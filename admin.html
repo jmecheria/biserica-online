@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Parohia Stornești</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --vis: #6B1A1A; --vis-d: #4A0F0F; --vis-dd: #2E0808;
+  --gold: #C9A84C; --gold-p: #F5EDD5; --gold-d: #9A7C32;
+  --cream: #FAF5EC; --text: #2A1010; --muted: #7A5050;
+  --border: rgba(201,168,76,0.3); --br: rgba(107,26,26,0.2);
+  --r: 3px; --shadow: 0 4px 24px rgba(30,8,8,0.15);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Raleway',sans-serif;background:#f5ede0;color:var(--text);min-height:100vh;}
+
+/* ── LOGIN ── */
+.login-screen {
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  background: var(--vis-dd);
+  position:relative; overflow:hidden;
+}
+.login-screen::before {
+  content:'✝'; position:absolute; font-size:400px; color:rgba(201,168,76,0.04);
+  top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;
+}
+.login-card {
+  background: var(--cream);
+  border: 2px solid var(--border);
+  border-top: 4px solid var(--gold);
+  border-radius: 6px;
+  padding: 3rem 2.5rem;
+  width: min(420px, 95vw);
+  text-align: center;
+  box-shadow: var(--shadow);
+  position: relative;
+}
+.login-cross { font-size:40px; color:var(--gold); display:block; margin-bottom:1rem; }
+.login-title { font-family:'Cinzel',serif; font-size:24px; color:var(--vis-d); margin-bottom:0.25rem; }
+.login-sub { font-size:13px; color:var(--muted); margin-bottom:2rem; }
+.login-input {
+  width:100%; border:1px solid var(--br); background:white;
+  font-family:'Raleway',sans-serif; font-size:14px; color:var(--text);
+  padding:12px 16px; border-radius:var(--r); outline:none;
+  margin-bottom:0.75rem; transition:border-color 0.15s;
+}
+.login-input:focus { border-color:var(--vis); }
+.login-btn {
+  width:100%; background:var(--vis); color:var(--gold); border:1px solid var(--gold-d);
+  font-family:'Raleway',sans-serif; font-size:12px; font-weight:600;
+  letter-spacing:0.2em; text-transform:uppercase; padding:14px;
+  cursor:pointer; border-radius:var(--r); transition:background 0.2s; margin-top:0.5rem;
+}
+.login-btn:hover { background:#8B2525; }
+.login-err { color:#c0392b; font-size:13px; margin-top:0.75rem; min-height:20px; }
+
+/* ── ADMIN LAYOUT ── */
+#adminApp { display:none; }
+.admin-header {
+  background:var(--vis-dd); border-bottom:2px solid var(--gold-d);
+  padding:0 2rem; position:sticky; top:0; z-index:100;
+}
+.admin-header-inner {
+  max-width:1400px; margin:0 auto;
+  display:flex; align-items:center; justify-content:space-between; height:60px;
+}
+.admin-logo { font-family:'Cinzel',serif; font-size:18px; color:var(--gold); }
+.admin-logo span { font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:rgba(201,168,76,0.5); display:block; line-height:1; }
+.admin-user { font-size:12px; color:rgba(201,168,76,0.6); display:flex; align-items:center; gap:12px; }
+.logout-btn {
+  background:none; border:1px solid rgba(201,168,76,0.3); color:var(--gold);
+  font-family:'Raleway',sans-serif; font-size:11px; letter-spacing:0.1em;
+  padding:6px 14px; cursor:pointer; border-radius:var(--r);
+}
+.logout-btn:hover { background:rgba(201,168,76,0.1); }
+
+.admin-body { max-width:1400px; margin:0 auto; padding:2rem; display:grid; grid-template-columns:220px 1fr; gap:1.5rem; align-items:start; }
+@media(max-width:768px){ .admin-body{grid-template-columns:1fr;} }
+
+/* SIDEBAR */
+.admin-sidebar {
+  background:white; border:1px solid var(--br); border-top:3px solid var(--vis);
+  border-radius:var(--r); overflow:hidden; position:sticky; top:76px;
+}
+.sidebar-btn {
+  display:block; width:100%; text-align:left;
+  background:none; border:none; border-bottom:1px solid rgba(107,26,26,0.06);
+  font-family:'Raleway',sans-serif; font-size:13px; color:var(--muted);
+  padding:13px 16px; cursor:pointer; transition:background 0.15s, color 0.15s;
+}
+.sidebar-btn:hover { background:var(--gold-p); color:var(--vis); }
+.sidebar-btn.active { background:var(--vis); color:var(--gold); font-weight:500; }
+.sidebar-btn .icon { margin-right:8px; font-size:14px; }
+
+/* PANELS */
+.admin-panel { display:none; }
+.admin-panel.active { display:block; }
+
+.panel-header {
+  background:white; border:1px solid var(--br); border-top:3px solid var(--vis);
+  border-radius:var(--r) var(--r) 0 0; padding:1.25rem 1.5rem;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.panel-title { font-family:'Cinzel',serif; font-size:20px; color:var(--vis-d); }
+
+/* FORM */
+.admin-form {
+  background:white; border:1px solid var(--br); border-top:0;
+  border-radius:0 0 var(--r) var(--r); padding:1.5rem;
+  margin-bottom:1.5rem;
+}
+.fg { margin-bottom:1rem; }
+.fg label { display:block; font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:5px; }
+.fg input, .fg select, .fg textarea {
+  width:100%; border:1px solid var(--br); background:#fafafa;
+  font-family:'Raleway',sans-serif; font-size:14px; color:var(--text);
+  padding:10px 14px; border-radius:var(--r); outline:none; transition:border-color 0.15s;
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus { border-color:var(--vis); background:white; }
+.fg-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.fg-row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; }
+@media(max-width:600px){ .fg-row{grid-template-columns:1fr;} .fg-row3{grid-template-columns:1fr;} }
+
+.save-btn {
+  background:var(--vis); color:var(--gold); border:1px solid var(--gold-d);
+  font-family:'Raleway',sans-serif; font-size:12px; font-weight:600;
+  letter-spacing:0.15em; text-transform:uppercase; padding:11px 28px;
+  cursor:pointer; border-radius:var(--r); transition:background 0.2s;
+}
+.save-btn:hover { background:#8B2525; }
+.cancel-btn {
+  background:none; border:1px solid var(--br); color:var(--muted);
+  font-family:'Raleway',sans-serif; font-size:12px; letter-spacing:0.1em;
+  text-transform:uppercase; padding:11px 24px; cursor:pointer; border-radius:var(--r);
+  margin-left:8px;
+}
+
+/* TABLE */
+.admin-table { width:100%; border-collapse:collapse; font-size:13px; }
+.admin-table th {
+  background:var(--vis); color:var(--gold); font-family:'Cinzel',serif;
+  font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
+  padding:10px 14px; text-align:left; font-weight:600;
+}
+.admin-table td { padding:10px 14px; border-bottom:1px solid rgba(107,26,26,0.07); color:var(--text); }
+.admin-table tr:hover td { background:var(--gold-p); }
+.tbl-wrap { background:white; border:1px solid var(--br); border-radius:var(--r); overflow:auto; }
+
+/* Badges */
+.badge {
+  display:inline-block; font-size:9px; font-weight:700; letter-spacing:0.15em;
+  text-transform:uppercase; padding:3px 10px; border-radius:20px;
+}
+.badge-pending { background:#fef3c7; color:#b45309; }
+.badge-done { background:#d1fae5; color:#065f46; }
+.badge-cancel { background:#fee2e2; color:#991b1b; }
+.badge-urgent { background:#fee2e2; color:#991b1b; }
+.badge-general { background:var(--gold-p); color:var(--gold-d); }
+
+.tbl-action-btn {
+  background:none; border:1px solid var(--br); color:var(--muted);
+  font-size:11px; padding:4px 10px; cursor:pointer; border-radius:var(--r);
+  margin-right:4px; transition:all 0.15s;
+}
+.tbl-action-btn:hover { background:var(--vis); color:var(--gold); border-color:var(--vis); }
+.tbl-action-btn.del:hover { background:#c0392b; border-color:#c0392b; color:white; }
+
+/* Stats */
+.stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-bottom:2rem; }
+.stat-card {
+  background:white; border:1px solid var(--br); border-top:3px solid var(--vis);
+  border-radius:var(--r); padding:1.25rem 1.5rem; text-align:center;
+}
+.stat-val { font-family:'Cinzel',serif; font-size:32px; font-weight:700; color:var(--vis-d); }
+.stat-label { font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-top:4px; }
+
+/* TOAST */
+.toast {
+  position:fixed; bottom:2rem; right:2rem;
+  background:var(--vis-dd); color:var(--gold); border:1px solid var(--border);
+  padding:12px 24px; border-radius:var(--r); font-size:14px; z-index:9999;
+  transform:translateY(80px); opacity:0; transition:all 0.35s; pointer-events:none;
+}
+.toast.show { transform:translateY(0); opacity:1; }
+
+.loading { text-align:center; padding:2rem; color:var(--muted); font-style:italic; }
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="loginScreen">
+  <div class="login-screen">
+    <div class="login-card">
+      <span class="login-cross">✝</span>
+      <h2 class="login-title">Panou Admin</h2>
+      <p class="login-sub">Parohia Stornești — Acces securizat</p>
+      <input type="email" class="login-input" id="loginEmail" placeholder="Email admin" autocomplete="username">
+      <input type="password" class="login-input" id="loginPass" placeholder="Parolă" autocomplete="current-password">
+      <button class="login-btn" onclick="doLogin()">Intră în panou →</button>
+      <p class="login-err" id="loginErr"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADMIN APP ── -->
+<div id="adminApp">
+  <header class="admin-header">
+    <div class="admin-header-inner">
+      <div class="admin-logo">
+        Admin — Parohia Stornești
+        <span>Panou de administrare</span>
+      </div>
+      <div class="admin-user">
+        <span id="adminEmail"></span>
+        <button class="logout-btn" onclick="doLogout()">Ieșire</button>
+        <a href="index.html" style="color:var(--gold);font-size:11px;letter-spacing:0.1em;text-decoration:none;">← Site public</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="admin-body">
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+      <button class="sidebar-btn active" onclick="showPanel('dashboard',this)"><span class="icon">📊</span>Dashboard</button>
+      <button class="sidebar-btn" onclick="showPanel('produse',this)"><span class="icon">🛍</span>Produse</button>
+      <button class="sidebar-btn" onclick="showPanel('comenzi',this)"><span class="icon">📦</span>Comenzi</button>
+      <button class="sidebar-btn" onclick="showPanel('anunturi',this)"><span class="icon">📢</span>Anunțuri</button>
+      <button class="sidebar-btn" onclick="showPanel('import',this)"><span class="icon">⬆️</span>Import Produse</button>
+    </aside>
+
+    <!-- MAIN -->
+    <main>
+
+      <!-- DASHBOARD -->
+      <div class="admin-panel active" id="panel-dashboard">
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-card"><div class="stat-val" id="st-orders">—</div><div class="stat-label">Comenzi totale</div></div>
+          <div class="stat-card"><div class="stat-val" id="st-pending">—</div><div class="stat-label">În așteptare</div></div>
+          <div class="stat-card"><div class="stat-val" id="st-products">—</div><div class="stat-label">Produse active</div></div>
+          <div class="stat-card"><div class="stat-val" id="st-anunturi">—</div><div class="stat-label">Anunțuri</div></div>
+        </div>
+        <div class="panel-header">
+          <h2 class="panel-title">Comenzi recente</h2>
+        </div>
+        <div class="tbl-wrap" style="border-top:0;border-radius:0 0 var(--r) var(--r)">
+          <div id="recentOrders" class="loading">Se încarcă...</div>
+        </div>
+      </div>
+
+      <!-- PRODUSE -->
+      <div class="admin-panel" id="panel-produse">
+        <div class="panel-header">
+          <h2 class="panel-title">✝ Produse</h2>
+          <button class="save-btn" onclick="toggleProductForm()">+ Adaugă produs</button>
+        </div>
+        <div id="productFormWrap" style="display:none">
+          <div class="admin-form" style="border-top:1px solid var(--br);border-top:0;">
+            <input type="hidden" id="editProductId">
+            <div class="fg-row">
+              <div class="fg"><label>Denumire *</label><input type="text" id="pName" placeholder="Ex: Icoana Maicii Domnului"></div>
+              <div class="fg">
+                <label>Categorie *</label>
+                <select id="pCat">
+                  <option value="icoane">Icoane</option>
+                  <option value="lumanari">Lumânări & Candele</option>
+                  <option value="obiecte-cult">Obiecte de cult</option>
+                  <option value="carti">Cărți & CD-uri</option>
+                  <option value="vesminte">Veșminte</option>
+                  <option value="tamaie">Tămâie & Uleiuri</option>
+                  <option value="accesorii">Accesorii</option>
+                </select>
+              </div>
+            </div>
+            <div class="fg"><label>Descriere</label><textarea id="pDesc" rows="3" placeholder="Descriere produs..."></textarea></div>
+            <div class="fg-row3">
+              <div class="fg"><label>Preț (lei) *</label><input type="number" id="pPrice" placeholder="0" min="0"></div>
+              <div class="fg"><label>Stoc</label><input type="number" id="pStock" placeholder="10" min="0"></div>
+              <div class="fg"><label>Icon (emoji)</label><input type="text" id="pIcon" placeholder="🖼️" maxlength="4"></div>
+            </div>
+            <div class="fg-row">
+              <div class="fg"><label>Badge (opțional)</label><input type="text" id="pBadge" placeholder="Popular, Nou, etc."></div>
+              <div class="fg"><label>URL Imagine (opțional)</label><input type="text" id="pImage" placeholder="https://..."></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;margin-top:4px;">
+              <input type="checkbox" id="pActive" checked style="width:auto;margin:0">
+              <label for="pActive" style="text-transform:none;letter-spacing:0;font-size:14px;color:var(--text);cursor:pointer">Produs activ (vizibil pe site)</label>
+            </div>
+            <div style="margin-top:1.5rem;">
+              <button class="save-btn" onclick="saveProduct()">✝ Salvează produsul</button>
+              <button class="cancel-btn" onclick="cancelProductForm()">Anulează</button>
+            </div>
+          </div>
+        </div>
+        <div class="tbl-wrap" style="border-top:0;border-radius:0 0 var(--r) var(--r);">
+          <div id="productsTable" class="loading">Se încarcă...</div>
+        </div>
+      </div>
+
+      <!-- COMENZI -->
+      <div class="admin-panel" id="panel-comenzi">
+        <div class="panel-header">
+          <h2 class="panel-title">📦 Comenzi</h2>
+          <select id="orderFilter" onchange="loadOrders()" style="border:1px solid var(--br);background:white;font-family:'Raleway',sans-serif;font-size:13px;padding:6px 12px;border-radius:var(--r);">
+            <option value="toate">Toate</option>
+            <option value="pending">În așteptare</option>
+            <option value="done">Finalizate</option>
+            <option value="cancelled">Anulate</option>
+          </select>
+        </div>
+        <div class="tbl-wrap" style="border-top:0;border-radius:0 0 var(--r) var(--r);">
+          <div id="ordersTable" class="loading">Se încarcă...</div>
+        </div>
+      </div>
+
+      <!-- ANUNTURI -->
+      <div class="admin-panel" id="panel-anunturi">
+        <div class="panel-header">
+          <h2 class="panel-title">📢 Anunțuri</h2>
+          <button class="save-btn" onclick="toggleAnuntForm()">+ Anunț nou</button>
+        </div>
+        <div id="anuntFormWrap" style="display:none">
+          <div class="admin-form" style="border-top:1px solid var(--br);border-top:0;">
+            <input type="hidden" id="editAnuntId">
+            <div class="fg"><label>Titlu *</label><input type="text" id="aTitle" placeholder="Titlul anunțului"></div>
+            <div class="fg"><label>Conținut *</label><textarea id="aBody" rows="5" placeholder="Textul anunțului..."></textarea></div>
+            <div class="fg">
+              <label>Tip anunț</label>
+              <select id="aTag">
+                <option value="general">General</option>
+                <option value="eveniment">Eveniment</option>
+                <option value="important">Important</option>
+                <option value="urgent">Urgent</option>
+              </select>
+            </div>
+            <div style="margin-top:1.5rem;">
+              <button class="save-btn" onclick="saveAnunt()">✝ Publică anunțul</button>
+              <button class="cancel-btn" onclick="cancelAnuntForm()">Anulează</button>
+            </div>
+          </div>
+        </div>
+        <div class="tbl-wrap" style="border-top:0;border-radius:0 0 var(--r) var(--r);">
+          <div id="anunturiTable" class="loading">Se încarcă...</div>
+        </div>
+      </div>
+
+      <!-- IMPORT PRODUSE -->
+      <div class="admin-panel" id="panel-import">
+        <div class="panel-header">
+          <h2 class="panel-title">⬆️ Import automat produse</h2>
+        </div>
+        <div class="admin-form" style="border-top:0;border-radius:0 0 var(--r) var(--r);">
+          <p style="font-size:14px;color:var(--muted);margin-bottom:1.5rem;line-height:1.8;">
+            Apasă butonul de mai jos pentru a importa automat <strong style="color:var(--vis)">25 de produse</strong> de demonstrație
+            în colecția <code>products</code> din Firestore. Dacă produsele există deja, vor fi ignorate.<br><br>
+            ⚠️ Rulează o singură dată!
+          </p>
+          <button class="save-btn" onclick="importProducts()" id="importBtn">⬆ Importă produsele acum</button>
+          <div id="importLog" style="margin-top:1.5rem;font-size:13px;color:var(--muted);line-height:2;background:var(--gold-p);border-radius:var(--r);padding:1rem;display:none;"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc,
+  doc, query, orderBy, where, serverTimestamp, getCountFromServer
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyDjQEkuNvLHWwBJsGWmu1LxLcOoS75pFjQ",
+  authDomain: "biserica-online-d3f0a.firebaseapp.com",
+  projectId: "biserica-online-d3f0a",
+  storageBucket: "biserica-online-d3f0a.firebasestorage.app",
+  messagingSenderId: "582958004765",
+  appId: "1:582958004765:web:60a31c374b9e298c1964f4"
+});
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+const MONTHS = ['Ian','Feb','Mar','Apr','Mai','Iun','Iul','Aug','Sep','Oct','Nov','Dec'];
+function fmtDate(ts) {
+  const d = ts?.toDate ? ts.toDate() : new Date(ts || Date.now());
+  return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+}
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ── AUTH ──
+onAuthStateChanged(auth, user => {
+  if (user) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminApp').style.display = 'block';
+    document.getElementById('adminEmail').textContent = user.email;
+    loadDashboard();
+  } else {
+    document.getElementById('loginScreen').style.display = 'block';
+    document.getElementById('adminApp').style.display = 'none';
+  }
+});
+
+window.doLogin = async function() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+  const err   = document.getElementById('loginErr');
+  err.textContent = '';
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch(e) {
+    err.textContent = 'Email sau parolă incorectă.';
+  }
+};
+
+window.doLogout = () => signOut(auth);
+
+// ── PANELS ──
+window.showPanel = function(name, btn) {
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  btn.classList.add('active');
+  if (name==='produse') loadProducts();
+  if (name==='comenzi') loadOrders();
+  if (name==='anunturi') loadAnunturi();
+};
+
+// ── DASHBOARD ──
+async function loadDashboard() {
+  try {
+    const [oSnap, pSnap, aSnap] = await Promise.all([
+      getDocs(collection(db,'orders')),
+      getDocs(query(collection(db,'products'), where('active','==',true))),
+      getDocs(collection(db,'anunturi'))
+    ]);
+    const orders = oSnap.docs.map(d=>({id:d.id,...d.data()}));
+    const pending = orders.filter(o=>o.status==='pending').length;
+    document.getElementById('st-orders').textContent = orders.length;
+    document.getElementById('st-pending').textContent = pending;
+    document.getElementById('st-products').textContent = pSnap.size;
+    document.getElementById('st-anunturi').textContent = aSnap.size;
+
+    const recent = orders.slice(0,8);
+    const el = document.getElementById('recentOrders');
+    if (!recent.length) { el.innerHTML='<p class="loading">Nicio comandă încă.</p>'; return; }
+    el.innerHTML = `<table class="admin-table">
+      <thead><tr><th>Data</th><th>Client</th><th>Total</th><th>Plată</th><th>Status</th><th>Acțiuni</th></tr></thead>
+      <tbody>${recent.map(o=>`<tr>
+        <td>${fmtDate(o.createdAt)}</td>
+        <td><strong>${o.customer?.firstName} ${o.customer?.lastName}</strong><br><small style="color:var(--muted)">${o.customer?.phone||''}</small></td>
+        <td><strong>${o.total} lei</strong></td>
+        <td>${o.payment||'—'}</td>
+        <td><span class="badge badge-${o.status||'pending'}">${statusLabel(o.status)}</span></td>
+        <td>
+          <button class="tbl-action-btn" onclick="setOrderStatus('${o.id}','done')">✓ Finalizat</button>
+          <button class="tbl-action-btn del" onclick="setOrderStatus('${o.id}','cancelled')">✕ Anulat</button>
+        </td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+  } catch(e) { console.error(e); }
+}
+
+function statusLabel(s) {
+  const m = {pending:'În așteptare',done:'Finalizat',cancelled:'Anulat'};
+  return m[s]||s||'—';
+}
+
+// ── PRODUCTS ──
+let editProductId = null;
+
+window.toggleProductForm = function() {
+  const w = document.getElementById('productFormWrap');
+  w.style.display = w.style.display==='none'?'block':'none';
+  if (w.style.display==='block') clearProductForm();
+};
+window.cancelProductForm = function() {
+  document.getElementById('productFormWrap').style.display = 'none';
+  clearProductForm();
+};
+function clearProductForm() {
+  editProductId=null;
+  ['pName','pDesc','pBadge','pImage','pIcon'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('pPrice').value='';
+  document.getElementById('pStock').value='10';
+  document.getElementById('pCat').value='icoane';
+  document.getElementById('pActive').checked=true;
+  document.getElementById('editProductId').value='';
+}
+
+async function loadProducts() {
+  const el = document.getElementById('productsTable');
+  el.innerHTML = '<p class="loading">Se încarcă...</p>';
+  const snap = await getDocs(collection(db,'products'));
+  const prods = snap.docs.map(d=>({id:d.id,...d.data()}));
+  if (!prods.length) { el.innerHTML='<p class="loading">Nu există produse. Folosiți Import pentru a adăuga produse.</p>'; return; }
+  el.innerHTML = `<table class="admin-table">
+    <thead><tr><th>Icon</th><th>Produs</th><th>Categorie</th><th>Preț</th><th>Stoc</th><th>Status</th><th>Acțiuni</th></tr></thead>
+    <tbody>${prods.map(p=>`<tr>
+      <td style="font-size:24px">${p.icon||'✝'}</td>
+      <td><strong>${p.name}</strong>${p.badge?`<br><span class="badge badge-general">${p.badge}</span>`:''}</td>
+      <td>${p.cat||'—'}</td>
+      <td><strong>${p.price} lei</strong></td>
+      <td>${p.stock??'—'}</td>
+      <td><span style="color:${p.active!==false?'#065f46':'#991b1b'};font-weight:600">${p.active!==false?'✓ Activ':'✗ Inactiv'}</span></td>
+      <td>
+        <button class="tbl-action-btn" onclick="editProduct('${p.id}')">✎ Editează</button>
+        <button class="tbl-action-btn del" onclick="deleteProduct('${p.id}')">✕ Șterge</button>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+window.editProduct = async function(id) {
+  const snap = await getDocs(collection(db,'products'));
+  const p = snap.docs.find(d=>d.id===id)?.data();
+  if (!p) return;
+  editProductId = id;
+  document.getElementById('editProductId').value = id;
+  document.getElementById('pName').value = p.name||'';
+  document.getElementById('pCat').value = p.cat||'icoane';
+  document.getElementById('pDesc').value = p.desc||'';
+  document.getElementById('pPrice').value = p.price||'';
+  document.getElementById('pStock').value = p.stock||'';
+  document.getElementById('pIcon').value = p.icon||'';
+  document.getElementById('pBadge').value = p.badge||'';
+  document.getElementById('pImage').value = p.imageUrl||'';
+  document.getElementById('pActive').checked = p.active!==false;
+  document.getElementById('productFormWrap').style.display='block';
+  document.getElementById('productFormWrap').scrollIntoView({behavior:'smooth'});
+};
+
+window.saveProduct = async function() {
+  const name = document.getElementById('pName').value.trim();
+  const price = parseFloat(document.getElementById('pPrice').value);
+  if (!name || isNaN(price)) { toast('Completați denumirea și prețul!'); return; }
+  const data = {
+    name, cat: document.getElementById('pCat').value,
+    desc: document.getElementById('pDesc').value,
+    price, stock: parseInt(document.getElementById('pStock').value)||0,
+    icon: document.getElementById('pIcon').value||'✝',
+    badge: document.getElementById('pBadge').value||null,
+    imageUrl: document.getElementById('pImage').value||null,
+    active: document.getElementById('pActive').checked,
+  };
+  const id = document.getElementById('editProductId').value;
+  try {
+    if (id) { await updateDoc(doc(db,'products',id), data); toast('✝ Produs actualizat!'); }
+    else { await addDoc(collection(db,'products'), {...data, createdAt:serverTimestamp()}); toast('✝ Produs adăugat!'); }
+    cancelProductForm();
+    loadProducts();
+  } catch(e) { toast('Eroare la salvare.'); }
+};
+
+window.deleteProduct = async function(id) {
+  if (!confirm('Sigur ștergi acest produs?')) return;
+  await deleteDoc(doc(db,'products',id));
+  toast('Produs șters.'); loadProducts();
+};
+
+// ── ORDERS ──
+window.loadOrders = async function() {
+  const el = document.getElementById('ordersTable');
+  el.innerHTML='<p class="loading">Se încarcă...</p>';
+  const filter = document.getElementById('orderFilter').value;
+  let q = query(collection(db,'orders'), orderBy('createdAt','desc'));
+  if (filter!=='toate') q = query(collection(db,'orders'), where('status','==',filter), orderBy('createdAt','desc'));
+  const snap = await getDocs(q);
+  const orders = snap.docs.map(d=>({id:d.id,...d.data()}));
+  if (!orders.length) { el.innerHTML='<p class="loading">Nicio comandă.</p>'; return; }
+  el.innerHTML=`<table class="admin-table">
+    <thead><tr><th>Data</th><th>Client</th><th>Adresă</th><th>Produse</th><th>Total</th><th>Plată</th><th>Status</th><th>Acțiuni</th></tr></thead>
+    <tbody>${orders.map(o=>`<tr>
+      <td>${fmtDate(o.createdAt)}</td>
+      <td><strong>${o.customer?.firstName||''} ${o.customer?.lastName||''}</strong><br>
+        <small style="color:var(--muted)">${o.customer?.email||''}</small><br>
+        <small style="color:var(--muted)">${o.customer?.phone||''}</small>
+      </td>
+      <td style="font-size:12px">${o.customer?.address||''}<br>${o.customer?.city||''}</td>
+      <td style="font-size:12px">${(o.items||[]).map(i=>`${i.name} ×${i.qty}`).join('<br>')}</td>
+      <td><strong>${o.total} lei</strong></td>
+      <td style="font-size:12px">${o.payment||'—'}</td>
+      <td><span class="badge badge-${o.status||'pending'}">${statusLabel(o.status)}</span></td>
+      <td>
+        <button class="tbl-action-btn" onclick="setOrderStatus('${o.id}','done')">✓</button>
+        <button class="tbl-action-btn del" onclick="setOrderStatus('${o.id}','cancelled')">✕</button>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+};
+
+window.setOrderStatus = async function(id, status) {
+  await updateDoc(doc(db,'orders',id), {status});
+  toast(`Status actualizat: ${statusLabel(status)}`);
+  loadDashboard(); loadOrders();
+};
+
+// ── ANUNTURI ──
+window.toggleAnuntForm = function() {
+  const w = document.getElementById('anuntFormWrap');
+  w.style.display = w.style.display==='none'?'block':'none';
+  if(w.style.display==='block') clearAnuntForm();
+};
+window.cancelAnuntForm = function() {
+  document.getElementById('anuntFormWrap').style.display='none';
+  clearAnuntForm();
+};
+function clearAnuntForm() {
+  document.getElementById('editAnuntId').value='';
+  document.getElementById('aTitle').value='';
+  document.getElementById('aBody').value='';
+  document.getElementById('aTag').value='general';
+}
+
+async function loadAnunturi() {
+  const el = document.getElementById('anunturiTable');
+  el.innerHTML='<p class="loading">Se încarcă...</p>';
+  const snap = await getDocs(query(collection(db,'anunturi'),orderBy('createdAt','desc')));
+  const items = snap.docs.map(d=>({id:d.id,...d.data()}));
+  if (!items.length) { el.innerHTML='<p class="loading">Nu există anunțuri.</p>'; return; }
+  const tagLabel = {general:'General',eveniment:'Eveniment',important:'Important',urgent:'Urgent'};
+  el.innerHTML=`<table class="admin-table">
+    <thead><tr><th>Data</th><th>Titlu</th><th>Tip</th><th>Conținut</th><th>Acțiuni</th></tr></thead>
+    <tbody>${items.map(a=>`<tr>
+      <td>${fmtDate(a.createdAt)}</td>
+      <td><strong>${a.titlu||'—'}</strong></td>
+      <td><span class="badge badge-${a.tag||'general'}">${tagLabel[a.tag]||'General'}</span></td>
+      <td style="font-size:12px;color:var(--muted);max-width:300px">${(a.continut||'').substring(0,100)}${(a.continut||'').length>100?'...':''}</td>
+      <td>
+        <button class="tbl-action-btn" onclick="editAnunt('${a.id}')">✎ Editează</button>
+        <button class="tbl-action-btn del" onclick="deleteAnunt('${a.id}')">✕ Șterge</button>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+window.editAnunt = async function(id) {
+  const snap = await getDocs(collection(db,'anunturi'));
+  const a = snap.docs.find(d=>d.id===id)?.data();
+  if (!a) return;
+  document.getElementById('editAnuntId').value=id;
+  document.getElementById('aTitle').value=a.titlu||'';
+  document.getElementById('aBody').value=a.continut||'';
+  document.getElementById('aTag').value=a.tag||'general';
+  document.getElementById('anuntFormWrap').style.display='block';
+  document.getElementById('anuntFormWrap').scrollIntoView({behavior:'smooth'});
+};
+
+window.saveAnunt = async function() {
+  const titlu = document.getElementById('aTitle').value.trim();
+  const continut = document.getElementById('aBody').value.trim();
+  if (!titlu||!continut) { toast('Completați titlul și conținutul!'); return; }
+  const data = { titlu, continut, tag: document.getElementById('aTag').value };
+  const id = document.getElementById('editAnuntId').value;
+  try {
+    if (id) { await updateDoc(doc(db,'anunturi',id), data); toast('✝ Anunț actualizat!'); }
+    else { await addDoc(collection(db,'anunturi'),{...data,createdAt:serverTimestamp()}); toast('✝ Anunț publicat!'); }
+    cancelAnuntForm(); loadAnunturi();
+  } catch(e) { toast('Eroare la salvare.'); }
+};
+
+window.deleteAnunt = async function(id) {
+  if (!confirm('Sigur ștergi acest anunț?')) return;
+  await deleteDoc(doc(db,'anunturi',id));
+  toast('Anunț șters.'); loadAnunturi();
+};
+
+// ── IMPORT PRODUSE ──
+window.importProducts = async function() {
+  const btn = document.getElementById('importBtn');
+  const log = document.getElementById('importLog');
+  btn.disabled = true; btn.textContent = 'Se importă...';
+  log.style.display='block'; log.innerHTML='';
+
+  const PRODUCTS = [
+    { name:'Icoana Maicii Domnului cu Pruncul', cat:'icoane', desc:'Icoană pictată pe lemn de tei, aurită manual cu foiță de aur 24K, 30×40cm.', price:180, stock:15, icon:'🖼️', badge:'Popular', active:true },
+    { name:'Icoana Sfântului Nicolae', cat:'icoane', desc:'Icoană litografiată de lux, ramă sculptată din lemn masiv de nuc, 25×35cm.', price:95, stock:8, icon:'🖼️', badge:null, active:true },
+    { name:'Icoana Sfintei Treimi (Rubliov)', cat:'icoane', desc:'Copie fidelă după Andrei Rubliov, aurită cu foiță de aur 24K, certificat autenticitate.', price:450, stock:5, icon:'🖼️', badge:'Premium', active:true },
+    { name:'Icoana Învierii Domnului', cat:'icoane', desc:'Icoană pictată pe sticlă, tradiție transilvăneană, unicat semnat de artist.', price:320, stock:3, icon:'🖼️', badge:'Unicat', active:true },
+    { name:'Icoana Sfântului Gheorghe', cat:'icoane', desc:'Icoană sculptată și pictată, lemn de cireș, dimensiune 20×30cm.', price:140, stock:6, icon:'🖼️', badge:null, active:true },
+    { name:'Icoana Sf. Parascheva — Patrona Moldovei', cat:'icoane', desc:'Pictată pe lemn, aurită, cu moaşte binecuvântate, 25×35cm.', price:200, stock:10, icon:'🖼️', badge:'Moldova', active:true },
+    { name:'Lumânări din ceară naturală — set 50', cat:'lumanari', desc:'100% ceară de albine, fără parafină, ard curat și aromat, 25cm.', price:35, stock:100, icon:'🕯️', badge:null, active:true },
+    { name:'Candelă de argint 925', cat:'lumanari', desc:'Candelă liturgică argintată, model tradițional bizantin, cu rezervor de ulei.', price:220, stock:10, icon:'🕯️', badge:'Argint 925', active:true },
+    { name:'Lumânare de botez sculptată', cat:'lumanari', desc:'Sculptată manual cu motive florale și cruce, personalizabilă cu nume.', price:75, stock:20, icon:'🕯️', badge:null, active:true },
+    { name:'Set lumânări pascale ×10', cat:'lumanari', desc:'Lumânări tradiționale pentru Sfânta Lumină, ceară albă pură, ambalaj festiv.', price:45, stock:150, icon:'🕯️', badge:'Paști', active:true },
+    { name:'Candelă de masă din bronz aurit', cat:'lumanari', desc:'Candelă pentru icoana de acasă, bronz aurit, model clasic ortodox, 20cm.', price:110, stock:15, icon:'🕯️', badge:null, active:true },
+    { name:'Cruce pectorală argintată', cat:'obiecte-cult', desc:'Cruce de gât cu lanț argintiu, model bizantin gravat manual, argint 925.', price:130, stock:25, icon:'✝️', badge:null, active:true },
+    { name:'Cădelniță din bronz masiv', cat:'obiecte-cult', desc:'Cădelniță liturgică din bronz, cu lanțuri și clopotei, 25cm, model Muntele Athos.', price:380, stock:7, icon:'✝️', badge:'Athos', active:true },
+    { name:'Potir din argint 925', cat:'obiecte-cult', desc:'Potir liturgic artizanal, inscripționabil, livrat în cutie specială de catifea.', price:1200, stock:3, icon:'✝️', badge:'Argint', active:true },
+    { name:'Cruce de masă din lemn de măslin', cat:'obiecte-cult', desc:'Sculptată manual în Israel, lemn autentic de măslin, 30cm, certificat origine.', price:85, stock:12, icon:'✝️', badge:'Israel', active:true },
+    { name:'Disc liturgic și copie din argint', cat:'obiecte-cult', desc:'Set disc și copie argintate, model tradițional, pentru Sfânta Liturghie.', price:450, stock:4, icon:'✝️', badge:null, active:true },
+    { name:'Biblia Ortodoxă — ediție aniversară', cat:'carti', desc:'Biblia Ortodoxă Română, copertă piele naturală, text aurit, 1200 pag., cutie cadou.', price:195, stock:30, icon:'📖', badge:'Ediție specială', active:true },
+    { name:'Psaltire cu notație muzicală', cat:'carti', desc:'Psaltire completă cu note bizantine, ediție pe hârtie velină, copertă tare.', price:55, stock:20, icon:'📖', badge:null, active:true },
+    { name:'Ceaslov de buzunar', cat:'carti', desc:'Format mic, cartonat, cu rugăciunile zilnice și slujba Utreniei și Vecerniei.', price:28, stock:40, icon:'📖', badge:null, active:true },
+    { name:'CD Corul Patriarhiei Române — vol. 1', cat:'carti', desc:'Colecție de cântări liturgice bizantine, înregistrare studio HD, cutie specială.', price:35, stock:15, icon:'📖', badge:'CD', active:true },
+    { name:'Epitrahil brodat manual', cat:'vesminte', desc:'Brodat cu fir de aur pe catifea vișinie, model tradițional românesc, certificat.', price:550, stock:5, icon:'👘', badge:'Artizanal', active:true },
+    { name:'Felon liturgic complet', cat:'vesminte', desc:'Set complet: felon, epitrahil, mânecuțe, bederniță — mătase naturală brodata.', price:1800, stock:2, icon:'👘', badge:'Set complet', active:true },
+    { name:'Tămâie Muntele Athos 500g', cat:'tamaie', desc:'Tămâie autentică din Muntele Athos, aromă de smirnă și chihlimbar, cutie lemn.', price:65, stock:50, icon:'💨', badge:'Athos', active:true },
+    { name:'Ulei sfințit de la Ierusalim', cat:'tamaie', desc:'Ulei de măslin sfințit la Sfântul Mormânt, recipient cristal 100ml, certificat.', price:90, stock:25, icon:'💨', badge:'Ierusalim', active:true },
+    { name:'Mătănii din chihlimbar natural', cat:'accesorii', desc:'Mătănii ortodoxe din chihlimbar baltic natural, 33 boabe, cruciuliță argint.', price:120, stock:20, icon:'📿', badge:null, active:true },
+  ];
+
+  let count = 0;
+  for (const p of PRODUCTS) {
+    try {
+      await addDoc(collection(db,'products'), {...p, createdAt: serverTimestamp()});
+      count++;
+      log.innerHTML += `✅ Importat: <strong>${p.name}</strong><br>`;
+      log.scrollTop = log.scrollHeight;
+    } catch(e) {
+      log.innerHTML += `❌ Eroare la: ${p.name}<br>`;
+    }
+  }
+  log.innerHTML += `<br><strong style="color:var(--vis)">✝ Import finalizat: ${count}/${PRODUCTS.length} produse adăugate!</strong>`;
+  btn.textContent = '✓ Import finalizat';
+  toast(`✝ ${count} produse importate în Firestore!`);
+  loadProducts();
+};
+
+// ── LOGIN ENTER KEY ──
+document.getElementById('loginPass').addEventListener('keydown', e => {
+  if (e.key==='Enter') window.doLogin();
+});
+</script>
+</body>
+</html>

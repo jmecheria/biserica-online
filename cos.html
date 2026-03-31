@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coș — Parohia Stornești</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.page-hero {
+  background: var(--visniu-deep);
+  padding: 3rem 2rem;
+  text-align: center;
+  border-bottom: 2px solid var(--gold-dim);
+}
+.page-hero h1 { font-family:'Cinzel',serif; font-size:clamp(26px,4vw,44px); color:var(--gold); font-weight:600; }
+
+.cos-layout {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 2rem;
+  align-items: start;
+}
+@media(max-width:900px){ .cos-layout{grid-template-columns:1fr;} }
+
+/* Cart items */
+.cart-section {
+  background: white;
+  border: 1px solid var(--border-red);
+  border-top: 3px solid var(--visniu);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.cart-section-head {
+  background: var(--visniu);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cart-section-head h2 { font-family:'Cinzel',serif; font-size:18px; color:var(--gold); font-weight:600; }
+.clear-cart-btn {
+  background: none;
+  border: 1px solid rgba(201,168,76,0.4);
+  color: rgba(201,168,76,0.7);
+  font-family:'Raleway',sans-serif;
+  font-size:11px; letter-spacing:0.1em;
+  padding: 5px 12px; cursor:pointer; border-radius:var(--radius);
+}
+.clear-cart-btn:hover { border-color:var(--gold); color:var(--gold); }
+
+.cart-item-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(107,26,26,0.08);
+}
+.ci-icon { width:64px;height:64px;background:var(--gold-pale);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0;border:1px solid var(--border); }
+.ci-info { flex:1; }
+.ci-name { font-family:'Cinzel',serif;font-size:16px;color:var(--visniu-dark);margin-bottom:3px; }
+.ci-unit { font-size:12px;color:var(--muted); }
+.ci-qty { display:flex;align-items:center;gap:8px; }
+.ci-btn { width:30px;height:30px;border:1px solid var(--border-red);background:white;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius);color:var(--visniu); }
+.ci-btn:hover { background:var(--visniu);color:var(--gold); }
+.ci-num { font-size:15px;font-weight:600;min-width:24px;text-align:center; }
+.ci-price { font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--visniu-dark);text-align:right;min-width:80px; }
+.ci-remove { background:none;border:none;color:rgba(107,26,26,0.3);font-size:18px;cursor:pointer;padding:4px; }
+.ci-remove:hover { color:var(--visniu); }
+
+.empty-cos { text-align:center;padding:4rem 2rem;color:var(--muted); }
+.empty-cos .big { font-size:60px;display:block;margin-bottom:1rem;opacity:0.3; }
+
+/* Order summary */
+.order-summary-box {
+  background: white;
+  border: 1px solid var(--border-red);
+  border-top: 3px solid var(--gold);
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: sticky;
+  top: 88px;
+}
+.osb-head {
+  background: var(--gold-pale);
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.osb-head h3 { font-family:'Cinzel',serif;font-size:18px;color:var(--visniu-dark);font-weight:600; }
+.osb-body { padding:1.5rem; }
+.osb-row { display:flex;justify-content:space-between;font-size:13px;color:var(--muted);padding:4px 0; }
+.osb-divider { height:1px;background:var(--border-red);margin:12px 0; }
+.osb-total { display:flex;justify-content:space-between;align-items:center; }
+.osb-total-label { font-size:13px;text-transform:uppercase;letter-spacing:0.15em;color:var(--muted); }
+.osb-total-val { font-family:'Cinzel',serif;font-size:30px;color:var(--visniu-dark);font-weight:700; }
+
+/* Form */
+.form-section {
+  background: white;
+  border: 1px solid var(--border-red);
+  border-top: 3px solid var(--visniu);
+  border-radius: var(--radius);
+  margin-top: 2rem;
+  overflow: hidden;
+}
+.form-section-head {
+  background: var(--visniu);
+  padding: 1rem 1.5rem;
+}
+.form-section-head h3 { font-family:'Cinzel',serif;font-size:18px;color:var(--gold);font-weight:600; }
+.form-body { padding:1.5rem; }
+.fg { margin-bottom:1rem; }
+.fg label { display:block;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:5px; }
+.fg input, .fg select, .fg textarea {
+  width:100%;
+  border:1px solid var(--border-red);
+  background:white;
+  font-family:'Raleway',sans-serif;
+  font-size:14px;color:var(--text);
+  padding:10px 14px;
+  border-radius:var(--radius);
+  outline:none;
+  transition:border-color 0.15s;
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus { border-color:var(--visniu); }
+.fg-row { display:grid;grid-template-columns:1fr 1fr;gap:1rem; }
+@media(max-width:600px){ .fg-row{grid-template-columns:1fr;} }
+
+.place-order-btn {
+  width:100%;
+  background:var(--visniu);
+  color:var(--gold);
+  border:1px solid var(--gold-dim);
+  font-family:'Raleway',sans-serif;
+  font-size:12px;font-weight:600;
+  letter-spacing:0.2em;text-transform:uppercase;
+  padding:16px;cursor:pointer;
+  border-radius:var(--radius);
+  margin-top:1.5rem;
+  transition:background 0.2s;
+  font-size:14px;
+}
+.place-order-btn:hover { background:var(--visniu-mid); }
+
+/* Success */
+.success-overlay {
+  display:none;
+  position:fixed;inset:0;
+  background:var(--visniu-deep);
+  z-index:9999;
+  align-items:center;justify-content:center;
+  flex-direction:column;text-align:center;padding:2rem;
+}
+.success-overlay.show { display:flex; }
+.success-cross { font-size:72px;color:var(--gold);animation:pulse 2s ease infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+.success-title { font-family:'Cinzel',serif;font-size:clamp(28px,5vw,52px);color:var(--gold);margin:1rem 0 0.5rem; }
+.success-sub { font-family:'EB Garamond',serif;font-size:clamp(16px,3vw,24px);color:rgba(250,245,236,0.7);font-style:italic;margin-bottom:2rem; }
+.success-back { display:inline-block; background:var(--gold);color:var(--dark);border:none;font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;padding:14px 36px;cursor:pointer;border-radius:var(--radius); }
+</style>
+</head>
+<body>
+
+<nav class="main-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">✝</div>
+      <div class="nav-logo-text">
+        <span class="name">Parohia Stornești</span>
+        <span class="sub">Iași · Ortodoxă</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Acasă</a></li>
+      <li><a href="produse.html">Magazin</a></li>
+      <li><a href="calendar.html">Calendar</a></li>
+      <li><a href="anunturi.html">Anunțuri</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="nav-cart" style="opacity:0.5;cursor:default">
+        🛒 Coș <span class="cart-badge" id="cartBadge">0</span>
+      </button>
+      <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+    </div>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <h1>Coșul meu</h1>
+</div>
+
+<div class="cos-layout" id="mainLayout">
+  <!-- LEFT: cart items + form -->
+  <div>
+    <div class="cart-section">
+      <div class="cart-section-head">
+        <h2>✝ Produse selectate</h2>
+        <button class="clear-cart-btn" onclick="clearCart()">Golește coșul</button>
+      </div>
+      <div id="cartItemsArea"></div>
+    </div>
+
+    <div class="form-section" id="orderFormSection" style="display:none">
+      <div class="form-section-head"><h3>Date livrare</h3></div>
+      <div class="form-body">
+        <div class="fg-row">
+          <div class="fg"><label>Prenume *</label><input type="text" id="fname" placeholder="Ion"></div>
+          <div class="fg"><label>Nume *</label><input type="text" id="lname" placeholder="Popescu"></div>
+        </div>
+        <div class="fg"><label>Email *</label><input type="email" id="email" placeholder="ion@email.ro"></div>
+        <div class="fg"><label>Telefon *</label><input type="tel" id="phone" placeholder="07xx xxx xxx"></div>
+        <div class="fg"><label>Adresă *</label><input type="text" id="address" placeholder="Str., Nr., Bl., Ap."></div>
+        <div class="fg-row">
+          <div class="fg"><label>Oraș *</label><input type="text" id="city" placeholder="Iași"></div>
+          <div class="fg"><label>Județ</label><input type="text" id="county" value="Iași"></div>
+        </div>
+        <div class="fg">
+          <label>Metodă de plată</label>
+          <select id="payment">
+            <option value="ramburs">Ramburs la livrare</option>
+            <option value="transfer">Transfer bancar</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Observații (opțional)</label>
+          <textarea id="notes" rows="3" placeholder="Rugăciune specială, mesaj cadou, alte detalii..."></textarea>
+        </div>
+        <button class="place-order-btn" onclick="placeOrder()">✝ Plasează comanda</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: summary -->
+  <div>
+    <div class="order-summary-box" id="summaryBox" style="display:none">
+      <div class="osb-head"><h3>Sumar comandă</h3></div>
+      <div class="osb-body">
+        <div id="summaryItems"></div>
+        <div class="osb-divider"></div>
+        <div class="osb-row"><span>Transport</span><span>Gratuit</span></div>
+        <div class="osb-divider"></div>
+        <div class="osb-total">
+          <span class="osb-total-label">Total</span>
+          <span class="osb-total-val" id="summaryTotal">0 lei</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-overlay" id="successOverlay">
+  <span class="success-cross">✝</span>
+  <h2 class="success-title">Mulțumim!</h2>
+  <p class="success-sub">Comanda a fost înregistrată cu succes.<br>Dumnezeu să vă binecuvânteze!</p>
+  <button class="success-back" onclick="window.location='index.html'">← Înapoi la pagina principală</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer class="site-footer">
+  <span class="footer-cross">✝</span>
+  <p class="footer-name">Parohia Stornești</p>
+  <p class="footer-info">📍 Stornești, Județul Iași</p>
+  <p class="footer-copy">© 2024 Parohia Stornești</p>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyDjQEkuNvLHWwBJsGWmu1LxLcOoS75pFjQ",
+  authDomain: "biserica-online-d3f0a.firebaseapp.com",
+  projectId: "biserica-online-d3f0a",
+  storageBucket: "biserica-online-d3f0a.firebasestorage.app",
+  messagingSenderId: "582958004765",
+  appId: "1:582958004765:web:60a31c374b9e298c1964f4"
+});
+const db = getFirestore(app);
+
+let cart = JSON.parse(localStorage.getItem('cart_stornesti') || '{}');
+let cartProds = JSON.parse(localStorage.getItem('cart_prods_stornesti') || '{}');
+
+function getTotal() {
+  return Object.entries(cart).reduce((s,[id,qty]) => s + (cartProds[id]?.price||0)*qty, 0);
+}
+
+function saveCart() {
+  localStorage.setItem('cart_stornesti', JSON.stringify(cart));
+  localStorage.setItem('cart_prods_stornesti', JSON.stringify(cartProds));
+}
+
+function renderCart() {
+  const total = Object.values(cart).reduce((s,v)=>s+v,0);
+  document.getElementById('cartBadge').textContent = total;
+  const area = document.getElementById('cartItemsArea');
+  const summaryBox = document.getElementById('summaryBox');
+  const formSection = document.getElementById('orderFormSection');
+
+  if (!total) {
+    area.innerHTML = `<div class="empty-cos"><span class="big">🛒</span><p>Coșul tău este gol.<br>Adaugă produse din <a href="produse.html" style="color:var(--visniu)">magazin</a>.</p></div>`;
+    summaryBox.style.display = 'none';
+    formSection.style.display = 'none';
+    return;
+  }
+
+  area.innerHTML = Object.entries(cart).map(([id,qty]) => {
+    const p = cartProds[id];
+    if (!p) return '';
+    return `<div class="cart-item-row">
+      <div class="ci-icon">${p.icon || '✝'}</div>
+      <div class="ci-info">
+        <p class="ci-name">${p.name}</p>
+        <p class="ci-unit">${p.price} lei / buc</p>
+      </div>
+      <div class="ci-qty">
+        <button class="ci-btn" onclick="changeQty('${id}',-1)">−</button>
+        <span class="ci-num">${qty}</span>
+        <button class="ci-btn" onclick="changeQty('${id}',1)">+</button>
+      </div>
+      <span class="ci-price">${p.price*qty} <small style="font-size:12px;font-weight:400;font-family:'Raleway',sans-serif">lei</small></span>
+      <button class="ci-remove" onclick="removeItem('${id}')">✕</button>
+    </div>`;
+  }).join('');
+
+  // Summary
+  summaryBox.style.display = 'block';
+  formSection.style.display = 'block';
+  document.getElementById('summaryItems').innerHTML = Object.entries(cart).map(([id,qty]) => {
+    const p = cartProds[id];
+    return `<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted);padding:4px 0">
+      <span>${p?.name} ×${qty}</span><span>${(p?.price||0)*qty} lei</span>
+    </div>`;
+  }).join('');
+  document.getElementById('summaryTotal').textContent = getTotal() + ' lei';
+}
+
+window.changeQty = function(id, dir) {
+  cart[id] = (cart[id] || 0) + dir;
+  if (cart[id] <= 0) delete cart[id];
+  saveCart();
+  renderCart();
+};
+
+window.removeItem = function(id) {
+  delete cart[id];
+  saveCart();
+  renderCart();
+};
+
+window.clearCart = function() {
+  if (confirm('Sigur dorești să golești coșul?')) {
+    cart = {}; cartProds = {};
+    saveCart();
+    renderCart();
+  }
+};
+
+window.placeOrder = async function() {
+  const fname = document.getElementById('fname').value.trim();
+  const lname = document.getElementById('lname').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const address = document.getElementById('address').value.trim();
+  const city = document.getElementById('city').value.trim();
+
+  if (!fname||!lname||!email||!phone||!address||!city) {
+    showToast('✝ Completați toate câmpurile obligatorii!');
+    return;
+  }
+
+  const orderData = {
+    customer: { firstName:fname, lastName:lname, email, phone, address,
+      city, county: document.getElementById('county').value },
+    items: Object.entries(cart).map(([id,qty]) => ({
+      productId:id, name:cartProds[id]?.name, price:cartProds[id]?.price, qty, subtotal:(cartProds[id]?.price||0)*qty
+    })),
+    total: getTotal(),
+    payment: document.getElementById('payment').value,
+    notes: document.getElementById('notes').value,
+    status: 'pending',
+    createdAt: serverTimestamp()
+  };
+
+  try {
+    await addDoc(collection(db, 'orders'), orderData);
+    cart = {}; cartProds = {};
+    localStorage.removeItem('cart_stornesti');
+    localStorage.removeItem('cart_prods_stornesti');
+    document.getElementById('successOverlay').classList.add('show');
+  } catch(e) {
+    showToast('Eroare la salvarea comenzii. Vă rugăm reîncercați.');
+  }
+};
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+renderCart();
+</script>
+</body>
+</html>

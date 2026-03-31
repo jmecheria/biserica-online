@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parohia Stornești — Acasă</title>
+<link rel="stylesheet" href="style.css">
+<style>
+/* ── HERO ── */
+.hero {
+  background: var(--visniu-deep);
+  position: relative;
+  overflow: hidden;
+  padding: 5rem 2rem 4rem;
+  text-align: center;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 110%, rgba(201,168,76,0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 20% 20%, rgba(107,26,26,0.5) 0%, transparent 60%);
+}
+.hero-ornament {
+  font-size: 13px;
+  letter-spacing: 0.5em;
+  color: var(--gold);
+  text-transform: uppercase;
+  opacity: 0.75;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+.hero h1 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(32px, 6vw, 68px);
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.15;
+  position: relative;
+  margin-bottom: 0.5rem;
+}
+.hero h1 span { color: var(--gold); }
+.hero-sub {
+  font-family: 'EB Garamond', serif;
+  font-size: clamp(16px, 2.5vw, 22px);
+  color: rgba(250,245,236,0.55);
+  font-style: italic;
+  position: relative;
+  margin-bottom: 3rem;
+}
+.hero-location {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(201,168,76,0.12);
+  border: 1px solid var(--border);
+  color: var(--gold);
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 8px 20px;
+  border-radius: 30px;
+  position: relative;
+}
+
+/* ── EASTER TIMER ── */
+.easter-section {
+  background: var(--visniu);
+  padding: 3rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(201,168,76,0.2);
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+}
+.easter-section::before {
+  content: '✝ ✝ ✝';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 200px;
+  color: rgba(201,168,76,0.03);
+  letter-spacing: 2rem;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.easter-label {
+  font-size: 11px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  margin-bottom: 1.2rem;
+  opacity: 0.8;
+}
+.easter-year-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(18px, 3vw, 28px);
+  color: var(--cream);
+  margin-bottom: 2.5rem;
+  font-weight: 400;
+}
+.easter-year-title strong { color: var(--gold); font-weight: 700; }
+
+/* Timer blocks */
+.timer-grid {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.timer-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 90px;
+}
+.timer-num {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(40px, 7vw, 72px);
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  text-shadow: 0 0 30px rgba(201,168,76,0.35);
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 6px;
+  padding: 10px 18px;
+  min-width: 80px;
+  text-align: center;
+}
+.timer-sep {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(30px, 5vw, 56px);
+  color: rgba(201,168,76,0.4);
+  line-height: 1;
+  padding-top: 10px;
+  align-self: flex-start;
+}
+.timer-label-text {
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(201,168,76,0.55);
+  margin-top: 8px;
+}
+.easter-date-line {
+  font-family: 'EB Garamond', serif;
+  font-size: 18px;
+  color: rgba(250,245,236,0.6);
+  font-style: italic;
+}
+.easter-date-line strong { color: var(--gold); font-style: normal; }
+
+/* Hristos a Inviat overlay */
+.hristos-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--visniu-deep);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+.hristos-overlay.show { display: flex; }
+.hristos-candles {
+  font-size: 60px;
+  margin-bottom: 1rem;
+  animation: glow 1.5s ease-in-out infinite alternate;
+}
+@keyframes glow {
+  from { filter: brightness(1); }
+  to   { filter: brightness(1.4) drop-shadow(0 0 20px #C9A84C); }
+}
+.hristos-text {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(36px, 8vw, 90px);
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1.2;
+  text-shadow: 0 0 60px rgba(201,168,76,0.6);
+  animation: fadeInUp 1s ease both;
+}
+.hristos-sub {
+  font-family: 'EB Garamond', serif;
+  font-size: clamp(20px, 4vw, 40px);
+  color: var(--cream);
+  font-style: italic;
+  margin-top: 0.5rem;
+  opacity: 0.85;
+  animation: fadeInUp 1s 0.3s ease both;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hristos-close {
+  margin-top: 3rem;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--gold);
+  font-family: 'Raleway', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 12px 32px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  animation: fadeInUp 1s 0.6s ease both;
+}
+
+/* ── INFO CARDS ── */
+.info-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+.info-card {
+  background: white;
+  border: 1px solid var(--border-red);
+  border-top: 3px solid var(--visniu);
+  padding: 2rem 1.75rem;
+  border-radius: var(--radius);
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.info-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.info-card-icon { font-size: 36px; margin-bottom: 1rem; display: block; }
+.info-card-title {
+  font-family: 'Cinzel', serif;
+  font-size: 17px;
+  color: var(--visniu-dark);
+  margin-bottom: 0.5rem;
+}
+.info-card-text { font-size: 14px; color: var(--muted); line-height: 1.8; }
+.info-card-link {
+  display: inline-block;
+  margin-top: 1rem;
+  color: var(--visniu);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-red);
+  transition: color 0.2s;
+}
+.info-card-link:hover { color: var(--gold-dim); }
+
+/* ── VERSE ── */
+.verse-section {
+  background: var(--visniu-deep);
+  padding: 4rem 2rem;
+  text-align: center;
+  border-top: 1px solid rgba(201,168,76,0.2);
+}
+.verse-text {
+  font-family: 'EB Garamond', serif;
+  font-size: clamp(20px, 3.5vw, 32px);
+  color: var(--cream);
+  font-style: italic;
+  max-width: 800px;
+  margin: 0 auto 1rem;
+  line-height: 1.6;
+}
+.verse-ref {
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.7;
+}
+
+/* ── ANUNTURI PREVIEW ── */
+.preview-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem 4rem;
+}
+.anunt-preview-card {
+  background: white;
+  border-left: 4px solid var(--visniu);
+  border: 1px solid var(--border-red);
+  border-left: 4px solid var(--visniu);
+  padding: 1.5rem;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  margin-bottom: 1rem;
+  transition: transform 0.15s;
+}
+.anunt-preview-card:hover { transform: translateX(3px); }
+.anunt-date { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 5px; }
+.anunt-title { font-family: 'Cinzel', serif; font-size: 17px; color: var(--visniu-dark); margin-bottom: 0.4rem; }
+.anunt-body { font-size: 14px; color: var(--muted); line-height: 1.7; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.loading-placeholder { text-align: center; padding: 2rem; color: var(--muted); font-style: italic; }
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav class="main-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">✝</div>
+      <div class="nav-logo-text">
+        <span class="name">Parohia Stornești</span>
+        <span class="sub">Iași · Ortodoxă</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="active">Acasă</a></li>
+      <li><a href="produse.html">Magazin</a></li>
+      <li><a href="calendar.html">Calendar</a></li>
+      <li><a href="anunturi.html">Anunțuri</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="nav-cart" onclick="window.location='cos.html'">
+        ⛪ Coș <span class="cart-badge" id="cartBadge">0</span>
+      </button>
+      <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-ornament">✦ &nbsp; Bine ați venit &nbsp; ✦</p>
+  <h1>Parohia<br><span>Stornești</span></h1>
+  <p class="hero-sub">„Veniți la Mine toți cei osteniți și împovărați"</p>
+  <span class="hero-location">📍 Stornești, Județul Iași</span>
+</section>
+
+<!-- EASTER TIMER -->
+<section class="easter-section" id="easterSection">
+  <p class="easter-label">✝ Numărătoare inversă</p>
+  <h2 class="easter-year-title">Sfintele Paști <strong id="easterYear">2025</strong></h2>
+
+  <div class="timer-grid" id="timerGrid">
+    <div class="timer-block">
+      <span class="timer-num" id="tDays">00</span>
+      <span class="timer-label-text">Zile</span>
+    </div>
+    <span class="timer-sep">:</span>
+    <div class="timer-block">
+      <span class="timer-num" id="tHours">00</span>
+      <span class="timer-label-text">Ore</span>
+    </div>
+    <span class="timer-sep">:</span>
+    <div class="timer-block">
+      <span class="timer-num" id="tMins">00</span>
+      <span class="timer-label-text">Minute</span>
+    </div>
+    <span class="timer-sep">:</span>
+    <div class="timer-block">
+      <span class="timer-num" id="tSecs">00</span>
+      <span class="timer-label-text">Secunde</span>
+    </div>
+  </div>
+  <p class="easter-date-line">Sfintele Paști Ortodoxe — <strong id="easterDateStr">20 Aprilie 2025</strong></p>
+</section>
+
+<!-- HRISTOS A INVIAT OVERLAY -->
+<div class="hristos-overlay" id="hristosOverlay">
+  <span class="hristos-candles">🕯️ ✝ 🕯️</span>
+  <p class="hristos-text">Hristos a Înviat!</p>
+  <p class="hristos-sub">Adevărat a Înviat!</p>
+  <button class="hristos-close" onclick="document.getElementById('hristosOverlay').classList.remove('show')">
+    Slavă Lui Dumnezeu ✝
+  </button>
+</div>
+
+<!-- INFO CARDS -->
+<div class="info-section">
+  <div class="info-card">
+    <span class="info-card-icon">🕯️</span>
+    <h3 class="info-card-title">Program Liturgic</h3>
+    <p class="info-card-text">
+      <strong>Duminică:</strong> Sf. Liturghie ora 9:00<br>
+      <strong>Sâmbătă:</strong> Vecernie ora 17:00<br>
+      <strong>Miercuri:</strong> Paraclisul Maicii Domnului
+    </p>
+  </div>
+  <div class="info-card">
+    <span class="info-card-icon">📖</span>
+    <h3 class="info-card-title">Calendar Ortodox</h3>
+    <p class="info-card-text">Consultați calendarul creștin ortodox cu sfinții zilei, posturile și sărbătorile de peste an.</p>
+    <a href="calendar.html" class="info-card-link">Deschide calendarul →</a>
+  </div>
+  <div class="info-card">
+    <span class="info-card-icon">📢</span>
+    <h3 class="info-card-title">Anunțuri Parohiale</h3>
+    <p class="info-card-text">Aflați ultimele noutăți, evenimente și activități ale comunității parohiale Stornești.</p>
+    <a href="anunturi.html" class="info-card-link">Vezi anunțuri →</a>
+  </div>
+  <div class="info-card">
+    <span class="info-card-icon">🛒</span>
+    <h3 class="info-card-title">Magazin Bisericesc</h3>
+    <p class="info-card-text">Icoane, lumânări, cărți de rugăciune, obiecte de cult și multe altele, alese cu grijă.</p>
+    <a href="produse.html" class="info-card-link">Vizitează magazinul →</a>
+  </div>
+</div>
+
+<!-- VERSE -->
+<section class="verse-section">
+  <p class="verse-text">„Eu sunt Învierea și Viața; cel ce crede în Mine, chiar dacă va muri, va trăi."</p>
+  <p class="verse-ref">Ioan 11:25</p>
+</section>
+
+<!-- ANUNTURI PREVIEW -->
+<div class="preview-section">
+  <div class="section-header" style="margin-top:3rem;">
+    <span class="section-label">Ultima oră</span>
+    <h2 class="section-title">Anunțuri recente</h2>
+    <div class="section-divider"></div>
+  </div>
+  <div id="anunturiPreview">
+    <div class="loading-placeholder">Se încarcă anunțurile...</div>
+  </div>
+  <div style="text-align:center;margin-top:2rem;">
+    <a href="anunturi.html" class="btn-primary">Toate anunțurile →</a>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <span class="footer-cross">✝</span>
+  <p class="footer-name">Parohia Stornești</p>
+  <p class="footer-info">
+    📍 Stornești, Județul Iași<br>
+    <a href="tel:+40000000000">📞 Contact parohie</a> &nbsp;|&nbsp;
+    <a href="mailto:parohia.stornesti@gmail.com">✉ Email</a>
+  </p>
+  <p class="footer-copy">© 2024 Parohia Stornești · Toate drepturile rezervate</p>
+</footer>
+
+<!-- FIREBASE + LOGIC -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDjQEkuNvLHWwBJsGWmu1LxLcOoS75pFjQ",
+  authDomain: "biserica-online-d3f0a.firebaseapp.com",
+  projectId: "biserica-online-d3f0a",
+  storageBucket: "biserica-online-d3f0a.firebasestorage.app",
+  messagingSenderId: "582958004765",
+  appId: "1:582958004765:web:60a31c374b9e298c1964f4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ── EASTER TIMER ──
+function getOrthodoxEaster(year) {
+  // Algoritm Meeus pentru Paștele Iulian → Gregorian
+  const a = year % 4, b = year % 7, c = year % 19;
+  const d = (19 * c + 15) % 30;
+  const e = (2 * a + 4 * b - d + 34) % 7;
+  const month = Math.floor((d + e + 114) / 31);
+  const day = ((d + e + 114) % 31) + 1;
+  // Convert Julian to Gregorian (add 13 days for 20th/21st century)
+  const julianDate = new Date(year, month - 1, day);
+  julianDate.setDate(julianDate.getDate() + 13);
+  return julianDate;
+}
+
+function updateTimer() {
+  const now = new Date();
+  let year = now.getFullYear();
+  let easter = getOrthodoxEaster(year);
+  // If Easter already passed this year, use next year
+  if (now > easter) {
+    year++;
+    easter = getOrthodoxEaster(year);
+  }
+
+  const diff = easter - now;
+  document.getElementById('easterYear').textContent = year;
+
+  const months = ['Ianuarie','Februarie','Martie','Aprilie','Mai','Iunie','Iulie','August','Septembrie','Octombrie','Noiembrie','Decembrie'];
+  document.getElementById('easterDateStr').textContent =
+    `${easter.getDate()} ${months[easter.getMonth()]} ${year}`;
+
+  if (diff <= 0) {
+    // Hristos a Inviat!
+    document.getElementById('hristosOverlay').classList.add('show');
+    document.getElementById('timerGrid').innerHTML = `<div style="font-family:'Cinzel',serif;font-size:clamp(24px,5vw,48px);color:var(--gold);letter-spacing:0.1em;">✝ Hristos a Înviat! ✝</div>`;
+    return;
+  }
+
+  const days = Math.floor(diff / (1000*60*60*24));
+  const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+  const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
+  const secs = Math.floor((diff % (1000*60)) / 1000);
+
+  document.getElementById('tDays').textContent = String(days).padStart(2,'0');
+  document.getElementById('tHours').textContent = String(hours).padStart(2,'0');
+  document.getElementById('tMins').textContent = String(mins).padStart(2,'0');
+  document.getElementById('tSecs').textContent = String(secs).padStart(2,'0');
+}
+
+updateTimer();
+setInterval(updateTimer, 1000);
+
+// ── ANUNTURI PREVIEW ──
+async function loadAnunturi() {
+  try {
+    const q = query(collection(db, 'anunturi'), orderBy('createdAt','desc'), limit(3));
+    const snap = await getDocs(q);
+    const el = document.getElementById('anunturiPreview');
+    if (snap.empty) {
+      el.innerHTML = `<div class="loading-placeholder">Nu există anunțuri momentan.</div>`;
+      return;
+    }
+    const months = ['Ian','Feb','Mar','Apr','Mai','Iun','Iul','Aug','Sep','Oct','Nov','Dec'];
+    el.innerHTML = snap.docs.map(d => {
+      const a = d.data();
+      const dt = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt);
+      const dateStr = `${dt.getDate()} ${months[dt.getMonth()]} ${dt.getFullYear()}`;
+      return `<div class="anunt-preview-card">
+        <p class="anunt-date">✝ ${dateStr}</p>
+        <h3 class="anunt-title">${a.titlu || 'Anunț'}</h3>
+        <p class="anunt-body">${a.continut || ''}</p>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    document.getElementById('anunturiPreview').innerHTML =
+      `<div class="loading-placeholder">Anunțurile nu pot fi încărcate momentan.</div>`;
+  }
+}
+loadAnunturi();
+
+// ── CART BADGE ──
+const cart = JSON.parse(localStorage.getItem('cart_stornesti') || '{}');
+const total = Object.values(cart).reduce((s,v) => s+v, 0);
+document.getElementById('cartBadge').textContent = total;
+</script>
+</body>
+</html>

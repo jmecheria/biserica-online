@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendar Ortodox — Parohia Stornești</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.page-hero {
+  background: var(--visniu-deep);
+  padding: 3rem 2rem;
+  text-align: center;
+  border-bottom: 2px solid var(--gold-dim);
+}
+.page-hero h1 { font-family:'Cinzel',serif; font-size:clamp(26px,4vw,44px); color:var(--gold); font-weight:600; margin-bottom:0.4rem; }
+.page-hero p { color:rgba(250,245,236,0.55); font-size:15px; font-style:italic; }
+
+.cal-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+/* Month Nav */
+.month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  background: white;
+  border: 1px solid var(--border-red);
+  border-top: 3px solid var(--visniu);
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius);
+}
+.month-btn {
+  background: none;
+  border: 1px solid var(--border-red);
+  color: var(--visniu);
+  font-size: 18px;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.month-btn:hover { background: var(--visniu); color: var(--gold); }
+.month-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(20px, 3vw, 28px);
+  color: var(--visniu-dark);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+/* Calendar Grid */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+  border: 1px solid var(--border-red);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--border-red);
+}
+.cal-day-header {
+  background: var(--visniu);
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 10px 4px;
+}
+.cal-cell {
+  background: white;
+  min-height: 90px;
+  padding: 8px;
+  border: 0.5px solid rgba(107,26,26,0.08);
+  transition: background 0.15s;
+  cursor: pointer;
+  position: relative;
+}
+.cal-cell:hover { background: var(--gold-pale); }
+.cal-cell.empty { background: var(--cream-dark); cursor: default; }
+.cal-cell.today { background: #fff5f5; border: 1.5px solid var(--visniu-soft); }
+.cal-cell.sunday .cal-num { color: var(--visniu); font-weight: 700; }
+.cal-cell.post { background: #f5f0ff; }
+.cal-num {
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  display: block;
+  margin-bottom: 4px;
+}
+.cal-saint {
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.cal-cell.feast .cal-saint { color: var(--visniu); font-weight: 500; }
+.feast-dot {
+  width: 6px; height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+  position: absolute;
+  top: 8px; right: 8px;
+}
+.post-dot {
+  width: 6px; height: 6px;
+  background: #7c3aed;
+  border-radius: 50%;
+  position: absolute;
+  top: 8px; right: 8px;
+}
+
+/* Legend */
+.cal-legend {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+  padding: 1rem 1.5rem;
+  background: white;
+  border: 1px solid var(--border-red);
+  border-radius: var(--radius);
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.leg-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+/* Day Detail Panel */
+.day-detail {
+  background: white;
+  border: 1px solid var(--border-red);
+  border-left: 4px solid var(--visniu);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  display: none;
+}
+.day-detail.show { display: block; }
+.day-detail-date {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  color: var(--visniu-dark);
+  margin-bottom: 0.5rem;
+}
+.day-detail-saints { font-size: 15px; color: var(--text); line-height: 1.8; }
+.day-detail-note {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--gold-pale);
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--visniu-dark);
+  border-left: 3px solid var(--gold);
+  font-style: italic;
+}
+
+/* Posturi section */
+.posturi-section {
+  margin-top: 3rem;
+}
+.posturi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.post-card {
+  background: white;
+  border: 1px solid var(--border-red);
+  border-top: 3px solid var(--visniu);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+}
+.post-card-name {
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  color: var(--visniu-dark);
+  margin-bottom: 0.4rem;
+}
+.post-card-period { font-size: 13px; color: var(--gold-dim); margin-bottom: 0.5rem; }
+.post-card-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+@media(max-width:600px){
+  .cal-cell { min-height: 60px; }
+  .cal-saint { display: none; }
+  .cal-num { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="main-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">✝</div>
+      <div class="nav-logo-text">
+        <span class="name">Parohia Stornești</span>
+        <span class="sub">Iași · Ortodoxă</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Acasă</a></li>
+      <li><a href="produse.html">Magazin</a></li>
+      <li><a href="calendar.html" class="active">Calendar</a></li>
+      <li><a href="anunturi.html">Anunțuri</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="nav-cart" onclick="window.location='cos.html'">
+        🛒 Coș <span class="cart-badge" id="cartBadge">0</span>
+      </button>
+      <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+    </div>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <h1>Calendar Creștin Ortodox</h1>
+  <p>Sfinții zilei, sărbători și posturi</p>
+</div>
+
+<div class="cal-wrapper">
+  <div class="month-nav">
+    <button class="month-btn" onclick="changeMonth(-1)">&#8249;</button>
+    <h2 class="month-title" id="monthTitle">Ianuarie 2025</h2>
+    <button class="month-btn" onclick="changeMonth(1)">&#8250;</button>
+  </div>
+
+  <div class="cal-grid" id="calGrid"></div>
+
+  <div class="cal-legend">
+    <div class="legend-item"><div class="leg-dot" style="background:var(--gold)"></div> Sărbătoare mare</div>
+    <div class="legend-item"><div class="leg-dot" style="background:var(--visniu)"></div> Duminică</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#7c3aed"></div> Zi de post</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#fff5f5;border:1.5px solid var(--visniu-soft)"></div> Ziua de azi</div>
+  </div>
+
+  <div class="day-detail" id="dayDetail">
+    <p class="day-detail-date" id="detailDate"></p>
+    <p class="day-detail-saints" id="detailSaints"></p>
+    <div class="day-detail-note" id="detailNote" style="display:none"></div>
+  </div>
+
+  <!-- POSTURI -->
+  <div class="posturi-section">
+    <div class="section-header">
+      <span class="section-label">Tradiție ortodoxă</span>
+      <h2 class="section-title">Posturile anului <span id="postYear">2025</span></h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="posturi-grid" id="posturiGrid"></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <span class="footer-cross">✝</span>
+  <p class="footer-name">Parohia Stornești</p>
+  <p class="footer-info">📍 Stornești, Județul Iași</p>
+  <p class="footer-copy">© 2024 Parohia Stornești</p>
+</footer>
+
+<script>
+// ── SAINTS DATA ──
+// Sfinții principali ai calendarului ortodox românesc
+const SAINTS = {
+  "1-1":  { s: "Tăierea împrejur a Domnului; Sf. Vasile cel Mare", feast: true },
+  "1-6":  { s: "Botezul Domnului (Boboteaza)", feast: true, note: "Sfințirea apelor" },
+  "1-7":  { s: "Soborul Sf. Ioan Botezătorul", feast: true },
+  "1-17": { s: "Sf. Antonie cel Mare" },
+  "1-20": { s: "Sf. Eutimie cel Mare" },
+  "1-30": { s: "Sf. Trei Ierarhi: Vasile, Grigorie și Ioan" , feast: true },
+  "2-2":  { s: "Întâmpinarea Domnului", feast: true },
+  "2-10": { s: "Sf. Haralambie" },
+  "2-24": { s: "Aflarea capului Sf. Ioan Botezătorul" },
+  "3-9":  { s: "Sf. 40 de Mucenici din Sevastia", feast: true },
+  "3-25": { s: "Buna Vestire", feast: true, note: "Dezlegare la pește" },
+  "4-23": { s: "Sf. Mare Mucenic Gheorghe", feast: true },
+  "5-1":  { s: "Sf. Prooroc Ieremia" },
+  "5-21": { s: "Sf. Împ. Constantin și Elena", feast: true },
+  "6-7":  { s: "Rusaliile — Pogorârea Sf. Duh", feast: true },
+  "6-24": { s: "Nașterea Sf. Ioan Botezătorul", feast: true },
+  "6-29": { s: "Sfinții Apostoli Petru și Pavel", feast: true },
+  "7-20": { s: "Sf. Mare Prooroc Ilie Tesviteanul", feast: true },
+  "8-6":  { s: "Schimbarea la Față a Domnului", feast: true },
+  "8-15": { s: "Adormirea Maicii Domnului", feast: true },
+  "9-8":  { s: "Nașterea Maicii Domnului", feast: true },
+  "9-14": { s: "Înălțarea Sf. Cruci", feast: true, post: true },
+  "9-26": { s: "Adormirea Sf. Apostol și Evanghelist Ioan" },
+  "10-14":{ s: "Sf. Cuvioasă Parascheva de la Iași", feast: true, note: "Hramul Mitropoliei Moldovei" },
+  "10-26":{ s: "Sf. Mare Mucenic Dimitrie" },
+  "11-8": { s: "Soborul Sfinților Arhangheli Mihail și Gavriil", feast: true },
+  "11-14":{ s: "Sf. Apostol Filip" },
+  "11-21":{ s: "Intrarea în Biserică a Maicii Domnului", feast: true },
+  "11-25":{ s: "Sf. Sfințit Mc. Clement al Romei; Sf. Petru al Alexandriei" },
+  "11-30":{ s: "Sf. Apostol Andrei, Ocrotitorul României", feast: true },
+  "12-1": { s: "Sf. Prooroc Naum; Ziua Națională a României" },
+  "12-4": { s: "Sf. Mare Muceniță Varvara" },
+  "12-5": { s: "Sf. Sava cel Sfințit" },
+  "12-6": { s: "Sf. Nicolae, Arhiepiscopul Mirelor Lichiei", feast: true },
+  "12-9": { s: "Zămislirea Sf. Ana" },
+  "12-20":{ s: "Sf. Sfințit Mc. Ignatie Teoforul" },
+  "12-25":{ s: "Nașterea Domnului — CRĂCIUNUL", feast: true, note: "Hristos Se naște, slăviți-L!" },
+  "12-26":{ s: "Soborul Maicii Domnului", feast: true },
+  "12-27":{ s: "Sf. Apostol, Prooroc și Întâiul Mucenic Arhidiacon Ștefan" },
+};
+
+// Miercuri și vineri sunt zile de post (simplified check)
+function isPostDay(year, month, day) {
+  const d = new Date(year, month, day);
+  const dow = d.getDay();
+  return dow === 3 || dow === 5; // miercuri=3, vineri=5
+}
+
+const MONTHS_RO = ['Ianuarie','Februarie','Martie','Aprilie','Mai','Iunie',
+                   'Iulie','August','Septembrie','Octombrie','Noiembrie','Decembrie'];
+const DAYS_RO   = ['Dum','Lun','Mar','Mie','Joi','Vin','Sâm'];
+
+let viewYear  = new Date().getFullYear();
+let viewMonth = new Date().getMonth(); // 0-based
+const today   = new Date();
+
+function renderCalendar() {
+  document.getElementById('monthTitle').textContent = `${MONTHS_RO[viewMonth]} ${viewYear}`;
+  document.getElementById('postYear').textContent = viewYear;
+
+  const grid = document.getElementById('calGrid');
+  // Headers
+  let html = DAYS_RO.map(d =>
+    `<div class="cal-day-header">${d}</div>`).join('');
+
+  const firstDay = new Date(viewYear, viewMonth, 1).getDay(); // 0=Sun
+  const daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
+
+  // Empty cells before
+  for (let i = 0; i < firstDay; i++) html += `<div class="cal-cell empty"></div>`;
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(viewYear, viewMonth, d);
+    const dow = date.getDay();
+    const key = `${viewMonth+1}-${d}`;
+    const info = SAINTS[key];
+    const isToday = d === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear();
+    const isPost = isPostDay(viewYear, viewMonth, d) && !info?.feast;
+    const isSun = dow === 0;
+
+    let classes = 'cal-cell';
+    if (isToday) classes += ' today';
+    if (isSun)   classes += ' sunday';
+    if (isPost)  classes += ' post';
+    if (info?.feast) classes += ' feast';
+
+    html += `<div class="${classes}" onclick="showDay(${d})">
+      ${info?.feast ? '<div class="feast-dot"></div>' : (isPost ? '<div class="post-dot"></div>' : '')}
+      <span class="cal-num">${d}</span>
+      <span class="cal-saint">${info?.s || ''}</span>
+    </div>`;
+  }
+  grid.innerHTML = html;
+}
+
+window.changeMonth = function(dir) {
+  viewMonth += dir;
+  if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+  if (viewMonth < 0)  { viewMonth = 11; viewYear--; }
+  renderCalendar();
+  document.getElementById('dayDetail').classList.remove('show');
+};
+
+window.showDay = function(d) {
+  const key = `${viewMonth+1}-${d}`;
+  const info = SAINTS[key];
+  const dow = new Date(viewYear, viewMonth, d).getDay();
+  const isPost = (dow === 3 || dow === 5) && !info?.feast;
+
+  document.getElementById('detailDate').textContent =
+    `${d} ${MONTHS_RO[viewMonth]} ${viewYear} — ${['Duminică','Luni','Marți','Miercuri','Joi','Vineri','Sâmbătă'][dow]}`;
+
+  let saintsText = info?.s || 'Calendar nu are înregistrări speciale pentru această zi.';
+  if (isPost) saintsText += '\n🚫 Zi de post (miercuri / vineri)';
+  document.getElementById('detailSaints').textContent = saintsText;
+
+  const noteEl = document.getElementById('detailNote');
+  if (info?.note) { noteEl.textContent = info.note; noteEl.style.display = 'block'; }
+  else noteEl.style.display = 'none';
+
+  document.getElementById('dayDetail').classList.add('show');
+  document.getElementById('dayDetail').scrollIntoView({ behavior:'smooth', block:'nearest' });
+};
+
+// ── POSTURI ──
+function getOrthodoxEaster(y) {
+  const a=y%4,b=y%7,c=y%19,d=(19*c+15)%30,e=(2*a+4*b-d+34)%7;
+  const mo=Math.floor((d+e+114)/31), da=((d+e+114)%31)+1;
+  const jd = new Date(y, mo-1, da);
+  jd.setDate(jd.getDate()+13);
+  return jd;
+}
+
+function renderPosturi() {
+  const y = viewYear;
+  const paste = getOrthodoxEaster(y);
+
+  const addDays = (dt, n) => { const d=new Date(dt); d.setDate(d.getDate()+n); return d; };
+  const fmt = dt => `${dt.getDate()} ${MONTHS_RO[dt.getMonth()]}`;
+
+  const posturi = [
+    {
+      name: 'Postul Nașterii Domnului (Crăciunul)',
+      period: `15 Noiembrie — 24 Decembrie ${y}`,
+      desc: '40 de zile, amintind postul Proorocului Moise. Se dezleagă la pește în zilele de rând.'
+    },
+    {
+      name: 'Postul Mare (Sfintele Paști)',
+      period: `${fmt(addDays(paste,-48))} — ${fmt(addDays(paste,-1))} ${y}`,
+      desc: '48 de zile, cel mai aspru post al anului. Pâine, apă, fructe și legume.'
+    },
+    {
+      name: 'Postul Sfinților Apostoli',
+      period: `${fmt(addDays(paste,57))} — 28 Iunie ${y}`,
+      desc: 'Post variabil, între 8 și 42 de zile, în cinstea Sfinților Apostoli Petru și Pavel.'
+    },
+    {
+      name: 'Postul Adormirii Maicii Domnului',
+      period: `1 August — 14 August ${y}`,
+      desc: '14 zile dedicate Maicii Domnului. Post aspru, asemănător Postului Mare.'
+    }
+  ];
+
+  document.getElementById('posturiGrid').innerHTML = posturi.map(p => `
+    <div class="post-card">
+      <p class="post-card-name">✝ ${p.name}</p>
+      <p class="post-card-period">📅 ${p.period}</p>
+      <p class="post-card-desc">${p.desc}</p>
+    </div>`).join('');
+}
+
+// Cart badge
+const cart = JSON.parse(localStorage.getItem('cart_stornesti') || '{}');
+document.getElementById('cartBadge').textContent = Object.values(cart).reduce((s,v)=>s+v,0);
+
+renderCalendar();
+renderPosturi();
+</script>
+</body>
+</html>
