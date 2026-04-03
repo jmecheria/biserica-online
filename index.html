@@ -1,276 +1,732 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Biserica Ortodoxă – Comunitatea Noastră</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✝</text></svg>">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parohia Ortodoxă</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<style>
+/* ── VARIABILE ─────────────────────────────── */
+:root{
+  --v:#6B1A2A; --vd:#4A0F1C; --vl:#8B2A3F; --vp:#D4899A;
+  --g:#C9A84C; --gl:#E8C97A;
+  --w:#FFF9F5; --cr:#F5EDE4; --crd:#EAD9CC;
+  --td:#2C1810; --tm:#5C3D30; --tl:#8B6B5A;
+  --sh:rgba(107,26,42,.14); --shs:rgba(74,15,28,.26);
+}
+/* ── RESET ─────────────────────────────────── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'EB Garamond',Georgia,serif;background:var(--w);color:var(--td);overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+ul{list-style:none}
+img{display:block;max-width:100%}
+button{cursor:pointer;font-family:inherit}
+input,select,textarea{font-family:'EB Garamond',serif}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--cr)}
+::-webkit-scrollbar-thumb{background:var(--v);border-radius:3px}
+
+/* ── TIMER BAR ─────────────────────────────── */
+#timer-bar{
+  background:linear-gradient(90deg,var(--vd),var(--v),var(--vd));
+  color:var(--gl);font-family:'Cinzel',serif;font-size:.75rem;
+  letter-spacing:1px;padding:6px 20px;
+  display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;
+  position:sticky;top:0;z-index:999;
+  border-bottom:2px solid var(--g);min-height:38px;
+}
+#timer-bar.risen{
+  background:linear-gradient(90deg,#0a2f0a,#1a6b1a,#0a2f0a);
+  color:#FFD700;font-size:.9rem;
+  animation:glow-green 2s infinite;
+}
+@keyframes glow-green{0%,100%{box-shadow:0 0 8px rgba(255,215,0,.3)}50%{box-shadow:0 0 24px rgba(255,215,0,.7)}}
+.t-units{display:flex;align-items:center;gap:8px}
+.t-unit{text-align:center}
+.t-num{font-size:1.2rem;font-weight:700;color:#fff;display:block;line-height:1}
+.t-lbl{font-size:.5rem;color:var(--gl);text-transform:uppercase;letter-spacing:1px}
+.t-sep{font-size:1rem;color:var(--g);font-weight:700;margin-bottom:8px}
+
+/* ── NAV ───────────────────────────────────── */
+nav{
+  background:var(--vd);height:64px;padding:0 36px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  position:sticky;top:38px;z-index:998;
+  border-bottom:2px solid var(--g);
+  box-shadow:0 3px 18px var(--shs);
+}
+.nav-logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.nav-logo-icon{font-size:1.7rem;color:var(--g);animation:glow-cross 4s ease-in-out infinite}
+@keyframes glow-cross{0%,100%{text-shadow:0 0 6px rgba(201,168,76,.3)}50%{text-shadow:0 0 22px rgba(201,168,76,.8)}}
+.nav-logo-text{font-family:'Cinzel',serif;color:var(--w);font-size:.95rem;font-weight:600;line-height:1.2}
+.nav-logo-sub{font-size:.55rem;color:var(--gl);letter-spacing:2px;text-transform:uppercase}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links a{
+  color:var(--cr);font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.6px;
+  padding:7px 12px;border-radius:5px;transition:.22s;
+  display:flex;align-items:center;gap:5px;white-space:nowrap;
+}
+.nav-links a:hover,.nav-links a.activ{background:var(--g);color:var(--vd)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.cart-btn{
+  position:relative;background:none;border:none;
+  color:var(--gl);font-size:1.45rem;padding:5px;
+  border-radius:5px;transition:.22s;
+}
+.cart-btn:hover{color:var(--g);transform:scale(1.12)}
+.cart-badge{
+  position:absolute;top:-3px;right:-3px;
+  background:var(--g);color:var(--vd);
+  font-size:.58rem;font-weight:700;font-family:'Lato',sans-serif;
+  width:16px;height:16px;border-radius:50%;
+  display:none;align-items:center;justify-content:center;
+}
+.cart-badge.viz{display:flex}
+.hamburger{
+  display:none;flex-direction:column;gap:4px;
+  background:none;border:none;padding:4px;
+}
+.hamburger span{width:22px;height:2px;background:var(--g);border-radius:2px;transition:.3s}
+
+/* ── PAGES ─────────────────────────────────── */
+.pagina{display:none;min-height:calc(100vh - 102px);animation:apar .35s ease}
+.pagina.activa{display:block}
+@keyframes apar{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── HERO ──────────────────────────────────── */
+.hero{
+  background:linear-gradient(135deg,var(--vd) 0%,var(--v) 55%,#7B2030 100%);
+  padding:70px 36px;text-align:center;color:var(--w);
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 25% 50%,rgba(201,168,76,.1) 0%,transparent 55%),
+             radial-gradient(ellipse at 75% 30%,rgba(201,168,76,.07) 0%,transparent 50%);
+}
+.hero-icon{display:block;font-size:3.5rem;color:var(--g);margin-bottom:16px;position:relative;animation:glow-cross 3s ease-in-out infinite}
+.hero h1{font-family:'Cinzel',serif;font-size:clamp(1.7rem,4.5vw,3rem);font-weight:700;color:var(--w);margin-bottom:10px;position:relative;text-shadow:0 2px 18px rgba(0,0,0,.4)}
+.hero-sub{font-style:italic;font-size:1.15rem;color:var(--gl);margin-bottom:26px;position:relative}
+.hero-linie{width:80px;height:2px;background:linear-gradient(90deg,transparent,var(--g),transparent);margin:0 auto 24px}
+.hero-butoane{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+.hero-mica{padding:44px 36px}
+
+/* ── BUTOANE ───────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 24px;border-radius:6px;border:none;
+  font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.7px;
+  transition:.28s;white-space:nowrap;cursor:pointer;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+.btn-primar{background:var(--v);color:var(--w)}.btn-primar:hover{background:var(--vd);box-shadow:0 5px 20px var(--shs)}
+.btn-aur{background:var(--g);color:var(--vd);font-weight:700}.btn-aur:hover{background:var(--gl);box-shadow:0 5px 18px rgba(201,168,76,.4)}
+.btn-contur{background:transparent;border:2px solid var(--v);color:var(--v)}.btn-contur:hover{background:var(--v);color:var(--w)}
+.btn-contur-aur{background:transparent;border:2px solid var(--g);color:var(--gl)}.btn-contur-aur:hover{background:var(--g);color:var(--vd)}
+.btn-pericol{background:#C0392B;color:#fff}.btn-pericol:hover{background:#922B21}
+.btn-mic{padding:6px 13px;font-size:.68rem}
+.btn-xs{padding:4px 9px;font-size:.65rem}
+
+/* ── LAYOUT ────────────────────────────────── */
+.sectiune{padding:56px 36px}
+.sectiune-alt{background:var(--cr)}
+.sectiune-inchis{background:var(--vd)}
+.container{max-width:1180px;margin:0 auto}
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:26px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:22px}
+.grid-prod{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px}
+
+/* ── TITLURI SECTIUNE ──────────────────────── */
+.titlu-sec{font-family:'Cinzel',serif;font-size:1.5rem;color:var(--v);text-align:center;margin-bottom:8px}
+.subtitlu-sec{text-align:center;font-style:italic;color:var(--tl);font-size:.98rem;margin-bottom:32px}
+.ornament{text-align:center;color:var(--g);font-size:1.3rem;margin-bottom:10px}
+.linie-deco{width:75px;height:2px;background:linear-gradient(90deg,transparent,var(--g),transparent);margin:0 auto 26px}
+
+/* ── CARD GENERIC ──────────────────────────── */
+.card{
+  background:var(--w);border-radius:11px;
+  box-shadow:0 4px 16px var(--sh);border:1px solid var(--crd);
+  overflow:hidden;transition:transform .3s,box-shadow .3s;
+}
+.card:hover{transform:translateY(-5px);box-shadow:0 12px 36px var(--shs)}
+.card-corp{padding:22px}
+.card-icon{font-size:2.2rem;color:var(--g);display:block;margin-bottom:12px}
+.card h3{font-family:'Cinzel',serif;font-size:1rem;color:var(--v);margin-bottom:8px}
+.card p{color:var(--tm);font-size:.93rem;line-height:1.62}
+
+/* ── TICKER URGENT ─────────────────────────── */
+#ticker-urgent{
+  background:linear-gradient(90deg,#7A0000,#B22222,#7A0000);
+  color:#fff;padding:8px 0;overflow:hidden;
+  display:none;border-bottom:2px solid #FF6B6B;
+}
+.ticker-pista{display:flex;gap:55px;animation:defileaza 34s linear infinite;white-space:nowrap;width:max-content}
+@keyframes defileaza{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{display:inline-flex;align-items:center;gap:7px;font-size:.86rem;cursor:pointer;padding:0 4px}
+.ticker-item:hover{text-decoration:underline}
+
+/* ── SFANT & VERSET ────────────────────────── */
+.sfant-card{
+  background:linear-gradient(135deg,var(--vd),var(--v));
+  color:var(--w);border-radius:14px;padding:34px;
+  text-align:center;position:relative;overflow:hidden;
+  box-shadow:0 6px 26px var(--shs);
+}
+.sfant-card::before{content:'✝';position:absolute;font-size:200px;opacity:.03;top:-30px;right:-20px;font-family:Georgia,serif;color:#fff}
+.sfant-nume{font-family:'Cinzel',serif;font-size:1.28rem;color:var(--gl);margin-bottom:11px}
+.sfant-desc{font-style:italic;color:var(--crd);line-height:1.72;font-size:1rem}
+.verset-box{
+  background:var(--cr);border-left:5px solid var(--g);
+  border-radius:0 11px 11px 0;padding:28px 32px;
+  font-size:1.12rem;font-style:italic;color:var(--tm);line-height:1.82;
+  position:relative;box-shadow:0 4px 16px var(--sh);
+}
+.verset-box::before{content:'"';font-size:4.5rem;color:var(--g);opacity:.22;position:absolute;top:-12px;left:10px;font-family:Georgia,serif;line-height:1}
+.verset-ref{font-size:.85rem;color:var(--v);font-style:normal;font-family:'Cinzel',serif;font-weight:600;margin-top:11px;display:block}
+
+/* ── TABEL SLUJBE ──────────────────────────── */
+.tabel-slujbe{width:100%;border-collapse:collapse;background:var(--w);border-radius:11px;overflow:hidden;box-shadow:0 4px 16px var(--sh)}
+.tabel-slujbe th{background:var(--v);color:var(--gl);font-family:'Cinzel',serif;padding:13px 15px;text-align:left;font-size:.78rem;letter-spacing:.7px}
+.tabel-slujbe td{padding:11px 15px;border-bottom:1px solid var(--crd);font-size:.93rem;color:var(--td)}
+.tabel-slujbe tr:last-child td{border-bottom:none}
+.tabel-slujbe tr:hover td{background:var(--cr)}
+
+/* ── CARD ANUNT ────────────────────────────── */
+.card-anunt{
+  background:var(--w);border-radius:9px;
+  border-left:5px solid var(--v);
+  box-shadow:0 3px 14px var(--sh);
+  padding:18px 22px;cursor:pointer;
+  transition:all .28s;margin-bottom:13px;
+}
+.card-anunt:hover{transform:translateX(5px);box-shadow:0 7px 26px var(--shs)}
+.card-anunt.urgent{
+  border-left-color:#C0392B;
+  background:linear-gradient(135deg,#fff5f5,var(--w));
+  animation:puls-urgenta 2.5s ease-in-out infinite;
+}
+@keyframes puls-urgenta{0%,100%{border-left-color:#C0392B}50%{border-left-color:#FF4444}}
+.insigna{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 9px;border-radius:18px;
+  font-size:.65rem;font-family:'Lato',sans-serif;
+  font-weight:700;letter-spacing:.9px;text-transform:uppercase;margin-bottom:7px;
+}
+.ins-urgent{background:#E74C3C;color:#fff}
+.ins-slujba{background:var(--v);color:var(--gl)}
+.ins-general{background:var(--crd);color:var(--tm)}
+.ins-eveniment{background:var(--g);color:var(--vd)}
+.ins-activitate{background:#27AE60;color:#fff}
+.card-anunt h3{font-family:'Cinzel',serif;font-size:.97rem;color:var(--v);margin-bottom:6px}
+.anunt-extras{color:var(--tm);font-size:.9rem;line-height:1.52}
+.anunt-data{font-size:.75rem;color:var(--tl);font-family:'Lato',sans-serif;margin-top:7px;display:block}
+
+/* ── CARD PRODUS ───────────────────────────── */
+.card-produs{
+  background:var(--w);border-radius:11px;
+  box-shadow:0 3px 14px var(--sh);border:1px solid var(--crd);
+  cursor:pointer;transition:all .28s;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.card-produs:hover{transform:translateY(-5px);box-shadow:0 14px 36px var(--shs)}
+.produs-img{
+  width:100%;height:210px;background:var(--cr);
+  overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.produs-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.card-produs:hover .produs-img img{transform:scale(1.06)}
+.produs-img-ph{font-size:3.2rem;color:var(--vp)}
+.produs-corp{padding:14px;flex:1;display:flex;flex-direction:column}
+.produs-nume{font-family:'Cinzel',serif;font-size:.88rem;color:var(--v);margin-bottom:5px;line-height:1.4}
+.produs-desc{font-size:.83rem;color:var(--tl);line-height:1.42;flex:1;margin-bottom:11px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.produs-footer{display:flex;align-items:center;justify-content:space-between;gap:7px;flex-wrap:wrap}
+.produs-pret{font-family:'Cinzel',serif;font-size:1.05rem;color:var(--v);font-weight:700}
+.stoc-badge{font-size:.68rem;font-family:'Lato',sans-serif;font-weight:700;padding:2px 7px;border-radius:9px}
+.in-stoc{background:#E8F5E9;color:#2E7D32}
+.epuizat{background:#FFEBEE;color:#C62828}
+.btn-cos{
+  background:var(--v);color:var(--w);border:none;
+  padding:7px 12px;border-radius:5px;
+  font-size:.73rem;font-family:'Lato',sans-serif;font-weight:700;
+  transition:.22s;display:flex;align-items:center;gap:4px;
+}
+.btn-cos:hover{background:var(--g);color:var(--vd)}
+.btn-cos:disabled{opacity:.4;cursor:not-allowed}
+
+/* ── BARA CAUTARE & FILTRE ─────────────────── */
+.bara-cautare{display:flex;gap:11px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.camp-cautare{flex:1;min-width:190px;position:relative}
+.camp-cautare input{
+  width:100%;padding:10px 14px 10px 40px;
+  border:2px solid var(--crd);border-radius:7px;
+  font-size:.95rem;color:var(--td);background:var(--w);
+  outline:none;transition:.22s;
+}
+.camp-cautare input:focus{border-color:var(--v)}
+.icon-cautare{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--tl)}
+.btn-filtre{
+  display:flex;align-items:center;gap:6px;
+  padding:9px 17px;border:2px solid var(--v);
+  background:transparent;color:var(--v);border-radius:7px;
+  font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.7px;transition:.22s;
+}
+.btn-filtre:hover,.btn-filtre.deschis{background:var(--v);color:var(--w)}
+.panou-filtre{
+  display:none;background:var(--w);border:1px solid var(--crd);
+  border-radius:9px;padding:18px;margin-bottom:20px;
+  box-shadow:0 5px 20px var(--sh);animation:apar .28s ease;
+}
+.panou-filtre.vizibil{display:block}
+.eticheta-grup{font-family:'Cinzel',serif;font-size:.77rem;color:var(--v);margin-bottom:8px}
+.rand-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.chip{
+  padding:4px 13px;border-radius:18px;border:1.5px solid var(--crd);
+  background:var(--w);color:var(--tm);font-size:.8rem;font-family:'Lato',sans-serif;transition:.2s;
+}
+.chip:hover,.chip.selectat{background:var(--v);color:var(--w);border-color:var(--v)}
+
+/* ── COS ───────────────────────────────────── */
+.cos-wrap{max-width:900px;margin:0 auto;padding:36px 18px}
+.item-cos{
+  display:flex;align-items:center;gap:16px;
+  background:var(--w);border-radius:9px;
+  box-shadow:0 3px 13px var(--sh);
+  padding:16px;margin-bottom:13px;border:1px solid var(--crd);
+}
+.item-cos-img{
+  width:74px;height:74px;border-radius:7px;background:var(--cr);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.7rem;overflow:hidden;flex-shrink:0;
+}
+.item-cos-img img{width:100%;height:100%;object-fit:cover}
+.item-cos-info{flex:1}
+.item-cos-nume{font-family:'Cinzel',serif;font-size:.94rem;color:var(--v);margin-bottom:3px}
+.item-cos-upret{font-size:.82rem;color:var(--tl)}
+.ctrl-cantitate{display:flex;align-items:center;gap:8px;margin-top:7px}
+.btn-cantitate{
+  width:27px;height:27px;border-radius:50%;
+  border:2px solid var(--v);background:none;color:var(--v);
+  font-size:.95rem;display:flex;align-items:center;justify-content:center;transition:.2s;
+}
+.btn-cantitate:hover{background:var(--v);color:#fff}
+.val-cantitate{font-family:'Cinzel',serif;font-size:.92rem;min-width:20px;text-align:center}
+.item-cos-pret{font-family:'Cinzel',serif;font-size:1.05rem;color:var(--v);font-weight:700;white-space:nowrap}
+.btn-sterge-item{background:none;border:none;color:#C0392B;font-size:1.1rem;padding:4px;transition:.2s}
+.btn-sterge-item:hover{transform:scale(1.22)}
+.sumar-cos{background:var(--cr);border-radius:11px;padding:26px;border:1px solid var(--crd);margin-top:16px}
+.total-cos-rand{
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:'Cinzel',serif;font-size:1.2rem;color:var(--v);
+  border-top:2px solid var(--vp);padding-top:13px;margin-bottom:16px;
+}
+
+/* ── PASI COMANDA ──────────────────────────── */
+.pasi{display:flex;justify-content:center;align-items:center;gap:0;margin-bottom:30px;flex-wrap:wrap}
+.pas{display:flex;align-items:center;gap:7px;padding:8px 14px;font-family:'Cinzel',serif;font-size:.72rem;color:var(--tl)}
+.pas.activ{color:var(--v);font-weight:600}.pas.gata{color:var(--g)}
+.pas-nr{width:26px;height:26px;border-radius:50%;background:var(--crd);color:var(--tl);display:flex;align-items:center;justify-content:center;font-size:.72rem;transition:.28s}
+.pas.activ .pas-nr{background:var(--v);color:#fff}.pas.gata .pas-nr{background:var(--g);color:var(--vd)}
+.pas-linie{width:32px;height:2px;background:var(--crd)}
+
+/* ── FORMULAR ──────────────────────────────── */
+.form-grup{margin-bottom:16px}
+.form-grup label{display:block;font-family:'Cinzel',serif;font-size:.77rem;color:var(--v);margin-bottom:6px;letter-spacing:.3px}
+.form-grup input,.form-grup select,.form-grup textarea{
+  width:100%;padding:10px 13px;border:2px solid var(--crd);border-radius:7px;
+  font-size:.95rem;color:var(--td);background:var(--w);outline:none;transition:.22s;
+}
+.form-grup input:focus,.form-grup select:focus,.form-grup textarea:focus{border-color:var(--v)}
+.form-rand{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.card-formular{background:var(--w);border-radius:13px;padding:28px;box-shadow:0 4px 18px var(--sh)}
+.titlu-formular{font-family:'Cinzel',serif;color:var(--v);font-size:1.05rem;margin-bottom:20px;padding-bottom:9px;border-bottom:2px solid var(--crd)}
+
+/* ── MODAL ─────────────────────────────────── */
+.fundal-modal{
+  position:fixed;inset:0;
+  background:rgba(74,15,28,.65);backdrop-filter:blur(5px);
+  z-index:2000;display:none;align-items:center;justify-content:center;padding:14px;
+}
+.fundal-modal.vizibil{display:flex}
+.modal{
+  background:var(--w);border-radius:14px;
+  max-width:700px;width:100%;max-height:92vh;overflow-y:auto;
+  box-shadow:0 28px 75px rgba(0,0,0,.44);
+}
+.modal-header{
+  background:var(--v);color:var(--w);
+  padding:22px 28px;border-radius:14px 14px 0 0;position:relative;
+}
+.modal-header h2{font-family:'Cinzel',serif;font-size:1.15rem;padding-right:32px}
+.modal-inchide{
+  position:absolute;top:13px;right:16px;
+  background:none;border:none;color:var(--gl);
+  font-size:1.35rem;transition:.2s;line-height:1;padding:3px;
+}
+.modal-inchide:hover{color:#fff}
+.modal-body{padding:26px}
+.modal-img-principal{width:100%;height:275px;object-fit:cover;border-radius:9px;margin-bottom:13px;display:none}
+.modal-galerie{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
+.modal-thumb{width:72px;height:55px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid transparent;flex-shrink:0;transition:.2s}
+.modal-thumb.activ{border-color:var(--g)}
+.modal-pret{font-family:'Cinzel',serif;font-size:1.7rem;color:var(--v);margin-bottom:11px}
+
+/* ── ADMIN ─────────────────────────────────── */
+.admin-wrap{display:flex;min-height:calc(100vh - 102px)}
+.admin-sidebar{width:250px;background:var(--vd);flex-shrink:0;display:flex;flex-direction:column}
+.admin-sidebar-top{padding:20px 20px 13px;border-bottom:1px solid rgba(201,168,76,.2);margin-bottom:7px}
+.admin-sidebar-top h3{font-family:'Cinzel',serif;font-size:.78rem;color:var(--gl);letter-spacing:2px;text-transform:uppercase;margin-top:5px}
+.nav-admin{
+  display:flex;align-items:center;gap:11px;
+  padding:11px 20px;cursor:pointer;transition:.2s;
+  font-family:'Lato',sans-serif;font-size:.86rem;color:var(--crd);
+  border-left:3px solid transparent;border:none;background:none;width:100%;text-align:left;
+}
+.nav-admin:hover,.nav-admin.activ{background:rgba(201,168,76,.1);border-left:3px solid var(--g);color:var(--gl)}
+.admin-sidebar-jos{margin-top:auto;padding:16px 20px;border-top:1px solid rgba(201,168,76,.2)}
+.admin-continut{flex:1;padding:30px;background:var(--cr);overflow-y:auto}
+.tabel-admin{width:100%;border-collapse:collapse;background:var(--w);border-radius:9px;overflow:hidden;box-shadow:0 3px 14px var(--sh)}
+.tabel-admin th{background:var(--v);color:var(--gl);font-family:'Cinzel',serif;font-size:.73rem;letter-spacing:.7px;padding:12px 13px;text-align:left}
+.tabel-admin td{padding:11px 13px;border-bottom:1px solid var(--crd);font-size:.85rem;color:var(--td);vertical-align:middle}
+.tabel-admin tr:last-child td{border-bottom:none}
+.tabel-admin tr:hover td{background:var(--cr)}
+.insigna-status{display:inline-block;padding:3px 9px;border-radius:18px;font-size:.69rem;font-weight:700;font-family:'Lato',sans-serif}
+.st-noua{background:#E3F2FD;color:#1565C0}
+.st-procesata{background:#FFF9C4;color:#F57F17}
+.st-livrata{background:#E8F5E9;color:#2E7D32}
+.st-anulata{background:#FFEBEE;color:#C62828}
+.formular-admin{background:var(--w);border-radius:11px;padding:26px;box-shadow:0 3px 14px var(--sh);max-width:700px}
+.card-stat{background:var(--w);border-radius:11px;padding:20px;box-shadow:0 3px 14px var(--sh);border-top:4px solid var(--v);text-align:center}
+.stat-numar{font-family:'Cinzel',serif;font-size:2.2rem;color:var(--v);line-height:1;margin-bottom:5px}
+.stat-eticheta{font-size:.78rem;color:var(--tl);font-family:'Lato',sans-serif}
+.pagina-login{
+  min-height:calc(100vh - 102px);
+  background:linear-gradient(135deg,var(--vd),var(--v));
+  display:flex;align-items:center;justify-content:center;padding:36px 14px;
+}
+.cutie-login{
+  background:var(--w);border-radius:14px;
+  padding:44px 36px;max-width:390px;width:100%;
+  text-align:center;box-shadow:0 28px 75px rgba(0,0,0,.33);
+}
+.cutie-login h2{font-family:'Cinzel',serif;color:var(--v);margin-bottom:26px;font-size:1.35rem}
+.eroare-login{display:none;color:#C0392B;background:#FFEBEE;padding:9px;border-radius:5px;font-size:.8rem;margin-bottom:13px}
+.grid-detalii-comanda{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.cutie-info{background:var(--cr);border-radius:9px;padding:16px;border:1px solid var(--crd)}
+.cutie-info h4{font-family:'Cinzel',serif;color:var(--v);font-size:.82rem;margin-bottom:9px;padding-bottom:6px;border-bottom:1px solid var(--crd)}
+.rand-info{display:flex;justify-content:space-between;padding:4px 0;font-size:.83rem;border-bottom:1px dashed var(--crd)}
+.rand-info:last-child{border:none}
+.rand-info .eticheta{color:var(--tl)}
+.rand-info .valoare{font-weight:700;color:var(--td);text-align:right;max-width:58%}
+
+/* ── UPLOAD ────────────────────────────────── */
+.zona-upload{border:2px dashed var(--vp);border-radius:9px;padding:26px;text-align:center;cursor:pointer;transition:.28s;background:var(--cr)}
+.zona-upload:hover{border-color:var(--v);background:rgba(107,26,42,.04)}
+.previzualizari{display:flex;flex-wrap:wrap;gap:9px;margin-top:13px}
+.prev-wrap{position:relative;display:inline-block}
+.prev-img{width:74px;height:62px;object-fit:cover;border-radius:6px;border:2px solid var(--crd)}
+.prev-sterge{position:absolute;top:-6px;right:-6px;background:#C0392B;color:#fff;border:none;border-radius:50%;width:19px;height:19px;font-size:.62rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* ── TOAST ─────────────────────────────────── */
+#toast{
+  position:fixed;bottom:26px;right:26px;
+  background:var(--vd);color:var(--gl);
+  padding:12px 20px;border-radius:9px;
+  box-shadow:0 7px 26px rgba(0,0,0,.33);
+  font-family:'Cinzel',serif;font-size:.82rem;
+  z-index:4000;border-left:4px solid var(--g);
+  display:none;align-items:center;gap:9px;max-width:300px;
+  animation:gliseaza .38s ease;
+}
+#toast.vizibil{display:flex}
+@keyframes gliseaza{from{transform:translateX(108%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* ── STARI GOALE / INCARCARE ───────────────── */
+.incarcare{display:flex;align-items:center;justify-content:center;padding:48px 18px;gap:13px;color:var(--tl);font-family:'Cinzel',serif;font-size:.85rem}
+.rotitor{width:26px;height:26px;border-radius:50%;border:3px solid var(--crd);border-top-color:var(--v);animation:roteste .75s linear infinite;flex-shrink:0}
+@keyframes roteste{to{transform:rotate(360deg)}}
+.gol{text-align:center;padding:50px 18px;color:var(--tl)}
+.gol .icon-gol{font-size:3.2rem;margin-bottom:16px}
+.gol h3{font-family:'Cinzel',serif;color:var(--tm);margin-bottom:7px}
+.gol p{font-size:.92rem;color:var(--tl);margin-bottom:20px}
+
+/* ── FOOTER ────────────────────────────────── */
+footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3px solid var(--g)}
+.footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:32px;margin-bottom:32px}
+.footer-col h4{font-family:'Cinzel',serif;font-size:.78rem;color:var(--gl);letter-spacing:2px;text-transform:uppercase;margin-bottom:13px;padding-bottom:8px;border-bottom:1px solid rgba(201,168,76,.24)}
+.footer-col p,.footer-col a{font-size:.86rem;color:var(--crd);line-height:1.82;display:block;transition:.2s}
+.footer-col a:hover{color:var(--gl)}
+.footer-jos{border-top:1px solid rgba(201,168,76,.18);padding-top:20px;text-align:center;font-size:.73rem;color:rgba(245,237,228,.42);font-family:'Lato',sans-serif}
+
+/* ── SELECT STATUS ADMIN ───────────────────── */
+.select-status{padding:4px 7px;border:1px solid var(--crd);border-radius:4px;font-size:.75rem;background:var(--w);color:var(--td);cursor:pointer}
+.select-filter-anunturi{padding:9px 13px;border:2px solid var(--crd);border-radius:7px;font-size:.93rem;background:var(--w);color:var(--td);outline:none;cursor:pointer;transition:.22s;font-family:'EB Garamond',serif}
+.select-filter-anunturi:focus{border-color:var(--v)}
+.img-mic-tabel{width:50px;height:42px;object-fit:cover;border-radius:5px;background:var(--cr)}
+.butoane-tabel{display:flex;gap:5px;flex-wrap:wrap}
+
+/* ── RESPONSIVE ────────────────────────────── */
+@media(max-width:900px){
+  nav{padding:0 16px}
+  .hamburger{display:flex}
+  .nav-links{display:none;position:absolute;top:64px;left:0;right:0;background:var(--vd);flex-direction:column;padding:10px;border-bottom:2px solid var(--g);z-index:997;gap:2px}
+  .nav-links.deschis{display:flex}
+  .nav-links a{width:100%}
+}
+@media(max-width:768px){
+  .sectiune{padding:36px 16px}
+  .hero{padding:46px 16px}
+  .admin-wrap{flex-direction:column}
+  .admin-sidebar{width:100%}
+  .admin-continut{padding:16px}
+  .form-rand{grid-template-columns:1fr}
+  .item-cos{flex-wrap:wrap}
+  .grid-detalii-comanda{grid-template-columns:1fr}
+}
+@media(max-width:500px){
+  nav{top:34px;height:58px}
+  #timer-bar{font-size:.65rem;padding:5px 9px;min-height:34px}
+  .t-num{font-size:1.05rem}
+  .hero h1{font-size:1.55rem}
+}
+</style>
 </head>
 <body>
 
-<!-- EASTER TIMER -->
-<div id="easter-banner">
-  <span style="font-size:0.9rem">✝ Timp până la Sfintele Paști:</span>
-  <div id="easter-timer">
-    <div class="timer-unit"><div class="timer-num" id="t-days">00</div><div class="timer-label">Zile</div></div>
-    <span class="timer-sep">:</span>
-    <div class="timer-unit"><div class="timer-num" id="t-hours">00</div><div class="timer-label">Ore</div></div>
-    <span class="timer-sep">:</span>
-    <div class="timer-unit"><div class="timer-num" id="t-mins">00</div><div class="timer-label">Min</div></div>
-    <span class="timer-sep">:</span>
-    <div class="timer-unit"><div class="timer-num" id="t-secs">00</div><div class="timer-label">Sec</div></div>
+<!-- ═══════════════════════════ TIMER ═══════════════════════════ -->
+<div id="timer-bar">
+  <span>✝ Timp până la Sfintele Paști:</span>
+  <div class="t-units">
+    <div class="t-unit"><span class="t-num" id="td">00</span><span class="t-lbl">Zile</span></div>
+    <span class="t-sep">:</span>
+    <div class="t-unit"><span class="t-num" id="th">00</span><span class="t-lbl">Ore</span></div>
+    <span class="t-sep">:</span>
+    <div class="t-unit"><span class="t-num" id="tm">00</span><span class="t-lbl">Min</span></div>
+    <span class="t-sep">:</span>
+    <div class="t-unit"><span class="t-num" id="ts">00</span><span class="t-lbl">Sec</span></div>
   </div>
 </div>
 
-<!-- NAVBAR -->
+<!-- ═══════════════════════════ NAV ═════════════════════════════ -->
 <nav>
-  <a class="nav-logo" href="#" data-page="home">
+  <a class="nav-logo" href="#" onclick="mergi('acasa');return false">
     <span class="nav-logo-icon">✝</span>
     <div>
       <div class="nav-logo-text">Biserica Ortodoxă</div>
-      <div class="nav-logo-sub">Comunitatea Noastră</div>
+      <div class="nav-logo-sub">Parohia Noastră</div>
     </div>
   </a>
-
-  <ul class="nav-links" id="nav-links">
-    <li><a href="#" data-page="home">🏛️ Acasă</a></li>
-    <li><a href="#" data-page="shop">🕯️ Magazin</a></li>
-    <li><a href="#" data-page="announcements">📋 Anunțuri</a></li>
-    <li><a href="#" data-page="admin">⚙️ Admin</a></li>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" onclick="mergi('acasa');return false" data-p="acasa">🏛️ Acasă</a></li>
+    <li><a href="#" onclick="mergi('magazin');return false" data-p="magazin">🕯️ Magazin</a></li>
+    <li><a href="#" onclick="mergi('anunturi');return false" data-p="anunturi">📋 Anunțuri</a></li>
+    <li><a href="#" onclick="mergi('admin');return false" data-p="admin">⚙️ Admin</a></li>
   </ul>
-
-  <div style="display:flex;align-items:center;gap:10px">
-    <div id="cart-icon" title="Coș de cumpărături">
-      🛒
-      <span id="cart-count" style="display:none">0</span>
-    </div>
-    <div class="hamburger" id="hamburger">
+  <div class="nav-right">
+    <button class="cart-btn" onclick="mergi('cos')" title="Coș">
+      🛒<span class="cart-badge" id="cosBadge">0</span>
+    </button>
+    <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('deschis')">
       <span></span><span></span><span></span>
-    </div>
+    </button>
   </div>
 </nav>
 
-<!-- ==================== HOME PAGE ==================== -->
-<div id="page-home" class="page">
+<!-- ═════════════════ TICKER URGENTE ════════════════════════════ -->
+<div id="ticker-urgent">
+  <div class="ticker-pista" id="tickerPista"></div>
+</div>
 
-  <!-- Urgent Ticker -->
-  <div id="urgent-ticker" style="display:none" class="urgent-ticker">
-    <div class="ticker-content" id="ticker-inner"></div>
-  </div>
+<!-- ═══════════════════════════ ACASĂ ═══════════════════════════ -->
+<div id="pagina-acasa" class="pagina">
 
   <!-- Hero -->
   <div class="hero">
-    <span class="hero-cross">✝</span>
-    <h1>Bine ați venit în comunitatea noastră</h1>
-    <p class="hero-subtitle">„Doamne, îți mulțumim pentru ziua de astăzi."</p>
-    <div class="hero-divider"></div>
-    <div style="display:flex;gap:15px;justify-content:center;flex-wrap:wrap;position:relative">
-      <button class="btn btn-gold" onclick="showPage('shop')">🕯️ Vizitați Magazinul</button>
-      <button class="btn btn-outline" style="border-color:var(--gold);color:var(--gold-light)" onclick="showPage('announcements')">📋 Anunțuri Parohiale</button>
+    <span class="hero-icon">✝</span>
+    <h1>Bine ați venit în Parohia Noastră</h1>
+    <p class="hero-sub">„Doamne, Tu ești lumina și mântuirea mea."</p>
+    <div class="hero-linie"></div>
+    <div class="hero-butoane">
+      <button class="btn btn-aur" onclick="mergi('magazin')">🕯️ Magazin Parohial</button>
+      <button class="btn btn-contur-aur" onclick="mergi('anunturi')">📋 Anunțuri</button>
     </div>
   </div>
 
-  <!-- Services Schedule -->
-  <div class="section section-alt">
+  <!-- Program slujbe -->
+  <div class="sectiune sectiune-alt">
     <div class="container">
       <div class="ornament">⛪</div>
-      <h2 class="section-title">Program Slujbe</h2>
-      <p class="section-subtitle">Vă așteptăm cu drag la sfintele slujbe</p>
+      <h2 class="titlu-sec">Program Slujbe</h2>
+      <p class="subtitlu-sec">Vă așteptăm cu drag la sfintele slujbe</p>
       <div style="overflow-x:auto">
-        <table class="schedule-table">
+        <table class="tabel-slujbe">
           <thead>
-            <tr>
-              <th>Slujba</th>
-              <th>Zi</th>
-              <th>Ora</th>
-              <th>Observații</th>
-            </tr>
+            <tr><th>Slujba</th><th>Zi</th><th>Ora</th><th>Observații</th></tr>
           </thead>
           <tbody>
-            <tr><td>🕯️ Sfânta Liturghie</td><td>Duminică</td><td>09:00</td><td>Cu predică</td></tr>
-            <tr><td>🙏 Vecernie</td><td>Sâmbătă</td><td>18:00</td><td>-</td></tr>
-            <tr><td>✝ Utrenie</td><td>Duminică</td><td>08:00</td><td>-</td></tr>
-            <tr><td>📿 Acatist</td><td>Miercuri</td><td>18:00</td><td>Rotativ la sfinți</td></tr>
+            <tr><td>🕯️ Sfânta Liturghie</td><td>Duminică</td><td>09:00</td><td>Cu predică și împărtășanie</td></tr>
+            <tr><td>🙏 Vecernia Mare</td><td>Sâmbătă</td><td>18:00</td><td>Urmat de spovedanie</td></tr>
+            <tr><td>✝ Utrenia</td><td>Duminică</td><td>08:00</td><td>Înaintea Liturghiei</td></tr>
+            <tr><td>📿 Acatistul</td><td>Miercuri</td><td>18:00</td><td>Rotativ la sfinți</td></tr>
             <tr><td>🕊️ Parastas</td><td>Sâmbătă</td><td>09:00</td><td>Prima sâmbătă din lună</td></tr>
+            <tr><td>🌿 Moliftă</td><td>Joi</td><td>17:30</td><td>La cerere</td></tr>
           </tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- Featured Sections: Best Product + Latest Announcement -->
-  <div class="section">
+  <!-- Produs recomandat + Ultimul anunt -->
+  <div class="sectiune">
     <div class="container">
       <div class="grid-2">
         <div>
           <div class="ornament">🕯️</div>
-          <h2 class="section-title">Produs Recomandat</h2>
-          <p class="section-subtitle">Din magazinul parohial</p>
-          <div id="home-best-product">
-            <div class="loading"><div class="spinner"></div>Se încarcă...</div>
-          </div>
-          <div style="text-align:center;margin-top:20px">
-            <button class="btn btn-primary" onclick="showPage('shop')">Vezi tot magazinul →</button>
+          <h2 class="titlu-sec">Produs Recomandat</h2>
+          <p class="subtitlu-sec">Din magazinul parohial</p>
+          <div id="acasa-produs-rec"><div class="incarcare"><div class="rotitor"></div> Se încarcă…</div></div>
+          <div style="text-align:center;margin-top:18px">
+            <button class="btn btn-primar" onclick="mergi('magazin')">Vizitați Magazinul →</button>
           </div>
         </div>
         <div>
           <div class="ornament">📋</div>
-          <h2 class="section-title">Ultimul Anunț</h2>
-          <p class="section-subtitle">Din viața parohiei</p>
-          <div id="home-announce">
-            <div class="loading"><div class="spinner"></div>Se încarcă...</div>
-          </div>
-          <div style="text-align:center;margin-top:20px">
-            <button class="btn btn-primary" onclick="showPage('announcements')">Toate anunțurile →</button>
+          <h2 class="titlu-sec">Ultimul Anunț</h2>
+          <p class="subtitlu-sec">Din viața parohiei</p>
+          <div id="acasa-ultim-anunt"><div class="incarcare"><div class="rotitor"></div> Se încarcă…</div></div>
+          <div style="text-align:center;margin-top:18px">
+            <button class="btn btn-primar" onclick="mergi('anunturi')">Toate Anunțurile →</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Saint of Day -->
-  <div class="section section-alt">
+  <!-- Sfantul zilei -->
+  <div class="sectiune sectiune-alt">
     <div class="container">
       <div class="ornament">✝</div>
-      <h2 class="section-title">Sfântul Zilei</h2>
-      <p class="section-subtitle">Pomenire de astăzi</p>
-      <div style="max-width:600px;margin:0 auto" id="home-saint">
-        <div class="loading"><div class="spinner"></div></div>
-      </div>
+      <h2 class="titlu-sec">Sfântul Zilei</h2>
+      <p class="subtitlu-sec">Pomenirea de astăzi</p>
+      <div style="max-width:600px;margin:0 auto" id="acasa-sfant"></div>
     </div>
   </div>
 
-  <!-- Daily Verse -->
-  <div class="section">
+  <!-- Versetul zilei -->
+  <div class="sectiune">
     <div class="container">
       <div class="ornament">📖</div>
-      <h2 class="section-title">Versetul Zilei</h2>
-      <div style="max-width:700px;margin:0 auto" id="home-verse">
-        <div class="loading"><div class="spinner"></div></div>
-      </div>
+      <h2 class="titlu-sec">Versetul Zilei</h2>
+      <div class="linie-deco"></div>
+      <div style="max-width:700px;margin:0 auto" id="acasa-verset"></div>
     </div>
   </div>
 
-  <!-- Info Cards -->
-  <div class="section section-alt">
+  <!-- Servicii pastorale -->
+  <div class="sectiune sectiune-alt">
     <div class="container">
       <div class="ornament">🕊️</div>
-      <h2 class="section-title">Servicii Parohiale</h2>
+      <h2 class="titlu-sec">Servicii Pastorale</h2>
+      <p class="subtitlu-sec">Suntem alături de dumneavoastră</p>
       <div class="grid-3">
-        <div class="card">
-          <div class="card-body">
-            <span class="card-icon">💍</span>
-            <h3>Cununii</h3>
-            <p>Programările pentru slujba cununiei se fac cu cel puțin 3 luni înainte. Contactați secretariatul parohial.</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-body">
-            <span class="card-icon">💧</span>
-            <h3>Botezuri</h3>
-            <p>Botezul copilului se poate programa oricând. Vă rugăm să contactați preotul pentru detalii și documente necesare.</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-body">
-            <span class="card-icon">🕯️</span>
-            <h3>Înmormântări</h3>
-            <p>Slujbele de înmormântare și parastase se programează cu preotul paroh. Suntem alături de dumneavoastră.</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-body">
-            <span class="card-icon">📿</span>
-            <h3>Spovedanie</h3>
-            <p>Spovedania se face după vecernia de sâmbătă sau la cerere. Primul pas spre mântuire.</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-body">
-            <span class="card-icon">🏠</span>
-            <h3>Sfințiri</h3>
-            <p>Sfințirea casei, mașinii sau altui bun se face la cerere. Contactați secretariatul pentru programare.</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-body">
-            <span class="card-icon">🫂</span>
-            <h3>Asistență Socială</h3>
-            <p>Parohia oferă sprijin familiilor nevoiașe. Dacă aveți nevoie de ajutor sau vreți să donați, suntem aici.</p>
-          </div>
-        </div>
+        <div class="card"><div class="card-corp"><span class="card-icon">💍</span><h3>Cununii</h3><p>Programările se fac cu 3 luni înainte. Contactați secretariatul pentru documente necesare.</p></div></div>
+        <div class="card"><div class="card-corp"><span class="card-icon">💧</span><h3>Botezuri</h3><p>Botezul se poate programa oricând. Consultați preotul pentru detalii și nași.</p></div></div>
+        <div class="card"><div class="card-corp"><span class="card-icon">🕯️</span><h3>Înmormântări</h3><p>Suntem alături în momentele de doliu. Slujbe și parastase la cerere.</p></div></div>
+        <div class="card"><div class="card-corp"><span class="card-icon">📿</span><h3>Spovedanie</h3><p>Spovedania după Vecernie sau la cerere. Primul pas spre împărtășanie.</p></div></div>
+        <div class="card"><div class="card-corp"><span class="card-icon">🏠</span><h3>Sfințiri</h3><p>Sfințirea casei, mașinii sau altui bun. La cerere, cu programare prealabilă.</p></div></div>
+        <div class="card"><div class="card-corp"><span class="card-icon">🫂</span><h3>Asistență Socială</h3><p>Sprijin pentru familiile nevoiașe. Colectăm și distribuim ajutoare cu drag.</p></div></div>
       </div>
     </div>
   </div>
 
-</div>
-
-<!-- ==================== SHOP PAGE ==================== -->
-<div id="page-shop" class="page">
-  <div class="hero" style="padding:50px 40px">
-    <span class="hero-cross" style="font-size:2.5rem">🕯️</span>
-    <h1 style="font-size:2rem">Magazin Parohial</h1>
-    <p class="hero-subtitle">Obiecte de cult și cărți religioase</p>
-  </div>
-
-  <div class="section">
-    <div class="container">
-      <!-- Search & Filters -->
-      <div class="search-filter-bar">
-        <div class="search-input-wrap">
-          <span class="search-icon">🔍</span>
-          <input type="text" id="shop-search" placeholder="Caută produse...">
+  <!-- Contact -->
+  <div class="sectiune sectiune-inchis">
+    <div class="container" style="text-align:center">
+      <div style="font-size:2.2rem;color:var(--g);margin-bottom:12px">✝</div>
+      <h2 class="titlu-sec" style="color:var(--gl)">Contact Parohie</h2>
+      <p style="color:var(--crd);font-style:italic;margin-bottom:28px">Nu ezitați să ne contactați</p>
+      <div class="grid-3" style="text-align:left">
+        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.2);border-radius:11px;padding:22px">
+          <div style="font-size:1.8rem;margin-bottom:9px">📍</div>
+          <h4 style="font-family:'Cinzel',serif;color:var(--gl);margin-bottom:7px">Adresă</h4>
+          <p style="color:var(--crd);line-height:1.72">Str. Bisericii, nr. 1<br>Localitate, Județ</p>
         </div>
-        <button class="btn-filters" id="btn-shop-filters">⚙️ Filtre</button>
-      </div>
-
-      <div id="shop-filters-panel" class="filters-panel">
-        <div style="margin-bottom:15px">
-          <p style="font-family:'Cinzel',serif;font-size:0.85rem;color:var(--visniu);margin-bottom:10px">Categorie:</p>
-          <div class="filter-row">
-            <button class="filter-chip shop-filter-chip active" data-type="category" data-val="all">Toate</button>
-            <button class="filter-chip shop-filter-chip" data-type="category" data-val="Lumânări">Lumânări</button>
-            <button class="filter-chip shop-filter-chip" data-type="category" data-val="Icoane">Icoane</button>
-            <button class="filter-chip shop-filter-chip" data-type="category" data-val="Cărți">Cărți</button>
-            <button class="filter-chip shop-filter-chip" data-type="category" data-val="Cruci">Cruci</button>
-            <button class="filter-chip shop-filter-chip" data-type="category" data-val="Tămâie">Tămâie</button>
-            <button class="filter-chip shop-filter-chip" data-type="category" data-val="Mir">Mir</button>
-            <button class="filter-chip shop-filter-chip" data-type="category" data-val="Alte obiecte">Altele</button>
-          </div>
+        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.2);border-radius:11px;padding:22px">
+          <div style="font-size:1.8rem;margin-bottom:9px">📞</div>
+          <h4 style="font-family:'Cinzel',serif;color:var(--gl);margin-bottom:7px">Telefon</h4>
+          <p style="color:var(--crd);line-height:1.72">0740 000 000<br>Secretariat: L-V, 10–14</p>
         </div>
-        <div>
-          <p style="font-family:'Cinzel',serif;font-size:0.85rem;color:var(--visniu);margin-bottom:10px">Sortare:</p>
-          <div class="filter-row">
-            <button class="filter-chip shop-filter-chip active" data-type="sort" data-val="default">Implicit</button>
-            <button class="filter-chip shop-filter-chip" data-type="sort" data-val="price-asc">Preț ↑</button>
-            <button class="filter-chip shop-filter-chip" data-type="sort" data-val="price-desc">Preț ↓</button>
-            <button class="filter-chip shop-filter-chip" data-type="sort" data-val="name">Alfabetic</button>
-          </div>
+        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.2);border-radius:11px;padding:22px">
+          <div style="font-size:1.8rem;margin-bottom:9px">✉️</div>
+          <h4 style="font-family:'Cinzel',serif;color:var(--gl);margin-bottom:7px">Email</h4>
+          <p style="color:var(--crd);line-height:1.72">parohia@email.ro<br>Răspundem în 24h</p>
         </div>
-      </div>
-
-      <div id="products-grid" class="products-grid">
-        <div class="loading" style="grid-column:1/-1"><div class="spinner"></div> Se încarcă produsele...</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ==================== ANNOUNCEMENTS PAGE ==================== -->
-<div id="page-announcements" class="page">
-  <div class="hero" style="padding:50px 40px">
-    <span class="hero-cross" style="font-size:2.5rem">📋</span>
-    <h1 style="font-size:2rem">Anunțuri Parohiale</h1>
-    <p class="hero-subtitle">Informații importante pentru enoriași</p>
+<!-- ═══════════════════════════ MAGAZIN ══════════════════════════ -->
+<div id="pagina-magazin" class="pagina">
+  <div class="hero hero-mica">
+    <span class="hero-icon" style="font-size:3rem">🕯️</span>
+    <h1 style="font-size:1.9rem">Magazin Parohial</h1>
+    <p class="hero-sub">Obiecte de cult, cărți și articole religioase</p>
   </div>
-
-  <div class="section">
+  <div class="sectiune">
     <div class="container">
-      <div style="display:flex;gap:15px;align-items:center;margin-bottom:25px;flex-wrap:wrap">
-        <label style="font-family:'Cinzel',serif;font-size:0.85rem;color:var(--visniu)">Filtrează:</label>
-        <select id="ann-filter" style="padding:10px 15px;border:2px solid var(--cream-dark);border-radius:8px;font-family:inherit;font-size:0.95rem;background:white;color:var(--text-dark);outline:none;cursor:pointer">
-          <option value="all">Toate tipurile</option>
+      <div class="bara-cautare">
+        <div class="camp-cautare">
+          <span class="icon-cautare">🔍</span>
+          <input type="text" id="cautareProduse" placeholder="Caută produse…" oninput="filtreazaProduse()">
+        </div>
+        <button class="btn-filtre" id="btnFiltre" onclick="comutaFiltre()">⚙️ Filtre</button>
+      </div>
+      <div id="panouFiltre" class="panou-filtre">
+        <p class="eticheta-grup">Categorie:</p>
+        <div class="rand-chips" id="chipsCategorie">
+          <button class="chip selectat" onclick="seteazaCategorie('toate',this)">Toate</button>
+          <button class="chip" onclick="seteazaCategorie('Lumânări',this)">🕯️ Lumânări</button>
+          <button class="chip" onclick="seteazaCategorie('Icoane',this)">🖼️ Icoane</button>
+          <button class="chip" onclick="seteazaCategorie('Cărți',this)">📚 Cărți</button>
+          <button class="chip" onclick="seteazaCategorie('Cruci',this)">✝ Cruci</button>
+          <button class="chip" onclick="seteazaCategorie('Tămâie',this)">🌿 Tămâie</button>
+          <button class="chip" onclick="seteazaCategorie('Mir',this)">💧 Mir</button>
+          <button class="chip" onclick="seteazaCategorie('Alte obiecte',this)">📦 Altele</button>
+        </div>
+        <p class="eticheta-grup">Sortare:</p>
+        <div class="rand-chips" id="chipsSortare">
+          <button class="chip selectat" onclick="seteazaSortare('implicit',this)">Implicit</button>
+          <button class="chip" onclick="seteazaSortare('pretcrescator',this)">Preț ↑</button>
+          <button class="chip" onclick="seteazaSortare('pretdescrescator',this)">Preț ↓</button>
+          <button class="chip" onclick="seteazaSortare('nume',this)">A–Z</button>
+        </div>
+      </div>
+      <div id="gridProduse" class="grid-prod">
+        <div class="incarcare" style="grid-column:1/-1"><div class="rotitor"></div> Se încarcă produsele…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ ANUNȚURI ════════════════════════ -->
+<div id="pagina-anunturi" class="pagina">
+  <div class="hero hero-mica">
+    <span class="hero-icon" style="font-size:3rem">📋</span>
+    <h1 style="font-size:1.9rem">Anunțuri Parohiale</h1>
+    <p class="hero-sub">Informații importante pentru enoriași</p>
+  </div>
+  <div class="sectiune">
+    <div class="container">
+      <div style="display:flex;gap:11px;align-items:center;margin-bottom:22px;flex-wrap:wrap">
+        <label style="font-family:'Cinzel',serif;font-size:.78rem;color:var(--v)">Filtrează:</label>
+        <select class="select-filter-anunturi" id="filtruAnunturi" onchange="afiseazaAnunturi()">
+          <option value="toate">Toate tipurile</option>
           <option value="urgent">🔴 Urgente</option>
           <option value="slujba">⛪ Slujbe</option>
           <option value="eveniment">📅 Evenimente</option>
@@ -278,283 +734,1092 @@
           <option value="general">📋 Generale</option>
         </select>
       </div>
-      <div id="announcements-list">
-        <div class="loading"><div class="spinner"></div> Se încarcă anunțurile...</div>
+      <div id="listaAnunturi">
+        <div class="incarcare"><div class="rotitor"></div> Se încarcă anunțurile…</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ==================== CART PAGE ==================== -->
-<div id="page-cart" class="page">
-  <div class="hero" style="padding:50px 40px">
-    <span class="hero-cross" style="font-size:2.5rem">🛒</span>
-    <h1 style="font-size:2rem">Coșul Meu</h1>
-    <p class="hero-subtitle">Finalizați comanda dumneavoastră</p>
+<!-- ═══════════════════════════ COȘ ═════════════════════════════ -->
+<div id="pagina-cos" class="pagina">
+  <div class="hero hero-mica">
+    <span class="hero-icon" style="font-size:3rem">🛒</span>
+    <h1 style="font-size:1.9rem">Coșul Meu</h1>
+    <p class="hero-sub">Finalizați comanda dumneavoastră</p>
   </div>
+  <div class="cos-wrap">
 
-  <div class="cart-container">
-
-    <!-- Cart View -->
-    <div id="cart-view">
-
-      <!-- Steps -->
-      <div class="checkout-steps">
-        <div class="step active"><span class="step-num">1</span> Coș</div>
-        <div class="step-sep"></div>
-        <div class="step" id="step2"><span class="step-num">2</span> Date Livrare</div>
-        <div class="step-sep"></div>
-        <div class="step"><span class="step-num">3</span> Confirmare</div>
+    <!-- Vedere cos -->
+    <div id="vedereaCos">
+      <div class="pasi">
+        <div class="pas activ"><span class="pas-nr">1</span> Coș</div>
+        <div class="pas-linie"></div>
+        <div class="pas"><span class="pas-nr">2</span> Date</div>
+        <div class="pas-linie"></div>
+        <div class="pas"><span class="pas-nr">3</span> Confirmare</div>
       </div>
-
-      <div id="cart-list"></div>
-
-      <div id="cart-summary" style="display:none">
-        <div class="cart-summary">
-          <div class="cart-total">
+      <div id="itemeCos"></div>
+      <div id="sumarulCos" style="display:none">
+        <div class="sumar-cos">
+          <div class="total-cos-rand">
             <span>Total comandă:</span>
-            <span id="cart-total-val">0.00 Lei</span>
+            <span id="valoareTotal">0.00 Lei</span>
           </div>
-          <div style="display:flex;gap:15px;flex-wrap:wrap">
-            <button class="btn btn-outline" onclick="showPage('shop')">← Continuă Cumpărăturile</button>
-            <button class="btn btn-gold" onclick="showCheckout()">Continuă spre Livrare →</button>
+          <div style="display:flex;gap:13px;flex-wrap:wrap">
+            <button class="btn btn-contur" onclick="mergi('magazin')">← Continuă Cumpărăturile</button>
+            <button class="btn btn-aur" onclick="arataComanada()">Continuă spre Date →</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Checkout View -->
-    <div id="checkout-view" style="display:none">
-      <div class="checkout-steps">
-        <div class="step done"><span class="step-num">✓</span> Coș</div>
-        <div class="step-sep"></div>
-        <div class="step active" id="step2"><span class="step-num">2</span> Date Livrare</div>
-        <div class="step-sep"></div>
-        <div class="step"><span class="step-num">3</span> Confirmare</div>
+    <!-- Vedere comanda -->
+    <div id="vedereComanda" style="display:none">
+      <div class="pasi">
+        <div class="pas gata"><span class="pas-nr">✓</span> Coș</div>
+        <div class="pas-linie"></div>
+        <div class="pas activ"><span class="pas-nr">2</span> Date</div>
+        <div class="pas-linie"></div>
+        <div class="pas"><span class="pas-nr">3</span> Confirmare</div>
       </div>
-
-      <div class="checkout-form">
-        <div style="background:var(--white);border-radius:16px;padding:35px;box-shadow:0 4px 20px var(--shadow)">
-          <h3 style="font-family:'Cinzel',serif;color:var(--visniu);margin-bottom:25px;font-size:1.2rem">📦 Date de Livrare</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Nume și Prenume *</label>
-              <input id="order-name" placeholder="Ion Ionescu">
-            </div>
-            <div class="form-group">
-              <label>Telefon *</label>
-              <input id="order-phone" placeholder="07XX XXX XXX">
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Email</label>
-            <input id="order-email" type="email" placeholder="email@exemplu.ro">
-          </div>
-          <div class="form-group">
-            <label>Adresă Completă *</label>
-            <input id="order-address" placeholder="Str. Sf. Ioan, nr. 12, bl. A1, ap. 5">
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Județ / Localitate</label>
-              <input id="order-county" placeholder="ex: Cluj-Napoca, Cluj">
-            </div>
-            <div class="form-group">
-              <label>Metodă de Plată</label>
-              <select id="order-payment">
-                <option value="ramburs">💵 Ramburs la livrare</option>
-                <option value="transfer">🏦 Transfer bancar</option>
-                <option value="card">💳 Card online</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Observații (opțional)</label>
-            <textarea id="order-notes" rows="3" placeholder="Mesaj pentru preot, instrucțiuni speciale..."></textarea>
-          </div>
-
-          <div style="background:var(--cream);border-radius:10px;padding:20px;margin-bottom:20px">
-            <h4 style="font-family:'Cinzel',serif;color:var(--visniu);margin-bottom:10px;font-size:0.9rem">Rezumat Comandă</h4>
-            <div id="checkout-summary-items" style="font-size:0.9rem;color:var(--text-mid)"></div>
-          </div>
-
-          <div style="display:flex;gap:15px;flex-wrap:wrap">
-            <button class="btn btn-outline" onclick="backToCart()">← Înapoi la Coș</button>
-            <button class="btn btn-gold" id="btn-submit-order" onclick="submitOrder(); document.getElementById('step2').classList.add('done')">✝ Finalizează Comanda</button>
+      <div class="card-formular" style="margin-bottom:18px">
+        <p class="titlu-formular">📦 Date de Livrare</p>
+        <div class="form-rand">
+          <div class="form-grup"><label>Nume și Prenume *</label><input id="oNume" placeholder="Ion Ionescu"></div>
+          <div class="form-grup"><label>Telefon *</label><input id="oTelefon" placeholder="07XX XXX XXX"></div>
+        </div>
+        <div class="form-grup"><label>Email</label><input id="oEmail" type="email" placeholder="email@exemplu.ro"></div>
+        <div class="form-grup"><label>Adresă Completă *</label><input id="oAdresa" placeholder="Strada, nr., bloc, ap."></div>
+        <div class="form-rand">
+          <div class="form-grup"><label>Localitate / Județ</label><input id="oLocalitate" placeholder="Cluj-Napoca, Cluj"></div>
+          <div class="form-grup"><label>Metodă Plată</label>
+            <select id="oPlata">
+              <option value="ramburs">💵 Ramburs la livrare</option>
+              <option value="transfer">🏦 Transfer bancar</option>
+              <option value="card">💳 Card online</option>
+            </select>
           </div>
         </div>
+        <div class="form-grup"><label>Observații</label><textarea id="oObservatii" rows="3" placeholder="Mesaj pentru preot, instrucțiuni speciale…"></textarea></div>
+      </div>
+      <div class="card-formular" style="margin-bottom:18px">
+        <p class="titlu-formular">🧾 Rezumat Comandă</p>
+        <div id="rezumatComanda"></div>
+      </div>
+      <div style="display:flex;gap:13px;flex-wrap:wrap">
+        <button class="btn btn-contur" onclick="inapoiLaCos()">← Înapoi la Coș</button>
+        <button class="btn btn-aur" id="btnFinalizeaza" onclick="trimiteComanda()">✝ Finalizează Comanda</button>
       </div>
     </div>
 
   </div>
 </div>
 
-<!-- ==================== ADMIN PAGE ==================== -->
-<div id="page-admin" class="page">
+<!-- ═══════════════════════════ ADMIN ════════════════════════════ -->
+<div id="pagina-admin" class="pagina">
 
   <!-- Login -->
-  <div id="admin-login-view" class="login-page" style="display:flex">
-    <div class="login-box">
-      <div style="font-size:3rem;color:var(--gold);margin-bottom:10px">✝</div>
+  <div id="adminLogin" class="pagina-login">
+    <div class="cutie-login">
+      <div style="font-size:2.8rem;color:var(--g);margin-bottom:7px">✝</div>
       <h2>Panou Administrare</h2>
-      <p style="color:var(--text-light);margin-bottom:30px;font-size:0.95rem">Autentificați-vă pentru a administra site-ul parohial</p>
-      <div class="form-group">
-        <label>Email Administrator</label>
-        <input id="admin-email" type="email" placeholder="admin@biserica.ro">
-      </div>
-      <div class="form-group">
-        <label>Parolă</label>
-        <input id="admin-password" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLogin()">
-      </div>
-      <div id="admin-login-error" style="display:none;color:#C0392B;background:#FFEBEE;padding:10px;border-radius:6px;font-size:0.85rem;margin-bottom:15px"></div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center" id="admin-login-btn" onclick="adminLogin()">Conectare</button>
+      <p style="color:var(--tl);margin-bottom:26px;font-size:.9rem">Autentificați-vă pentru a administra parohia</p>
+      <div class="form-grup"><label>Email Administrator</label><input id="aEmail" type="email" placeholder="admin@parohia.ro" onkeydown="if(event.key==='Enter')faLogin()"></div>
+      <div class="form-grup"><label>Parolă</label><input id="aParola" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')faLogin()"></div>
+      <div class="eroare-login" id="eroareLogin">Email sau parolă incorectă.</div>
+      <button class="btn btn-primar" style="width:100%;justify-content:center" id="btnLogin" onclick="faLogin()">Conectare</button>
     </div>
   </div>
 
   <!-- Panel -->
-  <div id="admin-panel-view" class="admin-layout" style="display:none">
-    <!-- Sidebar -->
+  <div id="adminPanel" class="admin-wrap" style="display:none">
     <div class="admin-sidebar">
-      <div class="admin-sidebar-header">
-        <div style="font-size:2rem;color:var(--gold);margin-bottom:5px">✝</div>
+      <div class="admin-sidebar-top">
+        <div style="font-size:1.7rem;color:var(--g)">✝</div>
         <h3>Admin Parohial</h3>
       </div>
-      <div class="admin-nav-item active" data-section="dashboard" onclick="renderAdminSection('dashboard')">
-        📊 Panou Principal
-      </div>
-      <div class="admin-nav-item" data-section="orders" onclick="renderAdminSection('orders')">
-        📦 Comenzi
-      </div>
-      <div class="admin-nav-item" data-section="products" onclick="renderAdminSection('products')">
-        🕯️ Produse
-      </div>
-      <div class="admin-nav-item" data-section="announcements" onclick="renderAdminSection('announcements')">
-        📋 Anunțuri
-      </div>
-      <div style="margin-top:auto;padding:20px;border-top:1px solid rgba(201,168,76,0.2)">
-        <button class="btn btn-danger btn-sm" style="width:100%;justify-content:center" onclick="adminLogout()">🚪 Deconectare</button>
+      <button class="nav-admin" id="nav-dashboard" onclick="incarcaSectiuena('dashboard')">📊 Panou Principal</button>
+      <button class="nav-admin" id="nav-comenzi" onclick="incarcaSectiuena('comenzi')">📦 Comenzi</button>
+      <button class="nav-admin" id="nav-produse" onclick="incarcaSectiuena('produse')">🕯️ Produse</button>
+      <button class="nav-admin" id="nav-anunturi" onclick="incarcaSectiuena('anunturi')">📋 Anunțuri</button>
+      <div class="admin-sidebar-jos">
+        <button class="btn btn-pericol btn-mic" style="width:100%;justify-content:center" onclick="faLogout()">🚪 Deconectare</button>
       </div>
     </div>
-
-    <!-- Content -->
-    <div class="admin-content">
-      <div id="admin-main">
-        <div class="loading"><div class="spinner"></div> Se încarcă...</div>
-      </div>
+    <div class="admin-continut" id="adminContinut">
+      <div class="incarcare"><div class="rotitor"></div> Se încarcă…</div>
     </div>
   </div>
 
 </div>
 
-<!-- ==================== MODALS ==================== -->
-
-<!-- Product Modal -->
-<div id="product-modal" class="modal-overlay" style="display:none">
+<!-- ═════════════════ MODAL PRODUS ══════════════════════════════ -->
+<div class="fundal-modal" id="modalProdus" onclick="if(event.target===this)inchideModal('modalProdus')">
   <div class="modal">
     <div class="modal-header">
-      <h2 id="pm-title">Produs</h2>
-      <button class="modal-close" onclick="closeModal('product-modal')">✕</button>
+      <h2 id="mpTitlu">Produs</h2>
+      <button class="modal-inchide" onclick="inchideModal('modalProdus')">✕</button>
     </div>
     <div class="modal-body">
-      <img id="pm-main-img" class="modal-main-img" src="" alt="" style="display:none">
-      <div id="pm-thumbs" class="modal-gallery"></div>
-      <div id="pm-price" class="modal-price"></div>
-      <div id="pm-stock" style="margin-bottom:15px"></div>
-      <p id="pm-category" style="font-family:'Cinzel',serif;font-size:0.8rem;color:var(--text-light);margin-bottom:15px"></p>
-      <div id="pm-desc" style="color:var(--text-mid);line-height:1.8;margin-bottom:20px"></div>
-      <div class="qty-selector">
-        <label>Cantitate:</label>
-        <div class="qty-control">
-          <button class="qty-btn" onclick="document.getElementById('pm-qty').value=Math.max(1,parseInt(document.getElementById('pm-qty').value)-1)">−</button>
-          <input id="pm-qty" type="number" value="1" min="1" style="width:50px;text-align:center;border:2px solid var(--cream-dark);border-radius:6px;padding:5px;font-family:'Cinzel',serif">
-          <button class="qty-btn" onclick="document.getElementById('pm-qty').value=parseInt(document.getElementById('pm-qty').value)+1">+</button>
+      <img id="mpImgPrinc" class="modal-img-principal" src="" alt="">
+      <div id="mpGalerie" class="modal-galerie"></div>
+      <div id="mpPret" class="modal-pret"></div>
+      <div id="mpStoc" style="margin-bottom:9px"></div>
+      <p id="mpCategorie" style="font-family:'Cinzel',serif;font-size:.75rem;color:var(--tl);margin-bottom:11px"></p>
+      <div id="mpDescriere" style="color:var(--tm);line-height:1.78;margin-bottom:18px;font-size:.98rem"></div>
+      <div style="display:flex;align-items:center;gap:11px;margin-bottom:18px">
+        <span style="font-family:'Cinzel',serif;font-size:.78rem;color:var(--v)">Cantitate:</span>
+        <div class="ctrl-cantitate">
+          <button class="btn-cantitate" onclick="schimbaCantMP(-1)">−</button>
+          <span class="val-cantitate" id="mpCantitate">1</span>
+          <button class="btn-cantitate" onclick="schimbaCantMP(1)">+</button>
         </div>
       </div>
-      <div style="display:flex;gap:15px;margin-top:20px;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="addModalToCart()">🛒 Adaugă în Coș</button>
-        <button class="btn btn-outline" onclick="closeModal('product-modal')">Închide</button>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button class="btn btn-primar" onclick="adaugadinModal()">🛒 Adaugă în Coș</button>
+        <button class="btn btn-contur" onclick="inchideModal('modalProdus')">Închide</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Announcement Modal -->
-<div id="announcement-modal" class="modal-overlay" style="display:none">
+<!-- ═════════════════ MODAL ANUNȚ ═══════════════════════════════ -->
+<div class="fundal-modal" id="modalAnunt" onclick="if(event.target===this)inchideModal('modalAnunt')">
   <div class="modal">
     <div class="modal-header">
-      <div id="ann-badge"></div>
-      <h2 id="ann-title" style="margin-top:5px"></h2>
-      <button class="modal-close" onclick="closeModal('announcement-modal')">✕</button>
+      <div id="maInsigna" style="margin-bottom:7px"></div>
+      <h2 id="maTitlu"></h2>
+      <button class="modal-inchide" onclick="inchideModal('modalAnunt')">✕</button>
     </div>
     <div class="modal-body">
-      <p id="ann-date" style="font-size:0.85rem;color:var(--text-light);margin-bottom:20px;font-family:'Lato',sans-serif"></p>
-      <img id="ann-image" src="" alt="" style="display:none;width:100%;max-height:300px;object-fit:cover;border-radius:10px;margin-bottom:20px">
-      <div id="ann-content" style="color:var(--text-mid);line-height:1.9;font-size:1.05rem"></div>
-      <div style="margin-top:25px;text-align:right">
-        <button class="btn btn-primary btn-sm" onclick="closeModal('announcement-modal')">Închide</button>
+      <p id="maData" style="font-size:.78rem;color:var(--tl);font-family:'Lato',sans-serif;margin-bottom:16px"></p>
+      <img id="maImagine" src="" alt="" style="display:none;width:100%;max-height:270px;object-fit:cover;border-radius:9px;margin-bottom:18px">
+      <div id="maContinut" style="color:var(--tm);line-height:1.88;font-size:1rem"></div>
+      <div style="margin-top:18px;text-align:right">
+        <button class="btn btn-primar btn-mic" onclick="inchideModal('modalAnunt')">Închide</button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- TOAST -->
-<div id="toast" class="toast"></div>
+<div id="toast"></div>
 
-<!-- FOOTER -->
+<!-- ═══════════════════════════ FOOTER ══════════════════════════ -->
 <footer>
   <div class="container">
     <div class="footer-grid">
-      <div class="footer-section">
-        <div style="font-size:2.5rem;color:var(--gold);margin-bottom:10px">✝</div>
+      <div class="footer-col">
+        <div style="font-size:2rem;color:var(--g);margin-bottom:9px">✝</div>
         <h4>Biserica Ortodoxă</h4>
-        <p>Comunitatea noastră vă este alături în toate momentele vieții – bucurii și necazuri, nașteri și treceri la cele veșnice.</p>
+        <p>Comunitatea noastră vă este alături în toate momentele vieții – bucurii și necazuri, de la naștere până la trecerea la cele veșnice.</p>
       </div>
-      <div class="footer-section">
+      <div class="footer-col">
         <h4>Program Slujbe</h4>
-        <p>Duminică: 09:00 – Sf. Liturghie</p>
-        <p>Sâmbătă: 18:00 – Vecernie</p>
-        <p>Miercuri: 18:00 – Acatist</p>
-        <p>Prima Sâmbătă: 09:00 – Parastas</p>
+        <p>Duminică – 09:00 Sf. Liturghie</p>
+        <p>Sâmbătă – 18:00 Vecernie</p>
+        <p>Miercuri – 18:00 Acatist</p>
+        <p>Joi – 17:30 Moliftă</p>
       </div>
-      <div class="footer-section">
+      <div class="footer-col">
         <h4>Contact</h4>
         <p>📍 Str. Bisericii, nr. 1</p>
         <p>📞 0740 000 000</p>
         <p>✉️ parohia@email.ro</p>
-        <p>🕐 Secretariat: L-V, 10:00-14:00</p>
+        <p>🕐 L–V, 10:00–14:00</p>
       </div>
-      <div class="footer-section">
+      <div class="footer-col">
         <h4>Navigare</h4>
-        <a href="#" data-page="home">🏛️ Pagina Principală</a>
-        <a href="#" data-page="shop">🕯️ Magazin Parohial</a>
-        <a href="#" data-page="announcements">📋 Anunțuri</a>
-        <a href="#" data-page="cart">🛒 Coș Cumpărături</a>
+        <a href="#" onclick="mergi('acasa');return false">🏛️ Acasă</a>
+        <a href="#" onclick="mergi('magazin');return false">🕯️ Magazin</a>
+        <a href="#" onclick="mergi('anunturi');return false">📋 Anunțuri</a>
+        <a href="#" onclick="mergi('cos');return false">🛒 Coș</a>
       </div>
     </div>
-    <div class="footer-bottom">
-      <p>✝ Slavă lui Dumnezeu pentru toate! ✝ &nbsp;|&nbsp; © 2025 Biserica Ortodoxă – Comunitatea Noastră</p>
-    </div>
+    <div class="footer-jos">✝ Slavă lui Dumnezeu pentru toate! ✝ &nbsp;|&nbsp; © 2025 Parohia Ortodoxă</div>
   </div>
 </footer>
 
-<!-- Firebase & App Scripts -->
-<script type="module" src="js/app.js"></script>
-
-<!-- Checkout summary updater -->
+<!-- ═══════════════════ JAVASCRIPT ═══════════════════════════════ -->
 <script>
-  // Update checkout summary when navigating
-  document.addEventListener('click', (e) => {
-    if (e.target.textContent.includes('Continuă spre Livrare')) {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const el = document.getElementById('checkout-summary-items');
-      if (el) {
-        const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-        el.innerHTML = cart.map(i => `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed var(--cream-dark)"><span>${i.name} x${i.qty}</span><strong>${(i.price*i.qty).toFixed(2)} Lei</strong></div>`).join('') +
-          `<div style="display:flex;justify-content:space-between;padding:8px 0;font-weight:700;font-family:'Cinzel',serif;color:var(--visniu)"><span>TOTAL</span><span>${total.toFixed(2)} Lei</span></div>`;
-      }
-    }
-  });
-</script>
+/* ── FIREBASE INIT ────────────────────────── */
+firebase.initializeApp({
+  apiKey:"AIzaSyDjQEkuNvLHWwBJsGWmu1LxLcOoS75pFjQ",
+  authDomain:"biserica-online-d3f0a.firebaseapp.com",
+  projectId:"biserica-online-d3f0a",
+  storageBucket:"biserica-online-d3f0a.firebasestorage.app",
+  messagingSenderId:"582958004765",
+  appId:"1:582958004765:web:60a31c374b9e298c1964f4"
+});
+const db      = firebase.firestore();
+const auth    = firebase.auth();
+const storage = firebase.storage();
 
+/* ── STATE ───────────────────────────────── */
+let cos        = JSON.parse(localStorage.getItem('bCos')||'[]');
+let produseCach= [];
+let anunturiCach=[];
+let comenziCach= [];
+let catCurenta = 'toate';
+let sortCurenta= 'implicit';
+let cautareCur = '';
+let filtreDeschise = false;
+let adminCurent= null;
+let prodModalCurent = null;
+let cantModalProd   = 1;
+let imgSelectateProd= [];
+let imgSelectataAnn = null;
+let editProdId = null;
+let editAnnId  = null;
+
+/* ── HELPERS FIREBASE ────────────────────── */
+const TS = ()=> firebase.firestore.FieldValue.serverTimestamp();
+
+async function fbLista(col){
+  try{
+    const s = await db.collection(col).orderBy('createdAt','desc').get();
+    return s.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){console.warn(col,e);return[];}
+}
+async function fbAdauga(col,data){ return db.collection(col).add({...data,createdAt:TS()}); }
+async function fbActualizeaza(col,id,data){ return db.collection(col).doc(id).update(data); }
+async function fbSterge(col,id){ return db.collection(col).doc(id).delete(); }
+async function fbGetUnul(col,id){
+  const d = await db.collection(col).doc(id).get();
+  return d.exists?{id:d.id,...d.data()}:null;
+}
+async function uploadImagine(file,cale){
+  const ref = storage.ref(cale);
+  await ref.put(file);
+  return ref.getDownloadURL();
+}
+
+/* ── COS ─────────────────────────────────── */
+function salveazaCos(){ localStorage.setItem('bCos',JSON.stringify(cos)); }
+function totalCos(){ return cos.reduce((s,i)=>s+i.pret*i.cantitate,0); }
+function nrArticole(){ return cos.reduce((s,i)=>s+i.cantitate,0); }
+
+function actualizeazaBadge(){
+  const n=nrArticole();
+  const b=document.getElementById('cosBadge');
+  if(n>0){b.textContent=n;b.classList.add('viz');}
+  else{b.textContent='';b.classList.remove('viz');}
+}
+
+function adaugaInCos(p,cant){
+  cant=cant||1;
+  const ex=cos.find(i=>i.id===p.id);
+  if(ex)ex.cantitate+=cant;
+  else cos.push({id:p.id,nume:p.name||p.nume,pret:p.price||p.pret,imagine:(p.images||p.imagini||[])[0]||'',cantitate:cant});
+  salveazaCos(); actualizeazaBadge();
+  afiseazaToast('✝ „'+(p.name||p.nume)+'" adăugat în coș!');
+}
+
+function scoateDinCos(id){
+  cos=cos.filter(i=>i.id!==id);
+  salveazaCos(); actualizeazaBadge(); redeazaCos();
+}
+
+function schimbaCant(id,delta){
+  const it=cos.find(i=>i.id===id);
+  if(!it)return;
+  it.cantitate+=delta;
+  if(it.cantitate<=0)return scoateDinCos(id);
+  salveazaCos(); actualizeazaBadge(); redeazaCos();
+}
+
+/* ── TOAST ───────────────────────────────── */
+let timerToast;
+function afiseazaToast(msg,dur){
+  dur=dur||3000;
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('vizibil');
+  clearTimeout(timerToast);
+  timerToast=setTimeout(()=>el.classList.remove('vizibil'),dur);
+}
+
+/* ── NAVIGARE ────────────────────────────── */
+function mergi(pag){
+  document.querySelectorAll('.pagina').forEach(p=>p.classList.remove('activa'));
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('activ'));
+  const pg=document.getElementById('pagina-'+pag);
+  if(pg)pg.classList.add('activa');
+  const na=document.querySelector('.nav-links a[data-p="'+pag+'"]');
+  if(na)na.classList.add('activ');
+  document.getElementById('navLinks').classList.remove('deschis');
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  if(pag==='acasa')   incarcaAcasa();
+  if(pag==='magazin') incarcaMagazin();
+  if(pag==='anunturi')afiseazaAnunturi();
+  if(pag==='cos')     redeazaCos();
+  if(pag==='admin')   initAdmin();
+}
+
+/* ── TIMER PAȘTI ─────────────────────────── */
+function calcPasteOrtodox(an){
+  // Calcul Paste Iulian → Gregorian (+13 zile pentru sec 20-21)
+  const a=an%4,b=an%7,c=an%19;
+  const d=(19*c+15)%30;
+  const e=(2*a+4*b-d+34)%7;
+  const luna=Math.floor((d+e+114)/31);
+  const zi=((d+e+114)%31)+1;
+  return new Date(an,luna-1,zi+13);
+}
+function porniTimer(){
+  function tick(){
+    const acum=new Date();
+    let an=acum.getFullYear();
+    let paste=calcPasteOrtodox(an);
+    if(acum>paste){an++;paste=calcPasteOrtodox(an);}
+    const diff=paste-acum;
+    const bar=document.getElementById('timer-bar');
+    if(diff<=0){
+      bar.classList.add('risen');
+      bar.innerHTML='✝&ensp;HRISTOS A ÎNVIAT!&ensp;ADEVĂRAT A ÎNVIAT!&ensp;✝';
+      return;
+    }
+    const zile=Math.floor(diff/86400000);
+    const ore =Math.floor((diff%86400000)/3600000);
+    const min =Math.floor((diff%3600000)/60000);
+    const sec =Math.floor((diff%60000)/1000);
+    const p=n=>String(n).padStart(2,'0');
+    document.getElementById('td').textContent=p(zile);
+    document.getElementById('th').textContent=p(ore);
+    document.getElementById('tm').textContent=p(min);
+    document.getElementById('ts').textContent=p(sec);
+  }
+  tick(); setInterval(tick,1000);
+}
+
+/* ── DATE SFINTI ─────────────────────────── */
+const SFINTI={
+  '0101':['Tăierea Împrejur a Domnului','Praznic împărătesc. Pruncul Iisus primește numele Său sfânt. Ziua Sfântului Vasile cel Mare.'],
+  '0106':['Botezul Domnului – Boboteaza','Arătarea Sfintei Treimi la Iordan. Apele se sfințesc prin coborârea Duhului Sfânt.'],
+  '0117':['Sfântul Antonie cel Mare','Părintele monahismului creștin, rugătorul neobosit al deșertului egiptean.'],
+  '0120':['Sfântul Eutimie cel Mare','Cuviosul luminătorul monahilor din Palestina, trăitor în pustnicie 90 de ani.'],
+  '0124':['Sfânta Xenia din Petersburg','Nebuna pentru Hristos, ocrotitoarea celor în suferință și a celor singuri.'],
+  '0130':['Cei Trei Ierarhi','Vasile cel Mare, Grigorie Teologul și Ioan Gură de Aur – patronii școlilor.'],
+  '0201':['Sfânta Muceniță Evdochia','Cuvioasă și muceniță, pomenire în prima zi din primăvară.'],
+  '0202':['Întâmpinarea Domnului','Prăznuirea aducerii pruncului Iisus la Templu și a dreptului Simeon.'],
+  '0209':['Sfântul Nichifor Mărturisitorul','Patriarh al Constantinopolului, apărătorul sfintelor icoane.'],
+  '0210':['Sfântul Haralambie','Mucenic ocrotitor împotriva ciumei și al tuturor bolilor.'],
+  '0214':['Sfântul Auxentie','Cuviosul Auxentie, sihastrul de la Muntele Oxia.'],
+  '0224':['Aflarea Capului Sf. Ioan Botezătorul','Prima și a doua aflare a capului Înaintemergătorului Domnului.'],
+  '0301':['Sfânta Muceniță Evdochia','Pomenire în prima zi din luna primăverii. Ziua Mărțișorului.'],
+  '0309':['Cei 40 de Mucenici din Sevastia','Soldați romani martirizați în lacul înghețat pentru credința creștină.'],
+  '0325':['Buna Vestire','Arhanghelul Gavriil îi vestește Fecioarei Maria nașterea Fiului lui Dumnezeu.'],
+  '0401':['Sfânta Maria Egipteanca','Cuvioasă, model suprem de pocăință și transformare duhovnicească.'],
+  '0423':['Sfântul Gheorghe Purtătorul de Biruință','Marele Mucenic, apărătorul celor nedreptățiți. Hramul multor biserici.'],
+  '0501':['Sfântul Proroc Ieremia','Prorocul cel plângăreț, autorul Cărții Plângerilor.'],
+  '0521':['Sfinții Împărați Constantin și Elena','Cei care au dat libertate Bisericii și au găsit Sfânta Cruce.'],
+  '0529':['Sfânta Muceniță Teodosia','Ocrotitoarea credincioșilor din Constantinopol.'],
+  '0615':['Sfântul Proroc Amos','Prorocul dreptății sociale, trimis la Israel.'],
+  '0624':['Nașterea Sf. Ioan Botezătorul','Înaintemergătorul Domnului, cel mai mare între prooroci.'],
+  '0629':['Sfinții Apostoli Petru și Pavel','Stâlpii Bisericii lui Hristos. Zi de prăznuire mare.'],
+  '0720':['Sfântul Proroc Ilie Tesviteanul','Cel luat la cer în car de foc. Apărătorul lui Dumnezeu Cel Adevărat.'],
+  '0806':['Schimbarea la Față a Domnului','Iisus se arată în slavă pe Muntele Tabor în fața ucenicilor Săi.'],
+  '0815':['Adormirea Maicii Domnului','Cel mai mare praznic al Maicii Domnului. Post și priveghere.'],
+  '0908':['Nașterea Maicii Domnului','Praznic împărătesc, bucuria lumii întregi și a cerurilor.'],
+  '0914':['Înălțarea Sfintei Cruci','Ziua Crucii lui Hristos. Post negru în semn de pocăință și cinstire.'],
+  '1014':['Sfânta Parascheva','Ocrotitoarea Moldovei, ale cărei moaște sfinte se află la Iași.'],
+  '1026':['Sfântul Dimitrie Izvorâtorul de Mir','Ocrotitorul Tesalonicului. Mir vindecător curge de la moaștele sale.'],
+  '1108':['Soborul Arh. Mihail și Gavriil','Prăznuirea tuturor Puterilor Cerești fără de trup.'],
+  '1114':['Sfântul Apostol Filip','Unul din cei Doisprezece Apostoli ai Mântuitorului.'],
+  '1130':['Sfântul Apostol Andrei','Cel Întâi Chemat, Ocrotitorul României.'],
+  '1206':['Sfântul Nicolae Arhiepiscopul Mirelor','Făcătorul de Minuni, cel mai iubit sfânt al poporului român.'],
+  '1225':['Nașterea Domnului – Crăciunul','Praznicul cel Mare al Nașterii lui Hristos. Slavă întru cei de Sus!'],
+  '1227':['Sf. Apostol Ioan Teologul','Ucenicul iubit al Mântuitorului, autorul celei de-a patra Evanghelii.'],
+};
+
+const VERSETE=[
+  ['Căci atât de mult a iubit Dumnezeu lumea, încât L-a dat pe Fiul Său cel Unul-Născut, ca oricine crede în El să nu piară, ci să aibă viață veșnică.','Ioan 3:16'],
+  ['Eu sunt calea, adevărul și viața. Nimeni nu vine la Tatăl decât prin Mine.','Ioan 14:6'],
+  ['Doamne, Tu mi-ai cercetat și m-ai cunoscut. Tu cunoști șezutul meu și scularea mea.','Psalm 139:1'],
+  ['Fiți tari și îmbărbătați-vă! Nu vă temeți, căci Domnul Dumnezeul vostru merge cu voi.','Deuteronom 31:6'],
+  ['Căutați mai întâi Împărăția lui Dumnezeu și dreptatea Lui, și toate celelalte se vor adăuga vouă.','Matei 6:33'],
+  ['Și iată, Eu sunt cu voi în toate zilele, până la sfârșitul veacului. Amin.','Matei 28:20'],
+  ['Doamne, Tu ești lumina mea și mântuirea mea; de cine mă voi teme?','Psalm 27:1'],
+  ['Bucurați-vă pururea întru Domnul; și iarăși zic: bucurați-vă!','Filipeni 4:4'],
+  ['Nu te teme de nimic din ce ai să suferi. Fii credincios până la moarte și îți voi da cununa vieții.','Apocalipsa 2:10'],
+  ['Veniți la Mine toți cei osteniți și împovărați și Eu vă voi odihni pe voi.','Matei 11:28'],
+  ['Doamne, ajutorul meu vine de la Tine, Cel ce ai făcut cerul și pământul.','Psalm 121:2'],
+  ['Nu vă îngrijorați de nimic, ci în orice împrejurare aduceți cererile voastre la cunoștința lui Dumnezeu prin rugăciuni.','Filipeni 4:6'],
+  ['Fericit bărbatul care n-a umblat în sfatul necredincioșilor și în calea păcătoșilor nu a stat.','Psalm 1:1'],
+  ['Doamne, cercetează-mă și cunoaște inima mea; încearcă-mă și cunoaște gândurile mele.','Psalm 139:23'],
+];
+
+function getSfant(){
+  const acum=new Date();
+  const cheie=String(acum.getMonth()+1).padStart(2,'0')+String(acum.getDate()).padStart(2,'0');
+  return SFINTI[cheie]||['Sfântul zilei','Rugați-vă cu credință și dragoste, căci Dumnezeu este cu voi în fiecare clipă a zilei.'];
+}
+function getVerset(){
+  const index=(new Date().getDate()+new Date().getMonth()*31)%VERSETE.length;
+  return VERSETE[index];
+}
+
+/* ── BADGE HELPERS ───────────────────────── */
+function clasaInsigna(tip){
+  return{urgent:'ins-urgent',slujba:'ins-slujba',eveniment:'ins-eveniment',activitate:'ins-activitate',general:'ins-general'}[tip]||'ins-general';
+}
+function textInsigna(tip){
+  return{urgent:'🔴 URGENT',slujba:'⛪ Slujbă',eveniment:'📅 Eveniment',activitate:'🌿 Activitate',general:'📋 General'}[tip]||'📋 General';
+}
+function formateazaData(ts){
+  if(!ts)return'–';
+  try{
+    const d=ts.toDate?ts.toDate():new Date(ts);
+    return d.toLocaleDateString('ro-RO',{day:'2-digit',month:'long',year:'numeric'});
+  }catch(e){return'–';}
+}
+
+/* ── MODAL ───────────────────────────────── */
+function deschideModal(id){document.getElementById(id).classList.add('vizibil')}
+function inchideModal(id){document.getElementById(id).classList.remove('vizibil')}
+
+/* ══════════════════════════════════════════
+   PAGINA ACASĂ
+══════════════════════════════════════════ */
+async function incarcaAcasa(){
+  // Sfant
+  const [sNume,sDesc]=getSfant();
+  document.getElementById('acasa-sfant').innerHTML=
+    '<div class="sfant-card"><div style="font-size:2.7rem;margin-bottom:13px">✝</div><div class="sfant-nume">'+sNume+'</div><p class="sfant-desc">'+sDesc+'</p></div>';
+  // Verset
+  const [vText,vRef]=getVerset();
+  document.getElementById('acasa-verset').innerHTML=
+    '<div class="verset-box"><p>'+vText+'</p><span class="verset-ref">— '+vRef+'</span></div>';
+  // Date Firebase
+  try{
+    if(!produseCach.length) produseCach=await fbLista('produse');
+    if(!anunturiCach.length)anunturiCach=await fbLista('anunturi');
+  }catch(e){}
+  // Ticker urgente
+  const urg=anunturiCach.filter(a=>a.type==='urgent');
+  const ticker=document.getElementById('ticker-urgent');
+  if(urg.length){
+    ticker.style.display='block';
+    const itm=urg.map(a=>'<span class="ticker-item" onclick="deschideModalAnunt(\''+a.id+'\')">🔔 '+a.title+'</span>');
+    document.getElementById('tickerPista').innerHTML=[...itm,...itm].join('<span style="color:#FFD700;margin:0 16px">✝</span>');
+  }else{ticker.style.display='none';}
+  // Produs recomandat
+  const pr=produseCach.find(p=>p.bestSeller)||produseCach[0];
+  const elPr=document.getElementById('acasa-produs-rec');
+  if(pr){
+    elPr.innerHTML=
+      '<div class="card-produs" onclick="deschideModalProdus(\''+pr.id+'\')">' +
+      '<div class="produs-img">'+(pr.images&&pr.images[0]?'<img src="'+pr.images[0]+'" alt="'+pr.name+'" loading="lazy">':'<div class="produs-img-ph">✝</div>')+'</div>'+
+      '<div class="produs-corp">'+
+      '<div class="produs-nume">'+pr.name+'</div>'+
+      '<div class="produs-desc">'+(pr.description||'')+'</div>'+
+      '<div class="produs-footer"><span class="produs-pret">'+pr.price+' Lei</span>'+
+      '<button class="btn-cos" onclick="event.stopPropagation();adaugaRapid(\''+pr.id+'\')">🛒 Adaugă</button>'+
+      '</div></div></div>';
+  }else{elPr.innerHTML='<div class="gol"><div class="icon-gol">🕯️</div><p>Nu există produse momentan.</p></div>';}
+  // Ultim anunt
+  const ua=anunturiCach[0];
+  const elUa=document.getElementById('acasa-ultim-anunt');
+  if(ua){
+    elUa.innerHTML=
+      '<div class="card-anunt '+(ua.type==='urgent'?'urgent':'')+'" onclick="deschideModalAnunt(\''+ua.id+'\')">'+
+      '<span class="insigna '+clasaInsigna(ua.type)+'">'+textInsigna(ua.type)+'</span>'+
+      '<h3>'+ua.title+'</h3>'+
+      '<p class="anunt-extras">'+(ua.content||'').substring(0,180)+((ua.content&&ua.content.length>180)?'…':'')+'</p>'+
+      '<span class="anunt-data">📅 '+formateazaData(ua.createdAt)+'</span></div>';
+  }else{elUa.innerHTML='<div class="gol"><div class="icon-gol">📋</div><p>Nu există anunțuri momentan.</p></div>';}
+}
+
+/* ══════════════════════════════════════════
+   MAGAZIN
+══════════════════════════════════════════ */
+async function incarcaMagazin(){
+  if(!produseCach.length){
+    document.getElementById('gridProduse').innerHTML='<div class="incarcare" style="grid-column:1/-1"><div class="rotitor"></div> Se încarcă…</div>';
+    produseCach=await fbLista('produse');
+  }
+  filtreazaProduse();
+}
+
+function comutaFiltre(){
+  filtreDeschise=!filtreDeschise;
+  document.getElementById('panouFiltre').classList.toggle('vizibil',filtreDeschise);
+  document.getElementById('btnFiltre').classList.toggle('deschis',filtreDeschise);
+}
+
+function seteazaCategorie(val,el){
+  catCurenta=val;
+  document.querySelectorAll('#chipsCategorie .chip').forEach(c=>c.classList.remove('selectat'));
+  el.classList.add('selectat');
+  filtreazaProduse();
+}
+function seteazaSortare(val,el){
+  sortCurenta=val;
+  document.querySelectorAll('#chipsSortare .chip').forEach(c=>c.classList.remove('selectat'));
+  el.classList.add('selectat');
+  filtreazaProduse();
+}
+
+function filtreazaProduse(){
+  cautareCur=document.getElementById('cautareProduse').value.toLowerCase();
+  let lista=[...produseCach];
+  if(catCurenta!=='toate') lista=lista.filter(p=>p.category===catCurenta);
+  if(cautareCur) lista=lista.filter(p=>p.name.toLowerCase().includes(cautareCur)||(p.description||'').toLowerCase().includes(cautareCur));
+  if(sortCurenta==='pretcrescator') lista.sort((a,b)=>a.price-b.price);
+  if(sortCurenta==='pretdescrescator') lista.sort((a,b)=>b.price-a.price);
+  if(sortCurenta==='nume') lista.sort((a,b)=>a.name.localeCompare(b.name));
+  redeazaGridProduse(lista);
+}
+
+function redeazaGridProduse(lista){
+  const el=document.getElementById('gridProduse');
+  if(!lista.length){
+    el.innerHTML='<div class="gol" style="grid-column:1/-1"><div class="icon-gol">🕯️</div><h3>Niciun produs găsit</h3><p>Modificați filtrele sau căutarea.</p></div>';
+    return;
+  }
+  el.innerHTML=lista.map(p=>
+    '<div class="card-produs" onclick="deschideModalProdus(\''+p.id+'\')">'+
+    '<div class="produs-img">'+(p.images&&p.images[0]?'<img src="'+p.images[0]+'" alt="'+p.name+'" loading="lazy">':'<div class="produs-img-ph">✝</div>')+'</div>'+
+    '<div class="produs-corp">'+
+    '<div class="produs-nume">'+p.name+'</div>'+
+    '<div class="produs-desc">'+(p.description||'')+'</div>'+
+    '<div class="produs-footer">'+
+    '<div><div class="produs-pret">'+p.price+' Lei</div><span class="stoc-badge '+(p.stock>0?'in-stoc':'epuizat')+'">'+(p.stock>0?p.stock+' buc.':'Epuizat')+'</span></div>'+
+    '<button class="btn-cos" onclick="event.stopPropagation();adaugaRapid(\''+p.id+'\')" '+(p.stock<=0?'disabled':'')+'>🛒 Adaugă</button>'+
+    '</div></div></div>'
+  ).join('');
+}
+
+function adaugaRapid(id){
+  const p=produseCach.find(x=>x.id===id);
+  if(p)adaugaInCos(p,1);
+}
+
+/* ── MODAL PRODUS ────────────────────────── */
+function deschideModalProdus(id){
+  const p=produseCach.find(x=>x.id===id);
+  if(!p)return;
+  prodModalCurent=p;
+  cantModalProd=1;
+  document.getElementById('mpTitlu').textContent=p.name;
+  document.getElementById('mpPret').textContent=p.price+' Lei';
+  document.getElementById('mpStoc').innerHTML=p.stock>0
+    ?'<span class="stoc-badge in-stoc">✓ Disponibil ('+p.stock+' buc.)</span>'
+    :'<span class="stoc-badge epuizat">✗ Epuizat</span>';
+  document.getElementById('mpCategorie').textContent=p.category||'';
+  document.getElementById('mpDescriere').innerHTML=(p.description||'').replace(/\n/g,'<br>');
+  document.getElementById('mpCantitate').textContent=1;
+  const imgs=p.images||[];
+  const mi=document.getElementById('mpImgPrinc');
+  const galerie=document.getElementById('mpGalerie');
+  if(imgs.length){
+    mi.src=imgs[0]; mi.style.display='block';
+    galerie.innerHTML=imgs.map((u,i)=>'<img src="'+u+'" class="modal-thumb'+(i===0?' activ':'')+'" onclick="setImgPrinc(this,\''+u+'\')">').join('');
+  }else{mi.style.display='none';galerie.innerHTML='<div style="font-size:3rem;color:var(--vp);padding:20px;text-align:center">✝</div>';}
+  deschideModal('modalProdus');
+}
+
+function setImgPrinc(el,src){
+  document.getElementById('mpImgPrinc').src=src;
+  document.querySelectorAll('.modal-thumb').forEach(t=>t.classList.remove('activ'));
+  el.classList.add('activ');
+}
+
+function schimbaCantMP(d){
+  cantModalProd=Math.max(1,cantModalProd+d);
+  document.getElementById('mpCantitate').textContent=cantModalProd;
+}
+
+function adaugadinModal(){
+  if(prodModalCurent){adaugaInCos(prodModalCurent,cantModalProd);inchideModal('modalProdus');}
+}
+
+/* ══════════════════════════════════════════
+   ANUNȚURI
+══════════════════════════════════════════ */
+async function afiseazaAnunturi(){
+  const el=document.getElementById('listaAnunturi');
+  el.innerHTML='<div class="incarcare"><div class="rotitor"></div> Se încarcă…</div>';
+  if(!anunturiCach.length)anunturiCach=await fbLista('anunturi');
+  const filtru=document.getElementById('filtruAnunturi').value;
+  const lista=filtru==='toate'?anunturiCach:anunturiCach.filter(a=>a.type===filtru);
+  if(!lista.length){
+    el.innerHTML='<div class="gol"><div class="icon-gol">📋</div><h3>Niciun anunț</h3><p>Nu există anunțuri în această categorie.</p></div>';
+    return;
+  }
+  el.innerHTML=lista.map(a=>
+    '<div class="card-anunt '+(a.type==='urgent'?'urgent':'')+'" onclick="deschideModalAnunt(\''+a.id+'\')">'+
+    '<span class="insigna '+clasaInsigna(a.type)+'">'+textInsigna(a.type)+'</span>'+
+    '<h3>'+a.title+'</h3>'+
+    '<p class="anunt-extras">'+(a.content||'').substring(0,200)+((a.content&&a.content.length>200)?'…':'')+'</p>'+
+    '<span class="anunt-data">📅 '+formateazaData(a.createdAt)+'</span></div>'
+  ).join('');
+}
+
+function deschideModalAnunt(id){
+  const a=anunturiCach.find(x=>x.id===id);
+  if(!a)return;
+  document.getElementById('maInsigna').innerHTML='<span class="insigna '+clasaInsigna(a.type)+'">'+textInsigna(a.type)+'</span>';
+  document.getElementById('maTitlu').textContent=a.title;
+  document.getElementById('maData').textContent='📅 '+formateazaData(a.createdAt);
+  document.getElementById('maContinut').innerHTML=(a.content||'').replace(/\n/g,'<br>');
+  const img=document.getElementById('maImagine');
+  if(a.image){img.src=a.image;img.style.display='block';}else{img.style.display='none';}
+  deschideModal('modalAnunt');
+}
+
+/* ══════════════════════════════════════════
+   COȘ
+══════════════════════════════════════════ */
+function redeazaCos(){
+  const elIteme=document.getElementById('itemeCos');
+  const elSumar=document.getElementById('sumarulCos');
+  if(!cos.length){
+    elIteme.innerHTML='<div class="gol"><div class="icon-gol">🛒</div><h3>Coșul este gol</h3><p>Adaugă produse din magazin.</p><br><button class="btn btn-primar" onclick="mergi(\'magazin\')">Mergi la Magazin</button></div>';
+    elSumar.style.display='none';
+    return;
+  }
+  elIteme.innerHTML=cos.map(it=>
+    '<div class="item-cos">'+
+    '<div class="item-cos-img">'+(it.imagine?'<img src="'+it.imagine+'" alt="'+it.nume+'">':'✝')+'</div>'+
+    '<div class="item-cos-info">'+
+    '<div class="item-cos-nume">'+it.nume+'</div>'+
+    '<div class="item-cos-upret">'+it.pret+' Lei / buc.</div>'+
+    '<div class="ctrl-cantitate">'+
+    '<button class="btn-cantitate" onclick="schimbaCant(\''+it.id+'\',-1)">−</button>'+
+    '<span class="val-cantitate">'+it.cantitate+'</span>'+
+    '<button class="btn-cantitate" onclick="schimbaCant(\''+it.id+'\',1)">+</button>'+
+    '</div></div>'+
+    '<span class="item-cos-pret">'+((it.pret*it.cantitate).toFixed(2))+' Lei</span>'+
+    '<button class="btn-sterge-item" onclick="scoateDinCos(\''+it.id+'\')" title="Șterge">🗑️</button>'+
+    '</div>'
+  ).join('');
+  elSumar.style.display='block';
+  document.getElementById('valoareTotal').textContent=totalCos().toFixed(2)+' Lei';
+}
+
+function arataComanada(){
+  document.getElementById('vedereaCos').style.display='none';
+  document.getElementById('vedereComanda').style.display='block';
+  // Rezumat
+  const el=document.getElementById('rezumatComanda');
+  el.innerHTML=cos.map(it=>
+    '<div class="rand-info"><span class="eticheta">'+it.nume+' × '+it.cantitate+'</span><span class="valoare">'+((it.pret*it.cantitate).toFixed(2))+' Lei</span></div>'
+  ).join('')+
+  '<div class="rand-info" style="font-size:1.05rem;font-weight:700;border-top:2px solid var(--vp);padding-top:9px;margin-top:5px">'+
+  '<span class="eticheta">TOTAL</span><span class="valoare" style="color:var(--v)">'+totalCos().toFixed(2)+' Lei</span></div>';
+}
+
+function inapoiLaCos(){
+  document.getElementById('vedereComanda').style.display='none';
+  document.getElementById('vedereaCos').style.display='block';
+}
+
+async function trimiteComanda(){
+  const nume=document.getElementById('oNume').value.trim();
+  const tel =document.getElementById('oTelefon').value.trim();
+  const adr =document.getElementById('oAdresa').value.trim();
+  if(!nume||!tel||!adr){afiseazaToast('⚠️ Completați câmpurile obligatorii!');return;}
+  const btn=document.getElementById('btnFinalizeaza');
+  btn.disabled=true; btn.textContent='Se trimite…';
+  try{
+    await fbAdauga('comenzi',{
+      name:nume, phone:tel,
+      email:document.getElementById('oEmail').value,
+      address:adr,
+      county:document.getElementById('oLocalitate').value,
+      payment:document.getElementById('oPlata').value,
+      notes:document.getElementById('oObservatii').value,
+      items:JSON.parse(JSON.stringify(cos)),
+      total:totalCos().toFixed(2),
+      status:'noua'
+    });
+    cos=[]; salveazaCos(); actualizeazaBadge();
+    mergi('acasa');
+    setTimeout(()=>afiseazaToast('✝ Comandă plasată cu succes! Vă mulțumim!',5000),400);
+  }catch(e){
+    afiseazaToast('❌ Eroare la trimitere. Verificați conexiunea.');
+    btn.disabled=false; btn.textContent='✝ Finalizează Comanda';
+  }
+}
+
+/* ══════════════════════════════════════════
+   ADMIN
+══════════════════════════════════════════ */
+function initAdmin(){
+  if(adminCurent){arataPanou();incarcaSectiuena('dashboard');}
+  else aratLogin();
+}
+function aratLogin(){
+  document.getElementById('adminLogin').style.display='flex';
+  document.getElementById('adminPanel').style.display='none';
+}
+function arataPanou(){
+  document.getElementById('adminLogin').style.display='none';
+  document.getElementById('adminPanel').style.display='flex';
+}
+
+async function faLogin(){
+  const email=document.getElementById('aEmail').value;
+  const parola=document.getElementById('aParola').value;
+  const btn=document.getElementById('btnLogin');
+  const err=document.getElementById('eroareLogin');
+  err.style.display='none';
+  btn.disabled=true; btn.textContent='Se conectează…';
+  try{
+    await auth.signInWithEmailAndPassword(email,parola);
+    arataPanou(); incarcaSectiuena('dashboard');
+  }catch(e){
+    err.style.display='block';
+  }
+  btn.disabled=false; btn.textContent='Conectare';
+}
+
+async function faLogout(){
+  await auth.signOut();
+  aratLogin();
+}
+
+function seteazaNavAdmin(sec){
+  document.querySelectorAll('.nav-admin').forEach(b=>b.classList.remove('activ'));
+  const el=document.getElementById('nav-'+sec);
+  if(el)el.classList.add('activ');
+}
+
+async function incarcaSectiuena(sec){
+  seteazaNavAdmin(sec);
+  const el=document.getElementById('adminContinut');
+  el.innerHTML='<div class="incarcare"><div class="rotitor"></div> Se încarcă…</div>';
+  if(sec==='dashboard') await secDashboard(el);
+  if(sec==='comenzi')   await secComenzi(el);
+  if(sec==='produse')   await secProduse(el);
+  if(sec==='anunturi')  await secAnunturi(el);
+}
+
+/* ── DASHBOARD ───────────────────────────── */
+async function secDashboard(el){
+  const[com,prod,ann]=await Promise.all([fbLista('comenzi'),fbLista('produse'),fbLista('anunturi')]);
+  comenziCach=com; produseCach=prod; anunturiCach=ann;
+  const venit=com.filter(o=>o.status!=='anulata').reduce((s,o)=>s+parseFloat(o.total||0),0);
+  const noi=com.filter(o=>o.status==='noua').length;
+  el.innerHTML=
+    '<h2 style="font-family:\'Cinzel\',serif;color:var(--v);margin-bottom:26px;font-size:1.4rem">📊 Panou Principal</h2>'+
+    '<div class="grid-3" style="margin-bottom:30px">'+
+    statCard(com.length,'Total Comenzi','📦')+statCard(noi,'Comenzi Noi','🔔')+statCard(venit.toFixed(0)+' Lei','Venituri','💰')+
+    statCard(prod.length,'Produse','🕯️')+statCard(ann.length,'Anunțuri','📋')+statCard(ann.filter(a=>a.type==='urgent').length,'Urgente','🔴')+
+    '</div>'+
+    '<h3 style="font-family:\'Cinzel\',serif;color:var(--v);margin-bottom:13px">Comenzi Recente</h3>'+
+    '<div style="overflow-x:auto"><table class="tabel-admin"><thead><tr><th>ID</th><th>Client</th><th>Total</th><th>Status</th><th>Data</th></tr></thead><tbody>'+
+    com.slice(0,6).map(o=>
+      '<tr style="cursor:pointer" onclick="veziComanda(\''+o.id+'\')">'+
+      '<td style="font-family:monospace;font-size:.72rem">'+o.id.substring(0,9)+'…</td>'+
+      '<td><strong>'+o.name+'</strong></td>'+
+      '<td><strong>'+o.total+' Lei</strong></td>'+
+      '<td><span class="insigna-status st-'+o.status+'">'+o.status.toUpperCase()+'</span></td>'+
+      '<td>'+formateazaData(o.createdAt)+'</td></tr>'
+    ).join('')+'</tbody></table></div>';
+}
+function statCard(num,lbl,ico){
+  return'<div class="card-stat"><div style="font-size:1.9rem;margin-bottom:7px">'+ico+'</div><div class="stat-numar">'+num+'</div><div class="stat-eticheta">'+lbl+'</div></div>';
+}
+
+/* ── COMENZI ─────────────────────────────── */
+async function secComenzi(el){
+  comenziCach=await fbLista('comenzi');
+  el.innerHTML=
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:13px">'+
+    '<h2 style="font-family:\'Cinzel\',serif;color:var(--v);font-size:1.35rem">📦 Comenzi</h2>'+
+    '<button class="btn btn-primar btn-mic" onclick="formularComandaNoua()">+ Comandă Manuală</button></div>'+
+    '<div style="overflow-x:auto"><table class="tabel-admin"><thead><tr><th>ID</th><th>Client</th><th>Telefon</th><th>Total</th><th>Status</th><th>Data</th><th>Acțiuni</th></tr></thead><tbody>'+
+    comenziCach.map(o=>
+      '<tr>'+
+      '<td style="font-family:monospace;font-size:.7rem;cursor:pointer" onclick="veziComanda(\''+o.id+'\')">'+o.id.substring(0,10)+'…</td>'+
+      '<td><strong>'+o.name+'</strong></td>'+
+      '<td>'+o.phone+'</td>'+
+      '<td><strong>'+o.total+' Lei</strong></td>'+
+      '<td><select class="select-status" onchange="schimbaStatus(\''+o.id+'\',this.value)">'+
+      ['noua','procesata','livrata','anulata'].map(s=>'<option value="'+s+'"'+(o.status===s?' selected':'')+'>'+s.toUpperCase()+'</option>').join('')+
+      '</select></td>'+
+      '<td>'+formateazaData(o.createdAt)+'</td>'+
+      '<td><div class="butoane-tabel">'+
+      '<button class="btn btn-contur btn-xs" onclick="veziComanda(\''+o.id+'\')">👁️</button>'+
+      '<button class="btn btn-pericol btn-xs" onclick="stergeComanda(\''+o.id+'\')">🗑️</button>'+
+      '</div></td></tr>'
+    ).join('')+'</tbody></table></div>';
+}
+
+async function veziComanda(id){
+  const el=document.getElementById('adminContinut');
+  el.innerHTML='<div class="incarcare"><div class="rotitor"></div></div>';
+  const o=await fbGetUnul('comenzi',id);
+  if(!o)return;
+  el.innerHTML=
+    '<div style="display:flex;align-items:center;gap:13px;margin-bottom:22px;flex-wrap:wrap">'+
+    '<button class="btn btn-contur btn-mic" onclick="incarcaSectiuena(\'comenzi\')">← Înapoi</button>'+
+    '<h2 style="font-family:\'Cinzel\',serif;color:var(--v)">Comandă #'+o.id.substring(0,8)+'</h2>'+
+    '<span class="insigna-status st-'+o.status+'">'+o.status.toUpperCase()+'</span></div>'+
+    '<div class="grid-detalii-comanda">'+
+    '<div class="cutie-info"><h4>Date Client</h4>'+
+    '<div class="rand-info"><span class="eticheta">Nume</span><span class="valoare">'+o.name+'</span></div>'+
+    '<div class="rand-info"><span class="eticheta">Telefon</span><span class="valoare">'+o.phone+'</span></div>'+
+    '<div class="rand-info"><span class="eticheta">Email</span><span class="valoare">'+(o.email||'–')+'</span></div></div>'+
+    '<div class="cutie-info"><h4>Livrare</h4>'+
+    '<div class="rand-info"><span class="eticheta">Adresă</span><span class="valoare">'+o.address+'</span></div>'+
+    '<div class="rand-info"><span class="eticheta">Localitate</span><span class="valoare">'+(o.county||'–')+'</span></div>'+
+    '<div class="rand-info"><span class="eticheta">Plată</span><span class="valoare">'+(o.payment||'ramburs')+'</span></div></div>'+
+    '</div>'+
+    (o.notes?'<div class="cutie-info" style="margin-bottom:15px"><h4>Observații</h4><p style="font-size:.9rem;color:var(--tm)">'+o.notes+'</p></div>':'')+
+    '<div class="cutie-info" style="margin-bottom:18px"><h4>Produse Comandate</h4>'+
+    (o.items||[]).map(it=>'<div class="rand-info"><span class="eticheta">'+it.nume+' × '+it.cantitate+'</span><span class="valoare">'+((it.pret*it.cantitate).toFixed(2))+' Lei</span></div>').join('')+
+    '<div class="rand-info" style="font-weight:700;font-size:1rem;border-top:2px solid var(--vp);padding-top:8px;margin-top:5px">'+
+    '<span class="eticheta">TOTAL</span><span class="valoare" style="color:var(--v)">'+o.total+' Lei</span></div></div>'+
+    '<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:18px">'+
+    '<select id="statusDetaliu" class="select-filter-anunturi">'+
+    ['noua','procesata','livrata','anulata'].map(s=>'<option value="'+s+'"'+(o.status===s?' selected':'')+'>'+s.toUpperCase()+'</option>').join('')+
+    '</select>'+
+    '<button class="btn btn-primar btn-mic" onclick="salveazaStatus(\''+o.id+'\')">Salvează Status</button>'+
+    '<button class="btn btn-pericol btn-mic" onclick="stergeComanda(\''+o.id+'\')">🗑️ Șterge Comanda</button></div>';
+}
+
+async function salveazaStatus(id){
+  const s=document.getElementById('statusDetaliu').value;
+  await fbActualizeaza('comenzi',id,{status:s});
+  afiseazaToast('✅ Status actualizat!');
+}
+async function schimbaStatus(id,status){
+  await fbActualizeaza('comenzi',id,{status});
+  afiseazaToast('✅ Status: '+status.toUpperCase());
+}
+async function stergeComanda(id){
+  if(!confirm('Ești sigur că vrei să ștergi această comandă?'))return;
+  await fbSterge('comenzi',id);
+  afiseazaToast('🗑️ Comandă ștearsă!');
+  incarcaSectiuena('comenzi');
+}
+
+function formularComandaNoua(){
+  const el=document.getElementById('adminContinut');
+  el.innerHTML=
+    '<div style="display:flex;gap:13px;margin-bottom:22px;flex-wrap:wrap;align-items:center">'+
+    '<button class="btn btn-contur btn-mic" onclick="incarcaSectiuena(\'comenzi\')">← Înapoi</button>'+
+    '<h2 style="font-family:\'Cinzel\',serif;color:var(--v)">Adaugă Comandă Manuală</h2></div>'+
+    '<div class="formular-admin">'+
+    '<div class="form-rand"><div class="form-grup"><label>Nume *</label><input id="mnNume" placeholder="Nume client"></div>'+
+    '<div class="form-grup"><label>Telefon *</label><input id="mnTel" placeholder="07XX"></div></div>'+
+    '<div class="form-grup"><label>Email</label><input id="mnEmail" type="email" placeholder="email@ex.ro"></div>'+
+    '<div class="form-grup"><label>Adresă *</label><input id="mnAdresa" placeholder="Strada…"></div>'+
+    '<div class="form-rand"><div class="form-grup"><label>Localitate/Județ</label><input id="mnLocalitate" placeholder="Cluj-Napoca"></div>'+
+    '<div class="form-grup"><label>Plată</label><select id="mnPlata"><option value="ramburs">Ramburs</option><option value="transfer">Transfer</option><option value="card">Card</option></select></div></div>'+
+    '<div class="form-grup"><label>Total (Lei) *</label><input id="mnTotal" type="number" placeholder="0.00"></div>'+
+    '<div class="form-grup"><label>Observații</label><textarea id="mnNote" rows="3"></textarea></div>'+
+    '<button class="btn btn-primar" onclick="trimiteComandaAdmin()">Adaugă Comanda</button></div>';
+}
+async function trimiteComandaAdmin(){
+  const n=document.getElementById('mnNume').value.trim();
+  const t=document.getElementById('mnTel').value.trim();
+  const a=document.getElementById('mnAdresa').value.trim();
+  const total=document.getElementById('mnTotal').value;
+  if(!n||!t||!a||!total){afiseazaToast('⚠️ Câmpuri obligatorii lipsesc!');return;}
+  await fbAdauga('comenzi',{name:n,phone:t,email:document.getElementById('mnEmail').value,address:a,county:document.getElementById('mnLocalitate').value,payment:document.getElementById('mnPlata').value,notes:document.getElementById('mnNote').value,total:parseFloat(total).toFixed(2),items:[],status:'noua'});
+  afiseazaToast('✅ Comandă adăugată!');
+  incarcaSectiuena('comenzi');
+}
+
+/* ── PRODUSE ADMIN ───────────────────────── */
+async function secProduse(el){
+  produseCach=await fbLista('produse');
+  el.innerHTML=
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:13px">'+
+    '<h2 style="font-family:\'Cinzel\',serif;color:var(--v);font-size:1.35rem">🕯️ Produse</h2>'+
+    '<button class="btn btn-primar btn-mic" onclick="formularProdus()">+ Produs Nou</button></div>'+
+    '<div style="overflow-x:auto"><table class="tabel-admin"><thead><tr><th>Img</th><th>Nume</th><th>Categorie</th><th>Preț</th><th>Stoc</th><th>Acțiuni</th></tr></thead><tbody>'+
+    produseCach.map(p=>
+      '<tr>'+
+      '<td>'+(p.images&&p.images[0]?'<img src="'+p.images[0]+'" class="img-mic-tabel" onerror="this.style.display=\'none\'">':'–')+'</td>'+
+      '<td><strong>'+p.name+'</strong>'+(p.bestSeller?'<br><span style="font-size:.68rem;color:var(--g)">⭐ Recomandat</span>':'')+'</td>'+
+      '<td>'+(p.category||'–')+'</td>'+
+      '<td><strong>'+p.price+' Lei</strong></td>'+
+      '<td><span class="stoc-badge '+(p.stock>0?'in-stoc':'epuizat')+'">'+(p.stock||0)+'</span></td>'+
+      '<td><div class="butoane-tabel">'+
+      '<button class="btn btn-contur btn-xs" onclick="formularProdus(\''+p.id+'\')">✏️</button>'+
+      '<button class="btn btn-pericol btn-xs" onclick="stergeProdus(\''+p.id+'\')">🗑️</button>'+
+      '</div></td></tr>'
+    ).join('')+'</tbody></table></div>';
+}
+
+function formularProdus(id){
+  editProdId=id||null;
+  imgSelectateProd=[];
+  const p=id?(produseCach.find(x=>x.id===id)||{}):{};
+  if(p.images)imgSelectateProd=[...p.images];
+  const el=document.getElementById('adminContinut');
+  el.innerHTML=
+    '<div style="display:flex;gap:13px;margin-bottom:22px;flex-wrap:wrap;align-items:center">'+
+    '<button class="btn btn-contur btn-mic" onclick="incarcaSectiuena(\'produse\')">← Înapoi</button>'+
+    '<h2 style="font-family:\'Cinzel\',serif;color:var(--v)">'+(id?'Editează':'Adaugă')+' Produs</h2></div>'+
+    '<div class="formular-admin">'+
+    '<div class="form-rand">'+
+    '<div class="form-grup"><label>Nume Produs *</label><input id="pNume" value="'+(p.name||'')+'" placeholder="ex: Lumânare pascală"></div>'+
+    '<div class="form-grup"><label>Preț (Lei) *</label><input id="pPret" type="number" value="'+(p.price||'')+'" placeholder="0.00"></div></div>'+
+    '<div class="form-rand">'+
+    '<div class="form-grup"><label>Categorie</label><select id="pCategorie">'+
+    '<option value="">– Selectează –</option>'+
+    ['Lumânări','Icoane','Cărți','Cruci','Tămâie','Mir','Alte obiecte'].map(c=>'<option value="'+c+'"'+(p.category===c?' selected':'')+'>'+c+'</option>').join('')+
+    '</select></div>'+
+    '<div class="form-grup"><label>Stoc (buc.)</label><input id="pStoc" type="number" value="'+(p.stock||0)+'"></div></div>'+
+    '<div class="form-grup"><label>Descriere</label><textarea id="pDescriere" rows="4" placeholder="Descriere detaliată…">'+(p.description||'')+'</textarea></div>'+
+    '<div class="form-grup" style="display:flex;align-items:center;gap:9px">'+
+    '<input type="checkbox" id="pBestSeller" '+(p.bestSeller?'checked':'')+'><label for="pBestSeller" style="cursor:pointer">Marchează ca Produs Recomandat (Best Seller)</label></div>'+
+    '<div class="form-grup"><label>Fotografii Produs</label>'+
+    '<div class="zona-upload" onclick="document.getElementById(\'pImgInput\').click()">'+
+    '<div style="font-size:2rem;color:var(--vp);margin-bottom:7px">📷</div>'+
+    '<p style="color:var(--tl);font-size:.86rem">Click pentru a adăuga fotografii (JPG, PNG, WebP)</p>'+
+    '<input type="file" id="pImgInput" multiple accept="image/*" style="display:none" onchange="gestioneazaImgProd(event)"></div>'+
+    '<div id="previzualizariProd" class="previzualizari"></div></div>'+
+    '<button class="btn btn-primar" id="btnSalveazaProd" onclick="salveazaProdus()">'+(id?'Actualizează':'Adaugă')+' Produs</button></div>';
+  redezaPrevProd();
+}
+
+function redezaPrevProd(){
+  const el=document.getElementById('previzualizariProd');
+  if(!el)return;
+  el.innerHTML=imgSelectateProd.map((img,i)=>
+    '<div class="prev-wrap">'+
+    '<img src="'+(typeof img==='string'?img:URL.createObjectURL(img))+'" class="prev-img">'+
+    '<button class="prev-sterge" onclick="scoateImgProd('+i+')">✕</button>'+
+    '</div>'
+  ).join('');
+}
+function gestioneazaImgProd(e){
+  imgSelectateProd=[...imgSelectateProd,...Array.from(e.target.files)];
+  redezaPrevProd();
+}
+function scoateImgProd(i){imgSelectateProd.splice(i,1);redezaPrevProd();}
+
+async function salveazaProdus(){
+  const name=document.getElementById('pNume').value.trim();
+  const price=parseFloat(document.getElementById('pPret').value);
+  if(!name||!price){afiseazaToast('⚠️ Câmpuri obligatorii lipsesc!');return;}
+  const btn=document.getElementById('btnSalveazaProd');
+  btn.disabled=true; btn.textContent='Se salvează…';
+  try{
+    const imgFinal=[];
+    for(const img of imgSelectateProd){
+      if(typeof img==='string'){imgFinal.push(img);continue;}
+      const url=await uploadImagine(img,'produse/'+Date.now()+'_'+img.name);
+      imgFinal.push(url);
+    }
+    const data={name,price,category:document.getElementById('pCategorie').value,stock:parseInt(document.getElementById('pStoc').value)||0,description:document.getElementById('pDescriere').value,bestSeller:document.getElementById('pBestSeller').checked,images:imgFinal};
+    if(editProdId)await fbActualizeaza('produse',editProdId,data);
+    else await fbAdauga('produse',data);
+    produseCach=[];
+    afiseazaToast(editProdId?'✅ Produs actualizat!':'✅ Produs adăugat!');
+    incarcaSectiuena('produse');
+  }catch(e){afiseazaToast('❌ Eroare: '+e.message);btn.disabled=false;btn.textContent='Salvează';}
+}
+async function stergeProdus(id){
+  if(!confirm('Ești sigur că vrei să ștergi acest produs?'))return;
+  await fbSterge('produse',id); produseCach=[];
+  afiseazaToast('🗑️ Produs șters!'); incarcaSectiuena('produse');
+}
+
+/* ── ANUNȚURI ADMIN ──────────────────────── */
+async function secAnunturi(el){
+  anunturiCach=await fbLista('anunturi');
+  el.innerHTML=
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:13px">'+
+    '<h2 style="font-family:\'Cinzel\',serif;color:var(--v);font-size:1.35rem">📋 Anunțuri</h2>'+
+    '<button class="btn btn-primar btn-mic" onclick="formularAnunt()">+ Anunț Nou</button></div>'+
+    '<table class="tabel-admin"><thead><tr><th>Titlu</th><th>Tip</th><th>Data</th><th>Acțiuni</th></tr></thead><tbody>'+
+    anunturiCach.map(a=>
+      '<tr>'+
+      '<td><strong>'+a.title+'</strong></td>'+
+      '<td><span class="insigna '+clasaInsigna(a.type)+'">'+textInsigna(a.type)+'</span></td>'+
+      '<td>'+formateazaData(a.createdAt)+'</td>'+
+      '<td><div class="butoane-tabel">'+
+      '<button class="btn btn-contur btn-xs" onclick="formularAnunt(\''+a.id+'\')">✏️</button>'+
+      '<button class="btn btn-pericol btn-xs" onclick="stergeAnunt(\''+a.id+'\')">🗑️</button>'+
+      '</div></td></tr>'
+    ).join('')+'</tbody></table>';
+}
+
+function formularAnunt(id){
+  editAnnId=id||null;
+  imgSelectataAnn=null;
+  const a=id?(anunturiCach.find(x=>x.id===id)||{}):{};
+  const el=document.getElementById('adminContinut');
+  el.innerHTML=
+    '<div style="display:flex;gap:13px;margin-bottom:22px;flex-wrap:wrap;align-items:center">'+
+    '<button class="btn btn-contur btn-mic" onclick="incarcaSectiuena(\'anunturi\')">← Înapoi</button>'+
+    '<h2 style="font-family:\'Cinzel\',serif;color:var(--v)">'+(id?'Editează':'Adaugă')+' Anunț</h2></div>'+
+    '<div class="formular-admin">'+
+    '<div class="form-grup"><label>Titlu *</label><input id="aTitlu" value="'+(a.title||'')+'" placeholder="Titlul anunțului"></div>'+
+    '<div class="form-grup"><label>Tip Anunț</label><select id="aTip">'+
+    ['urgent','slujba','eveniment','activitate','general'].map(t=>'<option value="'+t+'"'+(a.type===t?' selected':'')+'>'+textInsigna(t)+'</option>').join('')+
+    '</select></div>'+
+    '<div class="form-grup"><label>Conținut *</label><textarea id="aContinut" rows="9" placeholder="Conținutul anunțului…">'+(a.content||'')+'</textarea></div>'+
+    '<div class="form-grup"><label>Fotografie (opțional)</label>'+
+    '<div class="zona-upload" onclick="document.getElementById(\'aImgInput\').click()">'+
+    '<div style="font-size:2rem;color:var(--vp);margin-bottom:7px">🖼️</div>'+
+    '<p style="color:var(--tl);font-size:.86rem">Click pentru a adăuga o fotografie</p>'+
+    '<input type="file" id="aImgInput" accept="image/*" style="display:none" onchange="gestioneazaImgAnn(event)"></div>'+
+    '<div id="prevAnn" style="margin-top:11px">'+
+    (a.image?'<div class="prev-wrap"><img src="'+a.image+'" class="prev-img" style="width:115px;height:86px"><button class="prev-sterge" onclick="stergeImgAnn()">✕</button></div>':'')+
+    '</div></div>'+
+    '<button class="btn btn-primar" id="btnSalveazaAnn" onclick="salveazaAnunt()">'+(id?'Actualizează':'Publică')+' Anunțul</button></div>';
+  if(a.image)imgSelectataAnn=a.image;
+}
+
+function gestioneazaImgAnn(e){
+  const f=e.target.files[0]; if(!f)return;
+  imgSelectataAnn=f;
+  const url=URL.createObjectURL(f);
+  document.getElementById('prevAnn').innerHTML='<div class="prev-wrap"><img src="'+url+'" class="prev-img" style="width:115px;height:86px"><button class="prev-sterge" onclick="stergeImgAnn()">✕</button></div>';
+}
+function stergeImgAnn(){imgSelectataAnn=null;document.getElementById('prevAnn').innerHTML='';}
+
+async function salveazaAnunt(){
+  const title=document.getElementById('aTitlu').value.trim();
+  const content=document.getElementById('aContinut').value.trim();
+  if(!title||!content){afiseazaToast('⚠️ Câmpuri obligatorii lipsesc!');return;}
+  const btn=document.getElementById('btnSalveazaAnn');
+  btn.disabled=true; btn.textContent='Se salvează…';
+  try{
+    let imgUrl='';
+    if(imgSelectataAnn){
+      if(typeof imgSelectataAnn==='string')imgUrl=imgSelectataAnn;
+      else imgUrl=await uploadImagine(imgSelectataAnn,'anunturi/'+Date.now()+'_'+imgSelectataAnn.name);
+    }
+    const data={title,type:document.getElementById('aTip').value,content,image:imgUrl};
+    if(editAnnId)await fbActualizeaza('anunturi',editAnnId,data);
+    else await fbAdauga('anunturi',data);
+    anunturiCach=[];
+    afiseazaToast(editAnnId?'✅ Anunț actualizat!':'✅ Anunț publicat!');
+    incarcaSectiuena('anunturi');
+  }catch(e){afiseazaToast('❌ Eroare: '+e.message);btn.disabled=false;btn.textContent='Salvează';}
+}
+async function stergeAnunt(id){
+  if(!confirm('Ești sigur că vrei să ștergi acest anunț?'))return;
+  await fbSterge('anunturi',id); anunturiCach=[];
+  afiseazaToast('🗑️ Anunț șters!'); incarcaSectiuena('anunturi');
+}
+
+/* ── AUTH LISTENER ───────────────────────── */
+auth.onAuthStateChanged(user=>{
+  adminCurent=user;
+  if(user&&document.getElementById('pagina-admin').classList.contains('activa')){
+    arataPanou(); incarcaSectiuena('dashboard');
+  }
+});
+
+/* ── INIT ────────────────────────────────── */
+document.addEventListener('DOMContentLoaded',function(){
+  porniTimer();
+  actualizeazaBadge();
+  mergi('acasa');
+});
+</script>
 </body>
 </html>
+
