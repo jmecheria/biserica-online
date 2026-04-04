@@ -470,6 +470,114 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
 .img-mic-tabel{width:50px;height:42px;object-fit:cover;border-radius:5px;background:var(--cr)}
 .butoane-tabel{display:flex;gap:5px;flex-wrap:wrap}
 
+/* ── LIGHTBOX ────────────────────────────── */
+#lightbox{
+  position:fixed;inset:0;background:rgba(0,0,0,.93);
+  z-index:9000;display:none;align-items:center;justify-content:center;
+  flex-direction:column;gap:12px;padding:16px;
+}
+#lightbox.viz{display:flex}
+#lightbox-img{
+  max-width:92vw;max-height:80vh;
+  object-fit:contain;border-radius:8px;
+  box-shadow:0 0 60px rgba(0,0,0,.8);
+}
+#lightbox-close{
+  position:absolute;top:16px;right:20px;
+  background:none;border:none;color:#fff;
+  font-size:2rem;cursor:pointer;opacity:.8;
+  transition:opacity .2s;
+}
+#lightbox-close:hover{opacity:1}
+#lightbox-nav{display:flex;gap:16px;align-items:center}
+.lb-btn{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+  color:#fff;padding:8px 20px;border-radius:6px;font-size:1.2rem;cursor:pointer;
+  transition:.2s;
+}
+.lb-btn:hover{background:rgba(255,255,255,.25)}
+#lightbox-counter{color:rgba(255,255,255,.7);font-family:'Cinzel',serif;font-size:.8rem}
+#lightbox-thumbs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:600px}
+.lb-thumb{
+  width:60px;height:48px;object-fit:cover;border-radius:5px;
+  cursor:pointer;border:2px solid transparent;opacity:.6;transition:.2s;
+}
+.lb-thumb.activ{border-color:var(--g);opacity:1}
+
+/* ── MODAL PRODUS ÎMBUNĂTĂȚIT ───────────── */
+.modal-img-principal{
+  width:100%;height:320px;object-fit:contain;
+  border-radius:9px;margin-bottom:12px;display:none;
+  background:var(--cr);cursor:zoom-in;
+}
+.modal-thumb{
+  width:70px;height:56px;object-fit:cover;
+  border-radius:6px;cursor:pointer;
+  border:2px solid transparent;flex-shrink:0;transition:.2s;
+}
+.modal-thumb:hover{border-color:var(--vp)}
+.modal-thumb.activ{border-color:var(--g)}
+.zoom-hint{font-size:.72rem;color:var(--tl);font-family:'Lato',sans-serif;margin-bottom:12px;display:none}
+
+/* ── IMPORT SECTIUNE ADMIN ───────────────── */
+.import-box{
+  background:var(--w);border-radius:11px;padding:26px;
+  box-shadow:0 3px 14px var(--sh);margin-bottom:20px;
+  border-left:4px solid var(--g);
+}
+.import-box h4{font-family:'Cinzel',serif;color:var(--v);margin-bottom:6px;font-size:.95rem}
+.import-box p{font-size:.86rem;color:var(--tl);margin-bottom:14px;line-height:1.6}
+.import-result{
+  margin-top:14px;padding:12px 16px;border-radius:7px;
+  font-size:.84rem;font-family:'Lato',sans-serif;display:none;
+}
+.import-result.ok{background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7}
+.import-result.err{background:#FFEBEE;color:#C62828;border:1px solid #EF9A9A}
+
+/* ── CALENDAR CARD ──────────────────────── */
+.cal-card{
+  background:var(--w);border-radius:11px;
+  box-shadow:0 3px 14px var(--sh);border:1px solid var(--crd);
+  padding:18px 22px;margin-bottom:10px;
+}
+.cal-data{
+  font-family:'Cinzel',serif;font-size:.82rem;
+  color:var(--g);margin-bottom:5px;
+}
+.cal-titlu{
+  font-family:'Cinzel',serif;font-size:1rem;
+  color:var(--v);margin-bottom:5px;line-height:1.4;
+}
+.cal-detaliu{
+  font-size:.88rem;color:var(--tm);line-height:1.55;
+}
+.cal-post{
+  display:inline-block;padding:2px 8px;border-radius:10px;
+  font-size:.68rem;font-family:'Lato',sans-serif;font-weight:700;
+  background:#FFEBEE;color:#C62828;margin-top:5px;margin-right:4px;
+}
+.cal-dezlegare{
+  display:inline-block;padding:2px 8px;border-radius:10px;
+  font-size:.68rem;font-family:'Lato',sans-serif;font-weight:700;
+  background:#E8F5E9;color:#2E7D32;margin-top:5px;margin-right:4px;
+}
+.cal-praznic{
+  display:inline-block;padding:2px 8px;border-radius:10px;
+  font-size:.68rem;font-family:'Lato',sans-serif;font-weight:700;
+  background:rgba(201,168,76,.15);color:var(--v);margin-top:5px;margin-right:4px;
+}
+.sfant-card-nou{
+  background:linear-gradient(135deg,var(--vd),var(--v));
+  color:var(--w);border-radius:14px;padding:26px;
+  position:relative;overflow:hidden;
+  box-shadow:0 6px 26px var(--shs);
+}
+.sfant-card-nou::before{content:'✝';position:absolute;font-size:180px;opacity:.03;top:-25px;right:-15px;font-family:Georgia,serif;color:#fff}
+.sfant-data-azi{font-family:'Cinzel',serif;font-size:.78rem;color:var(--g);margin-bottom:4px;letter-spacing:1px}
+.sfant-titlu-azi{font-family:'Cinzel',serif;font-size:1.15rem;color:var(--gl);margin-bottom:8px;line-height:1.4}
+.sfant-desc-azi{font-style:italic;color:var(--crd);line-height:1.72;font-size:.95rem}
+.sfant-badges{margin-top:10px;display:flex;flex-wrap:wrap;gap:4px}
+
 /* ── RESPONSIVE ────────────────────────────── */
 @media(max-width:900px){
   nav{padding:0 16px}
@@ -798,6 +906,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
       <button class="nav-admin" id="nav-comenzi" onclick="incarcaSectiuena('comenzi')">📦 Comenzi</button>
       <button class="nav-admin" id="nav-produse" onclick="incarcaSectiuena('produse')">🕯️ Produse</button>
       <button class="nav-admin" id="nav-anunturi" onclick="incarcaSectiuena('anunturi')">📋 Anunțuri</button>
+      <button class="nav-admin" id="nav-import" onclick="incarcaSectiuena('import')">📥 Import Date</button>
       <div class="admin-sidebar-jos">
         <button class="btn btn-pericol btn-mic" style="width:100%;justify-content:center" onclick="faLogout()">🚪 Deconectare</button>
       </div>
@@ -856,6 +965,18 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
       </div>
     </div>
   </div>
+</div>
+
+<!-- LIGHTBOX GALERIE FULLSCREEN -->
+<div id="lightbox" onclick="if(event.target===this)inchideLightbox()">
+  <button id="lightbox-close" onclick="inchideLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="">
+  <div id="lightbox-nav">
+    <button class="lb-btn" onclick="lbNav(-1)">&#8592;</button>
+    <span id="lightbox-counter">1 / 1</span>
+    <button class="lb-btn" onclick="lbNav(1)">&#8594;</button>
+  </div>
+  <div id="lightbox-thumbs"></div>
 </div>
 
 <!-- TOAST -->
@@ -1074,62 +1195,800 @@ function porniTimer(){
   tick(); setInterval(tick,1000);
 }
 
-/* ── DATE SFINTI ─────────────────────────── */
-const SFINTI={
-  '0101':['Tăierea Împrejur a Domnului','Praznic împărătesc. Pruncul Iisus primește numele Său sfânt. Ziua Sfântului Vasile cel Mare.'],
-  '0106':['Botezul Domnului – Boboteaza','Arătarea Sfintei Treimi la Iordan. Apele se sfințesc prin coborârea Duhului Sfânt.'],
-  '0117':['Sfântul Antonie cel Mare','Părintele monahismului creștin, rugătorul neobosit al deșertului egiptean.'],
-  '0120':['Sfântul Eutimie cel Mare','Cuviosul luminătorul monahilor din Palestina, trăitor în pustnicie 90 de ani.'],
-  '0124':['Sfânta Xenia din Petersburg','Nebuna pentru Hristos, ocrotitoarea celor în suferință și a celor singuri.'],
-  '0130':['Cei Trei Ierarhi','Vasile cel Mare, Grigorie Teologul și Ioan Gură de Aur – patronii școlilor.'],
-  '0201':['Sfânta Muceniță Evdochia','Cuvioasă și muceniță, pomenire în prima zi din primăvară.'],
-  '0202':['Întâmpinarea Domnului','Prăznuirea aducerii pruncului Iisus la Templu și a dreptului Simeon.'],
-  '0209':['Sfântul Nichifor Mărturisitorul','Patriarh al Constantinopolului, apărătorul sfintelor icoane.'],
-  '0210':['Sfântul Haralambie','Mucenic ocrotitor împotriva ciumei și al tuturor bolilor.'],
-  '0214':['Sfântul Auxentie','Cuviosul Auxentie, sihastrul de la Muntele Oxia.'],
-  '0224':['Aflarea Capului Sf. Ioan Botezătorul','Prima și a doua aflare a capului Înaintemergătorului Domnului.'],
-  '0301':['Sfânta Muceniță Evdochia','Pomenire în prima zi din luna primăverii. Ziua Mărțișorului.'],
-  '0309':['Cei 40 de Mucenici din Sevastia','Soldați romani martirizați în lacul înghețat pentru credința creștină.'],
-  '0325':['Buna Vestire','Arhanghelul Gavriil îi vestește Fecioarei Maria nașterea Fiului lui Dumnezeu.'],
-  '0401':['Sfânta Maria Egipteanca','Cuvioasă, model suprem de pocăință și transformare duhovnicească.'],
-  '0423':['Sfântul Gheorghe Purtătorul de Biruință','Marele Mucenic, apărătorul celor nedreptățiți. Hramul multor biserici.'],
-  '0501':['Sfântul Proroc Ieremia','Prorocul cel plângăreț, autorul Cărții Plângerilor.'],
-  '0521':['Sfinții Împărați Constantin și Elena','Cei care au dat libertate Bisericii și au găsit Sfânta Cruce.'],
-  '0529':['Sfânta Muceniță Teodosia','Ocrotitoarea credincioșilor din Constantinopol.'],
-  '0615':['Sfântul Proroc Amos','Prorocul dreptății sociale, trimis la Israel.'],
-  '0624':['Nașterea Sf. Ioan Botezătorul','Înaintemergătorul Domnului, cel mai mare între prooroci.'],
-  '0629':['Sfinții Apostoli Petru și Pavel','Stâlpii Bisericii lui Hristos. Zi de prăznuire mare.'],
-  '0720':['Sfântul Proroc Ilie Tesviteanul','Cel luat la cer în car de foc. Apărătorul lui Dumnezeu Cel Adevărat.'],
-  '0806':['Schimbarea la Față a Domnului','Iisus se arată în slavă pe Muntele Tabor în fața ucenicilor Săi.'],
-  '0815':['Adormirea Maicii Domnului','Cel mai mare praznic al Maicii Domnului. Post și priveghere.'],
-  '0908':['Nașterea Maicii Domnului','Praznic împărătesc, bucuria lumii întregi și a cerurilor.'],
-  '0914':['Înălțarea Sfintei Cruci','Ziua Crucii lui Hristos. Post negru în semn de pocăință și cinstire.'],
-  '1014':['Sfânta Parascheva','Ocrotitoarea Moldovei, ale cărei moaște sfinte se află la Iași.'],
-  '1026':['Sfântul Dimitrie Izvorâtorul de Mir','Ocrotitorul Tesalonicului. Mir vindecător curge de la moaștele sale.'],
-  '1108':['Soborul Arh. Mihail și Gavriil','Prăznuirea tuturor Puterilor Cerești fără de trup.'],
-  '1114':['Sfântul Apostol Filip','Unul din cei Doisprezece Apostoli ai Mântuitorului.'],
-  '1130':['Sfântul Apostol Andrei','Cel Întâi Chemat, Ocrotitorul României.'],
-  '1206':['Sfântul Nicolae Arhiepiscopul Mirelor','Făcătorul de Minuni, cel mai iubit sfânt al poporului român.'],
-  '1225':['Nașterea Domnului – Crăciunul','Praznicul cel Mare al Nașterii lui Hristos. Slavă întru cei de Sus!'],
-  '1227':['Sf. Apostol Ioan Teologul','Ucenicul iubit al Mântuitorului, autorul celei de-a patra Evanghelii.'],
+/* ── CALENDAR ORTODOX COMPLET ───────────────
+   Format: 'LLZZ': { titlu, descriere, post?, dezlegare?, praznic?, extra[] }
+   Acoperă toate zilele anului. Zilele fără sfânt marcat afișează sfântul perioadei.
+─────────────────────────────────────────── */
+const CAL = {
+  '0101':{t:'Tăierea Împrejur a Domnului; Sf. Vasile cel Mare',d:'Praznic împărătesc. Pruncul Iisus primește numele Său sfânt. Ziua marelui ierarh Vasile.',praznic:true},
+  '0102':{t:'Sf. Silvestru, ep. Romei; Sf. Serafim de Sarov',d:'Sfântul Silvestru a condus Biserica Romei 21 de ani. Sfântul Serafim, stâlpul rugăciunii ortodoxe ruse.'},
+  '0103':{t:'Sf. Proroc Maleahi; Sf. Mc. Gordiu',d:'Ultimul proroc al Vechiului Testament. Sfântul Gordiu, soldat roman martirizat pentru credință.'},
+  '0104':{t:'Sf. 70 de Apostoli; Sf. Cuv. Teoctist',d:'Pomenirea celor 70 de ucenici trimiși de Mântuitorul. Sfântul Teoctist, sihastrul din Palestina.'},
+  '0105':{t:'Sf. Mc. Teopempt și Teonas; Sf. Cuv. Sinclitichia',d:'Mucenicii Teopempt și Teonas. Cuvioasa Sinclitichia, mama duhovnicească a multor monahii.'},
+  '0106':{t:'Botezul Domnului – Boboteaza; Sfințirea Apelor',d:'Arătarea Sfintei Treimi la Iordan. Apele lumii se sfințesc prin coborârea Duhului Sfânt.',praznic:true,dezlegare:'Dezlegare la toate'},
+  '0107':{t:'Soborul Sf. Ioan Botezătorul',d:'A doua zi după Bobotează cinstim pe Înaintemergătorul Domnului care L-a botezat pe Iisus.',dezlegare:'Dezlegare la pește'},
+  '0108':{t:'Sf. Cuv. Gheorghe Hozevitul; Sf. Mc. Domnica',d:'Sfântul Gheorghe, sihastrul Mânăstirii Hozeva din Palestina. Cuvioasa Domnica.'},
+  '0109':{t:'Sf. Mc. Polieuct; Sf. Ier. Filip, mitrop. Moscovei',d:'Sfântul Polieuct, ofițer roman martir. Sfântul Filip, mitropolitul Moscovei.'},
+  '0110':{t:'Sf. Grigorie, ep. Nissei; Sf. Dometian, ep. Melitinei',d:'Sfântul Grigorie de Nyssa, frate al lui Vasile cel Mare, mare teolog capadocian.'},
+  '0111':{t:'Sf. Cuv. Teodosie cel Mare; Sf. Mc. Vitalie',d:'Sfântul Teodosie, întemeietorul vieții de obște în monahism, trăitor în Palestina.'},
+  '0112':{t:'Sf. Mc. Tatiana; Sf. Ier. Savin, ep. Katanskii',d:'Sfânta Tatiana, diaconiță martirizată la Roma. Patrona studenților în tradiția rusă.'},
+  '0113':{t:'Sf. Mc. Ermil și Stratonic; Sf. Cuv. Iacob de Nisibe',d:'Mucenicii Ermil și Stratonic, martirizați pe malul Dunării.'},
+  '0114':{t:'Sf. Cuv. Mc. din Sinai și Rait; Sf. Ier. Sava, arhiep.',d:'Pomenirea monahilor uciși de barbari la Muntele Sinai și Rait.'},
+  '0115':{t:'Sf. Cuv. Pavel Tebeul; Sf. Ioan Colibașul',d:'Sfântul Pavel din Teba, primul sihastru creștin, trăitor 113 ani în pustie.'},
+  '0116':{t:'Sf. Cuv. Mc. Romil, Rașka; Pomenirea lanțurilor Sf. Ap. Petru',d:'Pomenirea lanțurilor Sfântului Apostol Petru, păstrate la Roma.'},
+  '0117':{t:'Sf. Antonie cel Mare',d:'Părintele monahismului creștin, rugătorul neobosit al deșertului egiptean, trăitor 105 ani.'},
+  '0118':{t:'Sf. Ier. Atanasie și Chiril, patr. Alexandriei',d:'Cei doi mari apărători ai Ortodoxiei împotriva arianismului.'},
+  '0119':{t:'Sf. Cuv. Macarie Egipteanul și Macarie Alexandrinul',d:'Cei doi mari Macarie, contemporani și prieteni, coloane ale vieții monahale din Egipt.'},
+  '0120':{t:'Sf. Eutimie cel Mare; Sf. Cuv. Teoctist',d:'Cuviosul Eutimie, luminătorul monahilor din Palestina, trăitor în pustnicie 90 de ani.'},
+  '0121':{t:'Sf. Cuv. Maxim Mărturisitorul; Sf. Mc. Neofitu',d:'Sfântul Maxim, mare teolog, apărătorul dreptei credințe, torturat și exilat.'},
+  '0122':{t:'Sf. Ap. Timotei; Sf. Cuv. Mc. Anastasie Persul',d:'Sfântul Timotei, ucenic al Apostolului Pavel, primul episcop al Efesului.'},
+  '0123':{t:'Sf. Sfințit Mc. Clement al Ancirei; Sf. Mc. Agatanghel',d:'Sfântul Clement, episcop martir din Ancira, a suferit mulți ani de temniță.'},
+  '0124':{t:'Sf. Xenia din Petersburg; Sf. Cuv. Pahomie',d:'Nebuna pentru Hristos, ocrotitoarea celor în suferință și a celor singuri din Petersburg.'},
+  '0125':{t:'Sf. Grigorie Teologul, arhiep. Constantinopolului',d:'Unul din cei Trei Ierarhi, poet și teolog, autorul multor imne și tratate.'},
+  '0126':{t:'Sf. Cuv. Xenofont și Maria; Sf. Ier. Iosif Studitul',d:'Sfântul Xenofont, familia sa și ucenicii lui, monahi la Ierusalim.'},
+  '0127':{t:'Aducerea moaștelor Sf. Ioan Gură de Aur',d:'Readucerea sfintelor moaște ale Sfântului Ioan de la Comana la Constantinopol.'},
+  '0128':{t:'Sf. Cuv. Efrem Sirul; Sf. Ier. Isac, ep. Ninivei',d:'Sfântul Efrem, diaconul Soarelui, autorul unor rugăciuni folosite și astăzi în post.'},
+  '0129':{t:'Aducerea moaștelor Sf. Sfințit Mc. Ignatie Teoforul',d:'Sfântul Ignatie, episcopul Antiohiei, ucis de fiare în arena Romei.'},
+  '0130':{t:'Cei Trei Ierarhi: Vasile, Grigorie, Ioan',d:'Vasile cel Mare, Grigorie Teologul și Ioan Gură de Aur – patronii școlilor și ai culturii creștine.',praznic:true,dezlegare:'Dezlegare la pește'},
+  '0131':{t:'Sf. Cuv. Mc. Chir și Ioan; Sf. Mc. Tryphena și Tryphosa',d:'Sfinții Chir și Ioan, medici fără de arginți, martirizați în Egipt.'},
+  '0201':{t:'Sf. Sfințit Mc. Trifon; Întâmpinarea Domnului (vecernia)',d:'Sfântul Trifon din Frigia, ocrotitorul viei și al livezilor.'},
+  '0202':{t:'Întâmpinarea Domnului; Sf. Simeon și Ana Proroceasa',d:'Praznic împărătesc – aducerea pruncului Iisus la Templu și primirea Sa de Simeon.',praznic:true,dezlegare:'Dezlegare la pește'},
+  '0203':{t:'Sf. Sfințit Mc. Vlasie, ep. Sevastiei; Sf. Cuv. Simeon',d:'Sfântul Vlasie, ocrotitorul bolilor de gât. Sfântul Simeon, Stâlpnicul cel Tânăr.'},
+  '0204':{t:'Sf. Cuv. Isidor Pelusiotul; Sf. Mc. Fileas',d:'Sfântul Isidor, autorul a peste 2000 de scrisori teologice păstrate până azi.'},
+  '0205':{t:'Sf. Mc. Agata; Sf. Cuv. Polieuct și Teodosiu',d:'Sfânta Agata, fecioară martirizată în Sicilia pentru refuzul unui guvernator.'},
+  '0206':{t:'Sf. Mc. Vucol, ep. Smirnei; Sf. Cuv. Varsanufie',d:'Sfântul Vucol, ucenic al Sfântului Apostol Ioan Teologul, episcop al Smirnei.'},
+  '0207':{t:'Sf. Mc. Partenie, ep. Lampsacului; Sf. 1003 Mc. din Nicomidia',d:'Sfântul Partenie, episcop cu har de vindecare, martirizat sub Deciu.'},
+  '0208':{t:'Sf. Mare Mc. Teodor Stratilat; Sf. Mc. Zaheu',d:'Sfântul Teodor, general roman, martir pentru credință. Ocrotitor al oștirii.'},
+  '0209':{t:'Sf. Mc. Nichifor din Antiohia; Sf. Cuv. Pancratie',d:'Sfântul Nichifor, cetățean simplu din Antiohia, martir pentru iertarea dușmanului.'},
+  '0210':{t:'Sf. Sfințit Mc. Haralambie; Sf. Mc. Porfiriu',d:'Sfântul Haralambie, preot de 113 ani, mucenic, ocrotitor împotriva bolilor și ciumei.'},
+  '0211':{t:'Sf. Mc. Vlasie, ep. Sevastiei; Sf. Mc. Teodora',d:'Sfânta Teodora, împărăteasa care a restabilit cultul sfintelor icoane.'},
+  '0212':{t:'Sf. Ier. Meletie, arhiep. Antiohiei; Sf. Cuv. Antonie al Pecerskăi',d:'Sfântul Meletie, episcop blând și iubit, prezident la Sinodul II Ecumenic.'},
+  '0213':{t:'Sf. Mc. Acvila și Priscila; Sf. Cuv. Martinian',d:'Sfinții Acvila și Priscila, prieteni și colaboratori ai Apostolului Pavel.'},
+  '0214':{t:'Sf. Auxentie, Sf. Chiril, Sf. Maron',d:'Sfântul Auxentie, sihastrul Muntelui Oxia. Sfântul Chiril, apostolul slavilor.'},
+  '0215':{t:'Sf. Ap. Onisim; Sf. Cuv. Pahomie',d:'Sfântul Onisim, sclavul care a devenit ucenic al Apostolului Pavel și episcop.'},
+  '0216':{t:'Sf. Mc. Pamfil și cei împreună cu el; Sf. Cuv. Flavian',d:'Sfântul Pamfil, preot erudit din Cezareea, martir sub Maximian.'},
+  '0217':{t:'Sf. Mare Mc. Teodor Tiron',d:'Sfântul Teodor Tiron, soldat roman, martir. În prima săptămână din Post – coliva sa comemorată.',praznic:false},
+  '0218':{t:'Sf. Cuv. Leon, ep. Cataniei; Sf. Mc. Agapit',d:'Sfântul Leon, episcopul Cataniei, cu har de minuni și vindecare.'},
+  '0219':{t:'Sf. Ap. Arhip și Filimon; Sf. Mc. Maxim',d:'Sfântul Filimon, căruia Apostolul Pavel i-a scris Epistola cu același nume.'},
+  '0220':{t:'Sf. Cuv. Leon din Catania; Sf. Mc. Sadoc',d:'Pomenirea Sfinților mucenici din Persia, uciși sub regele Sapur.'},
+  '0221':{t:'Sf. Cuv. Timotei din Simbole; Sf. Ier. Eustatie',d:'Sfântul Eustatie, Arhiepiscopul Antiohiei, apărătorul Ortodoxiei.'},
+  '0222':{t:'Găsirea moaștelor Sf. Mc. din Evghenia',d:'Pomenirea aflării moaștelor Sfinților mucenici.'},
+  '0223':{t:'Sf. Sfințit Mc. Policarp, ep. Smirnei',d:'Sfântul Policarp, episcopul Smirnei, ucenic al Apostolului Ioan, martir la 86 de ani.'},
+  '0224':{t:'Prima și a doua Aflare a Capului Sf. Ioan Botezătorul',d:'Praznic închinat cinstitului cap al Înaintemergătorului, aflat de două ori în chip minunat.',praznic:true},
+  '0225':{t:'Sf. Tarasie, patr. Constantinopolului; Sf. Mc. Righin',d:'Sfântul Tarasie, patriarh ce a prezidat Sinodul VII Ecumenic, restabilind cultul icoanelor.'},
+  '0226':{t:'Sf. Porfiriu, ep. Gazei; Sf. Ier. Fotie, patr. Constantinopolului',d:'Sfântul Porfiriu, episcop care a distrus templele idolești din Gaza.'},
+  '0227':{t:'Sf. Cuv. Procopie Decapolitul; Sf. Mc. Iulian și Cronion',d:'Cuviosul Procopie, apărător al icoanelor, torturat și exilat.'},
+  '0228':{t:'Sf. Cuv. Vasile Mărturisitorul; Sf. Mc. Nestorie',d:'Sfântul Vasile, apărătorul cinstitorii icoanelor, companionul Sfântului Procopie.'},
+  '0229':{t:'Sf. Cuv. Casian Romanul; Sf. Mc. Teofil',d:'Sfântul Casian, fondatorul monahismului occidental, autorul Convorbirilor duhovnicești.'},
+  '0301':{t:'Sf. Cuv. Mc. Eudochia; Sf. Mc. Antonina',d:'Sfânta Eudochia, femeie pocăită devenită monahie și martir.'},
+  '0302':{t:'Sf. Sfințit Mc. Teodot, ep. Chireniiei; Sf. Mc. Isihie',d:'Sfântul Teodot, episcop martir din Cipru.'},
+  '0303':{t:'Sf. Mc. Eutropie, Cleonic și Vasilisc',d:'Sfinții Eutropie, Cleonic și Vasilisc, soldați creștini martiri în Pont.'},
+  '0304':{t:'Sf. Cuv. Gherasim de la Iordan; Sf. Mc. Pavel și Iuliana',d:'Sfântul Gherasim, sihastrul Iordanului, prietenul leilor pustiei.'},
+  '0305':{t:'Sf. Mc. Conon din Isaurie; Sf. Cuv. Isihie',d:'Sfântul Conon, grădinar simplu din Isaurie, martir de tânăr.'},
+  '0306':{t:'Sf. 42 de Mc. din Amoreea; Sf. Cuv. Arcadie',d:'Cei 42 de soldați creștini capturați de arabi și martirizați după 7 ani de captivitate.'},
+  '0307':{t:'Sf. Sfințit Mc. Efrem, ep. Chersonului; Sf. Mc. Vasile',d:'Sfântul Efrem și ceilalți episcopi mucenici ai Crimeei, martiri ai primilor secole.'},
+  '0308':{t:'Sf. Ap. Erma, Agav, Ruf; Sf. Cuv. Teofil',d:'Sfinții Apostoli din cei 70, colaboratori ai Apostolului Pavel.'},
+  '0309':{t:'Sf. 40 de Mc. din Sevastia',d:'Patruzeci de soldați romani creștini, martirizați prin înghețare în lacul Sevastiei în iarna anului 320.',praznic:true},
+  '0310':{t:'Sf. Mc. Codrat și cei împreună cu el; Sf. Mc. Anastasie',d:'Sfântul Codrat și cei șase tovarăși ai săi, martiri în Corint.'},
+  '0311':{t:'Sf. Sfințit Mc. Pion și cei cu el; Sf. Cuv. Sofronie',d:'Sfântul Pion, presbiter din Smirna, martir sub Deciu.'},
+  '0312':{t:'Sf. Sfințit Mc. Grigorie Dialogul, ep. Romei',d:'Sfântul Grigorie cel Mare, papă al Romei, autor al multor cărți liturgice.'},
+  '0313':{t:'Sf. Mc. Afrodisie și ceilalți; Sf. Cuv. Nichifor',d:'Pomenirea sfinților mucenici din Egipt.'},
+  '0314':{t:'Sf. Cuv. Benedict de Nursia; Sf. Mc. Alexander',d:'Sfântul Benedict, întemeietorul monahismului occidental, autorul Regulii benedictine.'},
+  '0315':{t:'Sf. Ap. Aristovul; Sf. Mc. Agapia, Irina, Hionia',d:'Sfântul Aristovul, rudenie a Apostolului Pavel, primul episcop al Britaniei.'},
+  '0316':{t:'Sf. Mc. Savin și Papie; Sf. Cuv. Hristodul',d:'Sfântul Savin, martir în Egipt în timpul persecuției lui Dioclețian.'},
+  '0317':{t:'Sf. Cuv. Alexie, omul lui Dumnezeu; Sf. Mc. Marin',d:'Sfântul Alexie, fiul unui senator roman, trăit în sărăcie și anonimitate pentru Hristos.'},
+  '0318':{t:'Sf. Chiril, ep. Ierusalimului; Sf. Cuv. Anin',d:'Sfântul Chiril, episcopul Ierusalimului, autorul catehezelor baptismale.'},
+  '0319':{t:'Sf. Mc. Hrisafie; Sf. Ap. Aristovul',d:'Pomenirea sfinților mucenici ai lui Hristos.'},
+  '0320':{t:'Sf. Cuv. Mc. din Mânăstirea Sf. Sava; Sf. Mc. Fotina',d:'Pomenirea monahilor uciși de perși la Mânăstirea Sfântului Sava din Palestina.'},
+  '0321':{t:'Sf. Cuv. Iacob Mărturisitorul; Sf. Mc. Toma',d:'Sfântul Iacob, monah mărturisitor, torturat pentru apărarea sfintelor icoane.'},
+  '0322':{t:'Sf. Sfințit Mc. Vasile, presb. Ancirei; Sf. Mc. Drosida',d:'Sfântul Vasile, preot din Ancira, martir pentru Ortodoxie.'},
+  '0323':{t:'Sf. Mc. Nicheta Goticul; Sf. Cuv. Nichifor',d:'Sfântul Nicheta, got creștin, martir pentru credință printre goții din nord.'},
+  '0324':{t:'Sf. Cuv. Zaharia și Elizabeth; Sf. Mc. Artemon',d:'Sfinții Zaharia și Elisabeta, părinții Sfântului Ioan Botezătorul.'},
+  '0325':{t:'Buna Vestire a Preasfintei Născătoare de Dumnezeu',d:'Praznic împărătesc – Arhanghelul Gavriil îi vestește Fecioarei Maria că va naște pe Fiul lui Dumnezeu.',praznic:true,dezlegare:'Dezlegare la pește'},
+  '0326':{t:'Soborul Sf. Arhanghel Gavriil',d:'A doua zi după Buna Vestire cinstim pe Arhanghelul Gavriil, vestitorul Întrupării.'},
+  '0327':{t:'Sf. Mc. Matroana din Tesalonic; Sf. Mc. Filetus',d:'Sfânta Matrona, slujnică creștinată de stăpâna sa iudee, martir.'},
+  '0328':{t:'Sf. Cuv. Hilarion Nou; Sf. Mc. Priscila',d:'Sfântul Hilarion, abate din Pelekete, mucenic în vremea iconoclasmului.'},
+  '0329':{t:'Sf. Mc. Marc, ep. Aretuselor; Sf. Mc. Ionas',d:'Sfântul Marc, episcop martir din Arabia.'},
+  '0330':{t:'Sf. Ap. Sopatru, Tertiu, Erast; Sf. Mc. Acachie',d:'Sfinții Apostoli din cei 70, colaboratori ai Apostolului Pavel.'},
+  '0331':{t:'Sf. Sfințit Mc. Ipatie, ep. Gangrei; Sf. Ap. Ermei',d:'Sfântul Ipatie, episcop martir în Gangra Paflagoniei.'},
+  '0401':{t:'Sf. Cuv. Maria Egipteanca; Sf. Mc. Gherontie',d:'Sfânta Maria Egipteanca, modelul suprem al pocăinței, 17 ani de desfrâu și 47 de pustnicie.'},
+  '0402':{t:'Sf. Cuv. Tit Taumaturghul; Sf. Mc. Amfian și Edesie',d:'Sfântul Tit, tămăduitorul de minuni. Sfinții Amfian și Edesie, martiri la Cezareea.'},
+  '0403':{t:'Sf. Cuv. Nichita Mărturisitorul; Sf. Mc. Elpidofor',d:'Sfântul Nichita, apărătorul sfintelor icoane, torturat și exilat.'},
+  '0404':{t:'Sf. Cuv. Iosif cel Nou de la Partos; Sf. Mc. Terentie',d:'Sfântul Iosif de la Partos, mitropolitul Timișoarei, făcător de minuni și vindecător.'},
+  '0405':{t:'Sf. Mc. Teodul și Agathopod; Sf. Cuv. Marcu',d:'Sfântul Teodul, citeț martir în Tesalonic, și diaconul Agathopod.'},
+  '0406':{t:'Sf. Sfințit Mc. Eutihie, patr. Constantinopolului; Sf. Mc. Platoni',d:'Sfântul Eutihie, patriarh exilat de împăratul Iustinian.'},
+  '0407':{t:'Sf. Sfințit Mc. Calliopodiu; Sf. Cuv. Gheorghe',d:'Pomenirea sfinților martiri ai lui Hristos.'},
+  '0408':{t:'Sf. Ap. Irodion, Agav, Ruf, Flegon, Asincrit, Ermis',d:'Sfinți Apostoli din cei 70, menționați de Apostolul Pavel în Epistola către Romani.'},
+  '0409':{t:'Sf. Sfințit Mc. Eupsihie din Cezareea; Sf. Cuv. Vadim',d:'Sfântul Eupsihie, ofițer creștin care a dărâmat un templu păgân și a fost martirizat.'},
+  '0410':{t:'Sf. Mc. Terentie, Pompei, African, Maxim, Zotoc și Dima',d:'Șase soldați creștini martiri la Cartagina în Africa.'},
+  '0411':{t:'Sf. Sfințit Mc. Antipa, ep. Pergamului; Sf. Ier. Calinic de la Cernica',d:'Sfântul Antipa, ucenicul Apostolului Ioan, episcop martir la Pergam. Sfântul Calinic de la Cernica.'},
+  '0412':{t:'Sf. Cuv. Vasile Mărturisitorul; Sf. Mc. Menas',d:'Sfântul Vasile, apărătorul icoanelor.'},
+  '0413':{t:'Sf. Sfințit Mc. Arteamon, ep. Seleuciei; Sf. Cuv. Martinos',d:'Sfântul Arteamon, episcop martir, binecuvântat de Apostolul Pavel.'},
+  '0414':{t:'Sf. Sfințit Mc. Maxim, ep. Prusei; Sf. Cuv. Mc. Agathaghel',d:'Pomenirea sfinților martiri ai lui Hristos din Anatolia.'},
+  '0415':{t:'Sf. Ap. Aristarh, Pud și Trofim; Sf. Cuv. Mc. Anastasia din Cipru',d:'Sfinții Apostoli din cei 70, tovarăși ai Apostolului Pavel în călătoriile sale.'},
+  '0416':{t:'Sf. Mc. Agavia, Irina și Hionia; Sf. Cuv. Niceta',d:'Trei surori martire din Macedonia, ucise sub Dioclețian pentru refuzul de a arunca Scripturile.'},
+  '0417':{t:'Sf. Sfințit Mc. Simeon, ep. Persiei; Sf. Mc. Agatopod',d:'Sfântul Simeon, episcop persan martir, împreună cu mulți credincioși.'},
+  '0418':{t:'Sf. Cuv. Ioan, ucenicul Sf. Grigorie Decapolitul; Sf. Mc. Victor',d:'Pomenirea sfinților cuvioși din școala duhovnicească a Sfântului Grigorie.'},
+  '0419':{t:'Sf. Cuv. Ioan de la Poceaev; Sf. Mc. Hristofor și Dada',d:'Sfântul Ioan de la Poceaev, ocrotitorul Ucrainei.'},
+  '0420':{t:'Sf. Cuv. Teodor Trihina; Sf. Mc. Anastasie',d:'Sfântul Teodor Trihina, purtătorul hainei de păr, trăitor în mare asceză.'},
+  '0421':{t:'Sf. Mc. Ianuarie, ep. Beneventului; Sf. Cuv. Maxim din Sinai',d:'Sfântul Ianuarie, episcop martir, patronul orașului Napoli.'},
+  '0422':{t:'Sf. Sfințit Mc. Teodor de la Perge; Sf. Cuv. Natanael',d:'Sfântul Teodor, preot martir din Pamfilia.'},
+  '0423':{t:'Sf. Mare Mc. Gheorghe Purtătorul de Biruință',d:'Marele Mucenic Gheorghe, ofițer roman, martir sub Dioclețian. Apărătorul celor nedreptățiți. Hramul multor biserici.',praznic:true,dezlegare:'Dezlegare la pește'},
+  '0424':{t:'Sf. Mc. Sava Stratilat; Sf. Cuv. Elisabeta',d:'Sfântul Sava, general roman, botezat din minune și martirizat.'},
+  '0425':{t:'Sf. Ap. și Ev. Marcu',d:'Sfântul Marcu, autorul celei de-a doua Evanghelii, ucenic al Apostolului Petru.',dezlegare:'Dezlegare la pește'},
+  '0426':{t:'Sf. Sfințit Mc. Vasile, ep. Amasiei; Sf. Cuv. Isidor',d:'Sfântul Vasile, episcopul Amasiei, martir pentru credință.'},
+  '0427':{t:'Sf. Sfințit Mc. Simeon Rudstvennicu; Sf. Mc. Isihie',d:'Pomenirea sfinților martiri ai lui Hristos.'},
+  '0428':{t:'Sf. Ap. și Ev. Iacob al lui Zevedeu',d:'Sfântul Iacob, fratele Sfântului Ioan Teologul, primul martir dintre Apostoli.',dezlegare:'Dezlegare la pește'},
+  '0429':{t:'Sf. 9 Mc. din Cizic; Sf. Cuv. Memnon',d:'Nouă creștini martiri în Cizic, sub diverse împărați romani.'},
+  '0430':{t:'Sf. Ap. Iacob al lui Alfeu; Sf. Cuv. Donat',d:'Sfântul Iacob al lui Alfeu, unul din cei Doisprezece Apostoli.'},
+  '0501':{t:'Sf. Proroc Ieremia; Sf. Cuv. Pahomie cel Mare',d:'Sfântul Ieremia, prorocul cel plângăreț, autorul Cărții Plângerilor Ierusalimului.'},
+  '0502':{t:'Sf. Mc. Boris și Gleb; Sf. Atanasie cel Mare',d:'Sfinții Boris și Gleb, principi ruși martiri. Sfântul Atanasie, apărătorul Ortodoxiei.'},
+  '0503':{t:'Sf. Mc. Timotei și Mavra; Sf. Cuv. Petru',d:'Sfinții Timotei și Mavra, soți creștini martiri în Egipt.'},
+  '0504':{t:'Sf. Mc. Silvan, ep. Gazei; Sf. Cuv. Niceta',d:'Sfântul Silvan, episcop martir împreună cu 40 de diaconi.'},
+  '0505':{t:'Sf. Mc. Irina; Sf. Cuv. Dorotei',d:'Sfânta Irina, fecioară martirizată în Macedonia.'},
+  '0506':{t:'Sf. Dreptcredinciosul Iov; Sf. Mc. Varvar',d:'Sfântul Iov mult-răbdătorul, patronul celor suferinzi.'},
+  '0507':{t:'Sf. Mc. Achileu și Nerei; Sf. Cuv. Nil Sorski',d:'Sfinții Nerei și Achileu, slujitorii Sfintei Domitila, martiri la Roma.'},
+  '0508':{t:'Ap. și Ev. Ioan Teologul; Sf. Arhanghel Mihail (arăt.)',d:'Sfântul Ioan Teologul, ucenicul iubit al Mântuitorului, autorul Evangheliei a IV-a.',praznic:true,dezlegare:'Dezlegare la pește'},
+  '0509':{t:'Sf. Proroc Isaia; Sf. Mc. Hristofor',d:'Sfântul Isaia, prorocul care a văzut în duh Nașterea Mântuitorului.'},
+  '0510':{t:'Sf. Ap. Simon Zilotul',d:'Sfântul Simon Zilotul, unul din cei Doisprezece Apostoli, vestitor al Evangheliei în Persia.',dezlegare:'Dezlegare la pește'},
+  '0511':{t:'Sf. Ier. Mocaliu; Sf. Sfințit Mc. Mochie',d:'Pomenirea sfinților Bisericii.'},
+  '0512':{t:'Sf. Epifanie, arhiep. Ciprului; Sf. Ier. Gherman, patr.',d:'Sfântul Epifanie, erudit episcop al Ciprului, autorul Panarionu (combaterea ereziilor).'},
+  '0513':{t:'Sf. Mc. Glicherie; Sf. Cuv. Gheorghe din Mânăstirea',d:'Pomenirea sfinților martiri ai lui Hristos.'},
+  '0514':{t:'Sf. Mc. Isidor; Sf. Cuv. Serapion',d:'Sfântul Isidor, soldat roman creștinat în Hios, martir.'},
+  '0515':{t:'Sf. Cuv. Pahomie cel Mare; Sf. Ahila, ep. Larissei',d:'Sfântul Pahomie, întemeietorul vieții monahale chinoviale (de obște) în Egipt.'},
+  '0516':{t:'Sf. Cuv. Teodor Sfințitul; Sf. Mc. Vitus',d:'Sfântul Teodor, ucenic al Sfântului Pahomie, conducătorul mânăstirii după moartea sa.'},
+  '0517':{t:'Sf. Ap. Andronic și Iunia; Sf. Cuv. Atanasie de la Athos',d:'Sfântul Andronic și soția sa Iunia, martiri, menționați de Apostolul Pavel.'},
+  '0518':{t:'Sf. Mc. Petru, Dionisie, Andreia; Sf. Cuv. Ioachim din Osorela',d:'Pomenirea sfinților martiri ai primelor secole.'},
+  '0519':{t:'Sf. Sfințit Mc. Patrichie, ep. Pruzei; Sf. Mc. Achileu',d:'Sfântul Patrichie, episcop martir al Prusiei în Bitinia.'},
+  '0520':{t:'Sf. Mc. Talaleleu; Sf. Cuv. Licarion',d:'Sfântul Talalaeu, medic din Cilicia, martir sub Numerian.'},
+  '0521':{t:'Sf. Împărați Constantin și Elena',d:'Sfinții Constantin și Elena, care au dat libertate Bisericii și au descoperit Sfânta Cruce la Ierusalim.',praznic:true,dezlegare:'Dezlegare la pește'},
+  '0522':{t:'Sf. Cuv. Vasile de la Poiana Mărului; Sf. Mc. Vasilesc',d:'Sfântul Vasile de la Poiana Mărului, isihast român, îndrumător duhovnicesc al Sfântului Paisie Velicicovski.'},
+  '0523':{t:'Sf. Mc. Mihail Mărturisitorul; Sf. Cuv. Mihail de la Mânăstirea Synadsk',d:'Pomenirea sfinților mărturisitori ai credinței.'},
+  '0524':{t:'Sf. Simeon din Muntele Minunat; Sf. Cuv. Nichita',d:'Sfântul Simeon Stâlpnicul cel Tânăr, care a trăit 68 de ani pe un stâlp lângă Antiohia.'},
+  '0525':{t:'A treia Aflare a Capului Sf. Ioan Botezătorul',d:'A treia minunată aflare a capului Sfântului Ioan, Înaintemergătorul Domnului.',praznic:true,dezlegare:'Dezlegare la pește'},
+  '0526':{t:'Sf. Ap. Carpus și Alfeu; Sf. Mc. Avertie',d:'Sfinții Apostoli din cei 70, colaboratori ai Apostolului Pavel.'},
+  '0527':{t:'Sf. Sfințit Mc. Terapont, ep. Sardisei; Sf. Cuv. Ioan Rusul',d:'Sfântul Ioan Rusul, soldat rus captiv în Turcia, stâlp al credinței.'},
+  '0528':{t:'Sf. Cuv. Nichifor Leprosul; Sf. Mc. Eliconie',d:'Sfântul Nichifor Leprosul, trăitor în Grecia, vindecător de boli.'},
+  '0529':{t:'Sf. Mc. Teodosia; Sf. Cuv. Ioann, ep. Gotiei',d:'Sfânta Teodosia, fecioară martirizată la Cezareea Palestinei.'},
+  '0530':{t:'Sf. Cuv. Isaac, Dalmat și Faust; Sf. Mc. Nathalie',d:'Sfântul Isaac, întemeietorul Mânăstirii Dalmată din Constantinopol.'},
+  '0531':{t:'Sf. Mc. Ermie; Sf. Cuv. Eusebie',d:'Sfântul Ermie, veteran roman martirizat la bătrânețe pentru credința în Hristos.'},
+  '0601':{t:'Sf. Mc. Iustin Filozoful și cei cu el; Sf. Cuv. Agapitu',d:'Sfântul Iustin Filozoful, primul mare apologet creștin, martir la Roma în secolul II.'},
+  '0602':{t:'Sf. Mc. Fotie și Anichit; Sf. Cuv. Erastie',d:'Sfinții Fotie și Anichit, doi tineri martiri din Nicomidia.'},
+  '0603':{t:'Sf. Mc. Luchilian și cei cu el; Sf. Cuv. Ciprian',d:'Sfântul Luchilian, fostul preot al idolilor convertit la creștinism și martirizat.'},
+  '0604':{t:'Sf. Mc. Zotica; Sf. Cuv. Metodie; Sf. Mc. Concodardie',d:'Pomenirea sfinților martiri și cuvioși ai lui Hristos.'},
+  '0605':{t:'Sf. Mc. Dorotea; Sf. Cuv. Marc',d:'Pomenirea sfinților martiri ai lui Hristos.'},
+  '0606':{t:'Sf. Sfințit Mc. Dorotei, ep. Tirului; Sf. Cuv. Bestamon',d:'Sfântul Dorotei, episcopul Tirului, martir la 107 ani.'},
+  '0607':{t:'Sf. Sfințit Mc. Teodot, ep. Ancirei; Sf. Mc. Marchela',d:'Sfântul Teodot, episcop martir din Ancira Galației.'},
+  '0608':{t:'Sf. Ap. Ermoghen; Sf. Sfințit Mc. Teodor, ep. Cyrene',d:'Sfântul Ermoghen, apostol din cei 70, ucenic al Apostolului Pavel.'},
+  '0609':{t:'Sf. Sfințit Mc. Chiril, ep. Gortinei; Sf. Cuv. Chiril Belozersk',d:'Sfântul Chiril, episcop martir în Creta, ucis la vârsta de 100 de ani.'},
+  '0610':{t:'Sf. Sfințit Mc. Timotei, ep. Prusei; Sf. Mc. Alexander și Antonina',d:'Sfântul Timotei, episcop martir al Prusiei în Bitinia.'},
+  '0611':{t:'Sf. Ap. Vartolomeu și Barnaba',d:'Sfântul Barnaba, levit din Cipru, unul dintre primii misionari creștini.',dezlegare:'Dezlegare la pește'},
+  '0612':{t:'Sf. Sfințit Mc. Onufrie cel Mare; Sf. Cuv. Petru Athonitul',d:'Sfântul Onufrie, pustnicul Egiptului, trăitor 60 de ani în singurătate.'},
+  '0613':{t:'Sf. Mc. Achilina; Sf. Ier. Trifilie, ep. Lefcosei',d:'Sfânta Achilina, martirizată la 12 ani în Veria Siriei.'},
+  '0614':{t:'Sf. Proroc Elisei; Sf. Sfințit Mc. Metodie, ep. Patarelor',d:'Sfântul Proroc Elisei, urmașul lui Ilie Tesviteanul, făcătorul de minuni.'},
+  '0615':{t:'Sf. Proroc Amos; Sf. Mc. Vit, Modest și Crescentia',d:'Sfântul Amos, prorocul dreptății sociale, trimis la Israel.'},
+  '0616':{t:'Sf. Sfințit Mc. Tihon, ep. Amatundei; Sf. Cuv. Tihon',d:'Sfântul Tihon, episcopul Amatundei din Cipru, apărătorul credinței.'},
+  '0617':{t:'Sf. Mc. Isavr, Vasile, Inocentiu și cei cu ei; Sf. Cuv. Avda',d:'Grup de martiri creștini din Atena, uciși în Apollonia.'},
+  '0618':{t:'Sf. Mc. Leontie, Ipatiu și Teodul; Sf. Cuv. Arsenie',d:'Sfântul Leontie, general roman martir la Tripoli.'},
+  '0619':{t:'Sf. Ap. Iuda, fratele Domnului; Sf. Mc. Zosima',d:'Sfântul Iuda, autorul Epistolei a VII-a Sobornicești, ruda Mântuitorului.',dezlegare:'Dezlegare la pește'},
+  '0620':{t:'Sf. Sfințit Mc. Metodie, ep. Patarelor; Sf. Mc. Calliop',d:'Sfântul Metodie, episcop și teolog, apărătorul învierii trupului.'},
+  '0621':{t:'Sf. Mc. Iulian din Tars; Sf. Cuv. Achile',d:'Sfântul Iulian, tânăr martir din Tarsul Ciliciei.'},
+  '0622':{t:'Sf. Sfințit Mc. Eusebiu, ep. Samosatelor; Sf. Mc. Zakheus',d:'Sfântul Eusebiu, episcop martirizat de o femeie ariană prin azvârlirea unei cărămizi.'},
+  '0623':{t:'Sf. Mc. Agripina; Soborul Sf. Ioan Botezătorul (vecernia)',d:'Sfânta Agripina, fecioară din Roma, martirizată în Sicilia.'},
+  '0624':{t:'Nașterea Sf. Ioan Botezătorul',d:'Înaintemergătorul Domnului, cel mai mare între prooroci, anunțat de Arhanghelul Gavriil.',praznic:true,dezlegare:'Dezlegare la toate'},
+  '0625':{t:'Sf. Mc. Fevronia; Sf. Cuv. Dalmat',d:'Sfânta Fevronie, monahie martirizată sub Dioclețian.'},
+  '0626':{t:'Sf. Cuv. David din Tesalonic; Sf. Mc. Ioanichie',d:'Sfântul David, sihastrul Tesalonicului, trăitor 3 ani într-un migdal.'},
+  '0627':{t:'Sf. Mc. Samson și Anatolie; Sf. Cuv. Sampson',d:'Sfântul Samson, medic fără de arginți, fondatorul unui spital la Constantinopol.'},
+  '0628':{t:'Aducerea moaștelor Sf. Chirii și Metodie; Sf. Mc. Cirus',d:'Pomenirea aducerii moaștelor Sfinților Chiril și Metodie.'},
+  '0629':{t:'Sf. Ap. Petru și Pavel',d:'Stâlpii Bisericii lui Hristos – Petru, pescarul devenit Capul Apostolilor, și Pavel, apostolul neamurilor.',praznic:true,dezlegare:'Dezlegare la toate'},
+  '0630':{t:'Soborul Sf. 12 Apostoli',d:'Pomenirea celor doisprezece Apostoli ai Mântuitorului, coloane ale Bisericii.',dezlegare:'Dezlegare la pește'},
+  '0701':{t:'Sf. Sfințit Mc. Leonid, ep. Atenei; Sf. Cuv. Leonida',d:'Pomenirea sfinților Bisericii.'},
+  '0702':{t:'Aducerea veșmântului Maicii Domnului la Vlaherne; Sf. Cuv. Iuvenal',d:'Praznic închinat păstrării veșmântului Maicii Domnului la Blacherne, Constantinopol.'},
+  '0703':{t:'Sf. Mc. Iachint; Sf. Cuv. Anatolie, patr. Constantinopolului',d:'Sfântul Iachint, tânăr camarrier imperial, martir la Roma.'},
+  '0704':{t:'Sf. Mc. Teodot din Ancira; Sf. Cuv. Andrei',d:'Sfântul Teodot, hangiu creștin, îngrijitor al rămășițelor martirilor.'},
+  '0705':{t:'Sf. Mc. Lampadie; Sf. Cuv. Serghie și Gherman de la Valaam',d:'Sfinții Serghie și Gherman, întemeietorii Mânăstirii Valaam din Rusia.'},
+  '0706':{t:'Sf. Sfințit Mc. Isie; Sf. Cuv. Sisoe cel Mare',d:'Sfântul Sisoe cel Mare, pustnicul Egiptului, trăitor lângă peștera lui Alexandru cel Mare.'},
+  '0707':{t:'Sf. Cuv. Toma din Maleon; Sf. Mc. Peral',d:'Pomenirea sfinților Bisericii.'},
+  '0708':{t:'Sf. Mare Mc. Procopie; Sf. Cuv. Teofilact',d:'Sfântul Procopie, tribun roman martir la Cezareea Palestinei, primul martir în Palestina sub Dioclețian.'},
+  '0709':{t:'Sf. Mc. Panchratiu și Chiril; Sf. Cuv. Paisie cel Mare',d:'Sfântul Panchratiu, ucenic al Apostolului Petru, episcop martir.'},
+  '0710':{t:'Sf. 45 Mc. din Nicopolea Armeniei; Sf. Cuv. Antonie',d:'Patruzeci și cinci de soldați creștini martirizați în Armenia.'},
+  '0711':{t:'Sf. Cuv. Mc. Nichifor de la Athos; Sf. Mc. Chindeu',d:'Sfântul Nichifor, monah de la Athos, martir sub turci.'},
+  '0712':{t:'Sf. Mc. Proclus și Hilarie; Sf. Cuv. Mihail Maleinos',d:'Sfinții Proclus și Hilarie, unchi și nepot, martiri în Ancira.'},
+  '0713':{t:'Soborul Sf. Arhanghel Gavriil; Sf. Mc. Muza',d:'Cinstirea Arhanghelului Gavriil, vestitor al tainelor divine.'},
+  '0714':{t:'Sf. Ap. Achila; Sf. Sfințit Mc. Foca',d:'Sfântul Achila, ucenic al Apostolului Pavel, menționat în Epistola către Romani.'},
+  '0715':{t:'Sf. Mc. Chiric și Iulita; Sf. Cuv. Atanasie Athonitul',d:'Sfânta Iulita și fiul ei Chiric, de 3 ani, martiri. Sfântul Atanasie, întemeietorul Mânăstirii Mari de la Athos.',praznic:true},
+  '0716':{t:'Sf. Sfințit Mc. Atinogen, ep. Pedachtoi și ucenicii săi',d:'Sfântul Atinogen și cei 10 ucenici ai săi, martiri la Sebasta Armeniei.'},
+  '0717':{t:'Sf. Mare Mc. Marina; Sf. Mc. Enata',d:'Sfânta Marina, fecioară din Antiohia Pisidiei, martirizată la 15 ani.',praznic:true},
+  '0718':{t:'Sf. Mc. Emilian; Sf. Cuv. Pambo',d:'Sfântul Emilian, sclav creștin din Tracia, martir.'},
+  '0719':{t:'Sf. Cuv. Macrina, sora Sf. Vasile; Sf. Cuv. Dio',d:'Sfânta Macrina, sora Sfântului Vasile cel Mare, promotoare a vieții monahale feminine.'},
+  '0720':{t:'Sf. Proroc Ilie Tesviteanul',d:'Cel luat la cer în car de foc. Apărătorul lui Dumnezeu Cel Adevărat împotriva profeților lui Baal.',praznic:true,dezlegare:'Dezlegare la pește'},
+  '0721':{t:'Sf. Mc. Simeon și cei cu el; Sf. Cuv. Onufrie de la Vorona',d:'Pomenirea sfinților martiri ai lui Hristos.'},
+  '0722':{t:'Sf. Mc. Foca; Sf. Cuv. Maria Magdalena',d:'Sfânta Maria Magdalena, prima martoră a Învierii Mântuitorului, apostoloasa apostolilor.',dezlegare:'Dezlegare la pește'},
+  '0723':{t:'Sf. Mc. Foca Grădinarul; Sf. Cuv. Polihronie',d:'Sfântul Foca Grădinarul, grădinar simplu din Sinopa, martir.'},
+  '0724':{t:'Sf. Mc. Hristina; Sf. Cuv. Nicodim de la Tismana',d:'Sfântul Nicodim de la Tismana, întemeietorul monahismului în Țara Românească.',praznic:true},
+  '0725':{t:'Adormirea Sf. Ana, mama Maicii Domnului; Sf. Mc. Olimpiada',d:'Pomenirea Sfintei Ana, mama Fecioarei Maria, bunica Mântuitorului.',praznic:true},
+  '0726':{t:'Soborul Sf. Arhanghel Gavriil; Sf. Cuv. Paisie Velicicovski',d:'Sfântul Paisie Velicicovski, înnoitorul monahismului ortodox în Moldova și România.'},
+  '0727':{t:'Sf. Mare Mc. și Vindecătoare Panteleimon',d:'Sfântul Panteleimon, medic fără de arginți, martir, ocrotitorul bolnavilor.',praznic:true,dezlegare:'Dezlegare la pește'},
+  '0728':{t:'Sf. Ap. Prohoru, Nicanor, Timon și Parmena; Sf. Mc. Iuție',d:'Patru din cei șapte diaconi aleși de Apostoli pentru slujirea la mese.'},
+  '0729':{t:'Sf. Mc. Calinic; Sf. Mc. Teodota și cei trei fii ai ei',d:'Sfântul Calinic, tânăr creștin din Gangra Capadociei, martir.'},
+  '0730':{t:'Sf. Ap. Sila, Silvan, Crescens, Epenet și Andronic; Sf. Mc. Iuita',d:'Sfinți Apostoli din cei 70, colaboratori ai Apostolului Pavel.'},
+  '0731':{t:'Sf. Cuv. Mc. Eudochim; Sf. Mc. Junius și Iachint',d:'Pomenirea sfinților cuvioși martiri.'},
+  '0801':{t:'Scoaterea Sf. Lemn al Cinstitei Cruci; Sf. Mc. Macabei',d:'Începutul Postului Adormirii Maicii Domnului. Scoaterea Sfintei Cruci pentru sfințirea apelor.',post:'Post – începe Postul Maicii Domnului'},
+  '0802':{t:'Mutarea moaștelor Sf. Arhid. Ștefan; Sf. Cuv. Vasile',d:'Aducerea moaștelor Sfântului Arhidiacon Ștefan la Ierusalim.'},
+  '0803':{t:'Sf. Mc. Isachie, Apolon și Codrat; Sf. Cuv. Dalmat',d:'Sfinții Isachie, Apolon și Codrat, martiri în Egipt.'},
+  '0804':{t:'Sf. Mc. Ia; Sf. Cuv. Mc. Cosma de la Zografu',d:'Pomenirea sfinților martiri ai lui Hristos.'},
+  '0805':{t:'Sf. Mc. Evsignii; Sf. Cuv. Nona',d:'Sfântul Evsignii, veteran roman de 110 ani, martir sub Iulian Apostatul.'},
+  '0806':{t:'Schimbarea la Față a Domnului',d:'Iisus se arată în slavă pe Muntele Tabor, în fața Apostolilor Petru, Iacob și Ioan. Sfințirea strugurilor.',praznic:true,dezlegare:'Dezlegare la pește și vin'},
+  '0807':{t:'Sf. Cuv. Mc. Dometiu; Sf. Mc. Marcu, ep. Apoloniadei',d:'Sfântul Dometiu, monah persan martir sub Iulian Apostatul.'},
+  '0808':{t:'Sf. Mc. Emilian; Sf. Cuv. Grigorie Decapolitul',d:'Pomenirea sfinților Bisericii.'},
+  '0809':{t:'Sf. Ap. Matia; Sf. Mc. Iulian, Marcian',d:'Sfântul Matia, Apostolul ales în locul lui Iuda Iscarioteanul.',dezlegare:'Dezlegare la pește'},
+  '0810':{t:'Sf. Mc. și Arhid. Laurențiu; Sf. Cuv. Lavrentiu',d:'Sfântul Laurențiu, diacon al Romei, martir pe grătar de fier înroșit.'},
+  '0811':{t:'Sf. Sfințit Mc. Eplus; Sf. Cuv. Teodora din Alexandria',d:'Sfântul Eplus, diacon martir din Catania Siciliei.'},
+  '0812':{t:'Sf. Mc. Fotie și Anichit; Sf. Cuv. Aniceta',d:'Sfinți martiri din Nicomidia, uciși împreună.'},
+  '0813':{t:'Sf. Mc. Ippolit, Irineu și Avundiu; Sf. Cuv. Maxim Mărturisitorul',d:'Pomenirea sfinților martiri și cuvioși.'},
+  '0814':{t:'Sf. Proroc Miheia; Sf. Cuv. Mc. Maxim, ep. Salmis (vecernia Adormirii)',d:'Ajunul Adormirii Maicii Domnului. Sfântul Proroc Miheia.'},
+  '0815':{t:'Adormirea Maicii Domnului',d:'Cel mai mare praznic închinat Maicii Domnului. Trecerea ei la cer. Post și priveghere de toată noaptea.',praznic:true,dezlegare:'Dezlegare la pește și vin'},
+  '0816':{t:'Sf. Pânză (Mandilionul); Sf. Mc. Diomedis',d:'Pomenirea Sfintei Pânze pe care și-a șters fața Mântuitorul și care a vindecat pe regele Abgar.'},
+  '0817':{t:'Sf. Mc. Motiu; Sf. Cuv. Alipie Colibașul',d:'Pomenirea sfinților Bisericii.'},
+  '0818':{t:'Sf. Mc. Flor și Lavr; Sf. Cuv. Ioan de Rila',d:'Sfinții Flor și Lavr, zidari martiri, ocrotitorii animalelor.',praznic:false},
+  '0819':{t:'Sf. Mc. Andrei Stratilat; Sf. Cuv. Zosima',d:'Sfântul Andrei Stratilat și soldații săi, martiri în Cilicia.'},
+  '0820':{t:'Sf. Proroc Samuel; Sf. Mc. Sever',d:'Sfântul Samuel, ultimul judecător al lui Israel, unsul regilor Saul și David.'},
+  '0821':{t:'Sf. Ap. Tadeu; Sf. Mc. Vasa și copiii ei',d:'Sfântul Tadeu, Apostol din cei 70, evanghelist în Siria și Persia.',dezlegare:'Dezlegare la pește'},
+  '0822':{t:'Sf. Mc. Agathonic și cei cu el; Sf. Cuv. Antusa',d:'Pomenirea sfinților martiri ai lui Hristos.'},
+  '0823':{t:'Sf. Mc. Lup; Sf. Sfințit Mc. Irineu, ep. Lionului',d:'Sfântul Lup, sclav al Sfântului Dumitru, martir după stăpânul său.'},
+  '0824':{t:'Sf. Sfințit Mc. Eutihie, ucenic al Sf. Ap. Ioan; Sf. Mc. Tatie',d:'Sfântul Eutihie, ucenic al Apostolului Ioan și Apostolului Pavel, episcop martir.'},
+  '0825':{t:'Aducerea moaștelor Ap. Vartolomeu; Sf. Ap. Tit, ep. Cretei',d:'Sfântul Tit, ucenic al Apostolului Pavel, primul episcop al Cretei.',dezlegare:'Dezlegare la pește'},
+  '0826':{t:'Sf. Mc. Adrian și Natalia; Sf. Cuv. Ioanichie',d:'Sfinții Adrian și Natalia, soți martiri – Natalia l-a încurajat pe Adrian în suferință.'},
+  '0827':{t:'Sf. Mc. Pimen; Sf. Cuv. Liberie',d:'Pomenirea sfinților Bisericii.'},
+  '0828':{t:'Sf. Cuv. Moise Etiopianul; Sf. Mc. Diomid',d:'Sfântul Moise Etiopianul, tâlhar convertit, monah în Egipt, martir sub barbari.'},
+  '0829':{t:'Tăierea Capului Sf. Ioan Botezătorul',d:'Zi de post negru în amintirea martiriului Sfântului Ioan, ucis din porunca Irodiadei și a Irodului.',post:'Post negru'},
+  '0830':{t:'Sf. Alexandru, Ioan și Pavel cel Nou, patr. Constantinop.',d:'Sfinții patriarhi ai Constantinopolului, apărători ai Ortodoxiei.'},
+  '0831':{t:'Aducerea brâului Maicii Domnului; Sf. Cuv. Aliție',d:'Pomenirea cinstitului brâu al Maicii Domnului, păstrat la Mânăstirea Vatoped.'},
+  '0901':{t:'Începutul Anului Bisericesc; Sf. Mc. Simeon Stâlpnicul',d:'Anul Nou Bisericesc. Sfântul Simeon Stâlpnicul, trăitor 37 de ani pe un stâlp din Siria.',praznic:true},
+  '0902':{t:'Sf. Mc. Mamant, Mamea și tatăl ei; Sf. Cuv. Ioan Pustnicul',d:'Sfântul Mamant, cioban martir, ocrotitorul ciobanilor și al animalelor.'},
+  '0903':{t:'Sf. Sfințit Mc. Antim, ep. Nicomidiei; Sf. Mc. Teoctist',d:'Sfântul Antim, episcop martir, ucis la bătrânețe.'},
+  '0904':{t:'Sf. Sfințit Mc. Vavila, ep. Antiohiei; Sf. Proroc Moise',d:'Sfântul Vavila, episcop martir în Antiohia.'},
+  '0905':{t:'Proroc Zaharia și Sf. Elisabeta; Sf. Cuv. Lup',d:'Sfinții Zaharia și Elisabeta, părinții Sfântului Ioan Botezătorul.'},
+  '0906':{t:'Sf. Arhanghel Mihail (amintirea minunii de la Colose)',d:'Pomenirea minunii Arhanghelului Mihail la Colose, când a izvorât apă vindecătoare.',dezlegare:'Dezlegare la pește'},
+  '0907':{t:'Sf. Cuv. Mc. Sozont; Sf. Mc. Regina și Euodos',d:'Sfântul Sozont, cioban martir din Licaonia.'},
+  '0908':{t:'Nașterea Maicii Domnului',d:'Praznic împărătesc. Bucuria lumii întregi – nașterea Fecioarei Maria din Ioachim și Ana.',praznic:true,dezlegare:'Dezlegare la pește'},
+  '0909':{t:'Sf. Drepți Ioachim și Ana; Sf. Cuv. Iosif din Volok',d:'Părinții Maicii Domnului, sfinți prin rugăciune și viața lor curată.'},
+  '0910':{t:'Sf. Mc. Minodora, Mitrodora și Nimfodora; Sf. Cuv. Pavel',d:'Trei surori din Bitinia, martire, trăitoare în asceză.'},
+  '0911':{t:'Sf. Cuv. Teodora din Alexandria; Sf. Mc. Diodor și Didim',d:'Sfânta Teodora, femeie căită, trăitoare 11 ani în mânăstire bărbătească nerecunoscută.'},
+  '0912':{t:'Sf. Sfințit Mc. Autom; Sf. Mc. Corint',d:'Pomenirea sfinților Bisericii.'},
+  '0913':{t:'Sf. Sfințit Mc. Corneliu Sutașul; Sf. Ier. Filoteu',d:'Sfântul Corneliu, primul păgân botezat de Apostolul Petru.'},
+  '0914':{t:'Înălțarea Sfintei Cruci',d:'Ziua Crucii lui Hristos. Post negru. Descoperirea Sfintei Cruci de către Sfânta Elena la Ierusalim.',praznic:true,post:'Post negru'},
+  '0915':{t:'Sf. Mc. Nichita Goticul; Sf. Cuv. Filotei',d:'Sfântul Nichita, got creștin din nordul Dunării, martir.'},
+  '0916':{t:'Sf. Mc. Eufemia cea Mare; Sf. Cuv. Dorotei',d:'Sfânta Eufemia, martirizată la Calcedon. Sinodul IV Ecumenic i-a confirmat Ortodoxia în mod minunat.',praznic:true},
+  '0917':{t:'Sf. Mc. Sofia și fiicele ei Pistis, Elpis și Agapis; Sf. Cuv. Ioan',d:'Sfânta Sofia și cele trei fiice – Credința, Nădejdea și Dragostea, martire la Roma.'},
+  '0918':{t:'Sf. Cuv. Eumen, ep. Gortin; Sf. Mc. Ariadna',d:'Sfânta Ariadna, servitoare creștinată, martirizată la Prymnessos Frigiei.'},
+  '0919':{t:'Sf. Mc. Trofim, Savatie și Dorimedont; Sf. Cuv. Silvan',d:'Pomenirea sfinților martiri.'},
+  '0920':{t:'Sf. Mc. Eustatie Placida și familia sa; Sf. Cuv. Lavrentie',d:'Sfântul Eustatie, general roman, convertit la vederea unui cerb cu cruce între coarne, martir.',praznic:true},
+  '0921':{t:'Sf. Ap. Codrat; Sf. Mc. Isaachie, Apollon',d:'Sfântul Codrat, apostol din cei 70, ucenic al Apostolilor.'},
+  '0922':{t:'Sf. Sfințit Mc. Foca, ep. Sinopei; Sf. Proroc Iona',d:'Sfântul Foca, episcop martir al Sinopei din Pont.'},
+  '0923':{t:'Zămislirea Sf. Ioan Botezătorul; Sf. Mc. Andrei, Iona',d:'Minunata zămislire a Sfântului Ioan Botezătorul de către Elizaveta și Zaharia la bătrânețe.',praznic:true},
+  '0924':{t:'Sf. Cuv. Mc. Tecla, egal cu Apostolii; Sf. Mc. Copreat',d:'Sfânta Tecla, ucenica Apostolului Pavel, prima martiră femeie.'},
+  '0925':{t:'Sf. Cuv. Eufrosina; Sf. Mc. Pavel și Tată',d:'Sfânta Eufrosina, fiica unui bogat din Alexandria, trăitoare în mânăstire bărbătească.'},
+  '0926':{t:'Adormirea Sf. Ap. și Ev. Ioan Teologul',d:'Pomenirea trecerii la cele veșnice a Apostolului Ioan, singurul care nu a murit martir.',praznic:true,dezlegare:'Dezlegare la pește'},
+  '0927':{t:'Sf. Mc. Callistratu și cei 49 de ostași; Sf. Cuv. Ignatie',d:'Sfântul Calistratu și cei 49 de tovarăși ai săi, soldați creștini martiri în Cartagina.'},
+  '0928':{t:'Sf. Cuv. Hariton Mărturisitorul; Sf. Mc. Alexandru',d:'Sfântul Hariton, monah din Iconiu, mărturisitor sub Aurelian.'},
+  '0929':{t:'Sf. Cuv. Chiriac Pustnicul; Sf. Mc. Dada, Gavdelas și Casdie',d:'Sfântul Chiriac, pustnicul din Palestina, trăitor 109 ani.'},
+  '0930':{t:'Sf. Mc. Grigorie, ep. Armeniei Mari; Sf. Mc. Ripsimia',d:'Sfântul Grigorie Luminătorul Armeniei, apostolul și primul episcop al Armeniei.'},
+  '1001':{t:'Acoperământul Maicii Domnului',d:'Ocrotirea Maicii Domnului peste credincioși. Vedenia Sfântului Andrei cel Nebun pentru Hristos în Blacherne.',praznic:true},
+  '1002':{t:'Sf. Sfințit Mc. Ciprian și Sf. Mc. Iustina; Sf. Cuv. Andronic',d:'Sfântul Ciprian, fostul vrăjitor convertit la vederea sfintei Iustina, amândoi martiri.'},
+  '1003':{t:'Sf. Mc. Dionisie Areopagitul; Sf. Cuv. Ioan Hozevitul',d:'Sfântul Dionisie Areopagitul, botezat de Apostolul Pavel la Atena, primul episcop al Atenei.',dezlegare:'Dezlegare la pește'},
+  '1004':{t:'Sf. Sfințit Mc. Ierotei, ep. Atenei; Sf. Mc. Dometie',d:'Sfântul Ierotei, dascălul Sfântului Dionisie Areopagitul.'},
+  '1005':{t:'Sf. Mc. Haritina; Sf. Cuv. Damnhnat',d:'Sfânta Haritina, orfană creștin, martirizată în Pontul Bitiniei.'},
+  '1006':{t:'Sf. Ap. Toma',d:'Sfântul Toma Apostolul, care nu a crezut până nu a atins rănile Mântuitorului, vestitor în India.',dezlegare:'Dezlegare la pește'},
+  '1007':{t:'Sf. Mc. Serghie și Vah; Sf. Cuv. Serghie de la Pecerska',d:'Sfinții Serghie și Vah, ofițeri romani martiri, prieteni devotați în credință.'},
+  '1008':{t:'Sf. Cuv. Pelaghia; Sf. Mc. Pelagia din Antiohia',d:'Sfânta Pelagia, actriță din Antiohia convertită de Episcopul Nonnus, trăitoare în penitență.'},
+  '1009':{t:'Sf. Ap. Iacob al lui Alfeu; Sf. Cuv. Andronic și Atanasia',d:'Sfântul Iacob al lui Alfeu, din cei Doisprezece Apostoli.',dezlegare:'Dezlegare la pește'},
+  '1010':{t:'Sf. Mc. Eulampie și Eulampia; Sf. Cuv. Teofil',d:'Sfântul Eulampie și sora sa Eulampia, martiri tineri din Nicomidia.'},
+  '1011':{t:'Sf. Ap. Filip din cei 70; Sf. Mc. Zinon și Zenovia',d:'Sfântul Filip din cei 70, diaconul, nu Apostolul, evanghelistul Etiopiei.',dezlegare:'Dezlegare la pește'},
+  '1012':{t:'Sf. Mc. Probu, Andronicu și Taracu; Sf. Cuv. Cosma',d:'Pomenirea sfinților martiri ai lui Hristos.'},
+  '1013':{t:'Sf. Mc. Carp, Papil, Agatodor, Agatonica; Sf. Cuv. Nichifor',d:'Sfinții Carp și Papil, episcop și diacon martiri.'},
+  '1014':{t:'Sf. Cuv. Parascheva de la Iași',d:'Ocrotitoarea Moldovei, ale cărei sfinte moaște se află la Iași. Sărbătoare națională a Moldovei.',praznic:true},
+  '1015':{t:'Sf. Cuv. Eutimie Nou; Sf. Mc. Lucian și Marcel',d:'Pomenirea sfinților cuvioși.'},
+  '1016':{t:'Sf. Mc. Longhin Sutașul; Sf. Cuv. Galaktion și Epistima',d:'Sfântul Longhin, sutașul care a mărturisit la Cruce „Adevărat Fiul lui Dumnezeu era Acesta!"'},
+  '1017':{t:'Sf. Proroc Osea; Sf. Sfințit Mc. Andrei din Creta',d:'Sfântul Osea, prorocul dragostei lui Dumnezeu față de Israel.'},
+  '1018':{t:'Sf. Ap. și Ev. Luca',d:'Sfântul Luca, medicul și pictorul, autorul celei de-a treia Evanghelii și a Faptelor Apostolilor.',dezlegare:'Dezlegare la pește'},
+  '1019':{t:'Sf. Proroc Ioil; Sf. Mc. Varin',d:'Sfântul Ioil, prorocul care a vestit revărsarea Duhului Sfânt asupra tuturor oamenilor.'},
+  '1020':{t:'Sf. Mare Mc. Arteme; Sf. Cuv. Gherasim',d:'Sfântul Arteme, general roman, martir sub Iulian Apostatul.',praznic:true},
+  '1021':{t:'Sf. Cuv. Ilarion cel Mare; Sf. Mc. Dasiu',d:'Sfântul Ilarion, întemeietorul monahismului în Palestina, ucenicul Sfântului Antonie cel Mare.'},
+  '1022':{t:'Sf. Cuv. Averchin Egal cu Apostolii; Sf. 7 Mc. din Samosate',d:'Sfântul Averchin, episcopul Ierapolei, mărturisitor și taumaturg.'},
+  '1023':{t:'Sf. Ap. Iacob, ruda Domnului; Sf. Mc. Ignatie',d:'Sfântul Iacob, fratele Domnului după trup, primul episcop al Ierusalimului.',dezlegare:'Dezlegare la pește'},
+  '1024':{t:'Sf. Mc. Aretas și cei cu el; Sf. Cuv. Areta',d:'Sfântul Aretas și cei 4000 de creștini martiri din Yemen.'},
+  '1025':{t:'Sf. Mc. Marcian și Martirie; Sf. Cuv. Tabita',d:'Sfinții Marcian și Martirie, notari și martiri în Constantinopol.'},
+  '1026':{t:'Sf. Mare Mc. Dimitrie Izvorâtorul de Mir',d:'Ocrotitorul Tesalonicului. Mir vindecător curge de la sfintele sale moaște. Mare praznic.',praznic:true,dezlegare:'Dezlegare la pește'},
+  '1027':{t:'Sf. Mc. Neston; Sf. Cuv. Sf. Petru de la Athos',d:'Sfântul Neston, ucenic al Sfântului Dimitrie, martir la Tesalonic.'},
+  '1028':{t:'Sf. Mc. Terentie și Neonila; Sf. Cuv. Ştefan Sabait',d:'Sfântul Terentie și soția sa Neonila cu cei șapte copii, martiri.'},
+  '1029':{t:'Sf. Mc. Anastasia și Chiril; Sf. Cuv. Abraham',d:'Pomenirea sfinților martiri.'},
+  '1030':{t:'Sf. Mc. Zenobiu și Zenobia; Sf. Cuv. Stefa din Serbie',d:'Sfântul Zenobiu, episcop martir în Cilicia, și sora sa Zenobia.'},
+  '1031':{t:'Sf. Ap. Stahie, Ampliat, Urban, Narcis, Apellie și Aristovul',d:'Sfinți Apostoli din cei 70, menționați de Apostolul Pavel în Epistola către Romani.'},
+  '1101':{t:'Sf. Medici fără de arginți Cosma și Damian; Sf. Mc. Ermengeld',d:'Sfinții frați și doctori, martiri în Arabia, ocrotitori ai bolnavilor și chirurgilor.',praznic:true,dezlegare:'Dezlegare la pește'},
+  '1102':{t:'Sf. Mc. Acindinu, Pigasie, Aftonie și cei cu ei; Sf. Cuv. Marcian',d:'Cinci martiri persani uciși sub regele Sapur II.'},
+  '1103':{t:'Sf. Mc. Achepsima, Iosif și Aitala; Sf. Cuv. Ilarie',d:'Episcop, presbiter și diacon, martiri în Persia.'},
+  '1104':{t:'Sf. Cuv. Ioanichie cel Mare; Sf. Sfințit Mc. Nichiforu',d:'Sfântul Ioanichie cel Mare, ascet din Olimpul Bitiniei, taumaturg și profet.'},
+  '1105':{t:'Sf. Sfințiți Mc. Galaction și Episcopul; Sf. Mc. Areta',d:'Pomenirea sfinților martiri.'},
+  '1106':{t:'Sf. Cuv. Varlaam și Ioasaf; Sf. Mc. Melasip, Casinie, Antonie',d:'Sfinții Varlaam și Ioasaf, regele convertiți la creștinism de un ascet.'},
+  '1107':{t:'Sf. Sfințit Mc. Lazariu; Sf. Mc. Lucian și Maxian',d:'Pomenirea sfinților martiri ai lui Hristos.'},
+  '1108':{t:'Soborul Sf. Arhangheli Mihail și Gavriil',d:'Prăznuirea tuturor Puterilor Cerești netrupești – Arhanghelii, Îngerii, Serafimii, Heruvimii.',praznic:true,dezlegare:'Dezlegare la pește'},
+  '1109':{t:'Sf. Mc. Onisifor și Porfirie; Sf. Cuv. Matrona',d:'Sfântul Onisifor și soția sa Porfirie, martiri.'},
+  '1110':{t:'Sf. Ap. Olimp și Rodion; Sf. Mc. Erastie, Chvartu',d:'Sfinți Apostoli din cei 70.'},
+  '1111':{t:'Sf. Mc. Victor și Ștefanida; Sf. Cuv. Teodor Studitul',d:'Sfântul Teodor Studitul, reformatorul vieții monahale la Constantinopol.'},
+  '1112':{t:'Sf. Ier. Ioan cel Milostiv; Sf. Mc. Nilus',d:'Sfântul Ioan cel Milostiv, patriarh al Alexandriei, dăruitor neobosit al milei.'},
+  '1113':{t:'Sf. Ier. Ioan Gură de Aur, patr. Constantinopolului',d:'Marele predicator al Ortodoxiei, autorul Liturghiei care-i poartă numele, exilat și mort în exil.',praznic:true},
+  '1114':{t:'Sf. Ap. Filip',d:'Sfântul Filip, unul din cei Doisprezece Apostoli, evanghelist în Asia Mică.',dezlegare:'Dezlegare la pește'},
+  '1115':{t:'Sf. Mc. Gurie, Samon și Aviv',d:'Trei martiri din Edesa, ocrotitori ai căsniciei și ai celor aflați în necaz.'},
+  '1116':{t:'Sf. Ap. și Ev. Matei',d:'Sfântul Matei, vameșul chemat de Mântuitorul, autorul primei Evanghelii.',dezlegare:'Dezlegare la pește'},
+  '1117':{t:'Sf. Cuv. Lazar din Galiata; Sf. Mc. Gurie și Samon',d:'Sfântul Lazăr, sihastrul Galiatei, trăitor mulți ani pe un stâlp.'},
+  '1118':{t:'Sf. Mc. Platon și Roman; Sf. Cuv. Zaharia',d:'Sfinții Platon și Roman, martiri în Nicomidia.'},
+  '1119':{t:'Sf. Proroc Avdie; Sf. Mc. Varlaam',d:'Sfântul Proroc Avdie, autorul celei mai scurte cărți profetice din Biblie.'},
+  '1120':{t:'Sf. Sfișit Mc. Grigorie Decapolitul; Sf. Mc. Augusta',d:'Sfântul Grigorie Decapolitul, apărătorul icoanelor.'},
+  '1121':{t:'Intrarea în Biserică a Maicii Domnului',d:'Praznic împărătesc. La 3 ani, Fecioara Maria este adusă la Templul din Ierusalim de părinții ei.',praznic:true,dezlegare:'Dezlegare la pește'},
+  '1122':{t:'Sf. Ap. Filimon și Arhip; Sf. Mc. Cecilia',d:'Sfinții Apostoli din cei 70, colaboratori ai Apostolului Pavel.'},
+  '1123':{t:'Sf. Mc. Alexandru Nevski; Sf. Ap. Iacob al lui Alfeu',d:'Sfântul Alexandru Nevski, marele cneaz al Rusiei, apărătorul credinței.'},
+  '1124':{t:'Sf. Mc. Ecaterina; Sf. Mc. Mercurie',d:'Sfânta Ecaterina, filosoafă din Alexandria, martirizată pe roată, ocrotitoarea filosofiei.',praznic:true},
+  '1125':{t:'Sf. Mc. Clement, ep. Romei; Sf. Mc. Petru',d:'Sfântul Clement, al treilea episcop al Romei, martir.'},
+  '1126':{t:'Sf. Sfințit Mc. Petru, ep. Alexandriei; Sf. Cuv. Alie',d:'Sfântul Petru, episcopul Alexandriei, martirizat sub Maximian.'},
+  '1127':{t:'Sf. Mare Mc. Iacov Persul; Sf. Cuv. Palladiu',d:'Sfântul Iacov, ofițer persan, martirizat bucată cu bucată pentru credință.',praznic:true},
+  '1128':{t:'Sf. Cuv. Paisie Velicicovski; Sf. Mc. Irina',d:'Sfântul Paisie, înnoitorul isihsmului în Moldova și România, Mânăstirea Neamț.'},
+  '1129':{t:'Sf. Mc. Paramon; Sf. Cuv. Acaciu',d:'Sfântul Paramon și cei 370 de tovarăși ai săi, martiri în Pont.'},
+  '1130':{t:'Sf. Ap. Andrei cel Întâi Chemat',d:'Ocrotitorul României și al Greciei. Primul chemat de Mântuitorul. A propovăduit pe meleagurile românești.',praznic:true,dezlegare:'Dezlegare la pește'},
+  '1201':{t:'Sf. Proroc Naum; Sf. Cuv. Filaret Milostivul',d:'Sfântul Naum, prorocul care a vestit căderea Ninivei.'},
+  '1202':{t:'Sf. Proroc Avacum; Sf. Cuv. Ioan Isihastul',d:'Sfântul Avacum, prorocul credinței, autorul Cântării Avacum.'},
+  '1203':{t:'Sf. Proroc Sofonie; Sf. Sfințit Mc. Teodor',d:'Sfântul Sofonie, prorocul zilei Domnului și al restului lui Israel.'},
+  '1204':{t:'Sf. Mare Mc. Varvara; Sf. Cuv. Ioan Damaschin',d:'Sfânta Varvara, fiica unui senator păgân, martirizată de propriul tată. Ocrotitoarea muribunzilor.',praznic:true},
+  '1205':{t:'Sf. Cuv. Sava cel Sfințit; Sf. Mc. Anastasie',d:'Sfântul Sava cel Sfințit, întemeietorul Lavrei cu același nume la Ierusalim.'},
+  '1206':{t:'Sf. Ier. Nicolae, Arhiepiscop al Mirelor Lichiei, Făcătorul de Minuni',d:'Cel mai iubit sfânt al românilor. Apărătorul săracilor, al fecioarei lor, al marinarilor. Moaște la Bari.',praznic:true,dezlegare:'Dezlegare la pește'},
+  '1207':{t:'Sf. Cuv. Antonie Sihteanul; Sf. Mc. Athenodor',d:'Sfântul Antonie de la Sihla, sihastrul munților Moldovei.'},
+  '1208':{t:'Sf. Cuv. Patapie; Sf. Ap. Sosten, Apolo',d:'Sfântul Patapie, ascet egiptean, trăitor în Corint.'},
+  '1209':{t:'Zămislirea Sf. Ana; Sf. Cuv. Sofia',d:'Minunata zămislire a Fecioarei Maria de către Sfânta Ana la bătrânețe.',praznic:true},
+  '1210':{t:'Sf. Mc. Menas, Ermogen și Evgraf; Sf. Cuv. Toma',d:'Sfinții Menas, Ermogen și Evgraf, martiri în Alexandria Egiptului.'},
+  '1211':{t:'Sf. Cuv. Daniil Stâlpnicul; Sf. Mc. Acachie',d:'Sfântul Daniil Stâlpnicul, trăitor 33 de ani pe un stâlp la Constantinopol.'},
+  '1212':{t:'Sf. Sfințit Mc. Alexandru, ep. Ierusalimului; Sf. Cuv. Iacob',d:'Sfântul Alexandru, episcopul Ierusalimului, martir sub Deciu.'},
+  '1213':{t:'Sf. Mc. Eustrate, Auxentiu, Evgheniu, Mardarie și Orest',d:'Cinci martiri din Sevastia Armeniei, uciși împreună.'},
+  '1214':{t:'Sf. Mc. Tirs, Leuciu și Calinic; Sf. Cuv. Filip',d:'Pomenirea sfinților martiri ai lui Hristos.'},
+  '1215':{t:'Sf. Sfințit Mc. Elefterie; Sf. Mc. Susana',d:'Sfântul Elefterie, episcop martir la Roma.'},
+  '1216':{t:'Sf. Proroc Agheu; Sf. Cuv. Ioachim',d:'Sfântul Agheu, prorocul reconstruirii Templului din Ierusalim.'},
+  '1217':{t:'Sf. Proroc Daniil și Sf. Tineri: Anania, Azaria și Misail',d:'Sfântul Daniil, prorocul viziunilor apocaliptice, și cei trei tineri din cuptorul de foc.',praznic:true},
+  '1218':{t:'Sf. Mc. Sebastian și cei cu el; Sf. Cuv. Flabian',d:'Sfântul Sebastian, ofițer roman martir, invocat împotriva ciumei.'},
+  '1219':{t:'Sf. Mc. Bonifatie; Sf. Cuv. Grigorie din Decapolida',d:'Sfântul Bonifatie, tânăr convertit la creștinism, martir.'},
+  '1220':{t:'Sf. Sfințit Mc. Ignatie Teoforul, ep. Antiohiei',d:'Sfântul Ignatie, episcopul Antiohiei, martir în arena Romei, autorul unor importante scrisori.',praznic:true},
+  '1221':{t:'Sf. Mc. Iuliana; Sf. Cuv. Nichita',d:'Sfânta Iuliana, fecioară martirizată în Nicomidia.'},
+  '1222':{t:'Sf. Mare Mc. Anastasia Romana; Sf. Mc. Hrisogon',d:'Sfânta Anastasia, martirizată la Sirmium (Mitrovița). Ocrotitoarea captivilor.',praznic:true},
+  '1223':{t:'Sf. 10 Mc. din Creta; Sf. Cuv. Naum',d:'Zece creștini martiri în Creta.'},
+  '1224':{t:'Sf. Cuv. Mc. Eugenia; Sf. Mc. Filemon, Apolon și Fortunat',d:'Ajunul Crăciunului. Sfânta Eugenia, martirizată la Roma.',post:'Post negru (Ajunul Crăciunului)'},
+  '1225':{t:'Nașterea Domnului Iisus Hristos',d:'Praznicul cel Mare al Nașterii lui Hristos. Slavă întru cei de sus lui Dumnezeu și pe pământ pace! Dezlegare la toate.',praznic:true,dezlegare:'Dezlegare la toate'},
+  '1226':{t:'Soborul Maicii Domnului; Sf. Proroc David; Sf. Iosif Logodnicul',d:'A doua zi de Crăciun cinstim pe Maica Domnului, pe David și pe Iosif.',dezlegare:'Dezlegare la toate'},
+  '1227':{t:'Sf. Ap. și Ev. Ioan Teologul',d:'Ucenicul iubit al Mântuitorului, autorul celei de-a patra Evanghelii și al Apocalipsei.',dezlegare:'Dezlegare la toate'},
+  '1228':{t:'Sf. 20.000 Mc. din Nicomidia; Sf. Mc. Domin',d:'Douăzeci de mii de creștini arși în biserica din Nicomidia de Dioclețian.',dezlegare:'Dezlegare la toate'},
+  '1229':{t:'Sf. 14.000 Prunci Martiri din Betleem; Sf. Cuv. Marcel',d:'Pruncii ucisi de Irod în căutarea pruncului Iisus, primii martiri ai lui Hristos.',dezlegare:'Dezlegare la toate'},
+  '1230':{t:'Sf. Cuv. Anisia; Sf. Mc. Fileter',d:'Sfânta Anisia, fecioară martirizată în Tesalonic.',dezlegare:'Dezlegare la toate'},
+  '1231':{t:'Sf. Cuv. Melania Romana; Sf. Mc. Zotic',d:'Sfânta Melania, nobilă romană care și-a vândut averile și a trăit în asceză la Ierusalim.',dezlegare:'Dezlegare la toate'},
 };
 
-const VERSETE=[
-  ['Căci atât de mult a iubit Dumnezeu lumea, încât L-a dat pe Fiul Său cel Unul-Născut, ca oricine crede în El să nu piară, ci să aibă viață veșnică.','Ioan 3:16'],
-  ['Eu sunt calea, adevărul și viața. Nimeni nu vine la Tatăl decât prin Mine.','Ioan 14:6'],
-  ['Doamne, Tu mi-ai cercetat și m-ai cunoscut. Tu cunoști șezutul meu și scularea mea.','Psalm 139:1'],
-  ['Fiți tari și îmbărbătați-vă! Nu vă temeți, căci Domnul Dumnezeul vostru merge cu voi.','Deuteronom 31:6'],
-  ['Căutați mai întâi Împărăția lui Dumnezeu și dreptatea Lui, și toate celelalte se vor adăuga vouă.','Matei 6:33'],
-  ['Și iată, Eu sunt cu voi în toate zilele, până la sfârșitul veacului. Amin.','Matei 28:20'],
-  ['Doamne, Tu ești lumina mea și mântuirea mea; de cine mă voi teme?','Psalm 27:1'],
-  ['Bucurați-vă pururea întru Domnul; și iarăși zic: bucurați-vă!','Filipeni 4:4'],
-  ['Nu te teme de nimic din ce ai să suferi. Fii credincios până la moarte și îți voi da cununa vieții.','Apocalipsa 2:10'],
-  ['Veniți la Mine toți cei osteniți și împovărați și Eu vă voi odihni pe voi.','Matei 11:28'],
-  ['Doamne, ajutorul meu vine de la Tine, Cel ce ai făcut cerul și pământul.','Psalm 121:2'],
-  ['Nu vă îngrijorați de nimic, ci în orice împrejurare aduceți cererile voastre la cunoștința lui Dumnezeu prin rugăciuni.','Filipeni 4:6'],
-  ['Fericit bărbatul care n-a umblat în sfatul necredincioșilor și în calea păcătoșilor nu a stat.','Psalm 1:1'],
-  ['Doamne, cercetează-mă și cunoaște inima mea; încearcă-mă și cunoaște gândurile mele.','Psalm 139:23'],
+function getSfantAzi(){
+  const acum=new Date();
+  const luna=String(acum.getMonth()+1).padStart(2,'0');
+  const zi=String(acum.getDate()).padStart(2,'0');
+  const cheie=luna+zi;
+  const sf=CAL[cheie];
+  if(sf) return {cheie, ...sf};
+  // Fallback dacă ziua nu e în calendar
+  return {cheie, t:'Sfinții zilei', d:'Zi de rugăciune și mulțumire pentru toate binecuvântările primite.'};
+}
+
+/* ── VERSETE LUNARE (câte ~30 pe lună, se rotesc) ─────────────
+   Structura: VERSETE_LUNARE[luna_0indexed] = array de [text, referinta]
+───────────────────────────────────────────────────────────────── */
+const VERSETE_LUNARE = [
+  // IANUARIE (0)
+  [
+    ['Căci atât de mult a iubit Dumnezeu lumea, încât L-a dat pe Fiul Său cel Unul-Născut, ca oricine crede în El să nu piară, ci să aibă viață veșnică.','Ioan 3:16'],
+    ['Eu sunt calea, adevărul și viața. Nimeni nu vine la Tatăl decât prin Mine.','Ioan 14:6'],
+    ['Doamne, Tu mi-ai cercetat și m-ai cunoscut. Tu cunoști șezutul meu și scularea mea.','Psalm 139:1'],
+    ['Fiți tari și îmbărbătați-vă! Nu vă temeți, căci Domnul Dumnezeul vostru merge cu voi.','Deuteronom 31:6'],
+    ['Căutați mai întâi Împărăția lui Dumnezeu și dreptatea Lui, și toate celelalte se vor adăuga vouă.','Matei 6:33'],
+    ['Și iată, Eu sunt cu voi în toate zilele, până la sfârșitul veacului. Amin.','Matei 28:20'],
+    ['Doamne, Tu ești lumina mea și mântuirea mea; de cine mă voi teme?','Psalm 27:1'],
+    ['Bucurați-vă pururea întru Domnul; și iarăși zic: bucurați-vă!','Filipeni 4:4'],
+    ['Nu te teme de nimic din ce ai să suferi. Fii credincios până la moarte și îți voi da cununa vieții.','Apocalipsa 2:10'],
+    ['Veniți la Mine toți cei osteniți și împovărați și Eu vă voi odihni pe voi.','Matei 11:28'],
+    ['Doamne, ajutorul meu vine de la Tine, Cel ce ai făcut cerul și pământul.','Psalm 121:2'],
+    ['Nu vă îngrijorați de nimic, ci în orice împrejurare aduceți cererile voastre la cunoștința lui Dumnezeu prin rugăciuni.','Filipeni 4:6'],
+    ['Fericit bărbatul care n-a umblat în sfatul necredincioșilor.','Psalm 1:1'],
+    ['La început era Cuvântul și Cuvântul era la Dumnezeu și Dumnezeu era Cuvântul.','Ioan 1:1'],
+    ['Iată, stau la ușă și bat; de va auzi cineva glasul Meu și va deschide ușa, voi intra la el.','Apocalipsa 3:20'],
+    ['Cere și ți se va da; caută și vei afla; bate și ți se va deschide.','Matei 7:7'],
+    ['Domnul este păstorul meu; nu voi duce lipsă de nimic.','Psalm 23:1'],
+    ['Inima curată zidește-mi, Dumnezeule, și duh drept înnoiește întru mine.','Psalm 51:10'],
+    ['Cu Dumnezeu vom face fapte mari și El va zdrobi pe vrăjmașii noștri.','Psalm 60:12'],
+    ['Cel ce locuiește în ajutorul Celui Preaînalt, întru acoperământul Dumnezeului cerului se va sălășlui.','Psalm 91:1'],
+    ['Lăuda-voi pe Domnul în toată vremea, pururea lauda Lui în gura mea.','Psalm 34:1'],
+    ['Încredinţează-ţi calea ta Domnului şi nădăjduiește în El, şi El va face.','Psalm 37:5'],
+    ['Doamne, înaintea Ta este toată dorința mea și suspinul meu nu s-a ascuns de Tine.','Psalm 38:9'],
+    ['Binecuvântează, suflete al meu, pe Domnul și toate cele dinlăuntrul meu, numele cel sfânt al Lui!','Psalm 103:1'],
+    ['Dragostea lui Dumnezeu s-a vărsat în inimile noastre, prin Duhul Sfânt, Cel ce ni s-a dat.','Romani 5:5'],
+    ['Nu eu mai trăiesc, ci Hristos trăiește în mine.','Galateni 2:20'],
+    ['Pot totul în Hristos, Cel ce mă întărește.','Filipeni 4:13'],
+    ['Harul Domnului nostru Iisus Hristos să fie cu duhul vostru, fraților. Amin.','Galateni 6:18'],
+    ['Rădăcina tuturor relelor este iubirea de argint.','1 Timotei 6:10'],
+    ['Dumnezeu este iubire și cel ce rămâne în iubire rămâne în Dumnezeu și Dumnezeu rămâne întru el.','1 Ioan 4:16'],
+  ],
+  // FEBRUARIE (1)
+  [
+    ['Cel ce se smerește pe sine se va înălța.','Luca 18:14'],
+    ['Pocăiți-vă, că s-a apropiat Împărăția cerurilor.','Matei 4:17'],
+    ['Veniți la Mine toți cei osteniți și Eu vă voi odihni pe voi.','Matei 11:28'],
+    ['Eu sunt lumina lumii; cel ce Îmi urmează Mie nu va umbla în întuneric.','Ioan 8:12'],
+    ['Cel ce mânâncă trupul Meu și bea sângele Meu are viață veșnică.','Ioan 6:54'],
+    ['Dumnezeu este Duh și cei ce I se închină trebuie să I se închine în duh și adevăr.','Ioan 4:24'],
+    ['Fericiți cei curați cu inima, că aceia vor vedea pe Dumnezeu.','Matei 5:8'],
+    ['Fericiți cei blânzi, că aceia vor moșteni pământul.','Matei 5:5'],
+    ['Fericiți cei ce flămânzesc și însetează de dreptate, că aceia se vor sătura.','Matei 5:6'],
+    ['Fericiți făcătorii de pace, că aceia fiii lui Dumnezeu se vor chema.','Matei 5:9'],
+    ['Nu puteți sluji lui Dumnezeu și lui mamona.','Matei 6:24'],
+    ['Iubite-voi, Doamne, vârtutea mea; Doamne, scăparea mea și cetatea mea.','Psalm 18:1'],
+    ['Judecățile Domnului sunt adevărate și toate dreptate.','Psalm 19:9'],
+    ['Paharul mântuirii voi lua și numele Domnului voi chema.','Psalm 116:13'],
+    ['Doamne, gura mea vei deschide și buzele mele vor vesti lauda Ta.','Psalm 51:15'],
+    ['Psalmul și cântarea de laudă sunt ale Lui; lăuda-L-voi în toate zilele.','Psalm 145:2'],
+    ['Cel drept din credință va fi viu.','Romani 1:17'],
+    ['Credința fără fapte este moartă.','Iacov 2:26'],
+    ['Toată Scriptura este insuflată de Dumnezeu și de folos spre învățătură.','2 Timotei 3:16'],
+    ['Căci acolo unde sunt doi sau trei adunați în numele Meu, sunt și Eu în mijlocul lor.','Matei 18:20'],
+    ['Priveghiați și vă rugați, ca să nu intrați în ispită.','Matei 26:41'],
+    ['Celui ce biruiește îi voi da să mănânce din pomul vieții.','Apocalipsa 2:7'],
+    ['Scris este: Nu numai cu pâine va trăi omul, ci cu tot cuvântul care iese din gura lui Dumnezeu.','Matei 4:4'],
+    ['Iertați și vi se va ierta.','Luca 6:37'],
+    ['Dați și vi se va da; măsură bună, îndesată, clătinată și vărsată.','Luca 6:38'],
+    ['Nu judecați, ca să nu fiți judecați.','Matei 7:1'],
+    ['Cine vrea să fie mai mare între voi să fie slujitorul vostru.','Matei 20:26'],
+    ['Cerul și pământul vor trece, dar cuvintele Mele nu vor trece.','Matei 24:35'],
+    ['Eu sunt învierea și viața; cel ce crede în Mine, chiar dacă va muri, va trăi.','Ioan 11:25'],
+    ['Pace vă las vouă, pacea Mea o dau vouă.','Ioan 14:27'],
+  ],
+  // MARTIE (2)
+  [
+    ['Pocăiți-vă și întoarceți-vă la Dumnezeu, ca să vi se șteargă păcatele.','Fapte 3:19'],
+    ['Întoarceți-vă la Mine cu toată inima voastră, cu post, cu plâns și cu tânguire.','Ioil 2:12'],
+    ['Apropiați-vă de Dumnezeu și Se va apropia și El de voi.','Iacov 4:8'],
+    ['Milă voiesc, iar nu jertfă.','Osea 6:6'],
+    ['Deschide-mi, Doamne, ușile pocăinței; că inima mea caută sfântul Tău locaș.','Stihiră'],
+    ['Spălați-vă, curățiți-vă, luați vicleniile de dinaintea ochilor Mei, opriți-vă de la rău.','Isaia 1:16'],
+    ['Smeriți-vă înaintea Domnului și El vă va înălța.','Iacov 4:10'],
+    ['Rupe-ți inima, nu hainele tale, și întoarce-te la Domnul Dumnezeul tău.','Ioil 2:13'],
+    ['Cel ce ascunde fărădelegile sale nu va propăși, dar cel ce le mărturisește și se lasă de ele va fi miluit.','Proverbe 28:13'],
+    ['Dacă mărturisim păcatele noastre, El este credincios și drept ca să ne ierte.','1 Ioan 1:9'],
+    ['Înnoiți-vă cu duhul minții voastre și îmbrăcați-vă în omul cel nou.','Efeseni 4:23-24'],
+    ['Nu vă conformați acestui veac, ci transformați-vă prin înnoirea minții.','Romani 12:2'],
+    ['Postul pe care îl aleg Eu este acesta: dezlega legăturile nedreptății, da drumul celor asupriți.','Isaia 58:6'],
+    ['Împărția lui Dumnezeu nu este mâncare și băutură, ci dreptate și pace și bucurie în Duhul Sfânt.','Romani 14:17'],
+    ['Nu știți că trupul vostru este templu al Duhului Sfânt care locuiește în voi?','1 Corinteni 6:19'],
+    ['Curățiți-vă de orice întinăciune a trupului și a duhului.','2 Corinteni 7:1'],
+    ['Hainele albe să fie totdeauna pe tine și untdelemnul să nu lipsească de pe capul tău.','Eclesiastul 9:8'],
+    ['Strigat-am din adâncuri, Doamne; Doamne, auzi glasul meu.','Psalm 130:1'],
+    ['Nădăjduiește în Domnul, fii tare și voinicește să bată inima ta.','Psalm 27:14'],
+    ['Toiagul Tău și varga Ta acestea m-au mângâiat.','Psalm 23:4'],
+    ['Pe Tine Te-am iubit, Doamne, vârtutea mea.','Psalm 18:1'],
+    ['Cel ce se roagă în taină, Tatăl tău Care vede în taină îți va răsplăti ție.','Matei 6:6'],
+    ['Când postiți, nu fiți trişti ca fățarnicii.','Matei 6:16'],
+    ['Tezaurizați-vă comori în cer, unde nici molia, nici rugina nu le strică.','Matei 6:20'],
+    ['Robia păcatului v-ați slobozit și v-ați făcut robi ai dreptății.','Romani 6:18'],
+    ['Iar roada Duhului este: dragostea, bucuria, pacea, îndelungă-răbdarea.','Galateni 5:22'],
+    ['Purtați sarcinile unii altora și veți împlini astfel Legea lui Hristos.','Galateni 6:2'],
+    ['Faceți totul cu dragoste.','1 Corinteni 16:14'],
+    ['Dragostea îndelung rabdă; dragostea este binevoitoare; dragostea nu pizmuiește.','1 Corinteni 13:4'],
+    ['Acum rămân acestea trei: credința, nădejdea și dragostea. Iar mai mare dintre acestea este dragostea.','1 Corinteni 13:13'],
+  ],
+  // APRILIE (3)
+  [
+    ['Hristos a înviat din morți, cu moartea pe moarte călcând și celor din morminte viață dăruindu-le.','Troparul Învierii'],
+    ['Eu sunt învierea și viața; cel ce crede în Mine, chiar dacă va muri, va trăi.','Ioan 11:25'],
+    ['Nu căutați pe Cel Viu printre cei morți. Nu este aici, ci S-a sculat.','Luca 24:5-6'],
+    ['Dacă Hristos n-a înviat, zadarnică este credința voastră.','1 Corinteni 15:17'],
+    ['Cel ce a proorocit că va învia, Acela este Cel ce a și plinit cuvântul Său.','Stihiră pascal'],
+    ['Să prăznuim Paștile nu cu aluatul cel vechi, ci cu azimele curăției și ale adevărului.','1 Corinteni 5:8'],
+    ['Hristos, Paștile nostru, S-a jertfit.','1 Corinteni 5:7'],
+    ['Vineri ne-am răstignit, sâmbătă ne-am îngropat, iar duminică am înviat împreună cu Hristos.','Gând pascal'],
+    ['Ziua aceasta, pe care a făcut-o Domnul, să ne bucurăm și să ne veselim întru ea!','Psalm 118:24'],
+    ['Hristos este lumina lumii și cel ce crede în El nu va rămâne în întuneric.','Ioan 12:46'],
+    ['Hristos murind nu mai moare, moartea nu mai are stăpânire asupra Lui.','Romani 6:9'],
+    ['Noi am murit față de păcat; cum am mai trăi în el?','Romani 6:2'],
+    ['Dacă am murit împreună cu Hristos, credem că vom și viețui împreună cu El.','Romani 6:8'],
+    ['Lumina a venit în lume, dar oamenii au iubit mai mult întunericul decât lumina.','Ioan 3:19'],
+    ['Cel ce crede în Mine nu crede în Mine, ci în Cel ce M-a trimis pe Mine.','Ioan 12:44'],
+    ['Acum sufletul Meu este tulburat. Și ce voi zice? Doamne, mântuiește-Mă din ceasul acesta.','Ioan 12:27'],
+    ['Și Eu, când voi fi înălțat de pe pământ, voi atrage la Mine pe toți.','Ioan 12:32'],
+    ['Pace vouă! Precum M-a trimis pe Mine Tatăl, vă trimit și Eu pe voi.','Ioan 20:21'],
+    ['Fericiți cei ce n-au văzut și au crezut.','Ioan 20:29'],
+    ['Pacea Mea v-o dau vouă; nu cum dă lumea vă dau Eu.','Ioan 14:27'],
+    ['Eu sunt Cel Viu. Am fost mort și, iată, sunt viu în vecii vecilor.','Apocalipsa 1:18'],
+    ['El a luat asupră-Și slăbiciunile noastre și bolile noastre le-a purtat.','Matei 8:17'],
+    ['Stau la ușă și bat; de va auzi cineva glasul Meu și va deschide ușa, voi intra la el.','Apocalipsa 3:20'],
+    ['Dragostea desăvârșită alungă frica.','1 Ioan 4:18'],
+    ['Nu vă temeți de cei ce ucid trupul, dar sufletul nu pot să-l ucidă.','Matei 10:28'],
+    ['Cel ce iubește viața sa o va pierde; iar cel ce urăște viața sa în lumea aceasta, o va păstra pentru viața veșnică.','Ioan 12:25'],
+    ['Slavă Ție, Cel ce ne-ai arătat lumina!','Laudele dimineții'],
+    ['Cine ne va despărți pe noi de dragostea lui Hristos?','Romani 8:35'],
+    ['Sunt încredințat că nici moartea, nici viața nu va putea să ne despartă de dragostea lui Dumnezeu.','Romani 8:38-39'],
+    ['Să ne bucurăm și să ne veselim și să-I dăm slavă Lui, că a venit nunta Mielului.','Apocalipsa 19:7'],
+  ],
+  // MAI (4)
+  [
+    ['Nu vă iubiți numai cu vorba și cu limba, ci cu fapta și cu adevărul.','1 Ioan 3:18'],
+    ['Cel drept va viețui prin credința sa.','Habacuc 2:4'],
+    ['Dacă mărturisim cu gura că Iisus este Domnul și credem că Dumnezeu L-a înviat din morți, ne vom mântui.','Romani 10:9'],
+    ['Credința este încredințarea celor nădăjduite, dovada lucrurilor nevăzute.','Evrei 11:1'],
+    ['Prin credință îi înțelegem că lumile au fost întocmite cu cuvântul lui Dumnezeu.','Evrei 11:3'],
+    ['Fără credință nu este cu putință să fim plăcuți lui Dumnezeu.','Evrei 11:6'],
+    ['Căci cel ce vine la Dumnezeu trebuie să creadă că El este.','Evrei 11:6'],
+    ['Credința fără fapte este moartă în ea însăși.','Iacov 2:17'],
+    ['Binecuvântat este bărbatul care se încrede în Domnul și al cărui sprijin este Domnul.','Ieremia 17:7'],
+    ['Cel ce seamănă cu zgârcenie, cu zgârcenie va și secera; iar cel ce seamănă cu dărnicie va secera cu dărnicie.','2 Corinteni 9:6'],
+    ['Dumnezeu iubește pe cel ce dă cu voie bună.','2 Corinteni 9:7'],
+    ['Și orice veți cere în rugăciune cu credință, veți primi.','Matei 21:22'],
+    ['Dacă veți cere ceva în numele Meu, Eu voi face.','Ioan 14:14'],
+    ['Duceți-vă în toată lumea și propovăduiți Evanghelia la toată făptura.','Marcu 16:15'],
+    ['Nu v-ați ales voi pe Mine, ci Eu v-am ales pe voi și v-am rânduit să mergeți și rod să aduceți.','Ioan 15:16'],
+    ['Cel ce rămâne în Mine și Eu în el, acela aduce roadă multă.','Ioan 15:5'],
+    ['Eu sunt via, voi sunteți mlădițele.','Ioan 15:5'],
+    ['Rămâneți în dragostea Mea.','Ioan 15:9'],
+    ['Aceasta este porunca Mea: să vă iubiți unii pe alții, precum v-am iubit Eu.','Ioan 15:12'],
+    ['Mai mare dragoste decât aceasta nimeni nu are, ca sufletul lui să și-l pună pentru prietenii săi.','Ioan 15:13'],
+    ['Nu mai sunteți slugi, ci prieteni ai Mei.','Ioan 15:15'],
+    ['Dacă lumea vă urăște, știți că pe Mine mai înainte decât pe voi M-a urât.','Ioan 15:18'],
+    ['Veți fi urâți de toți pentru numele Meu, dar cel ce va răbda până la sfârșit, acela se va mântui.','Matei 10:22'],
+    ['Tatăl Meu este glorificat prin aceasta: să aduceți roadă multă.','Ioan 15:8'],
+    ['Dacă rămâneți în Mine și cuvintele Mele rămân în voi, cereți orice voiți și se va face vouă.','Ioan 15:7'],
+    ['Voi M-ați văzut pe Mine ați văzut pe Tatăl.','Ioan 14:9'],
+    ['Eu și Tatăl una suntem.','Ioan 10:30'],
+    ['Oile Mele ascultă glasul Meu și Eu le cunosc și ele vin după Mine.','Ioan 10:27'],
+    ['Eu le dau viață veșnică și ele nu vor pieri în veac.','Ioan 10:28'],
+    ['Eu am venit ca oile să aibă viață și s-o aibă din belșug.','Ioan 10:10'],
+  ],
+  // IUNIE (5)
+  [
+    ['Duhul Sfânt va veni asupra voastră și veți fi martorii Mei.','Fapte 1:8'],
+    ['S-a umplut toată casa unde ședeau ei și toți s-au umplut de Duh Sfânt.','Fapte 2:2,4'],
+    ['Pocăiți-vă și botezați-vă fiecare dintre voi în numele lui Iisus Hristos.','Fapte 2:38'],
+    ['Rodul Duhului este dragostea, bucuria, pacea, îndelunga-răbdare, bunătatea, credincioșia.','Galateni 5:22'],
+    ['Nu știți că voi sunteți templul lui Dumnezeu și că Duhul lui Dumnezeu locuiește în voi?','1 Corinteni 3:16'],
+    ['Duhul vine în ajutorul slăbiciunii noastre; căci noi nu știm să ne rugăm cum trebuie.','Romani 8:26'],
+    ['Nimeni nu poate zice Iisus este Domn, decât în Duhul Sfânt.','1 Corinteni 12:3'],
+    ['Darul deosebit pe care l-ați primit, puneți-l în slujba altora.','1 Petru 4:10'],
+    ['Căci în El trăim, ne mișcăm și suntem.','Fapte 17:28'],
+    ['Doamne, deschide-mi buzele și gura mea va vesti lauda Ta.','Psalm 51:15'],
+    ['Laudă suflete al meu pe Domnu; lăuda-voi pe Domnul în viața mea.','Psalm 146:1-2'],
+    ['Cu Tine voi sparge oaste de războinici și cu Dumnezeul meu voi trece zidul.','Psalm 18:29'],
+    ['Ai luminat, Doamne, candela mea; Dumnezeul meu, luminează întunericul meu.','Psalm 18:28'],
+    ['Cei ce seamănă cu lacrimi, cu bucurie vor secera.','Psalm 126:5'],
+    ['Cântați Domnului cântare nouă; cântați Lui tot pământul.','Psalm 96:1'],
+    ['Strigați de bucurie Lui Dumnezeu tot pământul.','Psalm 100:1'],
+    ['Intrați pe porțile Lui cu laude, în curțile Lui cu imne.','Psalm 100:4'],
+    ['Lăudați pe Domnul în sfințenia Lui; lăudați-L pe tăria puterii Lui.','Psalm 150:1'],
+    ['Tot ce suflă să laude pe Domnul! Aliluia!','Psalm 150:6'],
+    ['Mărimea Lui este nepătrunsă și lucrările Lui minunate.','Psalm 145:3'],
+    ['Cel ce iubește pe fratele său rămâne în lumină.','1 Ioan 2:10'],
+    ['Dacă zice cineva: iubesc pe Dumnezeu, iar pe fratele său îl urăște, mincinos este.','1 Ioan 4:20'],
+    ['Să iubim pe Dumnezeu, fiindcă El ne-a iubit cel dintâi.','1 Ioan 4:19'],
+    ['Oricine îl iubește pe Cel ce naște îl iubește și pe cel născut din El.','1 Ioan 5:1'],
+    ['Credința noastră este biruința care a biruit lumea.','1 Ioan 5:4'],
+    ['Iar acesta este adevăratul Dumnezeu și viața veșnică.','1 Ioan 5:20'],
+    ['Harul, îndurarea și pacea de la Dumnezeu Tatăl și de la Iisus Hristos Fiul Tatălui.','2 Ioan 1:3'],
+    ['M-am bucurat mult că am găsit pe unii din copiii tăi umblând în adevăr.','2 Ioan 1:4'],
+    ['Iubitule, nu imita răul, ci binele. Cel ce face binele este din Dumnezeu.','3 Ioan 1:11'],
+    ['Iar Celui ce poate să vă păzească fără de poticnire și să vă pună fără prihană înaintea slavei Lui.','Iuda 1:24'],
+  ],
+  // IULIE (6)
+  [
+    ['Rugați-vă neîncetat.','1 Tesaloniceni 5:17'],
+    ['Stați deci tari și nu vă plecați iarăși sub jugul robiei.','Galateni 5:1'],
+    ['Dacă trăim prin Duhul, prin Duhul și să umblăm.','Galateni 5:25'],
+    ['Fraților, chiar dacă un om ar cădea în vreo greșeală, voi cei duhovnicești îndreptați-l pe unul ca acesta cu duhul blândeții.','Galateni 6:1'],
+    ['Cel ce se laudă, să se laude în Domnul.','2 Corinteni 10:17'],
+    ['Bunătatea Lui, îngăduința și îndelunga-răbdare te cheamă la pocăință.','Romani 2:4'],
+    ['Dreptatea lui Dumnezeu prin credința în Iisus Hristos pentru toți și peste toți cei ce cred.','Romani 3:22'],
+    ['Toți au păcătuit și sunt lipsiți de slava lui Dumnezeu.','Romani 3:23'],
+    ['Și sunt îndreptățiți în dar, prin harul Lui, prin răscumpărarea cea în Hristos Iisus.','Romani 3:24'],
+    ['Fiindcă, de am murit împreună cu Hristos, credem că vom și viețui împreună cu El.','Romani 6:8'],
+    ['Socotiți că sunteți morți față de păcat, dar vii față de Dumnezeu, în Hristos Iisus, Domnul nostru.','Romani 6:11'],
+    ['Nu există nicio osândire pentru cei ce sunt în Hristos Iisus.','Romani 8:1'],
+    ['Căci cei ce sunt după Duh cugetă la cele ale Duhului.','Romani 8:5'],
+    ['Duhul însuși mărturisește împreună cu duhul nostru că suntem fii ai lui Dumnezeu.','Romani 8:16'],
+    ['Dacă Dumnezeu este pentru noi, cine este împotriva noastră?','Romani 8:31'],
+    ['El, Care n-a cruțat pe Însuși Fiul Său, ci L-a dat pentru noi toți, cum nu ne va da toate împreună cu El?','Romani 8:32'],
+    ['Ci în toate acestea suntem mai mult decât biruitori prin Acela Care ne-a iubit.','Romani 8:37'],
+    ['Deoarece din El și prin El și pentru El sunt toate. Lui fie slava în veci!','Romani 11:36'],
+    ['Iubirea să fie nefățarnică. Urâți răul, alipiți-vă de bine.','Romani 12:9'],
+    ['Iubiți-vă frățește unii pe alții; în cinste unii pe alții dați-vă întâietate.','Romani 12:10'],
+    ['Nu vă leneviți în sârguință, fiți înflăcărați cu duhul, slujiți Domnului.','Romani 12:11'],
+    ['Bucurați-vă în nădejde; fiți răbdători în necaz; stăruiți în rugăciune.','Romani 12:12'],
+    ['Faceți parte din nevoile sfinților; iubiți pe străini.','Romani 12:13'],
+    ['Nu fiți înțelepți în ochii voștri înșivă; nu răsplătiți nimănui răul cu rău.','Romani 12:16-17'],
+    ['Nu vă răzbunați singuri, iubiților, ci lăsați loc mâniei lui Dumnezeu.','Romani 12:19'],
+    ['Nu te lăsa biruit de rău, ci biruiește răul prin bine.','Romani 12:21'],
+    ['Dragostea aproapelui rău nu face; dragostea este deci împlinirea Legii.','Romani 13:10'],
+    ['Este ceasul să vă treziți din somn; căci acum mântuirea noastră este mai aproape.','Romani 13:11'],
+    ['Să ne purtăm cuviincios, ca ziua; nu în ospeturi și beții, nu în desfrânări.','Romani 13:13'],
+    ['Îmbrăcați-vă în Domnul Iisus Hristos.','Romani 13:14'],
+  ],
+  // AUGUST (7)
+  [
+    ['Sufletul meu tânjește și se topește de dor după curțile Domnului.','Psalm 84:2'],
+    ['Cel ce locuiește sub ocrotirea Celui Preaînalt va rămâne la umbra Celui Atotputernic.','Psalm 91:1'],
+    ['Voi striga la Dumnezeu Cel Preaînalt, la Dumnezeu Care plinește toate pentru mine.','Psalm 57:2'],
+    ['Bucurați-vă, drepților, în Domnul; celor drepți li se cuvine lauda.','Psalm 33:1'],
+    ['Ochii Domnului sunt spre cei drepți și urechile Lui spre strigătul lor.','Psalm 34:15'],
+    ['Aproape este Domnul de cei cu inima zdrobită și pe cei smeriți cu duhul îi va mântui.','Psalm 34:18'],
+    ['Gustați și vedeți că bun este Domnul; fericit bărbatul care nădăjduiește în El.','Psalm 34:8'],
+    ['Cela ce mănâncă Trupul Meu și bea Sângele Meu are viață veșnică.','Ioan 6:54'],
+    ['Eu sunt pâinea vie care s-a coborât din cer; dacă mănâncă cineva din această pâine, va trăi în veci.','Ioan 6:51'],
+    ['Eu sunt pâinea vieții; cel ce vine la Mine nu va flămânzi și cel ce crede în Mine nu va înseta niciodată.','Ioan 6:35'],
+    ['Doamne, nu știu cum să mă rog cum se cuvine; Duhul mă ajută în slăbiciunea mea.','după Romani 8:26'],
+    ['Luați jugul Meu asupra voastră și vă veți găsi odihnă sufletelor voastre.','Matei 11:29'],
+    ['Jugul Meu este bun și sarcina Mea este ușoară.','Matei 11:30'],
+    ['Îngrijorarea lumii și înșelăciunea bogăției îneacă Cuvântul și el ajunge neroditor.','Matei 13:22'],
+    ['Sămânța din pământ bun este cel ce aude Cuvântul și îl înțelege, care aduce roadă.','Matei 13:23'],
+    ['Cel mai mare în Împărăție va fi cel ce se va smeri pe sine ca un prunc.','Matei 18:4'],
+    ['Dacă nu vă veți întoarce și nu veți fi ca pruncii, nu veți intra în Împărăția cerurilor.','Matei 18:3'],
+    ['Primiți în Numele Meu un prunc ca acesta, pe Mine Mă primiți.','Matei 18:5'],
+    ['Grijile lumii acesteia să nu vă înăbușe.','după Matei 13:22'],
+    ['Nu vă temeți, rămășiță mică, căci Tatăl vostru a binevoit să vă dea Împărăția.','Luca 12:32'],
+    ['Unde este comoara voastră, acolo va fi și inima voastră.','Matei 6:21'],
+    ['Luminătorul trupului este ochiul. Dacă ochiul tău va fi curat, tot trupul tău va fi luminat.','Matei 6:22'],
+    ['Nu putem să sluji la doi domni.','după Matei 6:24'],
+    ['Luați aminte să nu faceți faptele dreptății înaintea oamenilor, ca să fiți văzuți de ei.','Matei 6:1'],
+    ['Tatăl tău care vede în ascuns îți va răsplăti ție.','Matei 6:4'],
+    ['Rugați-vă pentru cei ce vă prigonesc pe voi.','Matei 5:44'],
+    ['Fiți dar voi desăvârșiți, precum Tatăl vostru Cel ceresc desăvârșit este.','Matei 5:48'],
+    ['Nu am venit să stric Legea sau proorocii, ci să îndeplinesc.','Matei 5:17'],
+    ['Fericiți cei prigoniți pentru dreptate că a lor este Împărăția cerurilor.','Matei 5:10'],
+    ['Voi sunteți lumina lumii. Nu poate o cetate să se ascundă, stând pe vârf de munte.','Matei 5:14'],
+  ],
+  // SEPTEMBRIE (8)
+  [
+    ['La început a făcut Dumnezeu cerurile și pământul.','Geneza 1:1'],
+    ['Dumnezeu a văzut că toate cele făcute erau bune foarte.','Geneza 1:31'],
+    ['Iată Eu fac toate lucrurile noi.','Apocalipsa 21:5'],
+    ['Preaslăviți pe Dumnezeu în trupul vostru și în duhul vostru, care sunt ale lui Dumnezeu.','1 Corinteni 6:20'],
+    ['Nu știți că trupul vostru este mădular al lui Hristos?','1 Corinteni 6:15'],
+    ['Dumnezeu nu ne-a dat duhul temerii, ci al puterii, al dragostei și al înțelepciunii.','2 Timotei 1:7'],
+    ['Fii tare și nu te descuraja! Nu te teme și nu te înspăimânta!','Iosua 1:9'],
+    ['Fiți sobri și privegheați; potrivnicul vostru, diavolul, umblă ca un leu.','1 Petru 5:8'],
+    ['Împotriviți-vă lui, tari în credință.','1 Petru 5:9'],
+    ['Smeriti-vă sub mâna cea tare a lui Dumnezeu.','1 Petru 5:6'],
+    ['El poartă grijă de voi.','1 Petru 5:7'],
+    ['Credincios este Dumnezeu Care nu va îngădui ca să fiți ispitiți peste puterile voastre.','1 Corinteni 10:13'],
+    ['Cel ce crede că stă să ia seama să nu cadă.','1 Corinteni 10:12'],
+    ['Purtați-vă ca niște oameni; fiți tari.','1 Corinteni 16:13'],
+    ['Dumnezeu este Cel ce lucrează în voi și voința și înfăptuirea, spre bunăvoința Lui.','Filipeni 2:13'],
+    ['Faceți toate fără cârtiri și fără gânduri de îndoială.','Filipeni 2:14'],
+    ['Luptați-vă pentru credința dată sfinților odată pentru totdeauna.','Iuda 1:3'],
+    ['Ziua Domnului va veni ca un fur noaptea.','1 Tesaloniceni 5:2'],
+    ['Voi nu sunteți în întuneric, ca ziua aceea să vă surprindă ca un fur.','1 Tesaloniceni 5:4'],
+    ['Toți sunteți fii ai luminii și fii ai zilei; nu suntem ai nopții, nici ai întunericului.','1 Tesaloniceni 5:5'],
+    ['Mângâiați-vă dar unii pe alții și zidiți-vă unul pe altul.','1 Tesaloniceni 5:11'],
+    ['Nădejdea nu rușinează, pentru că dragostea lui Dumnezeu s-a vărsat în inimile noastre.','Romani 5:5'],
+    ['Prin credință umblăm, nu prin vedere.','2 Corinteni 5:7'],
+    ['Dacă cineva este în Hristos, este o făptură nouă; cele vechi au trecut, iată că toate s-au făcut noi.','2 Corinteni 5:17'],
+    ['Căci Dumnezeu în Hristos împacă lumea cu Sine.','2 Corinteni 5:19'],
+    ['Voi care erați depărtați v-ați apropiat prin sângele lui Hristos.','Efeseni 2:13'],
+    ['El însuși este pacea noastră, El a făcut din cei doi un singur om.','Efeseni 2:14'],
+    ['Sunteți ziditi pe temelia apostolilor și a proorocilor.','Efeseni 2:20'],
+    ['Temelia a pus-o Dumnezeu, tare stă, having this seal: Cunoaște Domnul pe ai Săi.','2 Timotei 2:19'],
+    ['Cel ce Mă trimite este cu Mine; nu M-a lăsat singur.','Ioan 8:29'],
+  ],
+  // OCTOMBRIE (9)
+  [
+    ['Doamne, Tu ne-ai fost scăpare din neam în neam.','Psalm 90:1'],
+    ['Înainte de a se naște munții și de a se fi zidit pământul și lumea, din veac și până în veac Tu ești Dumnezeu.','Psalm 90:2'],
+    ['Cine sunt eu, Doamne Dumnezeule, și ce este casa mea, de m-ai adus până aici?','2 Samuel 7:18'],
+    ['Doamne, toate înaintea Ta sunt și nu este nimic ascuns de la ochii Tăi.','după Psalm 139'],
+    ['Cât de tainice sunt judecățile Lui și cât de de nepătruns sunt căile Lui!','Romani 11:33'],
+    ['Ale Lui sunt veacurile și El le ținuie pe toate cu puterea cuvântului Său.','după Evrei 1'],
+    ['Doamne, Tu mă cercetezi și mă cunoști, Tu cunoști șezutul meu și scularea mea.','Psalm 139:1-2'],
+    ['Chiar de mă voi coborî în iad, Tu ești de față.','Psalm 139:8'],
+    ['Laudă, suflete al meu, pe Domnul. Lăuda-voi pe Domnul în viața mea.','Psalm 146:1'],
+    ['Cel ce face dreptate, care dă pâine celui flămând; Domnul slobozește pe cei înlănțuiți.','Psalm 146:7'],
+    ['Fericit cel al cărui ajutor este Dumnezeul lui Iacov.','Psalm 146:5'],
+    ['El vindecă pe cei cu inima zdrobită și leagă rănile lor.','Psalm 147:3'],
+    ['Lăudați pe Domnul din ceruri; lăudați-L în cele înalte!','Psalm 148:1'],
+    ['El a poruncit și s-au zidit; a poruncit și stau în veci.','Psalm 148:5-6'],
+    ['Cântați Lui o cântare nouă, lauda Lui în adunarea cuvioșilor.','Psalm 149:1'],
+    ['Aleluia! Slăviți pe Dumnezeu în sfântul Său lăcaș.','Psalm 150:1'],
+    ['Nimeni nu poate sluji la doi domni.','Matei 6:24'],
+    ['Nu vă îngrijiți pentru ziua de mâine.','Matei 6:34'],
+    ['Căutați mai întâi dreptatea lui Dumnezeu și toate acestea vi se vor adăuga.','Matei 6:33'],
+    ['Rugați-vă Stăpânului secerișului ca să scoată lucrători la secerișul Lui.','Matei 9:38'],
+    ['Veniți după Mine și vă voi face pescari de oameni.','Matei 4:19'],
+    ['Pocăiți-vă, că s-a apropiat Împărăția cerurilor.','Matei 4:17'],
+    ['Hristos a murit pentru noi, pe când noi eram încă păcătoși.','Romani 5:8'],
+    ['Noi am fost îngropați cu Hristos, prin botez, în moartea Lui.','Romani 6:4'],
+    ['Ca și Hristos a înviat din morți, tot astfel și noi să umblăm în înnoirea vieții.','Romani 6:4'],
+    ['Legea duhului vieții în Hristos Iisus m-a slobozit de legea păcatului și a morții.','Romani 8:2'],
+    ['Cei ce sunt duhovnicești cugetă la cele ale Duhului.','Romani 8:5'],
+    ['Câți sunt mânați de Duhul lui Dumnezeu sunt fii ai lui Dumnezeu.','Romani 8:14'],
+    ['Ați primit Duhul înfierii, prin care strigăm: Avva! Părinte!','Romani 8:15'],
+    ['Nădejdea nu ne face de rușine, căci dragostea lui Dumnezeu s-a revărsat în inimile noastre.','Romani 5:5'],
+  ],
+  // NOIEMBRIE (10)
+  [
+    ['Vino, Doamne Iisuse!','Apocalipsa 22:20'],
+    ['Eu, Iisus, am trimis pe îngerul Meu să vă adeverească acestea pentru Biserici.','Apocalipsa 22:16'],
+    ['Ferice de cei ce-și spală hainele ca să aibă drept la pomul vieții.','Apocalipsa 22:14'],
+    ['Și Duhul și Mireasa zic: Vino! Și cel ce aude să zică: Vino!','Apocalipsa 22:17'],
+    ['Slavă în veci Celui ce ne iubește și ne-a dezlegat din păcatele noastre prin sângele Său.','Apocalipsa 1:5-6'],
+    ['Eu sunt Alfa și Omega, Primul și Ultimul, Începutul și Sfârșitul.','Apocalipsa 22:13'],
+    ['Fericiți cei chemați la cina nunții Mielului.','Apocalipsa 19:9'],
+    ['Sfânt, sfânt, sfânt este Domnul Dumnezeu, Atotputernicul, Cel ce era, Cel ce este, Cel ce vine.','Apocalipsa 4:8'],
+    ['Vrednic ești, Doamne și Dumnezeul nostru, să primești slava, cinstea și puterea.','Apocalipsa 4:11'],
+    ['Vrednic este Mielul Care a fost junghiat să primească puterea și bogăția.','Apocalipsa 5:12'],
+    ['Cine n-ar respecta, Doamne, și n-ar slăvi Numele Tău? Că numai Tu ești sfânt.','Apocalipsa 15:4'],
+    ['Aleluia! Domnia s-a câștigat prin Dumnezeul nostru.','Apocalipsa 19:1'],
+    ['Fiți plini de Duhul, vorbind între voi în psalmi și imne și cântări duhovnicești.','Efeseni 5:18-19'],
+    ['Îmbrăcați toată armătura lui Dumnezeu.','Efeseni 6:11'],
+    ['Luați coiful mântuirii și sabia Duhului care este Cuvântul lui Dumnezeu.','Efeseni 6:17'],
+    ['Rugați-vă în orice vreme în Duhul, prin orice fel de rugăciune și cerere.','Efeseni 6:18'],
+    ['Stați, deci, având mijlocul încins cu adevărul.','Efeseni 6:14'],
+    ['Și pacea lui Dumnezeu, care întrece orice pricepere, să vă păzească inimile.','Filipeni 4:7'],
+    ['Gândiți-vă la lucruri adevărate, curate, drepte, frumoase, vrednice de laudă.','Filipeni 4:8'],
+    ['Dumnezeul păcii va zdrobi în curând pe Satana sub picioarele voastre.','Romani 16:20'],
+    ['Fie slava lui, în veci, prin Iisus Hristos! Amin.','Romani 16:27'],
+    ['Cuvântul lui Dumnezeu nu este legat.','2 Timotei 2:9'],
+    ['Noi nu avem un mare preot care să nu poată suferi cu noi în slăbiciunile noastre.','Evrei 4:15'],
+    ['Să mergem deci cu deplină încredere la tronul harului.','Evrei 4:16'],
+    ['Credința este temelia lucrurilor pe care le nădăjduim.','Evrei 11:1'],
+    ['Prin credință a trecut Israel prin Marea Roșie.','Evrei 11:29'],
+    ['Să alergăm cu stăruință în alergarea care ne stă înainte, cu ochii ațintiți la Iisus.','Evrei 12:1-2'],
+    ['El a răbdat crucea, disprețuind rușinea, și a șezut la dreapta tronului lui Dumnezeu.','Evrei 12:2'],
+    ['Iisus Hristos este același ieri și azi și în veci.','Evrei 13:8'],
+    ['Harul să fie cu voi toți. Amin.','Evrei 13:25'],
+  ],
+  // DECEMBRIE (11)
+  [
+    ['Iată, Fecioara va lua în pântece și va naște un fiu și-i vor pune numele Emanuel.','Isaia 7:14'],
+    ['Căci un Copil ni s-a născut, un fiu ni s-a dat și domnia va fi pe umărul Lui.','Isaia 9:6'],
+    ['Și Cuvântul S-a făcut trup și a locuit printre noi.','Ioan 1:14'],
+    ['Acesta este Fiul Meu cel iubit, în care Îmi găsesc plăcerea.','Matei 3:17'],
+    ['Iată, fecioara va lua în pântece și va naște un fiu și vei chema numele lui Iisus.','Matei 1:23'],
+    ['Slava lui Dumnezeu în înalturi și pe pământ pace, între oameni bunăvoire.','Luca 2:14'],
+    ['Și Magi din Răsărit au venit la Ierusalim, întrebând: Unde este regele Iudeilor cel nou-născut?','Matei 2:1-2'],
+    ['Au văzut steaua și s-au bucurat cu bucurie mare.','Matei 2:10'],
+    ['Au intrat în casă și au văzut Pruncul cu Maria, mama Lui, și căzând s-au închinat Lui.','Matei 2:11'],
+    ['Dumnezeu, odinioară, a vorbit în multe rânduri și în multe chipuri părinților noștri prin proroci.','Evrei 1:1'],
+    ['Iar la sfârșitul acestor zile ne-a vorbit nouă prin Fiul.','Evrei 1:2'],
+    ['Acesta este strălucirea slavei și întipărirea ființei Lui.','Evrei 1:3'],
+    ['Numele Lui este mai presus de orice altă strălucire a cerului.','după Filipeni 2:9'],
+    ['Și un nume I-a dat Lui, care este mai presus de orice nume.','Filipeni 2:9'],
+    ['Ca în numele lui Iisus să se plece orice genunchi, al celor cerești, pământești și de dedesubt.','Filipeni 2:10'],
+    ['Când a venit împlinirea vremii, Dumnezeu a trimis pe Fiul Său.','Galateni 4:4'],
+    ['A venit la ai Săi, dar ai Săi nu L-au primit.','Ioan 1:11'],
+    ['Dar celor ce L-au primit le-a dat putere să se facă fii ai lui Dumnezeu.','Ioan 1:12'],
+    ['Din plinătatea Lui noi toți am primit har după har.','Ioan 1:16'],
+    ['Harul și adevărul au venit prin Iisus Hristos.','Ioan 1:17'],
+    ['Nimeni nu L-a văzut vreodată pe Dumnezeu. Fiul Unul-Născut, Care este în sânul Tatălui, Acela L-a făcut cunoscut.','Ioan 1:18'],
+    ['Stăpânul meu va da un semn: Iată Fecioara va zămisli și va naște un fiu.','Isaia 7:14'],
+    ['Căci S-a născut vouă azi un Mântuitor, în cetatea lui David.','Luca 2:11'],
+    ['El este Hristos Domnul. Aceasta să vă fie semnul: Veți găsi un prunc înfășat.','Luca 2:11-12'],
+    ['Deodată s-a văzut împreună cu îngerul mulțime de oaste cerească, lăudând pe Dumnezeu.','Luca 2:13'],
+    ['Nașterea Lui, cine o va spune?','Isaia 53:8'],
+    ['Din veșnicie sunt zidirile Lui și originea Lui din zilele veșniciei.','Miheia 5:2'],
+    ['Acum, Doamne, slobozește pe robul Tău în pace, după cuvântul Tău.','Luca 2:29'],
+    ['Că ochii mei văzut-au mântuirea Ta.','Luca 2:30'],
+    ['Lumina spre descoperirea neamurilor și slava poporului Tău Israel.','Luca 2:32'],
+  ],
 ];
+
+function getVerset(){
+  const acum=new Date();
+  const luna=acum.getMonth(); // 0-11
+  const zi=acum.getDate()-1;   // 0-30
+  const versete=VERSETE_LUNARE[luna]||VERSETE_LUNARE[0];
+  const idx=zi%versete.length;
+  return versete[idx];
+}
 
 function getSfant(){
   const acum=new Date();
@@ -1164,11 +2023,24 @@ function inchideModal(id){document.getElementById(id).classList.remove('vizibil'
    PAGINA ACASĂ
 ══════════════════════════════════════════ */
 async function incarcaAcasa(){
-  // Sfant zilei
-  const [sNume,sDesc]=getSfant();
+  // Sfant zilei - calendar ortodox complet
+  const sf=getSfantAzi();
+  const acumRO=new Date();
+  const ziSpt=['Duminică','Luni','Marți','Miercuri','Joi','Vineri','Sâmbătă'][acumRO.getDay()];
+  const lunaRO=['Ianuarie','Februarie','Martie','Aprilie','Mai','Iunie','Iulie','August','Septembrie','Octombrie','Noiembrie','Decembrie'][acumRO.getMonth()];
+  const dataStr=ziSpt+', '+acumRO.getDate()+' '+lunaRO+' '+acumRO.getFullYear();
+  let badgesHTML='';
+  if(sf.praznic) badgesHTML+='<span class="cal-praznic">✝ Praznic</span>';
+  if(sf.post)    badgesHTML+='<span class="cal-post">✗ '+sf.post+'</span>';
+  if(sf.dezlegare) badgesHTML+='<span class="cal-dezlegare">✓ '+sf.dezlegare+'</span>';
   document.getElementById('acasa-sfant').innerHTML=
-    '<div class="sfant-card"><div style="font-size:2.5rem;margin-bottom:11px">✝</div><div class="sfant-nume">'+sNume+'</div><p class="sfant-desc">'+sDesc+'</p></div>';
-  // Verset zilei
+    '<div class="sfant-card-nou">'+
+    '<div class="sfant-data-azi">'+dataStr+'</div>'+
+    '<div class="sfant-titlu-azi">'+sf.t+'</div>'+
+    '<p class="sfant-desc-azi">'+sf.d+'</p>'+
+    (badgesHTML?'<div class="sfant-badges">'+badgesHTML+'</div>':'')+
+    '</div>';
+  // Verset zilei - lunar
   const [vText,vRef]=getVerset();
   document.getElementById('acasa-verset').innerHTML=
     '<div class="verset-box"><p>'+vText+'</p><span class="verset-ref">— '+vRef+'</span></div>';
@@ -1296,15 +2168,28 @@ function deschideModalProdus(id){
   const galerie=document.getElementById('mpGalerie');
   if(imgs.length){
     mi.src=imgs[0]; mi.style.display='block';
-    galerie.innerHTML=imgs.map((u,i)=>'<img src="'+u+'" class="modal-thumb'+(i===0?' activ':'')+'" onclick="setImgPrinc(this,\''+u+'\')">').join('');
+    // Click pe poza principala deschide lightbox
+    mi.onclick=()=>deschideLightbox(imgs,0);
+    mi.style.cursor='zoom-in';
+    // Hint zoom
+    let hint=document.querySelector('.zoom-hint');
+    if(!hint){hint=document.createElement('p');hint.className='zoom-hint';mi.after(hint);}
+    hint.style.display='block';
+    hint.textContent='🔍 Click pe fotografie pentru a vedea mai mare';
+    galerie.innerHTML=imgs.map((u,i)=>'<img src="'+u+'" class="modal-thumb'+(i===0?' activ':'')+'" onclick="setImgPrinc(this,\''+u+'\','+i+')">').join('');
+    // Set lightbox data
+    lightboxImgs=imgs; lightboxIdx=0;
   }else{mi.style.display='none';galerie.innerHTML='<div style="font-size:3rem;color:var(--vp);padding:20px;text-align:center">✝</div>';}
   deschideModal('modalProdus');
 }
 
-function setImgPrinc(el,src){
-  document.getElementById('mpImgPrinc').src=src;
+function setImgPrinc(el,src,idx){
+  const mi=document.getElementById('mpImgPrinc');
+  mi.src=src;
+  mi.onclick=()=>deschideLightbox(lightboxImgs,idx||0);
   document.querySelectorAll('.modal-thumb').forEach(t=>t.classList.remove('activ'));
   el.classList.add('activ');
+  lightboxIdx=idx||0;
 }
 
 function schimbaCantMP(d){
@@ -1489,6 +2374,7 @@ async function incarcaSectiuena(sec){
   if(sec==='comenzi')   await secComenzi(el);
   if(sec==='produse')   await secProduse(el);
   if(sec==='anunturi')  await secAnunturi(el);
+  if(sec==='import')    await secImport(el);
 }
 
 /* ── DASHBOARD ───────────────────────────── */
@@ -1815,6 +2701,187 @@ async function stergeAnunt(id){
   if(!confirm('Ești sigur că vrei să ștergi acest anunț?'))return;
   await fbSterge('anunturi',id); anunturiCach=[];
   afiseazaToast('🗑️ Anunț șters!'); incarcaSectiuena('anunturi');
+}
+
+/* ── LIGHTBOX ────────────────────────────── */
+let lightboxImgs=[];
+let lightboxIdx=0;
+
+function deschideLightbox(imgs,startIdx){
+  if(!imgs||!imgs.length)return;
+  lightboxImgs=imgs;
+  lightboxIdx=startIdx||0;
+  actualizezaLightbox();
+  document.getElementById('lightbox').classList.add('viz');
+  document.body.style.overflow='hidden';
+}
+
+function inchideLightbox(){
+  document.getElementById('lightbox').classList.remove('viz');
+  document.body.style.overflow='';
+}
+
+function lbNav(dir){
+  lightboxIdx=(lightboxIdx+dir+lightboxImgs.length)%lightboxImgs.length;
+  actualizezaLightbox();
+}
+
+function actualizezaLightbox(){
+  document.getElementById('lightbox-img').src=lightboxImgs[lightboxIdx];
+  document.getElementById('lightbox-counter').textContent=(lightboxIdx+1)+' / '+lightboxImgs.length;
+  // Thumbs
+  document.getElementById('lightbox-thumbs').innerHTML=lightboxImgs.map((u,i)=>
+    '<img src="'+u+'" class="lb-thumb'+(i===lightboxIdx?' activ':'')+'" onclick="lightboxIdx='+i+';actualizezaLightbox()">'
+  ).join('');
+  // Hide nav if single image
+  document.getElementById('lightbox-nav').style.display=lightboxImgs.length>1?'flex':'none';
+}
+
+// Keyboard navigation for lightbox
+document.addEventListener('keydown',function(e){
+  const lb=document.getElementById('lightbox');
+  if(!lb.classList.contains('viz'))return;
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') lbNav(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')   lbNav(-1);
+  if(e.key==='Escape') inchideLightbox();
+});
+
+/* ── IMPORT DATE ─────────────────────────── */
+async function secImport(el){
+  el.innerHTML=`
+  <h2 style="font-family:'Cinzel',serif;color:var(--v);margin-bottom:26px;font-size:1.4rem">📥 Import Date</h2>
+
+  <div class="import-box">
+    <h4>📦 Import Produse din CSV</h4>
+    <p>Fișierul CSV trebuie să aibă coloanele (prima linie = antet):<br>
+    <code style="background:var(--cr);padding:3px 7px;border-radius:4px;font-size:.82rem">name,price,category,stock,description</code><br>
+    Categorii acceptate: Lumânări, Icoane, Cărți, Cruci, Tămâie, Mir, Alte obiecte</p>
+    <input type="file" id="csvProduse" accept=".csv,.txt" style="display:block;margin-bottom:10px;padding:8px;border:1px solid var(--crd);border-radius:6px;width:100%">
+    <button class="btn btn-primar btn-mic" onclick="importProduse()">📥 Importă Produse</button>
+    <div id="rezultatProduse" class="import-result"></div>
+  </div>
+
+  <div class="import-box">
+    <h4>📋 Import Anunțuri din CSV</h4>
+    <p>Fișierul CSV trebuie să aibă coloanele (prima linie = antet):<br>
+    <code style="background:var(--cr);padding:3px 7px;border-radius:4px;font-size:.82rem">title,type,content</code><br>
+    Tipuri: urgent, slujba, eveniment, activitate, general</p>
+    <input type="file" id="csvAnunturi" accept=".csv,.txt" style="display:block;margin-bottom:10px;padding:8px;border:1px solid var(--crd);border-radius:6px;width:100%">
+    <button class="btn btn-primar btn-mic" onclick="importAnunturi()">📥 Importă Anunțuri</button>
+    <div id="rezultatAnunturi" class="import-result"></div>
+  </div>
+
+  <div class="import-box" style="border-left-color:var(--v)">
+    <h4>📄 Descarcă Template CSV</h4>
+    <p>Descarcă fișierele exemplu pentru a vedea formatul corect.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-contur btn-mic" onclick="descarcaTemplateProduse()">⬇️ Template Produse</button>
+      <button class="btn btn-contur btn-mic" onclick="descarcaTemplateAnunturi()">⬇️ Template Anunțuri</button>
+    </div>
+  </div>`;
+}
+
+function parseCSV(text){
+  const linii=text.trim().split('\n');
+  if(linii.length<2)return[];
+  const antet=linii[0].split(',').map(h=>h.trim().replace(/^"|"$/g,''));
+  return linii.slice(1).map(linie=>{
+    // Handle quoted fields with commas inside
+    const campuri=[];
+    let inQuote=false, curent='';
+    for(let i=0;i<linie.length;i++){
+      const c=linie[i];
+      if(c==='"'){inQuote=!inQuote;}
+      else if(c===','&&!inQuote){campuri.push(curent.trim());curent='';}
+      else{curent+=c;}
+    }
+    campuri.push(curent.trim());
+    const obj={};
+    antet.forEach((h,i)=>obj[h]=campuri[i]||'');
+    return obj;
+  }).filter(r=>Object.values(r).some(v=>v));
+}
+
+async function importProduse(){
+  const file=document.getElementById('csvProduse').files[0];
+  const rez=document.getElementById('rezultatProduse');
+  if(!file){rez.className='import-result err';rez.style.display='block';rez.textContent='⚠️ Selectați un fișier CSV!';return;}
+  const text=await file.text();
+  const randuri=parseCSV(text);
+  if(!randuri.length){rez.className='import-result err';rez.style.display='block';rez.textContent='❌ Fișierul CSV este gol sau are un format greșit.';return;}
+  rez.className='import-result ok';rez.style.display='block';
+  rez.textContent='⏳ Se importă '+randuri.length+' produse...';
+  let ok=0,erori=0;
+  for(const r of randuri){
+    if(!r.name||!r.price){erori++;continue;}
+    try{
+      await fbAdauga('produse',{
+        name:r.name.trim(),
+        price:parseFloat(r.price)||0,
+        category:r.category||'Alte obiecte',
+        stock:parseInt(r.stock)||0,
+        description:r.description||'',
+        images:[],
+        bestSeller:false
+      });
+      ok++;
+    }catch(e){erori++;}
+  }
+  produseCach=[];
+  rez.textContent='✅ Import finalizat: '+ok+' produse adăugate'+(erori?' ('+erori+' erori)':'')+'!';
+}
+
+async function importAnunturi(){
+  const file=document.getElementById('csvAnunturi').files[0];
+  const rez=document.getElementById('rezultatAnunturi');
+  if(!file){rez.className='import-result err';rez.style.display='block';rez.textContent='⚠️ Selectați un fișier CSV!';return;}
+  const text=await file.text();
+  const randuri=parseCSV(text);
+  if(!randuri.length){rez.className='import-result err';rez.style.display='block';rez.textContent='❌ Fișierul CSV este gol sau are un format greșit.';return;}
+  rez.className='import-result ok';rez.style.display='block';
+  rez.textContent='⏳ Se importă '+randuri.length+' anunțuri...';
+  let ok=0,erori=0;
+  for(const r of randuri){
+    if(!r.title||!r.content){erori++;continue;}
+    try{
+      await fbAdauga('anunturi',{
+        title:r.title.trim(),
+        type:r.type||'general',
+        content:r.content.trim(),
+        image:''
+      });
+      ok++;
+    }catch(e){erori++;}
+  }
+  anunturiCach=[];
+  rez.textContent='✅ Import finalizat: '+ok+' anunțuri adăugate'+(erori?' ('+erori+' erori)':'')+'!';
+}
+
+function descarcaTemplateProduse(){
+  const csv='name,price,category,stock,description\n'+
+    '"Lumânare pascală",15,Lumânări,100,"Lumânare specială pentru slujba de Paști, înaltă de 40cm"\n'+
+    '"Icoană Maica Domnului",85,Icoane,10,"Icoană pictată pe lemn, 20x30cm, aurită"\n'+
+    '"Acatistier",35,Cărți,25,"Carte de rugăciuni, ediție 2024"\n'+
+    '"Cruce de lemn",20,Cruci,50,"Cruce din lemn de stejar, 15cm"\n'+
+    '"Tămâie Athos",45,Tămâie,30,"Tămâie autentică de la Muntele Athos, 500g"';
+  descarcaFisier('template_produse.csv', csv, 'text/csv');
+}
+
+function descarcaTemplateAnunturi(){
+  const csv='title,type,content\n'+
+    '"Slujbă specială de Paști",slujba,"Vă invităm la slujba de Înviere sâmbătă la ora 23:00. Vă așteptăm cu lumânări."\n'+
+    '"Colectă pentru renovare",general,"Biserica organizează o colectă pentru renovarea acoperișului. Donațiile pot fi depuse la secretariat."\n'+
+    '"IMPORTANT - Schimbare program",urgent,"Duminică slujba se va ține la ora 10:00 în loc de 09:00."\n'+
+    '"Pelerinaj la Iași",eveniment,"Organizăm un pelerinaj la moaștele Sf. Parascheva. Înscrieri la secretariat."';
+  descarcaFisier('template_anunturi.csv', csv, 'text/csv');
+}
+
+function descarcaFisier(nume, continut, tip){
+  const blob=new Blob(['﻿'+continut],{type:tip+';charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=nume; a.click();
+  URL.revokeObjectURL(url);
 }
 
 /* ── AUTH LISTENER ───────────────────────── */
