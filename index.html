@@ -579,28 +579,108 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
 .sfant-badges{margin-top:10px;display:flex;flex-wrap:wrap;gap:4px}
 
 /* ── RESPONSIVE ────────────────────────────── */
+/* ── MOBILE FIRST RESPONSIVE ─────────────── */
 @media(max-width:900px){
-  nav{padding:0 16px}
+  nav{padding:0 14px;height:58px}
   .hamburger{display:flex}
-  .nav-links{display:none;position:absolute;top:64px;left:0;right:0;background:var(--vd);flex-direction:column;padding:10px;border-bottom:2px solid var(--g);z-index:997;gap:2px}
+  .nav-links{
+    display:none;position:absolute;
+    top:58px;left:0;right:0;
+    background:var(--vd);flex-direction:column;
+    padding:8px;border-bottom:2px solid var(--g);
+    z-index:997;gap:2px;box-shadow:0 8px 24px rgba(0,0,0,.4);
+  }
   .nav-links.deschis{display:flex}
-  .nav-links a{width:100%}
+  .nav-links a{width:100%;padding:11px 16px;font-size:.82rem}
+  .nav-logo-text{font-size:.88rem}
 }
 @media(max-width:768px){
-  .sectiune{padding:36px 16px}
-  .hero{padding:46px 16px}
+  .sectiune{padding:32px 14px}
+  .hero{padding:40px 14px}
+  .hero h1{font-size:1.65rem}
+  .hero-sub{font-size:1rem}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .grid-prod{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+  .produs-img{height:170px}
   .admin-wrap{flex-direction:column}
   .admin-sidebar{width:100%}
-  .admin-continut{padding:16px}
+  .admin-continut{padding:14px}
   .form-rand{grid-template-columns:1fr}
   .item-cos{flex-wrap:wrap}
   .grid-detalii-comanda{grid-template-columns:1fr}
+  .cos-wrap{padding:24px 12px}
+  .modal{border-radius:10px 10px 0 0;max-height:95vh;margin-top:auto}
+  .fundal-modal{align-items:flex-end;padding:0}
+  .tabel-admin{font-size:.8rem}
+  .tabel-admin th,.tabel-admin td{padding:9px 10px}
+  .titlu-sec{font-size:1.3rem}
+  .modal-img-principal{height:220px}
+  .t-sep{display:none}
 }
 @media(max-width:500px){
-  nav{top:34px;height:58px}
-  #timer-bar{font-size:.65rem;padding:5px 9px;min-height:34px}
-  .t-num{font-size:1.05rem}
-  .hero h1{font-size:1.55rem}
+  nav{top:32px;height:52px}
+  #timer-bar{font-size:.62rem;padding:4px 8px;min-height:32px;gap:10px}
+  .t-num{font-size:1rem}
+  .t-lbl{display:none}
+  .hero h1{font-size:1.4rem}
+  .btn{padding:9px 18px;font-size:.76rem}
+  .grid-prod{grid-template-columns:repeat(2,1fr);gap:11px}
+  .produs-img{height:145px}
+  .produs-corp{padding:11px}
+  .produs-nome,.produs-pret{font-size:.82rem}
+  .admin-content{padding:12px}
+  #lightbox-thumbs{display:none}
+}
+
+/* ── URGENT ANUNTURI EVIDENTA ─────────────── */
+.urgent-banner{
+  background:linear-gradient(135deg,#8B0000,#C0392B);
+  color:#fff;border-radius:11px;
+  padding:18px 22px;margin-bottom:18px;
+  border-left:6px solid #FF6B6B;
+  box-shadow:0 4px 18px rgba(192,57,43,.35);
+  cursor:pointer;transition:transform .25s,box-shadow .25s;
+  animation:puls-urgent-banner 3s ease-in-out infinite;
+}
+.urgent-banner:hover{transform:translateX(4px);box-shadow:0 8px 28px rgba(192,57,43,.5)}
+@keyframes puls-urgent-banner{
+  0%,100%{box-shadow:0 4px 18px rgba(192,57,43,.35)}
+  50%{box-shadow:0 6px 28px rgba(192,57,43,.6),0 0 0 4px rgba(192,57,43,.15)}
+}
+.urgent-banner .ins-urgent{background:rgba(255,255,255,.25);color:#fff;margin-bottom:8px}
+.urgent-banner h3{color:#fff;font-size:1.05rem}
+.urgent-banner .anunt-extras{color:rgba(255,255,255,.88);font-size:.9rem}
+.urgent-banner .anunt-data{color:rgba(255,255,255,.7)}
+.sectiune-urgente{
+  background:linear-gradient(135deg,#4a0808,#7a1010);
+  padding:22px 36px;
+}
+.sectiune-urgente .titlu-sec{color:#FF9999}
+.anunt-urgente-titlu{
+  font-family:'Cinzel',serif;font-size:1rem;color:#FF9999;
+  display:flex;align-items:center;gap:8px;margin-bottom:14px;
+}
+
+/* ── PRODUCT COVER IMAGE ───────────────────── */
+.produs-img-cover{
+  position:relative;
+  background:linear-gradient(to bottom,var(--cr),var(--crd));
+}
+.produs-img-cover::after{
+  content:'';position:absolute;
+  bottom:0;left:0;right:0;height:40%;
+  background:linear-gradient(transparent,rgba(74,15,28,.35));
+  pointer-events:none;
+}
+.produs-img-no-photo{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;color:var(--vp);font-size:.75rem;gap:8px;font-family:'Cinzel',serif;
+}
+
+/* ── COPERTA ANUNT ─────────────────────────── */
+.ann-cover{
+  width:100%;height:160px;object-fit:cover;
+  border-radius:9px 9px 0 0;display:block;margin-bottom:14px;
 }
 </style>
 </head>
@@ -662,27 +742,6 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
     <div class="hero-butoane">
       <button class="btn btn-aur" onclick="mergi('magazin')">🕯️ Magazin Parohial</button>
       <button class="btn btn-contur-aur" onclick="mergi('anunturi')">📋 Anunțuri</button>
-    </div>
-  </div>
-
-  <!-- Program slujbe -->
-  <div class="sectiune sectiune-alt">
-    <div class="container">
-      <div class="ornament">⛪</div>
-      <h2 class="titlu-sec">Program Slujbe</h2>
-      <p class="subtitlu-sec">Vă așteptăm cu drag la sfintele slujbe</p>
-      <div style="overflow-x:auto">
-        <table class="tabel-slujbe">
-          <thead><tr><th>Slujba</th><th>Zi</th><th>Ora</th><th>Observații</th></tr></thead>
-          <tbody>
-            <tr><td>🕯️ Sfânta Liturghie</td><td>Duminică</td><td>09:00</td><td>Cu predică și împărtășanie</td></tr>
-            <tr><td>🙏 Vecernia Mare</td><td>Sâmbătă</td><td>18:00</td><td>Urmat de spovedanie</td></tr>
-            <tr><td>✝ Utrenia</td><td>Duminică</td><td>08:00</td><td>Înaintea Liturghiei</td></tr>
-            <tr><td>📿 Acatistul</td><td>Miercuri</td><td>18:00</td><td>Rotativ la sfinți</td></tr>
-            <tr><td>🕊️ Parastas</td><td>Sâmbătă</td><td>09:00</td><td>Prima sâmbătă din lună</td></tr>
-          </tbody>
-        </table>
-      </div>
     </div>
   </div>
 
@@ -1990,15 +2049,7 @@ function getVerset(){
   return versete[idx];
 }
 
-function getSfant(){
-  const acum=new Date();
-  const cheie=String(acum.getMonth()+1).padStart(2,'0')+String(acum.getDate()).padStart(2,'0');
-  return SFINTI[cheie]||['Sfântul zilei','Rugați-vă cu credință și dragoste, căci Dumnezeu este cu voi în fiecare clipă a zilei.'];
-}
-function getVerset(){
-  const index=(new Date().getDate()+new Date().getMonth()*31)%VERSETE.length;
-  return VERSETE[index];
-}
+// (getSfant si getVerset inlocuite cu getSfantAzi si getVerset lunar)
 
 /* ── BADGE HELPERS ───────────────────────── */
 function clasaInsigna(tip){
@@ -2048,7 +2099,7 @@ async function incarcaAcasa(){
   try{
     if(!produseCach.length) produseCach=await fbLista('produse');
     if(!anunturiCach.length)anunturiCach=await fbLista('anunturi');
-  }catch(e){}
+  }catch(e){console.warn('Firebase load err:',e);}
   // Ticker urgente
   const urg=anunturiCach.filter(a=>a.type==='urgent');
   const ticker=document.getElementById('ticker-urgent');
@@ -2063,7 +2114,7 @@ async function incarcaAcasa(){
   if(pr){
     elPr.innerHTML=
       '<div class="card-produs" onclick="deschideModalProdus(\''+pr.id+'\')">' +
-      '<div class="produs-img">'+(pr.images&&pr.images[0]?'<img src="'+pr.images[0]+'" alt="'+pr.name+'" loading="lazy">':'<div class="produs-img-ph">✝</div>')+'</div>'+
+      '<div class="produs-img">'+(pr.images&&pr.images[0]?'<img src="'+pr.images[0]+'" alt="'+pr.name+'" loading="lazy">':'<div class="produs-img-no-photo"><div style="font-size:2.8rem">🕯️</div><span>Fără fotografie</span></div>')+'</div>'+
       '<div class="produs-corp">'+
       '<div class="produs-nume">'+pr.name+'</div>'+
       '<div class="produs-desc">'+(pr.description||'')+'</div>'+
@@ -2133,7 +2184,7 @@ function redeazaGridProduse(lista){
   }
   el.innerHTML=lista.map(p=>
     '<div class="card-produs" onclick="deschideModalProdus(\''+p.id+'\')">'+
-    '<div class="produs-img">'+(p.images&&p.images[0]?'<img src="'+p.images[0]+'" alt="'+p.name+'" loading="lazy">':'<div class="produs-img-ph">✝</div>')+'</div>'+
+    '<div class="produs-img">'+(p.images&&p.images[0]?'<img src="'+p.images[0]+'" alt="'+p.name+'" loading="lazy">':'<div class="produs-img-no-photo"><div style="font-size:2.8rem">🕯️</div><span>Fără fotografie</span></div>')+'</div>'+
     '<div class="produs-corp">'+
     '<div class="produs-nume">'+p.name+'</div>'+
     '<div class="produs-desc">'+(p.description||'')+'</div>'+
@@ -2206,21 +2257,46 @@ function adaugadinModal(){
 ══════════════════════════════════════════ */
 async function afiseazaAnunturi(){
   const el=document.getElementById('listaAnunturi');
-  el.innerHTML='<div class="incarcare"><div class="rotitor"></div> Se încarcă…</div>';
+  el.innerHTML='<div class="incarcare"><div class="rotitor"></div> Se incarca...</div>';
   if(!anunturiCach.length)anunturiCach=await fbLista('anunturi');
   const filtru=document.getElementById('filtruAnunturi').value;
-  const lista=filtru==='toate'?anunturiCach:anunturiCach.filter(a=>a.type===filtru);
+  let lista=filtru==='toate'?anunturiCach:anunturiCach.filter(a=>a.type===filtru);
   if(!lista.length){
     el.innerHTML='<div class="gol"><div class="icon-gol">📋</div><h3>Niciun anunț</h3><p>Nu există anunțuri în această categorie.</p></div>';
     return;
   }
-  el.innerHTML=lista.map(a=>
-    '<div class="card-anunt '+(a.type==='urgent'?'urgent':'')+'" onclick="deschideModalAnunt(\''+a.id+'\')">'+
-    '<span class="insigna '+clasaInsigna(a.type)+'">'+textInsigna(a.type)+'</span>'+
-    '<h3>'+a.title+'</h3>'+
-    '<p class="anunt-extras">'+(a.content||'').substring(0,200)+((a.content&&a.content.length>200)?'…':'')+'</p>'+
+  const urgente=filtru==='toate'?lista.filter(a=>a.type==='urgent'):[];
+  const restul=filtru==='toate'?lista.filter(a=>a.type!=='urgent'):lista;
+  let html='';
+  if(urgente.length){
+    html+='<div style="margin-bottom:22px"><p class="anunt-urgente-titlu">🔴 ANUNȚURI URGENTE</p>';
+    html+=urgente.map(a=>
+      '<div class="urgent-banner" onclick="deschideModalAnunt(''+a.id+'')">'+
+      '<span class="insigna ins-urgent">🔴 URGENT</span>'+
+      '<h3>'+a.title+'</h3>'+
+      '<p class="anunt-extras">'+(a.content||'').substring(0,180)+'...</p>'+
+      '<span class="anunt-data">📅 '+formateazaData(a.createdAt)+'</span></div>'
+    ).join('');
+    html+='</div>';
+  }
+  html+=restul.map(a=>cardAnunt(a)).join('');
+  if(filtru==='urgent') html=lista.map(a=>
+    '<div class="urgent-banner" onclick="deschideModalAnunt(''+a.id+'')">'+
+    '<span class="insigna ins-urgent">🔴 URGENT</span><h3>'+a.title+'</h3>'+
+    '<p class="anunt-extras">'+(a.content||'').substring(0,180)+'...</p>'+
     '<span class="anunt-data">📅 '+formateazaData(a.createdAt)+'</span></div>'
   ).join('');
+  el.innerHTML=html||'<div class="gol"><div class="icon-gol">📋</div><h3>Niciun anunț</h3></div>';
+}
+
+function cardAnunt(a){
+  const imgH=a.image?'<img src="'+a.image+'" class="ann-cover" alt="'+a.title+'" loading="lazy" onerror="this.style.display='none'">':'';
+  return '<div class="card-anunt" onclick="deschideModalAnunt(''+a.id+'')">'+
+    imgH+
+    '<span class="insigna '+clasaInsigna(a.type)+'">'+textInsigna(a.type)+'</span>'+
+    '<h3>'+a.title+'</h3>'+
+    '<p class="anunt-extras">'+(a.content||'').substring(0,200)+((a.content&&a.content.length>200)?'...':'')+'</p>'+
+    '<span class="anunt-data">📅 '+formateazaData(a.createdAt)+'</span></div>';
 }
 
 function deschideModalAnunt(id){
@@ -2884,6 +2960,66 @@ function descarcaFisier(nume, continut, tip){
   URL.revokeObjectURL(url);
 }
 
+/* ── DATE DEMO (se incarcare o singura data) ─
+   Dacă Firestore e gol, adaugă produse și anunțuri demo
+   Le poți edita/șterge din Admin după ce te loghezi.
+─────────────────────────────────────────── */
+const PRODUSE_DEMO=[
+  {name:'Lumânare pascală aurită',price:18,category:'Lumânări',stock:120,description:'Lumânare specială pentru slujba de Paști, decorată cu modele aurite. Înălțime 40cm, arde 6 ore. Potrivită pentru orice vârstă.',images:[],bestSeller:true},
+  {name:'Lumânare de botez',price:45,category:'Lumânări',stock:30,description:'Lumânare albă ornamentată cu floricele și panglică albastră sau roz. Include suport de prins. Înălțime 60cm.',images:[],bestSeller:false},
+  {name:'Lumânări de nuntă – set 2 buc.',price:55,category:'Lumânări',stock:20,description:'Set de două lumânări identice pentru cununie, decorate cu flori albe din ceară și panglică albă. Înălțime 70cm.',images:[],bestSeller:false},
+  {name:'Icoană Sf. Nicolae pe lemn',price:95,category:'Icoane',stock:8,description:'Icoană pictată manual pe lemn de tei, 20×30cm. Fond aurit, cu lacuire de protecție. Potrivită ca dar sau pentru casa credinciosului.',images:[],bestSeller:true},
+  {name:'Icoană Maica Domnului cu Pruncul',price:110,category:'Icoane',stock:5,description:'Icoană tipărită pe lemn cu rama sculptată, 25×35cm. Reproducere fidelă după icoana tradițională ortodoxă.',images:[],bestSeller:false},
+  {name:'Icoană Sf. Parascheva (Iași)',price:75,category:'Icoane',stock:12,description:'Icoană Sfânta Parascheva, Ocrotitoarea Moldovei. Lemn și print de calitate, 18×25cm.',images:[],bestSeller:false},
+  {name:'Acatistier complet',price:38,category:'Cărți',stock:25,description:'Acatistier ortodox complet, cuprinzând acatistele celor mai cunoscuți sfinți, paraclis și rugăciuni de seară și dimineață. 480 pagini.',images:[],bestSeller:false},
+  {name:'Ceaslov (Cartea de rugăciuni)',price:32,category:'Cărți',stock:18,description:'Ceaslovul mic pentru uzul credincioșilor, cu Miezonoptica, Utrenia, Ceasurile și Vecernia. Ediție nouă, tipar clar.',images:[],bestSeller:false},
+  {name:'Psaltirea lui David',price:28,category:'Cărți',stock:22,description:'Psaltirea completă, cu împărțire pe catisme, pentru citit la parastas și la canonul personal. Format mic, ușor de ținut în mână.',images:[],bestSeller:false},
+  {name:'Cruce de lemn sculptată',price:35,category:'Cruci',stock:40,description:'Cruce din lemn de stejar, sculptată manual, înălțime 20cm. Potrivită pentru perete sau birou. Lemn tratat, rezistent.',images:[],bestSeller:false},
+  {name:'Cruciuliță argintată cu lanț',price:65,category:'Cruci',stock:15,description:'Cruciuliță ortodoxă argintată, cu corp de 3cm. Lanț din argint 925, lungime 45cm. Cutie cadou inclusă.',images:[],bestSeller:false},
+  {name:'Tămâie Athos – 500g',price:48,category:'Tămâie',stock:35,description:'Tămâie autentică de la Muntele Athos, parfum de trandafir și smirnă. Ambalaj sigilat de 500g. Ideală pentru cădelniță.',images:[],bestSeller:false},
+  {name:'Tămâie românească – mix floral',price:22,category:'Tămâie',stock:60,description:'Tămâie naturală românească, amestec de flori și rășini. Pachet 200g. Fără adaosuri chimice.',images:[],bestSeller:false},
+  {name:'Mir sfințit – sticluță 20ml',price:15,category:'Mir',stock:50,description:'Mir sfințit în cadrul slujbei de Sfântul Maslu, ambalat în sticluță de sticlă cu dop. Potrivit pentru ungere și binecuvântare.',images:[],bestSeller:false},
+  {name:'Metanier ortodox (mătănii) – lemn',price:20,category:'Alte obiecte',stock:45,description:'Metanier din lemn de chiparos, 33 noduri, cu cruce la capăt. Parfum natural de chiparos. Tradițional ortodox.',images:[],bestSeller:false},
+  {name:'Cădelniță de birou – alamă',price:85,category:'Alte obiecte',stock:10,description:'Cădelniță mică din alamă, pentru acasă sau birou. Înălțime 12cm, diametru 8cm. Include 20g tămâie cadou.',images:[],bestSeller:false},
+];
+
+const ANUNTURI_DEMO=[
+  {title:'IMPORTANT – Program Paști 2025',type:'urgent',content:'Vă informăm că programul slujbelor de Paști este următorul:\n\nSâmbătă, 19 aprilie:\n- Ora 22:00 – Slujba Învierii (Denia de Paști)\n- Ora 23:00 – Sf. Liturghie pascală\n\nDuminică, 20 aprilie:\n- Ora 09:00 – Sf. Liturghie de dimineață\n\nVă așteptăm cu lumânări și veselie!\n\nHristos a Înviat!',image:''},
+  {title:'Colectă pentru renovarea acoperișului',type:'urgent',content:'Dragi enoriași,\n\nBiserica are nevoie urgentă de renovarea acoperișului. Costul estimat este de 85.000 Lei.\n\nPuteți contribui:\n- Prin virament bancar: RO12 RNCB 0000 1234 5678 0001\n- La secretariat (L-V, 10:00-14:00)\n- Prin site, la secțiunea Magazin\n\nOrice sumă contează! Dumnezeu să vă răsplătească!',image:''},
+  {title:'Pelerinaj la Mânăstirea Văratec – 15 Mai',type:'eveniment',content:'Parohia organizează un pelerinaj la Mânăstirea Văratec și Agapia, pe data de 15 mai 2025.\n\nProgram:\n- Ora 06:00 – Plecare din fața bisericii\n- Ora 10:00 – Sf. Liturghie la Văratec\n- Vizitarea mânăstirilor Văratec, Agapia și Neamț\n- Ora 20:00 – Întoarcere\n\nCost: 80 Lei/persoană (transport + prânz).\nÎnscrieri la secretariat până pe 10 mai.',image:''},
+  {title:'Cateheze pentru adulți – fiecare joi',type:'activitate',content:'Începând cu 3 aprilie, în fiecare joi de la ora 18:00, preotul paroh va ține cateheze pentru adulți.\n\nTemele abordate:\n- Credința ortodoxă pe înțelesul tuturor\n- Cum ne rugăm acasă\n- Postul – sens și practică\n- Tainele Bisericii\n\nToți credincioșii sunt bineveniți! Intrarea este liberă.',image:''},
+  {title:'Slujbă de sfințire a mașinilor',type:'slujba',content:'Duminică, 27 aprilie, după Sfânta Liturghie, se va oficia slujba de sfințire a mașinilor în parcarea din fața bisericii.\n\nAdresăm invitație tuturor credincioșilor care doresc sfințirea autovehiculelor.\n\nVă așteptăm!',image:''},
+  {title:'Ajutor pentru familii nevoiașe',type:'activitate',content:'Parohia colectează alimente neperisabile, haine și articole de uz casnic pentru familiile nevoiașe din parohie.\n\nPuteți aduce donații la secretariatul bisericii, luni-vineri între 10:00-14:00.\n\nAlimente acceptate: conserve, paste, ulei, zahăr, făină, orez.\n\nDumnezeu să vă binecuvânteze generozitatea!',image:''},
+  {title:'Parastasul general – 3 mai',type:'slujba',content:'Sâmbătă, 3 mai 2025, va fi parastasul general pentru toți credincioșii adormiți din parohia noastră.\n\nProgram:\n- Ora 09:00 – Slujba parastasului\n- Colivă și prescuri vor fi sfințite la altar\n\nRudele celor adormiți sunt invitate să aducă colive și să înscrie numele celor pentru care doresc să se facă rugăciune.',image:''},
+  {title:'Curs de pictură de icoane',type:'activitate',content:'Parohia organizează un curs de inițiere în pictura de icoane, tehnica tradițională (ou și tempera).\n\nCursul va fi susținut de iconarul Mihai Ionescu, absolvent al Institutului Teologic.\n\nDetalii:\n- Durata: 8 ședințe, câte 2 ore fiecare\n- Zi: sâmbăta, 10:00-12:00\n- Loc: sala parohială\n- Cost: 200 Lei (materiale incluse)\n\nÎnscrieri la secretariat. Locuri limitate!',image:''},
+];
+
+async function semaneazaDateDemo(){
+  // Verifica daca exista deja date
+  try{
+    const testProd=await db.collection('produse').limit(1).get();
+    const testAnn=await db.collection('anunturi').limit(1).get();
+    if(!testProd.empty&&!testAnn.empty){
+      console.log('Date demo deja existente, skip.');
+      return;
+    }
+    if(testProd.empty){
+      console.log('Semanare produse demo...');
+      for(const p of PRODUSE_DEMO){
+        await db.collection('produse').add({...p,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      }
+      console.log('Produse demo adaugate:', PRODUSE_DEMO.length);
+    }
+    if(testAnn.empty){
+      console.log('Semanare anunturi demo...');
+      for(const a of ANUNTURI_DEMO){
+        await db.collection('anunturi').add({...a,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      }
+      console.log('Anunturi demo adaugate:', ANUNTURI_DEMO.length);
+    }
+  }catch(e){console.warn('Seed demo error (normal daca nu esti autentificat):', e.message);}
+}
+
 /* ── AUTH LISTENER ───────────────────────── */
 auth.onAuthStateChanged(user=>{
   adminCurent=user;
@@ -2897,6 +3033,8 @@ document.addEventListener('DOMContentLoaded',function(){
   porniTimer();
   actualizeazaBadge();
   mergi('acasa');
+  // Adaugă date demo dacă Firestore e gol (o singură dată)
+  semaneazaDateDemo();
 });
 </script>
 </body>
