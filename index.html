@@ -1078,186 +1078,6 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
 
 <!-- ═══════════════════ JAVASCRIPT ═══════════════════════════════ -->
 <script>
-/* ── FIREBASE INIT ────────────────────────── */
-firebase.initializeApp({
-  apiKey:"AIzaSyDjQEkuNvLHWwBJsGWmu1LxLcOoS75pFjQ",
-  authDomain:"biserica-online-d3f0a.firebaseapp.com",
-  projectId:"biserica-online-d3f0a",
-  storageBucket:"biserica-online-d3f0a.firebasestorage.app",
-  messagingSenderId:"582958004765",
-  appId:"1:582958004765:web:60a31c374b9e298c1964f4"
-});
-const db      = firebase.firestore();
-const auth    = firebase.auth();
-// Storage dezactivat - se foloseste Firestore pentru imagini
-
-/* ── STATE ───────────────────────────────── */
-let cos        = JSON.parse(localStorage.getItem('bCos')||'[]');
-let produseCach= [];
-let anunturiCach=[];
-let comenziCach= [];
-let catCurenta = 'toate';
-let sortCurenta= 'implicit';
-let cautareCur = '';
-let filtreDeschise = false;
-let adminCurent= null;
-let prodModalCurent = null;
-let cantModalProd   = 1;
-let imgSelectateProd= [];
-let imgSelectataAnn = null;
-let editProdId = null;
-let editAnnId  = null;
-
-/* ── HELPERS FIREBASE ────────────────────── */
-const TS = ()=> firebase.firestore.FieldValue.serverTimestamp();
-
-async function fbLista(col){
-  try{
-    const s = await db.collection(col).orderBy('createdAt','desc').get();
-    return s.docs.map(d=>({id:d.id,...d.data()}));
-  }catch(e){console.warn(col,e);return[];}
-}
-async function fbAdauga(col,data){ return db.collection(col).add({...data,createdAt:TS()}); }
-async function fbActualizeaza(col,id,data){ return db.collection(col).doc(id).update(data); }
-async function fbSterge(col,id){ return db.collection(col).doc(id).delete(); }
-async function fbGetUnul(col,id){
-  const d = await db.collection(col).doc(id).get();
-  return d.exists?{id:d.id,...d.data()}:null;
-}
-// ── PROCESARE IMAGINI (fara Storage, doar Firestore) ────────────
-// Imaginile sunt comprimate cu Canvas si salvate ca base64 in Firestore.
-// Firestore free tier: 1GB stocare, suficient pentru sute de poze comprimate.
-
-async function proceseazaImagine(file){
-  // Redimensioneaza la max 700px si comprima la calitate 0.75 (aprox 50-80KB/poza)
-  return new Promise(res=>{
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = ()=>{
-      let w=img.width, h=img.height;
-      const maxW=700, maxH=700;
-      if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
-      if(h>maxH){w=Math.round(w*maxH/h);h=maxH;}
-      const c=document.createElement('canvas');
-      c.width=w; c.height=h;
-      c.getContext('2d').drawImage(img,0,0,w,h);
-      URL.revokeObjectURL(url);
-      // Returnam base64 string
-      res(c.toDataURL('image/jpeg', 0.75));
-    };
-    img.onerror=()=>{
-      URL.revokeObjectURL(url);
-      // Daca esueaza canvas, citim fisierul ca base64 direct
-      const r=new FileReader();
-      r.onload=()=>res(r.result);
-      r.readAsDataURL(file);
-    };
-    img.src=url;
-  });
-}
-
-/* ── COS ─────────────────────────────────── */
-function salveazaCos(){ localStorage.setItem('bCos',JSON.stringify(cos)); }
-function totalCos(){ return cos.reduce((s,i)=>s+i.pret*i.cantitate,0); }
-function nrArticole(){ return cos.reduce((s,i)=>s+i.cantitate,0); }
-
-function actualizeazaBadge(){
-  const n=nrArticole();
-  const b=document.getElementById('cosBadge');
-  if(n>0){b.textContent=n;b.classList.add('viz');}
-  else{b.textContent='';b.classList.remove('viz');}
-}
-
-function adaugaInCos(p,cant){
-  cant=cant||1;
-  const ex=cos.find(i=>i.id===p.id);
-  if(ex)ex.cantitate+=cant;
-  else cos.push({id:p.id,nume:p.name||p.nume,pret:p.price||p.pret,imagine:(p.images||p.imagini||[])[0]||'',cantitate:cant});
-  salveazaCos(); actualizeazaBadge();
-  afiseazaToast('✝ „'+(p.name||p.nume)+'" adăugat în coș!');
-}
-
-function scoateDinCos(id){
-  cos=cos.filter(i=>i.id!==id);
-  salveazaCos(); actualizeazaBadge(); redeazaCos();
-}
-
-function schimbaCant(id,delta){
-  const it=cos.find(i=>i.id===id);
-  if(!it)return;
-  it.cantitate+=delta;
-  if(it.cantitate<=0)return scoateDinCos(id);
-  salveazaCos(); actualizeazaBadge(); redeazaCos();
-}
-
-/* ── TOAST ───────────────────────────────── */
-let timerToast;
-function afiseazaToast(msg,dur){
-  dur=dur||3000;
-  const el=document.getElementById('toast');
-  el.textContent=msg; el.classList.add('vizibil');
-  clearTimeout(timerToast);
-  timerToast=setTimeout(()=>el.classList.remove('vizibil'),dur);
-}
-
-/* ── NAVIGARE ────────────────────────────── */
-function mergi(pag){
-  document.querySelectorAll('.pagina').forEach(p=>p.classList.remove('activa'));
-  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('activ'));
-  const pg=document.getElementById('pagina-'+pag);
-  if(pg)pg.classList.add('activa');
-  const na=document.querySelector('.nav-links a[data-p="'+pag+'"]');
-  if(na)na.classList.add('activ');
-  document.getElementById('navLinks').classList.remove('deschis');
-  window.scrollTo({top:0,behavior:'smooth'});
-
-  if(pag==='acasa')   incarcaAcasa();
-  if(pag==='magazin') incarcaMagazin();
-  if(pag==='anunturi')afiseazaAnunturi();
-  if(pag==='cos')     redeazaCos();
-  if(pag==='admin')   initAdmin();
-}
-
-/* ── TIMER PAȘTI ─────────────────────────── */
-function calcPasteOrtodox(an){
-  // Calcul Paste Iulian → Gregorian (+13 zile pentru sec 20-21)
-  const a=an%4,b=an%7,c=an%19;
-  const d=(19*c+15)%30;
-  const e=(2*a+4*b-d+34)%7;
-  const luna=Math.floor((d+e+114)/31);
-  const zi=((d+e+114)%31)+1;
-  return new Date(an,luna-1,zi+13);
-}
-function porniTimer(){
-  function tick(){
-    const acum=new Date();
-    let an=acum.getFullYear();
-    let paste=calcPasteOrtodox(an);
-    if(acum>paste){an++;paste=calcPasteOrtodox(an);}
-    const diff=paste-acum;
-    const bar=document.getElementById('timer-bar');
-    if(diff<=0){
-      bar.classList.add('risen');
-      bar.innerHTML='✝&ensp;HRISTOS A ÎNVIAT!&ensp;ADEVĂRAT A ÎNVIAT!&ensp;✝';
-      return;
-    }
-    const zile=Math.floor(diff/86400000);
-    const ore =Math.floor((diff%86400000)/3600000);
-    const min =Math.floor((diff%3600000)/60000);
-    const sec =Math.floor((diff%60000)/1000);
-    const p=n=>String(n).padStart(2,'0');
-    document.getElementById('td').textContent=p(zile);
-    document.getElementById('th').textContent=p(ore);
-    document.getElementById('tm').textContent=p(min);
-    document.getElementById('ts').textContent=p(sec);
-  }
-  tick(); setInterval(tick,1000);
-}
-
-/* ── CALENDAR ORTODOX COMPLET ───────────────
-   Format: 'LLZZ': { titlu, descriere, post?, dezlegare?, praznic?, extra[] }
-   Acoperă toate zilele anului. Zilele fără sfânt marcat afișează sfântul perioadei.
-─────────────────────────────────────────── */
 const CAL = {
   '0101':{t:'Tăierea Împrejur a Domnului; Sf. Vasile cel Mare',d:'Praznic împărătesc. Pruncul Iisus primește numele Său sfânt. Ziua marelui ierarh Vasile.',praznic:true},
   '0102':{t:'Sf. Silvestru, ep. Romei; Sf. Serafim de Sarov',d:'Sfântul Silvestru a condus Biserica Romei 21 de ani. Sfântul Serafim, stâlpul rugăciunii ortodoxe ruse.'},
@@ -1627,20 +1447,6 @@ const CAL = {
   '1231':{t:'Sf. Cuv. Melania Romana; Sf. Mc. Zotic',d:'Sfânta Melania, nobilă romană care și-a vândut averile și a trăit în asceză la Ierusalim.',dezlegare:'Dezlegare la toate'},
 };
 
-function getSfantAzi(){
-  const acum=new Date();
-  const luna=String(acum.getMonth()+1).padStart(2,'0');
-  const zi=String(acum.getDate()).padStart(2,'0');
-  const cheie=luna+zi;
-  const sf=CAL[cheie];
-  if(sf) return {cheie, ...sf};
-  // Fallback dacă ziua nu e în calendar
-  return {cheie, t:'Sfinții zilei', d:'Zi de rugăciune și mulțumire pentru toate binecuvântările primite.'};
-}
-
-/* ── VERSETE LUNARE (câte ~30 pe lună, se rotesc) ─────────────
-   Structura: VERSETE_LUNARE[luna_0indexed] = array de [text, referinta]
-───────────────────────────────────────────────────────────────── */
 const VERSETE_LUNARE = [
   // IANUARIE (0)
   [
@@ -2040,930 +1846,6 @@ const VERSETE_LUNARE = [
   ],
 ];
 
-function getVerset(){
-  const acum=new Date();
-  const luna=acum.getMonth(); // 0-11
-  const zi=acum.getDate()-1;   // 0-30
-  const versete=VERSETE_LUNARE[luna]||VERSETE_LUNARE[0];
-  const idx=zi%versete.length;
-  return versete[idx];
-}
-
-// (getSfant si getVerset inlocuite cu getSfantAzi si getVerset lunar)
-
-/* ── BADGE HELPERS ───────────────────────── */
-function clasaInsigna(tip){
-  return{urgent:'ins-urgent',slujba:'ins-slujba',eveniment:'ins-eveniment',activitate:'ins-activitate',general:'ins-general'}[tip]||'ins-general';
-}
-function textInsigna(tip){
-  return{urgent:'🔴 URGENT',slujba:'⛪ Slujbă',eveniment:'📅 Eveniment',activitate:'🌿 Activitate',general:'📋 General'}[tip]||'📋 General';
-}
-function formateazaData(ts){
-  if(!ts)return'–';
-  try{
-    const d=ts.toDate?ts.toDate():new Date(ts);
-    return d.toLocaleDateString('ro-RO',{day:'2-digit',month:'long',year:'numeric'});
-  }catch(e){return'–';}
-}
-
-/* ── MODAL ───────────────────────────────── */
-function deschideModal(id){document.getElementById(id).classList.add('vizibil')}
-function inchideModal(id){document.getElementById(id).classList.remove('vizibil')}
-
-/* ══════════════════════════════════════════
-   PAGINA ACASĂ
-══════════════════════════════════════════ */
-async function incarcaAcasa(){
-  // Sfant zilei - calendar ortodox complet
-  const sf=getSfantAzi();
-  const acumRO=new Date();
-  const ziSpt=['Duminică','Luni','Marți','Miercuri','Joi','Vineri','Sâmbătă'][acumRO.getDay()];
-  const lunaRO=['Ianuarie','Februarie','Martie','Aprilie','Mai','Iunie','Iulie','August','Septembrie','Octombrie','Noiembrie','Decembrie'][acumRO.getMonth()];
-  const dataStr=ziSpt+', '+acumRO.getDate()+' '+lunaRO+' '+acumRO.getFullYear();
-  let badgesHTML='';
-  if(sf.praznic) badgesHTML+='<span class="cal-praznic">✝ Praznic</span>';
-  if(sf.post)    badgesHTML+='<span class="cal-post">✗ '+sf.post+'</span>';
-  if(sf.dezlegare) badgesHTML+='<span class="cal-dezlegare">✓ '+sf.dezlegare+'</span>';
-  document.getElementById('acasa-sfant').innerHTML=
-    '<div class="sfant-card-nou">'+
-    '<div class="sfant-data-azi">'+dataStr+'</div>'+
-    '<div class="sfant-titlu-azi">'+sf.t+'</div>'+
-    '<p class="sfant-desc-azi">'+sf.d+'</p>'+
-    (badgesHTML?'<div class="sfant-badges">'+badgesHTML+'</div>':'')+
-    '</div>';
-  // Verset zilei - lunar
-  const [vText,vRef]=getVerset();
-  document.getElementById('acasa-verset').innerHTML=
-    '<div class="verset-box"><p>'+vText+'</p><span class="verset-ref">— '+vRef+'</span></div>';
-  // Date Firebase
-  try{
-    if(!produseCach.length) produseCach=await fbLista('produse');
-    if(!anunturiCach.length)anunturiCach=await fbLista('anunturi');
-  }catch(e){console.warn('Firebase load err:',e);}
-  // Ticker urgente
-  const urg=anunturiCach.filter(a=>a.type==='urgent');
-  const ticker=document.getElementById('ticker-urgent');
-  if(urg.length){
-    ticker.style.display='block';
-    const itm=urg.map(a=>'<span class="ticker-item" onclick="deschideModalAnunt(\''+a.id+'\')">🔔 '+a.title+'</span>');
-    document.getElementById('tickerPista').innerHTML=[...itm,...itm].join('<span style="color:#FFD700;margin:0 16px">✝</span>');
-  }else{ticker.style.display='none';}
-  // Produs recomandat
-  const pr=produseCach.find(p=>p.bestSeller)||produseCach[0];
-  const elPr=document.getElementById('acasa-produs-rec');
-  if(pr){
-    elPr.innerHTML=
-      '<div class="card-produs" onclick="deschideModalProdus(\''+pr.id+'\')">' +
-      '<div class="produs-img">'+(pr.images&&pr.images[0]?'<img src="'+pr.images[0]+'" alt="'+pr.name+'" loading="lazy">':'<div class="produs-img-no-photo"><div style="font-size:2.8rem">🕯️</div><span>Fără fotografie</span></div>')+'</div>'+
-      '<div class="produs-corp">'+
-      '<div class="produs-nume">'+pr.name+'</div>'+
-      '<div class="produs-desc">'+(pr.description||'')+'</div>'+
-      '<div class="produs-footer"><span class="produs-pret">'+pr.price+' Lei</span>'+
-      '<button class="btn-cos" onclick="event.stopPropagation();adaugaRapid(\''+pr.id+'\')">🛒 Adaugă</button>'+
-      '</div></div></div>';
-  }else{elPr.innerHTML='<div class="gol"><div class="icon-gol">🕯️</div><p>Nu există produse momentan.</p></div>';}
-  // Ultim anunt
-  const ua=anunturiCach[0];
-  const elUa=document.getElementById('acasa-ultim-anunt');
-  if(ua){
-    elUa.innerHTML=
-      '<div class="card-anunt '+(ua.type==='urgent'?'urgent':'')+'" onclick="deschideModalAnunt(\''+ua.id+'\')">'+
-      '<span class="insigna '+clasaInsigna(ua.type)+'">'+textInsigna(ua.type)+'</span>'+
-      '<h3>'+ua.title+'</h3>'+
-      '<p class="anunt-extras">'+(ua.content||'').substring(0,180)+((ua.content&&ua.content.length>180)?'…':'')+'</p>'+
-      '<span class="anunt-data">📅 '+formateazaData(ua.createdAt)+'</span></div>';
-  }else{elUa.innerHTML='<div class="gol"><div class="icon-gol">📋</div><p>Nu există anunțuri momentan.</p></div>';}
-}
-
-/* ══════════════════════════════════════════
-   MAGAZIN
-══════════════════════════════════════════ */
-async function incarcaMagazin(){
-  if(!produseCach.length){
-    document.getElementById('gridProduse').innerHTML='<div class="incarcare" style="grid-column:1/-1"><div class="rotitor"></div> Se încarcă…</div>';
-    produseCach=await fbLista('produse');
-  }
-  filtreazaProduse();
-}
-
-function comutaFiltre(){
-  filtreDeschise=!filtreDeschise;
-  document.getElementById('panouFiltre').classList.toggle('vizibil',filtreDeschise);
-  document.getElementById('btnFiltre').classList.toggle('deschis',filtreDeschise);
-}
-
-function seteazaCategorie(val,el){
-  catCurenta=val;
-  document.querySelectorAll('#chipsCategorie .chip').forEach(c=>c.classList.remove('selectat'));
-  el.classList.add('selectat');
-  filtreazaProduse();
-}
-function seteazaSortare(val,el){
-  sortCurenta=val;
-  document.querySelectorAll('#chipsSortare .chip').forEach(c=>c.classList.remove('selectat'));
-  el.classList.add('selectat');
-  filtreazaProduse();
-}
-
-function filtreazaProduse(){
-  cautareCur=document.getElementById('cautareProduse').value.toLowerCase();
-  let lista=[...produseCach];
-  if(catCurenta!=='toate') lista=lista.filter(p=>p.category===catCurenta);
-  if(cautareCur) lista=lista.filter(p=>p.name.toLowerCase().includes(cautareCur)||(p.description||'').toLowerCase().includes(cautareCur));
-  if(sortCurenta==='pretcrescator') lista.sort((a,b)=>a.price-b.price);
-  if(sortCurenta==='pretdescrescator') lista.sort((a,b)=>b.price-a.price);
-  if(sortCurenta==='nume') lista.sort((a,b)=>a.name.localeCompare(b.name));
-  redeazaGridProduse(lista);
-}
-
-function redeazaGridProduse(lista){
-  const el=document.getElementById('gridProduse');
-  if(!lista.length){
-    el.innerHTML='<div class="gol" style="grid-column:1/-1"><div class="icon-gol">🕯️</div><h3>Niciun produs găsit</h3><p>Modificați filtrele sau căutarea.</p></div>';
-    return;
-  }
-  el.innerHTML=lista.map(p=>
-    '<div class="card-produs" onclick="deschideModalProdus(\''+p.id+'\')">'+
-    '<div class="produs-img">'+(p.images&&p.images[0]?'<img src="'+p.images[0]+'" alt="'+p.name+'" loading="lazy">':'<div class="produs-img-no-photo"><div style="font-size:2.8rem">🕯️</div><span>Fără fotografie</span></div>')+'</div>'+
-    '<div class="produs-corp">'+
-    '<div class="produs-nume">'+p.name+'</div>'+
-    '<div class="produs-desc">'+(p.description||'')+'</div>'+
-    '<div class="produs-footer">'+
-    '<div><div class="produs-pret">'+p.price+' Lei</div><span class="stoc-badge '+(p.stock>0?'in-stoc':'epuizat')+'">'+(p.stock>0?p.stock+' buc.':'Epuizat')+'</span></div>'+
-    '<button class="btn-cos" onclick="event.stopPropagation();adaugaRapid(\''+p.id+'\')" '+(p.stock<=0?'disabled':'')+'>🛒 Adaugă</button>'+
-    '</div></div></div>'
-  ).join('');
-}
-
-function adaugaRapid(id){
-  const p=produseCach.find(x=>x.id===id);
-  if(p)adaugaInCos(p,1);
-}
-
-/* ── MODAL PRODUS ────────────────────────── */
-function deschideModalProdus(id){
-  const p=produseCach.find(x=>x.id===id);
-  if(!p)return;
-  prodModalCurent=p;
-  cantModalProd=1;
-  document.getElementById('mpTitlu').textContent=p.name;
-  document.getElementById('mpPret').textContent=p.price+' Lei';
-  document.getElementById('mpStoc').innerHTML=p.stock>0
-    ?'<span class="stoc-badge in-stoc">✓ Disponibil ('+p.stock+' buc.)</span>'
-    :'<span class="stoc-badge epuizat">✗ Epuizat</span>';
-  document.getElementById('mpCategorie').textContent=p.category||'';
-  document.getElementById('mpDescriere').innerHTML=(p.description||'').replace(/\n/g,'<br>');
-  document.getElementById('mpCantitate').textContent=1;
-  const imgs=p.images||[];
-  const mi=document.getElementById('mpImgPrinc');
-  const galerie=document.getElementById('mpGalerie');
-  if(imgs.length){
-    mi.src=imgs[0]; mi.style.display='block';
-    // Click pe poza principala deschide lightbox
-    mi.onclick=()=>deschideLightbox(imgs,0);
-    mi.style.cursor='zoom-in';
-    // Hint zoom
-    let hint=document.querySelector('.zoom-hint');
-    if(!hint){hint=document.createElement('p');hint.className='zoom-hint';mi.after(hint);}
-    hint.style.display='block';
-    hint.textContent='🔍 Click pe fotografie pentru a vedea mai mare';
-    galerie.innerHTML=imgs.map((u,i)=>'<img src="'+u+'" class="modal-thumb'+(i===0?' activ':'')+'" onclick="setImgPrinc(this,\''+u+'\','+i+')">').join('');
-    // Set lightbox data
-    lightboxImgs=imgs; lightboxIdx=0;
-  }else{mi.style.display='none';galerie.innerHTML='<div style="font-size:3rem;color:var(--vp);padding:20px;text-align:center">✝</div>';}
-  deschideModal('modalProdus');
-}
-
-function setImgPrinc(el,src,idx){
-  const mi=document.getElementById('mpImgPrinc');
-  mi.src=src;
-  mi.onclick=()=>deschideLightbox(lightboxImgs,idx||0);
-  document.querySelectorAll('.modal-thumb').forEach(t=>t.classList.remove('activ'));
-  el.classList.add('activ');
-  lightboxIdx=idx||0;
-}
-
-function schimbaCantMP(d){
-  cantModalProd=Math.max(1,cantModalProd+d);
-  document.getElementById('mpCantitate').textContent=cantModalProd;
-}
-
-function adaugadinModal(){
-  if(prodModalCurent){adaugaInCos(prodModalCurent,cantModalProd);inchideModal('modalProdus');}
-}
-
-/* ══════════════════════════════════════════
-   ANUNȚURI
-══════════════════════════════════════════ */
-async function afiseazaAnunturi(){
-  const el=document.getElementById('listaAnunturi');
-  el.innerHTML='<div class="incarcare"><div class="rotitor"></div> Se incarca...</div>';
-  if(!anunturiCach.length)anunturiCach=await fbLista('anunturi');
-  const filtru=document.getElementById('filtruAnunturi').value;
-  let lista=filtru==='toate'?anunturiCach:anunturiCach.filter(a=>a.type===filtru);
-  if(!lista.length){
-    el.innerHTML='<div class="gol"><div class="icon-gol">📋</div><h3>Niciun anunț</h3><p>Nu există anunțuri în această categorie.</p></div>';
-    return;
-  }
-  const urgente=filtru==='toate'?lista.filter(a=>a.type==='urgent'):[];
-  const restul=filtru==='toate'?lista.filter(a=>a.type!=='urgent'):lista;
-  let html='';
-  if(urgente.length){
-    html+='<div style="margin-bottom:22px"><p class="anunt-urgente-titlu">🔴 ANUNȚURI URGENTE</p>';
-    html+=urgente.map(a=>
-      '<div class="urgent-banner" onclick="deschideModalAnunt(''+a.id+'')">'+
-      '<span class="insigna ins-urgent">🔴 URGENT</span>'+
-      '<h3>'+a.title+'</h3>'+
-      '<p class="anunt-extras">'+(a.content||'').substring(0,180)+'...</p>'+
-      '<span class="anunt-data">📅 '+formateazaData(a.createdAt)+'</span></div>'
-    ).join('');
-    html+='</div>';
-  }
-  html+=restul.map(a=>cardAnunt(a)).join('');
-  if(filtru==='urgent') html=lista.map(a=>
-    '<div class="urgent-banner" onclick="deschideModalAnunt(''+a.id+'')">'+
-    '<span class="insigna ins-urgent">🔴 URGENT</span><h3>'+a.title+'</h3>'+
-    '<p class="anunt-extras">'+(a.content||'').substring(0,180)+'...</p>'+
-    '<span class="anunt-data">📅 '+formateazaData(a.createdAt)+'</span></div>'
-  ).join('');
-  el.innerHTML=html||'<div class="gol"><div class="icon-gol">📋</div><h3>Niciun anunț</h3></div>';
-}
-
-function cardAnunt(a){
-  const imgH=a.image?'<img src="'+a.image+'" class="ann-cover" alt="'+a.title+'" loading="lazy" onerror="this.style.display='none'">':'';
-  return '<div class="card-anunt" onclick="deschideModalAnunt(''+a.id+'')">'+
-    imgH+
-    '<span class="insigna '+clasaInsigna(a.type)+'">'+textInsigna(a.type)+'</span>'+
-    '<h3>'+a.title+'</h3>'+
-    '<p class="anunt-extras">'+(a.content||'').substring(0,200)+((a.content&&a.content.length>200)?'...':'')+'</p>'+
-    '<span class="anunt-data">📅 '+formateazaData(a.createdAt)+'</span></div>';
-}
-
-function deschideModalAnunt(id){
-  const a=anunturiCach.find(x=>x.id===id);
-  if(!a)return;
-  document.getElementById('maInsigna').innerHTML='<span class="insigna '+clasaInsigna(a.type)+'">'+textInsigna(a.type)+'</span>';
-  document.getElementById('maTitlu').textContent=a.title;
-  document.getElementById('maData').textContent='📅 '+formateazaData(a.createdAt);
-  document.getElementById('maContinut').innerHTML=(a.content||'').replace(/\n/g,'<br>');
-  const img=document.getElementById('maImagine');
-  if(a.image){img.src=a.image;img.style.display='block';}else{img.style.display='none';}
-  deschideModal('modalAnunt');
-}
-
-/* ══════════════════════════════════════════
-   COȘ
-══════════════════════════════════════════ */
-function redeazaCos(){
-  const elIteme=document.getElementById('itemeCos');
-  const elSumar=document.getElementById('sumarulCos');
-  if(!cos.length){
-    elIteme.innerHTML='<div class="gol"><div class="icon-gol">🛒</div><h3>Coșul este gol</h3><p>Adaugă produse din magazin.</p><br><button class="btn btn-primar" onclick="mergi(\'magazin\')">Mergi la Magazin</button></div>';
-    elSumar.style.display='none';
-    return;
-  }
-  elIteme.innerHTML=cos.map(it=>
-    '<div class="item-cos">'+
-    '<div class="item-cos-img">'+(it.imagine?'<img src="'+it.imagine+'" alt="'+it.nume+'">':'✝')+'</div>'+
-    '<div class="item-cos-info">'+
-    '<div class="item-cos-nume">'+it.nume+'</div>'+
-    '<div class="item-cos-upret">'+it.pret+' Lei / buc.</div>'+
-    '<div class="ctrl-cantitate">'+
-    '<button class="btn-cantitate" onclick="schimbaCant(\''+it.id+'\',-1)">−</button>'+
-    '<span class="val-cantitate">'+it.cantitate+'</span>'+
-    '<button class="btn-cantitate" onclick="schimbaCant(\''+it.id+'\',1)">+</button>'+
-    '</div></div>'+
-    '<span class="item-cos-pret">'+((it.pret*it.cantitate).toFixed(2))+' Lei</span>'+
-    '<button class="btn-sterge-item" onclick="scoateDinCos(\''+it.id+'\')" title="Șterge">🗑️</button>'+
-    '</div>'
-  ).join('');
-  elSumar.style.display='block';
-  document.getElementById('valoareTotal').textContent=totalCos().toFixed(2)+' Lei';
-}
-
-function arataComanada(){
-  document.getElementById('vedereaCos').style.display='none';
-  document.getElementById('vedereComanda').style.display='block';
-  // Rezumat
-  const el=document.getElementById('rezumatComanda');
-  el.innerHTML=cos.map(it=>
-    '<div class="rand-info"><span class="eticheta">'+it.nume+' × '+it.cantitate+'</span><span class="valoare">'+((it.pret*it.cantitate).toFixed(2))+' Lei</span></div>'
-  ).join('')+
-  '<div class="rand-info" style="font-size:1.05rem;font-weight:700;border-top:2px solid var(--vp);padding-top:9px;margin-top:5px">'+
-  '<span class="eticheta">TOTAL</span><span class="valoare" style="color:var(--v)">'+totalCos().toFixed(2)+' Lei</span></div>';
-}
-
-function inapoiLaCos(){
-  document.getElementById('vedereComanda').style.display='none';
-  document.getElementById('vedereaCos').style.display='block';
-}
-
-async function trimiteComanda(){
-  const nume=document.getElementById('oNume').value.trim();
-  const tel =document.getElementById('oTelefon').value.trim();
-  const adr =document.getElementById('oAdresa').value.trim();
-  if(!nume||!tel||!adr){afiseazaToast('⚠️ Completați câmpurile obligatorii!');return;}
-  const btn=document.getElementById('btnFinalizeaza');
-  btn.disabled=true; btn.textContent='Se trimite…';
-  try{
-    // Salvăm comanda
-    await fbAdauga('comenzi',{
-      name:nume, phone:tel,
-      email:document.getElementById('oEmail').value,
-      address:adr,
-      county:document.getElementById('oLocalitate').value,
-      payment:document.getElementById('oPlata').value,
-      notes:document.getElementById('oObservatii').value,
-      items:JSON.parse(JSON.stringify(cos)),
-      total:totalCos().toFixed(2),
-      status:'noua'
-    });
-    // Scădem stocul pentru fiecare produs comandat
-    for(const item of cos){
-      const prod = produseCach.find(p=>p.id===item.id);
-      if(prod && typeof prod.stock === 'number'){
-        const stocNou = Math.max(0, prod.stock - item.cantitate);
-        try{
-          await fbActualizeaza('produse', item.id, {stock: stocNou});
-          prod.stock = stocNou; // actualizam si cache-ul local
-        }catch(e){ console.warn('Stoc neactualizat pentru', item.id, e); }
-      }
-    }
-    cos=[]; salveazaCos(); actualizeazaBadge();
-    mergi('acasa');
-    setTimeout(()=>afiseazaToast('✝ Comandă plasată cu succes! Vă mulțumim!',5000),400);
-  }catch(e){
-    console.error(e);
-    afiseazaToast('❌ Eroare la trimitere. Verificați conexiunea.');
-    btn.disabled=false; btn.textContent='✝ Finalizează Comanda';
-  }
-}
-
-/* ══════════════════════════════════════════
-   ADMIN
-══════════════════════════════════════════ */
-function initAdmin(){
-  if(adminCurent){arataPanou();incarcaSectiuena('dashboard');}
-  else aratLogin();
-}
-function aratLogin(){
-  document.getElementById('adminLogin').style.display='flex';
-  document.getElementById('adminPanel').style.display='none';
-}
-function arataPanou(){
-  document.getElementById('adminLogin').style.display='none';
-  document.getElementById('adminPanel').style.display='flex';
-}
-
-async function faLogin(){
-  const email=document.getElementById('aEmail').value;
-  const parola=document.getElementById('aParola').value;
-  const btn=document.getElementById('btnLogin');
-  const err=document.getElementById('eroareLogin');
-  err.style.display='none';
-  btn.disabled=true; btn.textContent='Se conectează…';
-  try{
-    await auth.signInWithEmailAndPassword(email,parola);
-    arataPanou(); incarcaSectiuena('dashboard');
-  }catch(e){
-    err.style.display='block';
-  }
-  btn.disabled=false; btn.textContent='Conectare';
-}
-
-async function faLogout(){
-  await auth.signOut();
-  aratLogin();
-}
-
-function seteazaNavAdmin(sec){
-  document.querySelectorAll('.nav-admin').forEach(b=>b.classList.remove('activ'));
-  const el=document.getElementById('nav-'+sec);
-  if(el)el.classList.add('activ');
-}
-
-async function incarcaSectiuena(sec){
-  seteazaNavAdmin(sec);
-  const el=document.getElementById('adminContinut');
-  el.innerHTML='<div class="incarcare"><div class="rotitor"></div> Se încarcă…</div>';
-  if(sec==='dashboard') await secDashboard(el);
-  if(sec==='comenzi')   await secComenzi(el);
-  if(sec==='produse')   await secProduse(el);
-  if(sec==='anunturi')  await secAnunturi(el);
-  if(sec==='import')    await secImport(el);
-}
-
-/* ── DASHBOARD ───────────────────────────── */
-async function secDashboard(el){
-  const[com,prod,ann]=await Promise.all([fbLista('comenzi'),fbLista('produse'),fbLista('anunturi')]);
-  comenziCach=com; produseCach=prod; anunturiCach=ann;
-  const venit=com.filter(o=>o.status!=='anulata').reduce((s,o)=>s+parseFloat(o.total||0),0);
-  const noi=com.filter(o=>o.status==='noua').length;
-  el.innerHTML=
-    '<h2 style="font-family:\'Cinzel\',serif;color:var(--v);margin-bottom:26px;font-size:1.4rem">📊 Panou Principal</h2>'+
-    '<div class="grid-3" style="margin-bottom:30px">'+
-    statCard(com.length,'Total Comenzi','📦')+statCard(noi,'Comenzi Noi','🔔')+statCard(venit.toFixed(0)+' Lei','Venituri','💰')+
-    statCard(prod.length,'Produse','🕯️')+statCard(ann.length,'Anunțuri','📋')+statCard(ann.filter(a=>a.type==='urgent').length,'Urgente','🔴')+
-    '</div>'+
-    '<h3 style="font-family:\'Cinzel\',serif;color:var(--v);margin-bottom:13px">Comenzi Recente</h3>'+
-    '<div style="overflow-x:auto"><table class="tabel-admin"><thead><tr><th>ID</th><th>Client</th><th>Total</th><th>Status</th><th>Data</th></tr></thead><tbody>'+
-    com.slice(0,6).map(o=>
-      '<tr style="cursor:pointer" onclick="veziComanda(\''+o.id+'\')">'+
-      '<td style="font-family:monospace;font-size:.72rem">'+o.id.substring(0,9)+'…</td>'+
-      '<td><strong>'+o.name+'</strong></td>'+
-      '<td><strong>'+o.total+' Lei</strong></td>'+
-      '<td><span class="insigna-status st-'+o.status+'">'+o.status.toUpperCase()+'</span></td>'+
-      '<td>'+formateazaData(o.createdAt)+'</td></tr>'
-    ).join('')+'</tbody></table></div>';
-}
-function statCard(num,lbl,ico){
-  return'<div class="card-stat"><div style="font-size:1.9rem;margin-bottom:7px">'+ico+'</div><div class="stat-numar">'+num+'</div><div class="stat-eticheta">'+lbl+'</div></div>';
-}
-
-/* ── COMENZI ─────────────────────────────── */
-async function secComenzi(el){
-  comenziCach=await fbLista('comenzi');
-  el.innerHTML=
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:13px">'+
-    '<h2 style="font-family:\'Cinzel\',serif;color:var(--v);font-size:1.35rem">📦 Comenzi</h2>'+
-    '<button class="btn btn-primar btn-mic" onclick="formularComandaNoua()">+ Comandă Manuală</button></div>'+
-    '<div style="overflow-x:auto"><table class="tabel-admin"><thead><tr><th>ID</th><th>Client</th><th>Telefon</th><th>Total</th><th>Status</th><th>Data</th><th>Acțiuni</th></tr></thead><tbody>'+
-    comenziCach.map(o=>
-      '<tr>'+
-      '<td style="font-family:monospace;font-size:.7rem;cursor:pointer" onclick="veziComanda(\''+o.id+'\')">'+o.id.substring(0,10)+'…</td>'+
-      '<td><strong>'+o.name+'</strong></td>'+
-      '<td>'+o.phone+'</td>'+
-      '<td><strong>'+o.total+' Lei</strong></td>'+
-      '<td><select class="select-status" onchange="schimbaStatus(\''+o.id+'\',this.value)">'+
-      ['noua','procesata','livrata','anulata'].map(s=>'<option value="'+s+'"'+(o.status===s?' selected':'')+'>'+s.toUpperCase()+'</option>').join('')+
-      '</select></td>'+
-      '<td>'+formateazaData(o.createdAt)+'</td>'+
-      '<td><div class="butoane-tabel">'+
-      '<button class="btn btn-contur btn-xs" onclick="veziComanda(\''+o.id+'\')">👁️</button>'+
-      '<button class="btn btn-pericol btn-xs" onclick="stergeComanda(\''+o.id+'\')">🗑️</button>'+
-      '</div></td></tr>'
-    ).join('')+'</tbody></table></div>';
-}
-
-async function veziComanda(id){
-  const el=document.getElementById('adminContinut');
-  el.innerHTML='<div class="incarcare"><div class="rotitor"></div></div>';
-  const o=await fbGetUnul('comenzi',id);
-  if(!o)return;
-  el.innerHTML=
-    '<div style="display:flex;align-items:center;gap:13px;margin-bottom:22px;flex-wrap:wrap">'+
-    '<button class="btn btn-contur btn-mic" onclick="incarcaSectiuena(\'comenzi\')">← Înapoi</button>'+
-    '<h2 style="font-family:\'Cinzel\',serif;color:var(--v)">Comandă #'+o.id.substring(0,8)+'</h2>'+
-    '<span class="insigna-status st-'+o.status+'">'+o.status.toUpperCase()+'</span></div>'+
-    '<div class="grid-detalii-comanda">'+
-    '<div class="cutie-info"><h4>Date Client</h4>'+
-    '<div class="rand-info"><span class="eticheta">Nume</span><span class="valoare">'+o.name+'</span></div>'+
-    '<div class="rand-info"><span class="eticheta">Telefon</span><span class="valoare">'+o.phone+'</span></div>'+
-    '<div class="rand-info"><span class="eticheta">Email</span><span class="valoare">'+(o.email||'–')+'</span></div></div>'+
-    '<div class="cutie-info"><h4>Livrare</h4>'+
-    '<div class="rand-info"><span class="eticheta">Adresă</span><span class="valoare">'+o.address+'</span></div>'+
-    '<div class="rand-info"><span class="eticheta">Localitate</span><span class="valoare">'+(o.county||'–')+'</span></div>'+
-    '<div class="rand-info"><span class="eticheta">Plată</span><span class="valoare">'+(o.payment||'ramburs')+'</span></div></div>'+
-    '</div>'+
-    (o.notes?'<div class="cutie-info" style="margin-bottom:15px"><h4>Observații</h4><p style="font-size:.9rem;color:var(--tm)">'+o.notes+'</p></div>':'')+
-    '<div class="cutie-info" style="margin-bottom:18px"><h4>Produse Comandate</h4>'+
-    (o.items||[]).map(it=>'<div class="rand-info"><span class="eticheta">'+it.nume+' × '+it.cantitate+'</span><span class="valoare">'+((it.pret*it.cantitate).toFixed(2))+' Lei</span></div>').join('')+
-    '<div class="rand-info" style="font-weight:700;font-size:1rem;border-top:2px solid var(--vp);padding-top:8px;margin-top:5px">'+
-    '<span class="eticheta">TOTAL</span><span class="valoare" style="color:var(--v)">'+o.total+' Lei</span></div></div>'+
-    '<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:18px">'+
-    '<select id="statusDetaliu" class="select-filter-anunturi">'+
-    ['noua','procesata','livrata','anulata'].map(s=>'<option value="'+s+'"'+(o.status===s?' selected':'')+'>'+s.toUpperCase()+'</option>').join('')+
-    '</select>'+
-    '<button class="btn btn-primar btn-mic" onclick="salveazaStatus(\''+o.id+'\')">Salvează Status</button>'+
-    '<button class="btn btn-pericol btn-mic" onclick="stergeComanda(\''+o.id+'\')">🗑️ Șterge Comanda</button></div>';
-}
-
-async function salveazaStatus(id){
-  const s=document.getElementById('statusDetaliu').value;
-  await fbActualizeaza('comenzi',id,{status:s});
-  afiseazaToast('✅ Status actualizat!');
-}
-async function schimbaStatus(id,status){
-  await fbActualizeaza('comenzi',id,{status});
-  afiseazaToast('✅ Status: '+status.toUpperCase());
-}
-async function stergeComanda(id){
-  if(!confirm('Ești sigur că vrei să ștergi această comandă?'))return;
-  await fbSterge('comenzi',id);
-  afiseazaToast('🗑️ Comandă ștearsă!');
-  incarcaSectiuena('comenzi');
-}
-
-function formularComandaNoua(){
-  const el=document.getElementById('adminContinut');
-  el.innerHTML=
-    '<div style="display:flex;gap:13px;margin-bottom:22px;flex-wrap:wrap;align-items:center">'+
-    '<button class="btn btn-contur btn-mic" onclick="incarcaSectiuena(\'comenzi\')">← Înapoi</button>'+
-    '<h2 style="font-family:\'Cinzel\',serif;color:var(--v)">Adaugă Comandă Manuală</h2></div>'+
-    '<div class="formular-admin">'+
-    '<div class="form-rand"><div class="form-grup"><label>Nume *</label><input id="mnNume" placeholder="Nume client"></div>'+
-    '<div class="form-grup"><label>Telefon *</label><input id="mnTel" placeholder="07XX"></div></div>'+
-    '<div class="form-grup"><label>Email</label><input id="mnEmail" type="email" placeholder="email@ex.ro"></div>'+
-    '<div class="form-grup"><label>Adresă *</label><input id="mnAdresa" placeholder="Strada…"></div>'+
-    '<div class="form-rand"><div class="form-grup"><label>Localitate/Județ</label><input id="mnLocalitate" placeholder="Cluj-Napoca"></div>'+
-    '<div class="form-grup"><label>Plată</label><select id="mnPlata"><option value="ramburs">Ramburs</option><option value="transfer">Transfer</option><option value="card">Card</option></select></div></div>'+
-    '<div class="form-grup"><label>Total (Lei) *</label><input id="mnTotal" type="number" placeholder="0.00"></div>'+
-    '<div class="form-grup"><label>Observații</label><textarea id="mnNote" rows="3"></textarea></div>'+
-    '<button class="btn btn-primar" onclick="trimiteComandaAdmin()">Adaugă Comanda</button></div>';
-}
-async function trimiteComandaAdmin(){
-  const n=document.getElementById('mnNume').value.trim();
-  const t=document.getElementById('mnTel').value.trim();
-  const a=document.getElementById('mnAdresa').value.trim();
-  const total=document.getElementById('mnTotal').value;
-  if(!n||!t||!a||!total){afiseazaToast('⚠️ Câmpuri obligatorii lipsesc!');return;}
-  await fbAdauga('comenzi',{name:n,phone:t,email:document.getElementById('mnEmail').value,address:a,county:document.getElementById('mnLocalitate').value,payment:document.getElementById('mnPlata').value,notes:document.getElementById('mnNote').value,total:parseFloat(total).toFixed(2),items:[],status:'noua'});
-  afiseazaToast('✅ Comandă adăugată!');
-  incarcaSectiuena('comenzi');
-}
-
-/* ── PRODUSE ADMIN ───────────────────────── */
-async function secProduse(el){
-  produseCach=await fbLista('produse');
-  el.innerHTML=
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:13px">'+
-    '<h2 style="font-family:\'Cinzel\',serif;color:var(--v);font-size:1.35rem">🕯️ Produse</h2>'+
-    '<button class="btn btn-primar btn-mic" onclick="formularProdus()">+ Produs Nou</button></div>'+
-    '<div style="overflow-x:auto"><table class="tabel-admin"><thead><tr><th>Img</th><th>Nume</th><th>Categorie</th><th>Preț</th><th>Stoc</th><th>Acțiuni</th></tr></thead><tbody>'+
-    produseCach.map(p=>
-      '<tr>'+
-      '<td>'+(p.images&&p.images[0]?'<img src="'+p.images[0]+'" class="img-mic-tabel" onerror="this.style.display=\'none\'">':'–')+'</td>'+
-      '<td><strong>'+p.name+'</strong>'+(p.bestSeller?'<br><span style="font-size:.68rem;color:var(--g)">⭐ Recomandat</span>':'')+'</td>'+
-      '<td>'+(p.category||'–')+'</td>'+
-      '<td><strong>'+p.price+' Lei</strong></td>'+
-      '<td><span class="stoc-badge '+(p.stock>0?'in-stoc':'epuizat')+'">'+(p.stock||0)+'</span></td>'+
-      '<td><div class="butoane-tabel">'+
-      '<button class="btn btn-contur btn-xs" onclick="formularProdus(\''+p.id+'\')">✏️</button>'+
-      '<button class="btn btn-pericol btn-xs" onclick="stergeProdus(\''+p.id+'\')">🗑️</button>'+
-      '</div></td></tr>'
-    ).join('')+'</tbody></table></div>';
-}
-
-function formularProdus(id){
-  editProdId=id||null;
-  imgSelectateProd=[];
-  const p=id?(produseCach.find(x=>x.id===id)||{}):{};
-  if(p.images)imgSelectateProd=[...p.images];
-  const el=document.getElementById('adminContinut');
-  el.innerHTML=
-    '<div style="display:flex;gap:13px;margin-bottom:22px;flex-wrap:wrap;align-items:center">'+
-    '<button class="btn btn-contur btn-mic" onclick="incarcaSectiuena(\'produse\')">← Înapoi</button>'+
-    '<h2 style="font-family:\'Cinzel\',serif;color:var(--v)">'+(id?'Editează':'Adaugă')+' Produs</h2></div>'+
-    '<div class="formular-admin">'+
-    '<div class="form-rand">'+
-    '<div class="form-grup"><label>Nume Produs *</label><input id="pNume" value="'+(p.name||'')+'" placeholder="ex: Lumânare pascală"></div>'+
-    '<div class="form-grup"><label>Preț (Lei) *</label><input id="pPret" type="number" value="'+(p.price||'')+'" placeholder="0.00"></div></div>'+
-    '<div class="form-rand">'+
-    '<div class="form-grup"><label>Categorie</label><select id="pCategorie">'+
-    '<option value="">– Selectează –</option>'+
-    ['Lumânări','Icoane','Cărți','Cruci','Tămâie','Mir','Alte obiecte'].map(c=>'<option value="'+c+'"'+(p.category===c?' selected':'')+'>'+c+'</option>').join('')+
-    '</select></div>'+
-    '<div class="form-grup"><label>Stoc (buc.)</label><input id="pStoc" type="number" value="'+(p.stock||0)+'"></div></div>'+
-    '<div class="form-grup"><label>Descriere</label><textarea id="pDescriere" rows="4" placeholder="Descriere detaliată…">'+(p.description||'')+'</textarea></div>'+
-    '<div class="form-grup" style="display:flex;align-items:center;gap:9px">'+
-    '<input type="checkbox" id="pBestSeller" '+(p.bestSeller?'checked':'')+'><label for="pBestSeller" style="cursor:pointer">Marchează ca Produs Recomandat (Best Seller)</label></div>'+
-    '<div class="form-grup"><label>Fotografii Produs</label>'+
-    '<div class="zona-upload" onclick="document.getElementById(\'pImgInput\').click()">'+
-    '<div style="font-size:2rem;color:var(--vp);margin-bottom:7px">📷</div>'+
-    '<p style="color:var(--tl);font-size:.86rem">Click pentru a adăuga fotografii (JPG, PNG, WebP)</p>'+
-    '<input type="file" id="pImgInput" multiple accept="image/*" style="display:none" onchange="gestioneazaImgProd(event)"></div>'+
-    '<div id="previzualizariProd" class="previzualizari"></div></div>'+
-    '<button class="btn btn-primar" id="btnSalveazaProd" onclick="salveazaProdus()">'+(id?'Actualizează':'Adaugă')+' Produs</button></div>';
-  redezaPrevProd();
-}
-
-function redezaPrevProd(){
-  const el=document.getElementById('previzualizariProd');
-  if(!el)return;
-  el.innerHTML=imgSelectateProd.map((img,i)=>
-    '<div class="prev-wrap">'+
-    '<img src="'+(typeof img==='string'?img:URL.createObjectURL(img))+'" class="prev-img">'+
-    '<button class="prev-sterge" onclick="scoateImgProd('+i+')">✕</button>'+
-    '</div>'
-  ).join('');
-}
-function gestioneazaImgProd(e){
-  imgSelectateProd=[...imgSelectateProd,...Array.from(e.target.files)];
-  redezaPrevProd();
-}
-function scoateImgProd(i){imgSelectateProd.splice(i,1);redezaPrevProd();}
-
-async function salveazaProdus(){
-  const name=document.getElementById('pNume').value.trim();
-  const price=parseFloat(document.getElementById('pPret').value);
-  if(!name||!price){afiseazaToast('⚠️ Câmpuri obligatorii lipsesc!');return;}
-  const btn=document.getElementById('btnSalveazaProd');
-  btn.disabled=true; btn.textContent='Se încarcă imaginile…';
-  try{
-    const imgFinal=[];
-    const nrFisiere=imgSelectateProd.filter(x=>typeof x!=='string').length;
-    let i=0;
-    for(const img of imgSelectateProd){
-      if(typeof img==='string'){imgFinal.push(img);continue;}
-      i++;
-      btn.textContent='Se procesează imaginea '+i+'/'+nrFisiere+'…';
-      const b64 = await proceseazaImagine(img);
-      imgFinal.push(b64);
-    }
-    btn.textContent='Se salvează…';
-    const data={name,price,category:document.getElementById('pCategorie').value,stock:parseInt(document.getElementById('pStoc').value)||0,description:document.getElementById('pDescriere').value,bestSeller:document.getElementById('pBestSeller').checked,images:imgFinal};
-    if(editProdId)await fbActualizeaza('produse',editProdId,data);
-    else await fbAdauga('produse',data);
-    produseCach=[];
-    afiseazaToast(editProdId?'✅ Produs actualizat cu '+imgFinal.length+' poze!':'✅ Produs adăugat cu '+imgFinal.length+' poze!');
-    incarcaSectiuena('produse');
-  }catch(e){
-    console.error(e);
-    afiseazaToast('❌ Eroare: '+e.message);
-    btn.disabled=false; btn.textContent='Salvează';
-  }
-}
-async function stergeProdus(id){
-  if(!confirm('Ești sigur că vrei să ștergi acest produs?'))return;
-  await fbSterge('produse',id); produseCach=[];
-  afiseazaToast('🗑️ Produs șters!'); incarcaSectiuena('produse');
-}
-
-/* ── ANUNȚURI ADMIN ──────────────────────── */
-async function secAnunturi(el){
-  anunturiCach=await fbLista('anunturi');
-  el.innerHTML=
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:13px">'+
-    '<h2 style="font-family:\'Cinzel\',serif;color:var(--v);font-size:1.35rem">📋 Anunțuri</h2>'+
-    '<button class="btn btn-primar btn-mic" onclick="formularAnunt()">+ Anunț Nou</button></div>'+
-    '<table class="tabel-admin"><thead><tr><th>Titlu</th><th>Tip</th><th>Data</th><th>Acțiuni</th></tr></thead><tbody>'+
-    anunturiCach.map(a=>
-      '<tr>'+
-      '<td><strong>'+a.title+'</strong></td>'+
-      '<td><span class="insigna '+clasaInsigna(a.type)+'">'+textInsigna(a.type)+'</span></td>'+
-      '<td>'+formateazaData(a.createdAt)+'</td>'+
-      '<td><div class="butoane-tabel">'+
-      '<button class="btn btn-contur btn-xs" onclick="formularAnunt(\''+a.id+'\')">✏️</button>'+
-      '<button class="btn btn-pericol btn-xs" onclick="stergeAnunt(\''+a.id+'\')">🗑️</button>'+
-      '</div></td></tr>'
-    ).join('')+'</tbody></table>';
-}
-
-function formularAnunt(id){
-  editAnnId=id||null;
-  imgSelectataAnn=null;
-  const a=id?(anunturiCach.find(x=>x.id===id)||{}):{};
-  const el=document.getElementById('adminContinut');
-  el.innerHTML=
-    '<div style="display:flex;gap:13px;margin-bottom:22px;flex-wrap:wrap;align-items:center">'+
-    '<button class="btn btn-contur btn-mic" onclick="incarcaSectiuena(\'anunturi\')">← Înapoi</button>'+
-    '<h2 style="font-family:\'Cinzel\',serif;color:var(--v)">'+(id?'Editează':'Adaugă')+' Anunț</h2></div>'+
-    '<div class="formular-admin">'+
-    '<div class="form-grup"><label>Titlu *</label><input id="aTitlu" value="'+(a.title||'')+'" placeholder="Titlul anunțului"></div>'+
-    '<div class="form-grup"><label>Tip Anunț</label><select id="aTip">'+
-    ['urgent','slujba','eveniment','activitate','general'].map(t=>'<option value="'+t+'"'+(a.type===t?' selected':'')+'>'+textInsigna(t)+'</option>').join('')+
-    '</select></div>'+
-    '<div class="form-grup"><label>Conținut *</label><textarea id="aContinut" rows="9" placeholder="Conținutul anunțului…">'+(a.content||'')+'</textarea></div>'+
-    '<div class="form-grup"><label>Fotografie (opțional)</label>'+
-    '<div class="zona-upload" onclick="document.getElementById(\'aImgInput\').click()">'+
-    '<div style="font-size:2rem;color:var(--vp);margin-bottom:7px">🖼️</div>'+
-    '<p style="color:var(--tl);font-size:.86rem">Click pentru a adăuga o fotografie</p>'+
-    '<input type="file" id="aImgInput" accept="image/*" style="display:none" onchange="gestioneazaImgAnn(event)"></div>'+
-    '<div id="prevAnn" style="margin-top:11px">'+
-    (a.image?'<div class="prev-wrap"><img src="'+a.image+'" class="prev-img" style="width:115px;height:86px"><button class="prev-sterge" onclick="stergeImgAnn()">✕</button></div>':'')+
-    '</div></div>'+
-    '<button class="btn btn-primar" id="btnSalveazaAnn" onclick="salveazaAnunt()">'+(id?'Actualizează':'Publică')+' Anunțul</button></div>';
-  if(a.image)imgSelectataAnn=a.image;
-}
-
-function gestioneazaImgAnn(e){
-  const f=e.target.files[0]; if(!f)return;
-  imgSelectataAnn=f;
-  const url=URL.createObjectURL(f);
-  document.getElementById('prevAnn').innerHTML='<div class="prev-wrap"><img src="'+url+'" class="prev-img" style="width:115px;height:86px"><button class="prev-sterge" onclick="stergeImgAnn()">✕</button></div>';
-}
-function stergeImgAnn(){imgSelectataAnn=null;document.getElementById('prevAnn').innerHTML='';}
-
-async function salveazaAnunt(){
-  const titlu=document.getElementById('aTitlu').value.trim();
-  const continut=document.getElementById('aContinut').value.trim();
-  if(!titlu||!continut){afiseazaToast('⚠️ Câmpuri obligatorii lipsesc!');return;}
-  const btn=document.getElementById('btnSalveazaAnn');
-  btn.disabled=true; btn.textContent='Se salvează…';
-  try{
-    let imgUrl='';
-    if(imgSelectataAnn){
-      if(typeof imgSelectataAnn==='string'){
-        imgUrl=imgSelectataAnn;
-      }else{
-        btn.textContent='Se procesează fotografia…';
-        imgUrl=await proceseazaImagine(imgSelectataAnn);
-      }
-    }
-    btn.textContent='Se salvează…';
-    const data={title:titlu,type:document.getElementById('aTip').value,content:continut,image:imgUrl};
-    if(editAnnId)await fbActualizeaza('anunturi',editAnnId,data);
-    else await fbAdauga('anunturi',data);
-    anunturiCach=[];
-    afiseazaToast(editAnnId?'✅ Anunț actualizat!':'✅ Anunț publicat!');
-    incarcaSectiuena('anunturi');
-  }catch(e){
-    console.error(e);
-    afiseazaToast('❌ Eroare: '+e.message);
-    btn.disabled=false; btn.textContent='Salvează';
-  }
-}
-async function stergeAnunt(id){
-  if(!confirm('Ești sigur că vrei să ștergi acest anunț?'))return;
-  await fbSterge('anunturi',id); anunturiCach=[];
-  afiseazaToast('🗑️ Anunț șters!'); incarcaSectiuena('anunturi');
-}
-
-/* ── LIGHTBOX ────────────────────────────── */
-let lightboxImgs=[];
-let lightboxIdx=0;
-
-function deschideLightbox(imgs,startIdx){
-  if(!imgs||!imgs.length)return;
-  lightboxImgs=imgs;
-  lightboxIdx=startIdx||0;
-  actualizezaLightbox();
-  document.getElementById('lightbox').classList.add('viz');
-  document.body.style.overflow='hidden';
-}
-
-function inchideLightbox(){
-  document.getElementById('lightbox').classList.remove('viz');
-  document.body.style.overflow='';
-}
-
-function lbNav(dir){
-  lightboxIdx=(lightboxIdx+dir+lightboxImgs.length)%lightboxImgs.length;
-  actualizezaLightbox();
-}
-
-function actualizezaLightbox(){
-  document.getElementById('lightbox-img').src=lightboxImgs[lightboxIdx];
-  document.getElementById('lightbox-counter').textContent=(lightboxIdx+1)+' / '+lightboxImgs.length;
-  // Thumbs
-  document.getElementById('lightbox-thumbs').innerHTML=lightboxImgs.map((u,i)=>
-    '<img src="'+u+'" class="lb-thumb'+(i===lightboxIdx?' activ':'')+'" onclick="lightboxIdx='+i+';actualizezaLightbox()">'
-  ).join('');
-  // Hide nav if single image
-  document.getElementById('lightbox-nav').style.display=lightboxImgs.length>1?'flex':'none';
-}
-
-// Keyboard navigation for lightbox
-document.addEventListener('keydown',function(e){
-  const lb=document.getElementById('lightbox');
-  if(!lb.classList.contains('viz'))return;
-  if(e.key==='ArrowRight'||e.key==='ArrowDown') lbNav(1);
-  if(e.key==='ArrowLeft'||e.key==='ArrowUp')   lbNav(-1);
-  if(e.key==='Escape') inchideLightbox();
-});
-
-/* ── IMPORT DATE ─────────────────────────── */
-async function secImport(el){
-  el.innerHTML=`
-  <h2 style="font-family:'Cinzel',serif;color:var(--v);margin-bottom:26px;font-size:1.4rem">📥 Import Date</h2>
-
-  <div class="import-box">
-    <h4>📦 Import Produse din CSV</h4>
-    <p>Fișierul CSV trebuie să aibă coloanele (prima linie = antet):<br>
-    <code style="background:var(--cr);padding:3px 7px;border-radius:4px;font-size:.82rem">name,price,category,stock,description</code><br>
-    Categorii acceptate: Lumânări, Icoane, Cărți, Cruci, Tămâie, Mir, Alte obiecte</p>
-    <input type="file" id="csvProduse" accept=".csv,.txt" style="display:block;margin-bottom:10px;padding:8px;border:1px solid var(--crd);border-radius:6px;width:100%">
-    <button class="btn btn-primar btn-mic" onclick="importProduse()">📥 Importă Produse</button>
-    <div id="rezultatProduse" class="import-result"></div>
-  </div>
-
-  <div class="import-box">
-    <h4>📋 Import Anunțuri din CSV</h4>
-    <p>Fișierul CSV trebuie să aibă coloanele (prima linie = antet):<br>
-    <code style="background:var(--cr);padding:3px 7px;border-radius:4px;font-size:.82rem">title,type,content</code><br>
-    Tipuri: urgent, slujba, eveniment, activitate, general</p>
-    <input type="file" id="csvAnunturi" accept=".csv,.txt" style="display:block;margin-bottom:10px;padding:8px;border:1px solid var(--crd);border-radius:6px;width:100%">
-    <button class="btn btn-primar btn-mic" onclick="importAnunturi()">📥 Importă Anunțuri</button>
-    <div id="rezultatAnunturi" class="import-result"></div>
-  </div>
-
-  <div class="import-box" style="border-left-color:var(--v)">
-    <h4>📄 Descarcă Template CSV</h4>
-    <p>Descarcă fișierele exemplu pentru a vedea formatul corect.</p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <button class="btn btn-contur btn-mic" onclick="descarcaTemplateProduse()">⬇️ Template Produse</button>
-      <button class="btn btn-contur btn-mic" onclick="descarcaTemplateAnunturi()">⬇️ Template Anunțuri</button>
-    </div>
-  </div>`;
-}
-
-function parseCSV(text){
-  const linii=text.trim().split('\n');
-  if(linii.length<2)return[];
-  const antet=linii[0].split(',').map(h=>h.trim().replace(/^"|"$/g,''));
-  return linii.slice(1).map(linie=>{
-    // Handle quoted fields with commas inside
-    const campuri=[];
-    let inQuote=false, curent='';
-    for(let i=0;i<linie.length;i++){
-      const c=linie[i];
-      if(c==='"'){inQuote=!inQuote;}
-      else if(c===','&&!inQuote){campuri.push(curent.trim());curent='';}
-      else{curent+=c;}
-    }
-    campuri.push(curent.trim());
-    const obj={};
-    antet.forEach((h,i)=>obj[h]=campuri[i]||'');
-    return obj;
-  }).filter(r=>Object.values(r).some(v=>v));
-}
-
-async function importProduse(){
-  const file=document.getElementById('csvProduse').files[0];
-  const rez=document.getElementById('rezultatProduse');
-  if(!file){rez.className='import-result err';rez.style.display='block';rez.textContent='⚠️ Selectați un fișier CSV!';return;}
-  const text=await file.text();
-  const randuri=parseCSV(text);
-  if(!randuri.length){rez.className='import-result err';rez.style.display='block';rez.textContent='❌ Fișierul CSV este gol sau are un format greșit.';return;}
-  rez.className='import-result ok';rez.style.display='block';
-  rez.textContent='⏳ Se importă '+randuri.length+' produse...';
-  let ok=0,erori=0;
-  for(const r of randuri){
-    if(!r.name||!r.price){erori++;continue;}
-    try{
-      await fbAdauga('produse',{
-        name:r.name.trim(),
-        price:parseFloat(r.price)||0,
-        category:r.category||'Alte obiecte',
-        stock:parseInt(r.stock)||0,
-        description:r.description||'',
-        images:[],
-        bestSeller:false
-      });
-      ok++;
-    }catch(e){erori++;}
-  }
-  produseCach=[];
-  rez.textContent='✅ Import finalizat: '+ok+' produse adăugate'+(erori?' ('+erori+' erori)':'')+'!';
-}
-
-async function importAnunturi(){
-  const file=document.getElementById('csvAnunturi').files[0];
-  const rez=document.getElementById('rezultatAnunturi');
-  if(!file){rez.className='import-result err';rez.style.display='block';rez.textContent='⚠️ Selectați un fișier CSV!';return;}
-  const text=await file.text();
-  const randuri=parseCSV(text);
-  if(!randuri.length){rez.className='import-result err';rez.style.display='block';rez.textContent='❌ Fișierul CSV este gol sau are un format greșit.';return;}
-  rez.className='import-result ok';rez.style.display='block';
-  rez.textContent='⏳ Se importă '+randuri.length+' anunțuri...';
-  let ok=0,erori=0;
-  for(const r of randuri){
-    if(!r.title||!r.content){erori++;continue;}
-    try{
-      await fbAdauga('anunturi',{
-        title:r.title.trim(),
-        type:r.type||'general',
-        content:r.content.trim(),
-        image:''
-      });
-      ok++;
-    }catch(e){erori++;}
-  }
-  anunturiCach=[];
-  rez.textContent='✅ Import finalizat: '+ok+' anunțuri adăugate'+(erori?' ('+erori+' erori)':'')+'!';
-}
-
-function descarcaTemplateProduse(){
-  const csv='name,price,category,stock,description\n'+
-    '"Lumânare pascală",15,Lumânări,100,"Lumânare specială pentru slujba de Paști, înaltă de 40cm"\n'+
-    '"Icoană Maica Domnului",85,Icoane,10,"Icoană pictată pe lemn, 20x30cm, aurită"\n'+
-    '"Acatistier",35,Cărți,25,"Carte de rugăciuni, ediție 2024"\n'+
-    '"Cruce de lemn",20,Cruci,50,"Cruce din lemn de stejar, 15cm"\n'+
-    '"Tămâie Athos",45,Tămâie,30,"Tămâie autentică de la Muntele Athos, 500g"';
-  descarcaFisier('template_produse.csv', csv, 'text/csv');
-}
-
-function descarcaTemplateAnunturi(){
-  const csv='title,type,content\n'+
-    '"Slujbă specială de Paști",slujba,"Vă invităm la slujba de Înviere sâmbătă la ora 23:00. Vă așteptăm cu lumânări."\n'+
-    '"Colectă pentru renovare",general,"Biserica organizează o colectă pentru renovarea acoperișului. Donațiile pot fi depuse la secretariat."\n'+
-    '"IMPORTANT - Schimbare program",urgent,"Duminică slujba se va ține la ora 10:00 în loc de 09:00."\n'+
-    '"Pelerinaj la Iași",eveniment,"Organizăm un pelerinaj la moaștele Sf. Parascheva. Înscrieri la secretariat."';
-  descarcaFisier('template_anunturi.csv', csv, 'text/csv');
-}
-
-function descarcaFisier(nume, continut, tip){
-  const blob=new Blob(['﻿'+continut],{type:tip+';charset=utf-8'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url; a.download=nume; a.click();
-  URL.revokeObjectURL(url);
-}
-
-/* ── DATE DEMO (se incarcare o singura data) ─
-   Dacă Firestore e gol, adaugă produse și anunțuri demo
-   Le poți edita/șterge din Admin după ce te loghezi.
-─────────────────────────────────────────── */
 const PRODUSE_DEMO=[
   {name:'Lumânare pascală aurită',price:18,category:'Lumânări',stock:120,description:'Lumânare specială pentru slujba de Paști, decorată cu modele aurite. Înălțime 40cm, arde 6 ore. Potrivită pentru orice vârstă.',images:[],bestSeller:true},
   {name:'Lumânare de botez',price:45,category:'Lumânări',stock:30,description:'Lumânare albă ornamentată cu floricele și panglică albastră sau roz. Include suport de prins. Înălțime 60cm.',images:[],bestSeller:false},
@@ -2994,30 +1876,1125 @@ const ANUNTURI_DEMO=[
   {title:'Curs de pictură de icoane',type:'activitate',content:'Parohia organizează un curs de inițiere în pictura de icoane, tehnica tradițională (ou și tempera).\n\nCursul va fi susținut de iconarul Mihai Ionescu, absolvent al Institutului Teologic.\n\nDetalii:\n- Durata: 8 ședințe, câte 2 ore fiecare\n- Zi: sâmbăta, 10:00-12:00\n- Loc: sala parohială\n- Cost: 200 Lei (materiale incluse)\n\nÎnscrieri la secretariat. Locuri limitate!',image:''},
 ];
 
-async function semaneazaDateDemo(){
-  // Verifica daca exista deja date
+/* ── FIREBASE INIT ────────────────────────── */
+firebase.initializeApp({
+  apiKey:"AIzaSyDjQEkuNvLHWwBJsGWmu1LxLcOoS75pFjQ",
+  authDomain:"biserica-online-d3f0a.firebaseapp.com",
+  projectId:"biserica-online-d3f0a",
+  storageBucket:"biserica-online-d3f0a.firebasestorage.app",
+  messagingSenderId:"582958004765",
+  appId:"1:582958004765:web:60a31c374b9e298c1964f4"
+});
+const db   = firebase.firestore();
+const auth = firebase.auth();
+
+/* ── STATE ───────────────────────────────── */
+let cos          = JSON.parse(localStorage.getItem('bCos')||'[]');
+let produseCach  = [];
+let anunturiCach = [];
+let comenziCach  = [];
+let catCurenta   = 'toate';
+let sortCurenta  = 'implicit';
+let cautareCur   = '';
+let filtreDeschise = false;
+let adminCurent  = null;
+let prodModalCurent = null;
+let cantModalProd   = 1;
+let imgSelectateProd = [];
+let imgSelectataAnn  = null;
+let editProdId = null;
+let editAnnId  = null;
+let lightboxImgs = [];
+let lightboxIdx  = 0;
+
+/* ── FIREBASE HELPERS ────────────────────── */
+const TS = () => firebase.firestore.FieldValue.serverTimestamp();
+
+async function fbLista(col){
   try{
-    const testProd=await db.collection('produse').limit(1).get();
-    const testAnn=await db.collection('anunturi').limit(1).get();
-    if(!testProd.empty&&!testAnn.empty){
-      console.log('Date demo deja existente, skip.');
+    const s = await db.collection(col).orderBy('createdAt','desc').get();
+    return s.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){ console.warn(col,e); return []; }
+}
+async function fbAdauga(col,data){ return db.collection(col).add({...data,createdAt:TS()}); }
+async function fbActualizeaza(col,id,data){ return db.collection(col).doc(id).update(data); }
+async function fbSterge(col,id){ return db.collection(col).doc(id).delete(); }
+async function fbGetUnul(col,id){
+  const d = await db.collection(col).doc(id).get();
+  return d.exists ? {id:d.id,...d.data()} : null;
+}
+
+/* ── IMAGINI ─────────────────────────────── */
+async function proceseazaImagine(file){
+  return new Promise(res=>{
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = ()=>{
+      let w=img.width, h=img.height, mx=700, my=700;
+      if(w>mx){h=Math.round(h*mx/w);w=mx;}
+      if(h>my){w=Math.round(w*my/h);h=my;}
+      const c=document.createElement('canvas');
+      c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      URL.revokeObjectURL(url);
+      res(c.toDataURL('image/jpeg',0.75));
+    };
+    img.onerror=()=>{
+      URL.revokeObjectURL(url);
+      const r=new FileReader();
+      r.onload=()=>res(r.result);
+      r.readAsDataURL(file);
+    };
+    img.src=url;
+  });
+}
+
+/* ── COS ─────────────────────────────────── */
+function salveazaCos(){ localStorage.setItem('bCos',JSON.stringify(cos)); }
+function totalCos(){ return cos.reduce((s,i)=>s+i.pret*i.cantitate,0); }
+function nrArticole(){ return cos.reduce((s,i)=>s+i.cantitate,0); }
+
+function actualizeazaBadge(){
+  const n=nrArticole();
+  const b=document.getElementById('cosBadge');
+  b.textContent=n||'';
+  n>0 ? b.classList.add('viz') : b.classList.remove('viz');
+}
+
+function adaugaInCos(p,cant){
+  cant=cant||1;
+  const ex=cos.find(i=>i.id===p.id);
+  if(ex) ex.cantitate+=cant;
+  else cos.push({id:p.id,nume:p.name||p.nume,pret:p.price||p.pret,imagine:(p.images||[])[0]||'',cantitate:cant});
+  salveazaCos(); actualizeazaBadge();
+  afiseazaToast(`✝ "${p.name||p.nume}" adăugat în coș!`);
+}
+
+function scoateDinCos(id){
+  cos=cos.filter(i=>i.id!==id);
+  salveazaCos(); actualizeazaBadge(); redeazaCos();
+}
+
+function schimbaCant(id,delta){
+  const it=cos.find(i=>i.id===id);
+  if(!it) return;
+  it.cantitate+=delta;
+  if(it.cantitate<=0) return scoateDinCos(id);
+  salveazaCos(); actualizeazaBadge(); redeazaCos();
+}
+
+/* ── TOAST ───────────────────────────────── */
+let timerToast;
+function afiseazaToast(msg,dur){
+  dur=dur||3000;
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('vizibil');
+  clearTimeout(timerToast);
+  timerToast=setTimeout(()=>el.classList.remove('vizibil'),dur);
+}
+
+/* ── NAVIGARE ────────────────────────────── */
+function mergi(pag){
+  document.querySelectorAll('.pagina').forEach(p=>p.classList.remove('activa'));
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('activ'));
+  const pg=document.getElementById('pagina-'+pag);
+  if(pg) pg.classList.add('activa');
+  const na=document.querySelector(`.nav-links a[data-p="${pag}"]`);
+  if(na) na.classList.add('activ');
+  document.getElementById('navLinks').classList.remove('deschis');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(pag==='acasa')    incarcaAcasa();
+  if(pag==='magazin')  incarcaMagazin();
+  if(pag==='anunturi') afiseazaAnunturi();
+  if(pag==='cos')      redeazaCos();
+  if(pag==='admin')    initAdmin();
+}
+
+/* ── TIMER PASTI ─────────────────────────── */
+function calcPasteOrtodox(an){
+  const a=an%4,b=an%7,c=an%19;
+  const d=(19*c+15)%30;
+  const e=(2*a+4*b-d+34)%7;
+  const luna=Math.floor((d+e+114)/31);
+  const zi=((d+e+114)%31)+1;
+  return new Date(an,luna-1,zi+13);
+}
+function porniTimer(){
+  function tick(){
+    const acum=new Date();
+    let an=acum.getFullYear();
+    let paste=calcPasteOrtodox(an);
+    if(acum>paste){an++;paste=calcPasteOrtodox(an);}
+    const diff=paste-acum;
+    const bar=document.getElementById('timer-bar');
+    if(diff<=0){
+      bar.classList.add('risen');
+      bar.innerHTML='✝&ensp;HRISTOS A ÎNVIAT!&ensp;ADEVĂRAT A ÎNVIAT!&ensp;✝';
       return;
     }
-    if(testProd.empty){
-      console.log('Semanare produse demo...');
-      for(const p of PRODUSE_DEMO){
-        await db.collection('produse').add({...p,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    const z=Math.floor(diff/86400000);
+    const h=Math.floor((diff%86400000)/3600000);
+    const m=Math.floor((diff%3600000)/60000);
+    const s=Math.floor((diff%60000)/1000);
+    const p=n=>String(n).padStart(2,'0');
+    document.getElementById('td').textContent=p(z);
+    document.getElementById('th').textContent=p(h);
+    document.getElementById('tm').textContent=p(m);
+    document.getElementById('ts').textContent=p(s);
+  }
+  tick(); setInterval(tick,1000);
+}
+
+/* ── SFANT & VERSET ──────────────────────── */
+function getSfantAzi(){
+  const acum=new Date();
+  const luna=String(acum.getMonth()+1).padStart(2,'0');
+  const zi=String(acum.getDate()).padStart(2,'0');
+  const sf=CAL[luna+zi];
+  if(sf) return {cheie:luna+zi,...sf};
+  return {cheie:luna+zi,t:'Sfintii zilei',d:'Rugati-va cu credinta si dragoste.'};
+}
+
+function getVerset(){
+  const acum=new Date();
+  const luna=acum.getMonth();
+  const zi=acum.getDate()-1;
+  const versete=VERSETE_LUNARE[luna]||VERSETE_LUNARE[0];
+  return versete[zi%versete.length];
+}
+
+/* ── HELPERS ─────────────────────────────── */
+function clasaInsigna(tip){
+  return {urgent:'ins-urgent',slujba:'ins-slujba',eveniment:'ins-eveniment',activitate:'ins-activitate',general:'ins-general'}[tip]||'ins-general';
+}
+function textInsigna(tip){
+  return {urgent:'🔴 URGENT',slujba:'⛪ Slujba',eveniment:'📅 Eveniment',activitate:'🌿 Activitate',general:'📋 General'}[tip]||'📋 General';
+}
+function formateazaData(ts){
+  if(!ts) return '';
+  try{
+    const d=ts.toDate?ts.toDate():new Date(ts);
+    return d.toLocaleDateString('ro-RO',{day:'2-digit',month:'long',year:'numeric'});
+  }catch(e){ return ''; }
+}
+
+/* ── MODAL ───────────────────────────────── */
+function deschideModal(id){ document.getElementById(id).classList.add('vizibil'); }
+function inchideModal(id){ document.getElementById(id).classList.remove('vizibil'); }
+
+/* ── LIGHTBOX ────────────────────────────── */
+function deschideLightbox(imgs,startIdx){
+  if(!imgs||!imgs.length) return;
+  lightboxImgs=imgs; lightboxIdx=startIdx||0;
+  actualizezaLightbox();
+  document.getElementById('lightbox').classList.add('viz');
+  document.body.style.overflow='hidden';
+}
+function inchideLightbox(){
+  document.getElementById('lightbox').classList.remove('viz');
+  document.body.style.overflow='';
+}
+function lbNav(dir){
+  lightboxIdx=(lightboxIdx+dir+lightboxImgs.length)%lightboxImgs.length;
+  actualizezaLightbox();
+}
+function actualizezaLightbox(){
+  document.getElementById('lightbox-img').src=lightboxImgs[lightboxIdx];
+  document.getElementById('lightbox-counter').textContent=(lightboxIdx+1)+' / '+lightboxImgs.length;
+  const thumbsEl=document.getElementById('lightbox-thumbs');
+  thumbsEl.innerHTML=lightboxImgs.map((u,i)=>{
+    const cls=i===lightboxIdx?'lb-thumb activ':'lb-thumb';
+    return `<img src="${u}" class="${cls}" onclick="lightboxIdx=${i};actualizezaLightbox()">`;
+  }).join('');
+  document.getElementById('lightbox-nav').style.display=lightboxImgs.length>1?'flex':'none';
+}
+document.addEventListener('keydown',function(e){
+  const lb=document.getElementById('lightbox');
+  if(!lb.classList.contains('viz')) return;
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') lbNav(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')    lbNav(-1);
+  if(e.key==='Escape') inchideLightbox();
+});
+
+/* ══════════════════════════════════════════
+   PAGINA ACASA
+══════════════════════════════════════════ */
+async function incarcaAcasa(){
+  // Sfant zilei
+  const sf=getSfantAzi();
+  const acumRO=new Date();
+  const ziSpt=['Duminica','Luni','Marti','Miercuri','Joi','Vineri','Sambata'][acumRO.getDay()];
+  const lunaRO=['Ianuarie','Februarie','Martie','Aprilie','Mai','Iunie','Iulie','August','Septembrie','Octombrie','Noiembrie','Decembrie'][acumRO.getMonth()];
+  const dataStr=`${ziSpt}, ${acumRO.getDate()} ${lunaRO} ${acumRO.getFullYear()}`;
+  let badgesHTML='';
+  if(sf.praznic)    badgesHTML+=`<span class="cal-praznic">✝ Praznic</span>`;
+  if(sf.post)       badgesHTML+=`<span class="cal-post">✗ ${sf.post}</span>`;
+  if(sf.dezlegare)  badgesHTML+=`<span class="cal-dezlegare">✓ ${sf.dezlegare}</span>`;
+  document.getElementById('acasa-sfant').innerHTML=`
+    <div class="sfant-card-nou">
+      <div class="sfant-data-azi">${dataStr}</div>
+      <div class="sfant-titlu-azi">${sf.t}</div>
+      <p class="sfant-desc-azi">${sf.d}</p>
+      ${badgesHTML?`<div class="sfant-badges">${badgesHTML}</div>`:''}
+    </div>`;
+
+  // Verset zilei
+  const [vText,vRef]=getVerset();
+  document.getElementById('acasa-verset').innerHTML=`
+    <div class="verset-box">
+      <p>${vText}</p>
+      <span class="verset-ref">— ${vRef}</span>
+    </div>`;
+
+  // Date Firebase
+  try{
+    if(!produseCach.length)  produseCach  = await fbLista('produse');
+    if(!anunturiCach.length) anunturiCach = await fbLista('anunturi');
+  }catch(e){ console.warn('Firebase load err:',e); }
+
+  // Ticker urgente
+  const urg=anunturiCach.filter(a=>a.type==='urgent');
+  const ticker=document.getElementById('ticker-urgent');
+  if(urg.length){
+    ticker.style.display='block';
+    const itm=urg.map(a=>`<span class="ticker-item" onclick="deschideModalAnunt('${a.id}')">🔔 ${a.title}</span>`);
+    document.getElementById('tickerPista').innerHTML=[...itm,...itm].join('<span style="color:#FFD700;margin:0 16px">✝</span>');
+  }else{ ticker.style.display='none'; }
+
+  // Produs recomandat
+  const pr=produseCach.find(p=>p.bestSeller)||produseCach[0];
+  const elPr=document.getElementById('acasa-produs-rec');
+  if(pr){
+    const imgHtml=pr.images&&pr.images[0]
+      ?`<img src="${pr.images[0]}" alt="${pr.name}" loading="lazy">`
+      :`<div class="produs-img-no-photo"><div style="font-size:2.8rem">🕯️</div><span>Fara fotografie</span></div>`;
+    elPr.innerHTML=`
+      <div class="card-produs" onclick="deschideModalProdus('${pr.id}')">
+        <div class="produs-img">${imgHtml}</div>
+        <div class="produs-corp">
+          <div class="produs-nume">${pr.name}</div>
+          <div class="produs-desc">${pr.description||''}</div>
+          <div class="produs-footer">
+            <span class="produs-pret">${pr.price} Lei</span>
+            <button class="btn-cos" onclick="event.stopPropagation();adaugaRapid('${pr.id}')">🛒 Adauga</button>
+          </div>
+        </div>
+      </div>`;
+  }else{
+    elPr.innerHTML=`<div class="gol"><div class="icon-gol">🕯️</div><p>Nu exista produse momentan.</p></div>`;
+  }
+
+  // Ultim anunt
+  const ua=anunturiCach.find(a=>a.type==='urgent')||anunturiCach[0];
+  const elUa=document.getElementById('acasa-ultim-anunt');
+  if(ua){
+    const urgCls=ua.type==='urgent'?'urgent':'';
+    const extras=(ua.content||'').substring(0,180);
+    elUa.innerHTML=`
+      <div class="card-anunt ${urgCls}" onclick="deschideModalAnunt('${ua.id}')">
+        <span class="insigna ${clasaInsigna(ua.type)}">${textInsigna(ua.type)}</span>
+        <h3>${ua.title}</h3>
+        <p class="anunt-extras">${extras}${ua.content&&ua.content.length>180?'...':''}</p>
+        <span class="anunt-data">📅 ${formateazaData(ua.createdAt)}</span>
+      </div>`;
+  }else{
+    elUa.innerHTML=`<div class="gol"><div class="icon-gol">📋</div><p>Nu exista anunturi momentan.</p></div>`;
+  }
+}
+
+/* ══════════════════════════════════════════
+   MAGAZIN
+══════════════════════════════════════════ */
+async function incarcaMagazin(){
+  if(!produseCach.length){
+    document.getElementById('gridProduse').innerHTML=`<div class="incarcare" style="grid-column:1/-1"><div class="rotitor"></div> Se incarca...</div>`;
+    produseCach=await fbLista('produse');
+  }
+  filtreazaProduse();
+}
+
+function comutaFiltre(){
+  filtreDeschise=!filtreDeschise;
+  document.getElementById('panouFiltre').classList.toggle('vizibil',filtreDeschise);
+  document.getElementById('btnFiltre').classList.toggle('deschis',filtreDeschise);
+}
+function seteazaCategorie(val,el){
+  catCurenta=val;
+  document.querySelectorAll('#chipsCategorie .chip').forEach(c=>c.classList.remove('selectat'));
+  el.classList.add('selectat');
+  filtreazaProduse();
+}
+function seteazaSortare(val,el){
+  sortCurenta=val;
+  document.querySelectorAll('#chipsSortare .chip').forEach(c=>c.classList.remove('selectat'));
+  el.classList.add('selectat');
+  filtreazaProduse();
+}
+function filtreazaProduse(){
+  cautareCur=document.getElementById('cautareProduse').value.toLowerCase();
+  let lista=[...produseCach];
+  if(catCurenta!=='toate') lista=lista.filter(p=>p.category===catCurenta);
+  if(cautareCur) lista=lista.filter(p=>p.name.toLowerCase().includes(cautareCur)||(p.description||'').toLowerCase().includes(cautareCur));
+  if(sortCurenta==='pretcrescator') lista.sort((a,b)=>a.price-b.price);
+  if(sortCurenta==='pretdescrescator') lista.sort((a,b)=>b.price-a.price);
+  if(sortCurenta==='nume') lista.sort((a,b)=>a.name.localeCompare(b.name));
+  redeazaGridProduse(lista);
+}
+function redeazaGridProduse(lista){
+  const el=document.getElementById('gridProduse');
+  if(!lista.length){
+    el.innerHTML=`<div class="gol" style="grid-column:1/-1"><div class="icon-gol">🕯️</div><h3>Niciun produs gasit</h3><p>Modificati filtrele sau cautarea.</p></div>`;
+    return;
+  }
+  el.innerHTML=lista.map(p=>{
+    const imgHtml=p.images&&p.images[0]
+      ?`<img src="${p.images[0]}" alt="${p.name}" loading="lazy">`
+      :`<div class="produs-img-no-photo"><div style="font-size:2.5rem">🕯️</div><span>Fara fotografie</span></div>`;
+    const stocCls=p.stock>0?'in-stoc':'epuizat';
+    const stocTxt=p.stock>0?`${p.stock} buc.`:'Epuizat';
+    const disabledAttr=p.stock<=0?'disabled':'';
+    return `<div class="card-produs" onclick="deschideModalProdus('${p.id}')">
+      <div class="produs-img">${imgHtml}</div>
+      <div class="produs-corp">
+        <div class="produs-nume">${p.name}</div>
+        <div class="produs-desc">${p.description||''}</div>
+        <div class="produs-footer">
+          <div>
+            <div class="produs-pret">${p.price} Lei</div>
+            <span class="stoc-badge ${stocCls}">${stocTxt}</span>
+          </div>
+          <button class="btn-cos" onclick="event.stopPropagation();adaugaRapid('${p.id}')" ${disabledAttr}>🛒 Adauga</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function adaugaRapid(id){
+  const p=produseCach.find(x=>x.id===id);
+  if(p) adaugaInCos(p,1);
+}
+
+/* ── MODAL PRODUS ────────────────────────── */
+function deschideModalProdus(id){
+  const p=produseCach.find(x=>x.id===id);
+  if(!p) return;
+  prodModalCurent=p; cantModalProd=1;
+  document.getElementById('mpTitlu').textContent=p.name;
+  document.getElementById('mpPret').textContent=`${p.price} Lei`;
+  document.getElementById('mpStoc').innerHTML=p.stock>0
+    ?`<span class="stoc-badge in-stoc">✓ Disponibil (${p.stock} buc.)</span>`
+    :`<span class="stoc-badge epuizat">✗ Epuizat</span>`;
+  document.getElementById('mpCategorie').textContent=p.category||'';
+  document.getElementById('mpDescriere').innerHTML=(p.description||'').replace(/\n/g,'<br>');
+  document.getElementById('mpCantitate').textContent=1;
+  lightboxImgs=p.images||[];
+  lightboxIdx=0;
+  const mi=document.getElementById('mpImgPrinc');
+  const galerie=document.getElementById('mpGalerie');
+  if(lightboxImgs.length){
+    mi.src=lightboxImgs[0]; mi.style.display='block';
+    mi.onclick=()=>deschideLightbox(lightboxImgs,0);
+    mi.style.cursor='zoom-in';
+    galerie.innerHTML=lightboxImgs.map((u,i)=>{
+      const cls=i===0?'modal-thumb activ':'modal-thumb';
+      return `<img src="${u}" class="${cls}" onclick="setImgPrinc(this,'${u}',${i})">`;
+    }).join('');
+  }else{
+    mi.style.display='none';
+    galerie.innerHTML=`<div style="font-size:3rem;color:var(--vp);padding:20px;text-align:center">✝</div>`;
+  }
+  deschideModal('modalProdus');
+}
+function setImgPrinc(el,src,idx){
+  const mi=document.getElementById('mpImgPrinc');
+  mi.src=src; mi.onclick=()=>deschideLightbox(lightboxImgs,idx);
+  document.querySelectorAll('.modal-thumb').forEach(t=>t.classList.remove('activ'));
+  el.classList.add('activ');
+  lightboxIdx=idx;
+}
+function schimbaCantMP(d){
+  cantModalProd=Math.max(1,cantModalProd+d);
+  document.getElementById('mpCantitate').textContent=cantModalProd;
+}
+function adaugadinModal(){
+  if(prodModalCurent){ adaugaInCos(prodModalCurent,cantModalProd); inchideModal('modalProdus'); }
+}
+
+/* ══════════════════════════════════════════
+   ANUNTURI
+══════════════════════════════════════════ */
+async function afiseazaAnunturi(){
+  const el=document.getElementById('listaAnunturi');
+  el.innerHTML=`<div class="incarcare"><div class="rotitor"></div> Se incarca...</div>`;
+  if(!anunturiCach.length) anunturiCach=await fbLista('anunturi');
+  const filtru=document.getElementById('filtruAnunturi').value;
+  let lista=filtru==='toate'?anunturiCach:anunturiCach.filter(a=>a.type===filtru);
+  if(!lista.length){
+    el.innerHTML=`<div class="gol"><div class="icon-gol">📋</div><h3>Niciun anunt</h3><p>Nu exista anunturi in aceasta categorie.</p></div>`;
+    return;
+  }
+  const urgente=filtru==='toate'?lista.filter(a=>a.type==='urgent'):[];
+  const restul=filtru==='toate'?lista.filter(a=>a.type!=='urgent'):lista;
+  let html='';
+  if(urgente.length){
+    html+=`<div style="margin-bottom:22px"><p class="anunt-urgente-titlu">🔴 ANUNTURI URGENTE</p>`;
+    html+=urgente.map(a=>`
+      <div class="urgent-banner" onclick="deschideModalAnunt('${a.id}')">
+        <span class="insigna ins-urgent">🔴 URGENT</span>
+        <h3>${a.title}</h3>
+        <p class="anunt-extras">${(a.content||'').substring(0,180)}...</p>
+        <span class="anunt-data">📅 ${formateazaData(a.createdAt)}</span>
+      </div>`).join('');
+    html+=`</div>`;
+  }
+  if(filtru==='urgent'){
+    html=lista.map(a=>`
+      <div class="urgent-banner" onclick="deschideModalAnunt('${a.id}')">
+        <span class="insigna ins-urgent">🔴 URGENT</span>
+        <h3>${a.title}</h3>
+        <p class="anunt-extras">${(a.content||'').substring(0,180)}...</p>
+        <span class="anunt-data">📅 ${formateazaData(a.createdAt)}</span>
+      </div>`).join('');
+  } else {
+    html+=restul.map(a=>cardAnunt(a)).join('');
+  }
+  el.innerHTML=html;
+}
+function cardAnunt(a){
+  const imgH=a.image?`<img src="${a.image}" class="ann-cover" alt="${a.title}" loading="lazy">`:'' ;
+  const extras=(a.content||'').substring(0,200);
+  const mai=a.content&&a.content.length>200?'...':'';
+  return `<div class="card-anunt" onclick="deschideModalAnunt('${a.id}')">
+    ${imgH}
+    <span class="insigna ${clasaInsigna(a.type)}">${textInsigna(a.type)}</span>
+    <h3>${a.title}</h3>
+    <p class="anunt-extras">${extras}${mai}</p>
+    <span class="anunt-data">📅 ${formateazaData(a.createdAt)}</span>
+  </div>`;
+}
+function deschideModalAnunt(id){
+  const a=anunturiCach.find(x=>x.id===id);
+  if(!a) return;
+  document.getElementById('maInsigna').innerHTML=`<span class="insigna ${clasaInsigna(a.type)}">${textInsigna(a.type)}</span>`;
+  document.getElementById('maTitlu').textContent=a.title;
+  document.getElementById('maData').textContent='📅 '+formateazaData(a.createdAt);
+  document.getElementById('maContinut').innerHTML=(a.content||'').replace(/\n/g,'<br>');
+  const img=document.getElementById('maImagine');
+  if(a.image){ img.src=a.image; img.style.display='block'; }
+  else { img.style.display='none'; }
+  deschideModal('modalAnunt');
+}
+
+/* ══════════════════════════════════════════
+   COS
+══════════════════════════════════════════ */
+function redeazaCos(){
+  const elIteme=document.getElementById('itemeCos');
+  const elSumar=document.getElementById('sumarulCos');
+  if(!cos.length){
+    elIteme.innerHTML=`<div class="gol"><div class="icon-gol">🛒</div><h3>Cosul este gol</h3><p>Adauga produse din magazin.</p><br><button class="btn btn-primar" onclick="mergi('magazin')">Mergi la Magazin</button></div>`;
+    elSumar.style.display='none';
+    return;
+  }
+  elIteme.innerHTML=cos.map(it=>{
+    const imgH=it.imagine?`<img src="${it.imagine}" alt="${it.nume}">`:' ✝ ';
+    return `<div class="item-cos">
+      <div class="item-cos-img">${imgH}</div>
+      <div class="item-cos-info">
+        <div class="item-cos-nume">${it.nume}</div>
+        <div class="item-cos-upret">${it.pret} Lei / buc.</div>
+        <div class="ctrl-cantitate">
+          <button class="btn-cantitate" onclick="schimbaCant('${it.id}',-1)">−</button>
+          <span class="val-cantitate">${it.cantitate}</span>
+          <button class="btn-cantitate" onclick="schimbaCant('${it.id}',1)">+</button>
+        </div>
+      </div>
+      <span class="item-cos-pret">${(it.pret*it.cantitate).toFixed(2)} Lei</span>
+      <button class="btn-sterge-item" onclick="scoateDinCos('${it.id}')" title="Sterge">🗑️</button>
+    </div>`;
+  }).join('');
+  elSumar.style.display='block';
+  document.getElementById('valoareTotal').textContent=totalCos().toFixed(2)+' Lei';
+}
+function arataComanada(){
+  document.getElementById('vedereaCos').style.display='none';
+  document.getElementById('vedereComanda').style.display='block';
+  const el=document.getElementById('rezumatComanda');
+  el.innerHTML=cos.map(it=>`
+    <div class="rand-info">
+      <span class="eticheta">${it.nume} x${it.cantitate}</span>
+      <span class="valoare">${(it.pret*it.cantitate).toFixed(2)} Lei</span>
+    </div>`).join('')+`
+    <div class="rand-info" style="font-weight:700;font-size:1.05rem;border-top:2px solid var(--vp);padding-top:9px;margin-top:5px">
+      <span class="eticheta">TOTAL</span>
+      <span class="valoare" style="color:var(--v)">${totalCos().toFixed(2)} Lei</span>
+    </div>`;
+}
+function inapoiLaCos(){
+  document.getElementById('vedereComanda').style.display='none';
+  document.getElementById('vedereaCos').style.display='block';
+}
+async function trimiteComanda(){
+  const nume=document.getElementById('oNume').value.trim();
+  const tel=document.getElementById('oTelefon').value.trim();
+  const adr=document.getElementById('oAdresa').value.trim();
+  if(!nume||!tel||!adr){ afiseazaToast('⚠️ Completati campurile obligatorii!'); return; }
+  const btn=document.getElementById('btnFinalizeaza');
+  btn.disabled=true; btn.textContent='Se trimite...';
+  try{
+    await fbAdauga('comenzi',{
+      name:nume, phone:tel,
+      email:document.getElementById('oEmail').value,
+      address:adr,
+      county:document.getElementById('oLocalitate').value,
+      payment:document.getElementById('oPlata').value,
+      notes:document.getElementById('oObservatii').value,
+      items:JSON.parse(JSON.stringify(cos)),
+      total:totalCos().toFixed(2),
+      status:'noua'
+    });
+    // Scade stocul
+    for(const item of cos){
+      const prod=produseCach.find(p=>p.id===item.id);
+      if(prod&&typeof prod.stock==='number'){
+        const nou=Math.max(0,prod.stock-item.cantitate);
+        try{ await fbActualizeaza('produse',item.id,{stock:nou}); prod.stock=nou; }
+        catch(e){ console.warn('Stoc neactualizat:',item.id); }
       }
-      console.log('Produse demo adaugate:', PRODUSE_DEMO.length);
     }
-    if(testAnn.empty){
-      console.log('Semanare anunturi demo...');
-      for(const a of ANUNTURI_DEMO){
-        await db.collection('anunturi').add({...a,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-      }
-      console.log('Anunturi demo adaugate:', ANUNTURI_DEMO.length);
+    cos=[]; salveazaCos(); actualizeazaBadge();
+    mergi('acasa');
+    setTimeout(()=>afiseazaToast('✝ Comanda plasata cu succes! Va multumim!',5000),400);
+  }catch(e){
+    console.error(e);
+    afiseazaToast('❌ Eroare la trimitere. Verificati conexiunea.');
+    btn.disabled=false; btn.textContent='✝ Finalizeaza Comanda';
+  }
+}
+
+/* ══════════════════════════════════════════
+   ADMIN
+══════════════════════════════════════════ */
+function initAdmin(){
+  if(adminCurent){ arataPanou(); incarcaSectiuena('dashboard'); }
+  else aratLogin();
+}
+function aratLogin(){
+  document.getElementById('adminLogin').style.display='flex';
+  document.getElementById('adminPanel').style.display='none';
+}
+function arataPanou(){
+  document.getElementById('adminLogin').style.display='none';
+  document.getElementById('adminPanel').style.display='flex';
+}
+async function faLogin(){
+  const email=document.getElementById('aEmail').value;
+  const parola=document.getElementById('aParola').value;
+  const btn=document.getElementById('btnLogin');
+  const err=document.getElementById('eroareLogin');
+  err.style.display='none';
+  btn.disabled=true; btn.textContent='Se conecteaza...';
+  try{
+    await auth.signInWithEmailAndPassword(email,parola);
+    arataPanou(); incarcaSectiuena('dashboard');
+  }catch(e){
+    err.style.display='block';
+  }
+  btn.disabled=false; btn.textContent='Conectare';
+}
+async function faLogout(){ await auth.signOut(); aratLogin(); }
+
+function seteazaNavAdmin(sec){
+  document.querySelectorAll('.nav-admin').forEach(b=>b.classList.remove('activ'));
+  const el=document.getElementById('nav-'+sec);
+  if(el) el.classList.add('activ');
+}
+async function incarcaSectiuena(sec){
+  seteazaNavAdmin(sec);
+  const el=document.getElementById('adminContinut');
+  el.innerHTML=`<div class="incarcare"><div class="rotitor"></div> Se incarca...</div>`;
+  if(sec==='dashboard') await secDashboard(el);
+  if(sec==='comenzi')   await secComenzi(el);
+  if(sec==='produse')   await secProduse(el);
+  if(sec==='anunturi')  await secAnunturi(el);
+  if(sec==='import')    await secImport(el);
+}
+
+function statCard(num,lbl,ico){
+  return `<div class="card-stat"><div style="font-size:1.9rem;margin-bottom:7px">${ico}</div><div class="stat-numar">${num}</div><div class="stat-eticheta">${lbl}</div></div>`;
+}
+
+async function secDashboard(el){
+  const [com,prod,ann]=await Promise.all([fbLista('comenzi'),fbLista('produse'),fbLista('anunturi')]);
+  comenziCach=com; produseCach=prod; anunturiCach=ann;
+  const venit=com.filter(o=>o.status!=='anulata').reduce((s,o)=>s+parseFloat(o.total||0),0);
+  const noi=com.filter(o=>o.status==='noua').length;
+  el.innerHTML=`
+    <h2 style="font-family:'Cinzel',serif;color:var(--v);margin-bottom:26px;font-size:1.4rem">📊 Panou Principal</h2>
+    <div class="grid-3" style="margin-bottom:30px">
+      ${statCard(com.length,'Total Comenzi','📦')}
+      ${statCard(noi,'Comenzi Noi','🔔')}
+      ${statCard(venit.toFixed(0)+' Lei','Venituri','💰')}
+      ${statCard(prod.length,'Produse','🕯️')}
+      ${statCard(ann.length,'Anunturi','📋')}
+      ${statCard(ann.filter(a=>a.type==='urgent').length,'Urgente','🔴')}
+    </div>
+    <h3 style="font-family:'Cinzel',serif;color:var(--v);margin-bottom:13px">Comenzi Recente</h3>
+    <div style="overflow-x:auto"><table class="tabel-admin">
+      <thead><tr><th>ID</th><th>Client</th><th>Total</th><th>Status</th><th>Data</th></tr></thead>
+      <tbody>${com.slice(0,6).map(o=>`
+        <tr style="cursor:pointer" onclick="veziComanda('${o.id}')">
+          <td style="font-family:monospace;font-size:.72rem">${o.id.substring(0,9)}…</td>
+          <td><strong>${o.name}</strong></td>
+          <td><strong>${o.total} Lei</strong></td>
+          <td><span class="insigna-status st-${o.status}">${o.status.toUpperCase()}</span></td>
+          <td>${formateazaData(o.createdAt)}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table></div>`;
+}
+
+async function secComenzi(el){
+  comenziCach=await fbLista('comenzi');
+  el.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:13px">
+      <h2 style="font-family:'Cinzel',serif;color:var(--v);font-size:1.35rem">📦 Comenzi</h2>
+      <button class="btn btn-primar btn-mic" onclick="formularComandaNoua()">+ Comanda Manuala</button>
+    </div>
+    <div style="overflow-x:auto"><table class="tabel-admin">
+      <thead><tr><th>ID</th><th>Client</th><th>Telefon</th><th>Total</th><th>Status</th><th>Data</th><th>Actiuni</th></tr></thead>
+      <tbody>${comenziCach.map(o=>`
+        <tr>
+          <td style="font-family:monospace;font-size:.7rem;cursor:pointer" onclick="veziComanda('${o.id}')">${o.id.substring(0,10)}…</td>
+          <td><strong>${o.name}</strong></td>
+          <td>${o.phone}</td>
+          <td><strong>${o.total} Lei</strong></td>
+          <td>
+            <select class="select-status" onchange="schimbaStatus('${o.id}',this.value)">
+              ${['noua','procesata','livrata','anulata'].map(s=>`<option value="${s}"${o.status===s?' selected':''}>${s.toUpperCase()}</option>`).join('')}
+            </select>
+          </td>
+          <td>${formateazaData(o.createdAt)}</td>
+          <td>
+            <div class="butoane-tabel">
+              <button class="btn btn-contur btn-xs" onclick="veziComanda('${o.id}')">👁️</button>
+              <button class="btn btn-pericol btn-xs" onclick="stergeComanda('${o.id}')">🗑️</button>
+            </div>
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table></div>`;
+}
+
+async function veziComanda(id){
+  const el=document.getElementById('adminContinut');
+  el.innerHTML=`<div class="incarcare"><div class="rotitor"></div></div>`;
+  const o=await fbGetUnul('comenzi',id);
+  if(!o) return;
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;gap:13px;margin-bottom:22px;flex-wrap:wrap">
+      <button class="btn btn-contur btn-mic" onclick="incarcaSectiuena('comenzi')">← Inapoi</button>
+      <h2 style="font-family:'Cinzel',serif;color:var(--v)">Comanda #${o.id.substring(0,8)}</h2>
+      <span class="insigna-status st-${o.status}">${o.status.toUpperCase()}</span>
+    </div>
+    <div class="grid-detalii-comanda">
+      <div class="cutie-info"><h4>Date Client</h4>
+        <div class="rand-info"><span class="eticheta">Nume</span><span class="valoare">${o.name}</span></div>
+        <div class="rand-info"><span class="eticheta">Telefon</span><span class="valoare">${o.phone}</span></div>
+        <div class="rand-info"><span class="eticheta">Email</span><span class="valoare">${o.email||'–'}</span></div>
+      </div>
+      <div class="cutie-info"><h4>Livrare</h4>
+        <div class="rand-info"><span class="eticheta">Adresa</span><span class="valoare">${o.address}</span></div>
+        <div class="rand-info"><span class="eticheta">Localitate</span><span class="valoare">${o.county||'–'}</span></div>
+        <div class="rand-info"><span class="eticheta">Plata</span><span class="valoare">${o.payment||'ramburs'}</span></div>
+      </div>
+    </div>
+    ${o.notes?`<div class="cutie-info" style="margin-bottom:15px"><h4>Observatii</h4><p style="font-size:.9rem;color:var(--tm)">${o.notes}</p></div>`:''}
+    <div class="cutie-info" style="margin-bottom:18px"><h4>Produse Comandate</h4>
+      ${(o.items||[]).map(it=>`<div class="rand-info"><span class="eticheta">${it.nume||it.name} x${it.cantitate||it.qty}</span><span class="valoare">${((it.pret||it.price)*(it.cantitate||it.qty)).toFixed(2)} Lei</span></div>`).join('')}
+      <div class="rand-info" style="font-weight:700;font-size:1rem;border-top:2px solid var(--vp);padding-top:8px;margin-top:5px">
+        <span class="eticheta">TOTAL</span><span class="valoare" style="color:var(--v)">${o.total} Lei</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:18px">
+      <select id="statusDetaliu" class="select-filter-anunturi">
+        ${['noua','procesata','livrata','anulata'].map(s=>`<option value="${s}"${o.status===s?' selected':''}>${s.toUpperCase()}</option>`).join('')}
+      </select>
+      <button class="btn btn-primar btn-mic" onclick="salveazaStatus('${o.id}')">Salveaza Status</button>
+      <button class="btn btn-pericol btn-mic" onclick="stergeComanda('${o.id}')">🗑️ Sterge Comanda</button>
+    </div>`;
+}
+async function salveazaStatus(id){
+  const s=document.getElementById('statusDetaliu').value;
+  await fbActualizeaza('comenzi',id,{status:s});
+  afiseazaToast('✅ Status actualizat!');
+}
+async function schimbaStatus(id,status){
+  await fbActualizeaza('comenzi',id,{status});
+  afiseazaToast('✅ Status: '+status.toUpperCase());
+}
+async function stergeComanda(id){
+  if(!confirm('Esti sigur ca vrei sa stergi aceasta comanda?')) return;
+  await fbSterge('comenzi',id);
+  afiseazaToast('🗑️ Comanda stearsa!');
+  incarcaSectiuena('comenzi');
+}
+function formularComandaNoua(){
+  const el=document.getElementById('adminContinut');
+  el.innerHTML=`
+    <div style="display:flex;gap:13px;margin-bottom:22px;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-contur btn-mic" onclick="incarcaSectiuena('comenzi')">← Inapoi</button>
+      <h2 style="font-family:'Cinzel',serif;color:var(--v)">Adauga Comanda Manuala</h2>
+    </div>
+    <div class="formular-admin">
+      <div class="form-rand">
+        <div class="form-grup"><label>Nume *</label><input id="mnNume" placeholder="Nume client"></div>
+        <div class="form-grup"><label>Telefon *</label><input id="mnTel" placeholder="07XX"></div>
+      </div>
+      <div class="form-grup"><label>Email</label><input id="mnEmail" type="email"></div>
+      <div class="form-grup"><label>Adresa *</label><input id="mnAdresa" placeholder="Strada..."></div>
+      <div class="form-rand">
+        <div class="form-grup"><label>Localitate</label><input id="mnLocalitate"></div>
+        <div class="form-grup"><label>Plata</label>
+          <select id="mnPlata">
+            <option value="ramburs">Ramburs</option>
+            <option value="transfer">Transfer</option>
+            <option value="card">Card</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-grup"><label>Total (Lei) *</label><input id="mnTotal" type="number" placeholder="0.00"></div>
+      <div class="form-grup"><label>Observatii</label><textarea id="mnNote" rows="3"></textarea></div>
+      <button class="btn btn-primar" onclick="trimiteComandaAdmin()">Adauga Comanda</button>
+    </div>`;
+}
+async function trimiteComandaAdmin(){
+  const n=document.getElementById('mnNume').value.trim();
+  const t=document.getElementById('mnTel').value.trim();
+  const a=document.getElementById('mnAdresa').value.trim();
+  const total=document.getElementById('mnTotal').value;
+  if(!n||!t||!a||!total){ afiseazaToast('⚠️ Campuri obligatorii lipsesc!'); return; }
+  await fbAdauga('comenzi',{name:n,phone:t,email:document.getElementById('mnEmail').value,address:a,county:document.getElementById('mnLocalitate').value,payment:document.getElementById('mnPlata').value,notes:document.getElementById('mnNote').value,total:parseFloat(total).toFixed(2),items:[],status:'noua'});
+  afiseazaToast('✅ Comanda adaugata!');
+  incarcaSectiuena('comenzi');
+}
+
+async function secProduse(el){
+  produseCach=await fbLista('produse');
+  el.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:13px">
+      <h2 style="font-family:'Cinzel',serif;color:var(--v);font-size:1.35rem">🕯️ Produse</h2>
+      <button class="btn btn-primar btn-mic" onclick="formularProdus()">+ Produs Nou</button>
+    </div>
+    <div style="overflow-x:auto"><table class="tabel-admin">
+      <thead><tr><th>Img</th><th>Nume</th><th>Categorie</th><th>Pret</th><th>Stoc</th><th>Actiuni</th></tr></thead>
+      <tbody>${produseCach.map(p=>`
+        <tr>
+          <td>${p.images&&p.images[0]?`<img src="${p.images[0]}" class="img-mic-tabel">`:'–'}</td>
+          <td><strong>${p.name}</strong>${p.bestSeller?'<br><span style="font-size:.68rem;color:var(--g)">⭐ Recomandat</span>':''}</td>
+          <td>${p.category||'–'}</td>
+          <td><strong>${p.price} Lei</strong></td>
+          <td><span class="stoc-badge ${p.stock>0?'in-stoc':'epuizat'}">${p.stock||0}</span></td>
+          <td><div class="butoane-tabel">
+            <button class="btn btn-contur btn-xs" onclick="formularProdus('${p.id}')">✏️</button>
+            <button class="btn btn-pericol btn-xs" onclick="stergeProdus('${p.id}')">🗑️</button>
+          </div></td>
+        </tr>`).join('')}
+      </tbody>
+    </table></div>`;
+}
+
+function formularProdus(id){
+  editProdId=id||null;
+  imgSelectateProd=[];
+  const p=id?(produseCach.find(x=>x.id===id)||{}):{};
+  if(p.images) imgSelectateProd=[...p.images];
+  const el=document.getElementById('adminContinut');
+  const catOpts=['','Lumanari','Icoane','Carti','Cruci','Tamaie','Mir','Alte obiecte']
+    .map(c=>`<option value="${c}"${p.category===c?' selected':''}>${c||'– Selecteaza –'}</option>`).join('');
+  el.innerHTML=`
+    <div style="display:flex;gap:13px;margin-bottom:22px;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-contur btn-mic" onclick="incarcaSectiuena('produse')">← Inapoi</button>
+      <h2 style="font-family:'Cinzel',serif;color:var(--v)">${id?'Editeaza':'Adauga'} Produs</h2>
+    </div>
+    <div class="formular-admin">
+      <div class="form-rand">
+        <div class="form-grup"><label>Nume Produs *</label><input id="pNume" value="${p.name||''}" placeholder="ex: Lumanare pascala"></div>
+        <div class="form-grup"><label>Pret (Lei) *</label><input id="pPret" type="number" value="${p.price||''}" placeholder="0.00"></div>
+      </div>
+      <div class="form-rand">
+        <div class="form-grup"><label>Categorie</label><select id="pCategorie">${catOpts}</select></div>
+        <div class="form-grup"><label>Stoc (buc.)</label><input id="pStoc" type="number" value="${p.stock||0}"></div>
+      </div>
+      <div class="form-grup"><label>Descriere</label><textarea id="pDescriere" rows="4" placeholder="Descriere detaliata...">${p.description||''}</textarea></div>
+      <div class="form-grup" style="display:flex;align-items:center;gap:9px">
+        <input type="checkbox" id="pBestSeller" ${p.bestSeller?'checked':''}>
+        <label for="pBestSeller" style="cursor:pointer">Marcheaza ca Produs Recomandat</label>
+      </div>
+      <div class="form-grup">
+        <label>Fotografii Produs</label>
+        <div class="zona-upload" onclick="document.getElementById('pImgInput').click()">
+          <div style="font-size:2rem;color:var(--vp);margin-bottom:7px">📷</div>
+          <p style="color:var(--tl);font-size:.86rem">Click pentru a adauga fotografii (JPG, PNG)</p>
+          <input type="file" id="pImgInput" multiple accept="image/*" style="display:none" onchange="gestioneazaImgProd(event)">
+        </div>
+        <div id="previzualizariProd" class="previzualizari"></div>
+      </div>
+      <button class="btn btn-primar" id="btnSalveazaProd" onclick="salveazaProdus()">${id?'Actualizeaza':'Adauga'} Produs</button>
+    </div>`;
+  redezaPrevProd();
+}
+function redezaPrevProd(){
+  const el=document.getElementById('previzualizariProd');
+  if(!el) return;
+  el.innerHTML=imgSelectateProd.map((img,i)=>`
+    <div class="prev-wrap">
+      <img src="${typeof img==='string'?img:URL.createObjectURL(img)}" class="prev-img">
+      <button class="prev-sterge" onclick="scoateImgProd(${i})">✕</button>
+    </div>`).join('');
+}
+function gestioneazaImgProd(e){
+  imgSelectateProd=[...imgSelectateProd,...Array.from(e.target.files)];
+  redezaPrevProd();
+}
+function scoateImgProd(i){ imgSelectateProd.splice(i,1); redezaPrevProd(); }
+async function salveazaProdus(){
+  const name=document.getElementById('pNume').value.trim();
+  const price=parseFloat(document.getElementById('pPret').value);
+  if(!name||!price){ afiseazaToast('⚠️ Campuri obligatorii lipsesc!'); return; }
+  const btn=document.getElementById('btnSalveazaProd');
+  const total=imgSelectateProd.filter(x=>typeof x!=='string').length;
+  btn.disabled=true; btn.textContent=total?`Se proceseaza imaginile...`:'Se salveaza...';
+  try{
+    const imgFinal=[];
+    let i=0;
+    for(const img of imgSelectateProd){
+      if(typeof img==='string'){ imgFinal.push(img); continue; }
+      i++;
+      btn.textContent=`Imagine ${i}/${total}...`;
+      imgFinal.push(await proceseazaImagine(img));
     }
-  }catch(e){console.warn('Seed demo error (normal daca nu esti autentificat):', e.message);}
+    btn.textContent='Se salveaza...';
+    const data={
+      name,price,
+      category:document.getElementById('pCategorie').value,
+      stock:parseInt(document.getElementById('pStoc').value)||0,
+      description:document.getElementById('pDescriere').value,
+      bestSeller:document.getElementById('pBestSeller').checked,
+      images:imgFinal
+    };
+    if(editProdId) await fbActualizeaza('produse',editProdId,data);
+    else await fbAdauga('produse',data);
+    produseCach=[];
+    afiseazaToast(editProdId?'✅ Produs actualizat!':'✅ Produs adaugat!');
+    incarcaSectiuena('produse');
+  }catch(e){
+    console.error(e);
+    afiseazaToast('❌ Eroare: '+e.message);
+    btn.disabled=false; btn.textContent='Salveaza';
+  }
+}
+async function stergeProdus(id){
+  if(!confirm('Esti sigur ca vrei sa stergi acest produs?')) return;
+  await fbSterge('produse',id); produseCach=[];
+  afiseazaToast('🗑️ Produs sters!'); incarcaSectiuena('produse');
+}
+
+async function secAnunturi(el){
+  anunturiCach=await fbLista('anunturi');
+  el.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:13px">
+      <h2 style="font-family:'Cinzel',serif;color:var(--v);font-size:1.35rem">📋 Anunturi</h2>
+      <button class="btn btn-primar btn-mic" onclick="formularAnunt()">+ Anunt Nou</button>
+    </div>
+    <table class="tabel-admin">
+      <thead><tr><th>Titlu</th><th>Tip</th><th>Data</th><th>Actiuni</th></tr></thead>
+      <tbody>${anunturiCach.map(a=>`
+        <tr>
+          <td><strong>${a.title}</strong></td>
+          <td><span class="insigna ${clasaInsigna(a.type)}">${textInsigna(a.type)}</span></td>
+          <td>${formateazaData(a.createdAt)}</td>
+          <td><div class="butoane-tabel">
+            <button class="btn btn-contur btn-xs" onclick="formularAnunt('${a.id}')">✏️</button>
+            <button class="btn btn-pericol btn-xs" onclick="stergeAnunt('${a.id}')">🗑️</button>
+          </div></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+function formularAnunt(id){
+  editAnnId=id||null;
+  imgSelectataAnn=null;
+  const a=id?(anunturiCach.find(x=>x.id===id)||{}):{};
+  const tipOpts=['urgent','slujba','eveniment','activitate','general']
+    .map(t=>`<option value="${t}"${a.type===t?' selected':''}>${textInsigna(t)}</option>`).join('');
+  const prevHtml=a.image?`<div class="prev-wrap"><img src="${a.image}" class="prev-img" style="width:115px;height:86px"><button class="prev-sterge" onclick="stergeImgAnn()">✕</button></div>`:'';
+  document.getElementById('adminContinut').innerHTML=`
+    <div style="display:flex;gap:13px;margin-bottom:22px;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-contur btn-mic" onclick="incarcaSectiuena('anunturi')">← Inapoi</button>
+      <h2 style="font-family:'Cinzel',serif;color:var(--v)">${id?'Editeaza':'Adauga'} Anunt</h2>
+    </div>
+    <div class="formular-admin">
+      <div class="form-grup"><label>Titlu *</label><input id="aTitlu" value="${a.title||''}" placeholder="Titlul anuntului"></div>
+      <div class="form-grup"><label>Tip Anunt</label><select id="aTip">${tipOpts}</select></div>
+      <div class="form-grup"><label>Continut *</label><textarea id="aContinut" rows="9" placeholder="Continutul anuntului...">${a.content||''}</textarea></div>
+      <div class="form-grup">
+        <label>Fotografie (optional)</label>
+        <div class="zona-upload" onclick="document.getElementById('aImgInput').click()">
+          <div style="font-size:2rem;color:var(--vp);margin-bottom:7px">🖼️</div>
+          <p style="color:var(--tl);font-size:.86rem">Click pentru a adauga o fotografie</p>
+          <input type="file" id="aImgInput" accept="image/*" style="display:none" onchange="gestioneazaImgAnn(event)">
+        </div>
+        <div id="prevAnn" style="margin-top:11px">${prevHtml}</div>
+      </div>
+      <button class="btn btn-primar" id="btnSalveazaAnn" onclick="salveazaAnunt()">${id?'Actualizeaza':'Publica'} Anuntul</button>
+    </div>`;
+  if(a.image) imgSelectataAnn=a.image;
+}
+function gestioneazaImgAnn(e){
+  const f=e.target.files[0]; if(!f) return;
+  imgSelectataAnn=f;
+  const url=URL.createObjectURL(f);
+  document.getElementById('prevAnn').innerHTML=`<div class="prev-wrap"><img src="${url}" class="prev-img" style="width:115px;height:86px"><button class="prev-sterge" onclick="stergeImgAnn()">✕</button></div>`;
+}
+function stergeImgAnn(){ imgSelectataAnn=null; document.getElementById('prevAnn').innerHTML=''; }
+async function salveazaAnunt(){
+  const titlu=document.getElementById('aTitlu').value.trim();
+  const continut=document.getElementById('aContinut').value.trim();
+  if(!titlu||!continut){ afiseazaToast('⚠️ Campuri obligatorii lipsesc!'); return; }
+  const btn=document.getElementById('btnSalveazaAnn');
+  btn.disabled=true; btn.textContent='Se salveaza...';
+  try{
+    let imgUrl='';
+    if(imgSelectataAnn){
+      btn.textContent='Se proceseaza fotografia...';
+      imgUrl=typeof imgSelectataAnn==='string'?imgSelectataAnn:await proceseazaImagine(imgSelectataAnn);
+    }
+    const data={title:titlu,type:document.getElementById('aTip').value,content:continut,image:imgUrl};
+    if(editAnnId) await fbActualizeaza('anunturi',editAnnId,data);
+    else await fbAdauga('anunturi',data);
+    anunturiCach=[];
+    afiseazaToast(editAnnId?'✅ Anunt actualizat!':'✅ Anunt publicat!');
+    incarcaSectiuena('anunturi');
+  }catch(e){
+    console.error(e);
+    afiseazaToast('❌ Eroare: '+e.message);
+    btn.disabled=false; btn.textContent='Salveaza';
+  }
+}
+async function stergeAnunt(id){
+  if(!confirm('Esti sigur ca vrei sa stergi acest anunt?')) return;
+  await fbSterge('anunturi',id); anunturiCach=[];
+  afiseazaToast('🗑️ Anunt sters!'); incarcaSectiuena('anunturi');
+}
+
+async function secImport(el){
+  el.innerHTML=`
+  <h2 style="font-family:'Cinzel',serif;color:var(--v);margin-bottom:26px;font-size:1.4rem">📥 Import Date</h2>
+  <div class="import-box">
+    <h4>📦 Import Produse din CSV</h4>
+    <p>Coloane: <code style="background:var(--cr);padding:3px 7px;border-radius:4px;font-size:.82rem">name,price,category,stock,description</code></p>
+    <input type="file" id="csvProduse" accept=".csv,.txt" style="display:block;margin:10px 0;padding:8px;border:1px solid var(--crd);border-radius:6px;width:100%">
+    <button class="btn btn-primar btn-mic" onclick="importProduse()">📥 Importa Produse</button>
+    <div id="rezultatProduse" class="import-result"></div>
+  </div>
+  <div class="import-box">
+    <h4>📋 Import Anunturi din CSV</h4>
+    <p>Coloane: <code style="background:var(--cr);padding:3px 7px;border-radius:4px;font-size:.82rem">title,type,content</code></p>
+    <input type="file" id="csvAnunturi" accept=".csv,.txt" style="display:block;margin:10px 0;padding:8px;border:1px solid var(--crd);border-radius:6px;width:100%">
+    <button class="btn btn-primar btn-mic" onclick="importAnunturi()">📥 Importa Anunturi</button>
+    <div id="rezultatAnunturi" class="import-result"></div>
+  </div>
+  <div class="import-box" style="border-left-color:var(--v)">
+    <h4>📄 Descarca Template CSV</h4>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+      <button class="btn btn-contur btn-mic" onclick="descarcaTemplateProduse()">⬇️ Template Produse</button>
+      <button class="btn btn-contur btn-mic" onclick="descarcaTemplateAnunturi()">⬇️ Template Anunturi</button>
+    </div>
+  </div>`;
+}
+function parseCSV(text){
+  const linii=text.trim().split('\n');
+  if(linii.length<2) return [];
+  const antet=linii[0].split(',').map(h=>h.trim().replace(/^"|"$/g,''));
+  return linii.slice(1).map(linie=>{
+    const campuri=[]; let inQ=false, cur='';
+    for(let i=0;i<linie.length;i++){
+      const c=linie[i];
+      if(c==='"'){ inQ=!inQ; }
+      else if(c===','&&!inQ){ campuri.push(cur.trim()); cur=''; }
+      else { cur+=c; }
+    }
+    campuri.push(cur.trim());
+    const obj={};
+    antet.forEach((h,i)=>obj[h]=(campuri[i]||'').replace(/^"|"$/g,''));
+    return obj;
+  }).filter(r=>Object.values(r).some(v=>v));
+}
+async function importProduse(){
+  const file=document.getElementById('csvProduse').files[0];
+  const rez=document.getElementById('rezultatProduse');
+  if(!file){ rez.className='import-result err'; rez.style.display='block'; rez.textContent='Selectati un fisier CSV!'; return; }
+  const text=await file.text();
+  const randuri=parseCSV(text);
+  if(!randuri.length){ rez.className='import-result err'; rez.style.display='block'; rez.textContent='Fisierul CSV este gol sau are format gresit.'; return; }
+  rez.className='import-result ok'; rez.style.display='block';
+  rez.textContent=`Se importa ${randuri.length} produse...`;
+  let ok=0,erori=0;
+  for(const r of randuri){
+    if(!r.name||!r.price){ erori++; continue; }
+    try{ await fbAdauga('produse',{name:r.name.trim(),price:parseFloat(r.price)||0,category:r.category||'Alte obiecte',stock:parseInt(r.stock)||0,description:r.description||'',images:[],bestSeller:false}); ok++; }
+    catch(e){ erori++; }
+  }
+  produseCach=[];
+  rez.textContent=`✅ Import finalizat: ${ok} produse adaugate${erori?` (${erori} erori)`:''}!`;
+}
+async function importAnunturi(){
+  const file=document.getElementById('csvAnunturi').files[0];
+  const rez=document.getElementById('rezultatAnunturi');
+  if(!file){ rez.className='import-result err'; rez.style.display='block'; rez.textContent='Selectati un fisier CSV!'; return; }
+  const text=await file.text();
+  const randuri=parseCSV(text);
+  if(!randuri.length){ rez.className='import-result err'; rez.style.display='block'; rez.textContent='Fisierul CSV este gol sau are format gresit.'; return; }
+  rez.className='import-result ok'; rez.style.display='block';
+  rez.textContent=`Se importa ${randuri.length} anunturi...`;
+  let ok=0,erori=0;
+  for(const r of randuri){
+    if(!r.title||!r.content){ erori++; continue; }
+    try{ await fbAdauga('anunturi',{title:r.title.trim(),type:r.type||'general',content:r.content.trim(),image:''}); ok++; }
+    catch(e){ erori++; }
+  }
+  anunturiCach=[];
+  rez.textContent=`✅ Import finalizat: ${ok} anunturi adaugate${erori?` (${erori} erori)`:''}!`;
+}
+function descarcaTemplateProduse(){
+  const csv='name,price,category,stock,description\n"Lumanare pascala",15,Lumanari,100,"Lumanare pentru slujba de Pasti"\n"Icoana Maica Domnului",85,Icoane,10,"Icoana pictata pe lemn 20x30cm"\n"Acatistier",35,Carti,25,"Carte de rugaciuni editie 2024"';
+  descarcaFisier('template_produse.csv',csv,'text/csv');
+}
+function descarcaTemplateAnunturi(){
+  const csv='title,type,content\n"Slujba speciala de Pasti",slujba,"Slujba de Inviere sambata la ora 23:00"\n"Anunt urgent",urgent,"Continut anunt urgent"\n"Pelerinaj",eveniment,"Detalii pelerinaj"';
+  descarcaFisier('template_anunturi.csv',csv,'text/csv');
+}
+function descarcaFisier(nume,continut,tip){
+  const blob=new Blob(['\ufeff'+continut],{type:tip+';charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=nume; a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ── SEED DATE DEMO ──────────────────────── */
+async function semaneazaDateDemo(){
+  try{
+    const [testP,testA]=await Promise.all([
+      db.collection('produse').limit(1).get(),
+      db.collection('anunturi').limit(1).get()
+    ]);
+    if(!testP.empty&&!testA.empty) return;
+    if(testP.empty) for(const p of PRODUSE_DEMO) await fbAdauga('produse',p);
+    if(testA.empty) for(const a of ANUNTURI_DEMO) await fbAdauga('anunturi',a);
+    console.log('Date demo adaugate cu succes!');
+  }catch(e){ console.warn('Seed demo (normal daca reguli Firestore sunt restrictive):',e.code); }
 }
 
 /* ── AUTH LISTENER ───────────────────────── */
@@ -3033,9 +3010,9 @@ document.addEventListener('DOMContentLoaded',function(){
   porniTimer();
   actualizeazaBadge();
   mergi('acasa');
-  // Adaugă date demo dacă Firestore e gol (o singură dată)
   semaneazaDateDemo();
 });
+
 </script>
 </body>
 </html>
