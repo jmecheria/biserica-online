@@ -565,16 +565,13 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
       <p class="subtitlu-sec">Vă așteptăm cu drag la sfintele slujbe</p>
       <div style="overflow-x:auto">
         <table class="tabel-slujbe">
-          <thead>
-            <tr><th>Slujba</th><th>Zi</th><th>Ora</th><th>Observații</th></tr>
-          </thead>
+          <thead><tr><th>Slujba</th><th>Zi</th><th>Ora</th><th>Observații</th></tr></thead>
           <tbody>
             <tr><td>🕯️ Sfânta Liturghie</td><td>Duminică</td><td>09:00</td><td>Cu predică și împărtășanie</td></tr>
             <tr><td>🙏 Vecernia Mare</td><td>Sâmbătă</td><td>18:00</td><td>Urmat de spovedanie</td></tr>
             <tr><td>✝ Utrenia</td><td>Duminică</td><td>08:00</td><td>Înaintea Liturghiei</td></tr>
             <tr><td>📿 Acatistul</td><td>Miercuri</td><td>18:00</td><td>Rotativ la sfinți</td></tr>
             <tr><td>🕊️ Parastas</td><td>Sâmbătă</td><td>09:00</td><td>Prima sâmbătă din lună</td></tr>
-            <tr><td>🌿 Moliftă</td><td>Joi</td><td>17:30</td><td>La cerere</td></tr>
           </tbody>
         </table>
       </div>
@@ -607,68 +604,26 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
     </div>
   </div>
 
-  <!-- Sfantul zilei -->
+  <!-- Sfantul zilei + Versetul zilei -->
   <div class="sectiune sectiune-alt">
     <div class="container">
-      <div class="ornament">✝</div>
-      <h2 class="titlu-sec">Sfântul Zilei</h2>
-      <p class="subtitlu-sec">Pomenirea de astăzi</p>
-      <div style="max-width:600px;margin:0 auto" id="acasa-sfant"></div>
-    </div>
-  </div>
-
-  <!-- Versetul zilei -->
-  <div class="sectiune">
-    <div class="container">
-      <div class="ornament">📖</div>
-      <h2 class="titlu-sec">Versetul Zilei</h2>
-      <div class="linie-deco"></div>
-      <div style="max-width:700px;margin:0 auto" id="acasa-verset"></div>
-    </div>
-  </div>
-
-  <!-- Servicii pastorale -->
-  <div class="sectiune sectiune-alt">
-    <div class="container">
-      <div class="ornament">🕊️</div>
-      <h2 class="titlu-sec">Servicii Pastorale</h2>
-      <p class="subtitlu-sec">Suntem alături de dumneavoastră</p>
-      <div class="grid-3">
-        <div class="card"><div class="card-corp"><span class="card-icon">💍</span><h3>Cununii</h3><p>Programările se fac cu 3 luni înainte. Contactați secretariatul pentru documente necesare.</p></div></div>
-        <div class="card"><div class="card-corp"><span class="card-icon">💧</span><h3>Botezuri</h3><p>Botezul se poate programa oricând. Consultați preotul pentru detalii și nași.</p></div></div>
-        <div class="card"><div class="card-corp"><span class="card-icon">🕯️</span><h3>Înmormântări</h3><p>Suntem alături în momentele de doliu. Slujbe și parastase la cerere.</p></div></div>
-        <div class="card"><div class="card-corp"><span class="card-icon">📿</span><h3>Spovedanie</h3><p>Spovedania după Vecernie sau la cerere. Primul pas spre împărtășanie.</p></div></div>
-        <div class="card"><div class="card-corp"><span class="card-icon">🏠</span><h3>Sfințiri</h3><p>Sfințirea casei, mașinii sau altui bun. La cerere, cu programare prealabilă.</p></div></div>
-        <div class="card"><div class="card-corp"><span class="card-icon">🫂</span><h3>Asistență Socială</h3><p>Sprijin pentru familiile nevoiașe. Colectăm și distribuim ajutoare cu drag.</p></div></div>
+      <div class="grid-2">
+        <div>
+          <div class="ornament">✝</div>
+          <h2 class="titlu-sec">Sfântul Zilei</h2>
+          <p class="subtitlu-sec">Pomenirea de astăzi</p>
+          <div id="acasa-sfant"></div>
+        </div>
+        <div>
+          <div class="ornament">📖</div>
+          <h2 class="titlu-sec">Versetul Zilei</h2>
+          <p class="subtitlu-sec">Cuvântul lui Dumnezeu</p>
+          <div id="acasa-verset"></div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Contact -->
-  <div class="sectiune sectiune-inchis">
-    <div class="container" style="text-align:center">
-      <div style="font-size:2.2rem;color:var(--g);margin-bottom:12px">✝</div>
-      <h2 class="titlu-sec" style="color:var(--gl)">Contact Parohie</h2>
-      <p style="color:var(--crd);font-style:italic;margin-bottom:28px">Nu ezitați să ne contactați</p>
-      <div class="grid-3" style="text-align:left">
-        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.2);border-radius:11px;padding:22px">
-          <div style="font-size:1.8rem;margin-bottom:9px">📍</div>
-          <h4 style="font-family:'Cinzel',serif;color:var(--gl);margin-bottom:7px">Adresă</h4>
-          <p style="color:var(--crd);line-height:1.72">Str. Bisericii, nr. 1<br>Localitate, Județ</p>
-        </div>
-        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.2);border-radius:11px;padding:22px">
-          <div style="font-size:1.8rem;margin-bottom:9px">📞</div>
-          <h4 style="font-family:'Cinzel',serif;color:var(--gl);margin-bottom:7px">Telefon</h4>
-          <p style="color:var(--crd);line-height:1.72">0740 000 000<br>Secretariat: L-V, 10–14</p>
-        </div>
-        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.2);border-radius:11px;padding:22px">
-          <div style="font-size:1.8rem;margin-bottom:9px">✉️</div>
-          <h4 style="font-family:'Cinzel',serif;color:var(--gl);margin-bottom:7px">Email</h4>
-          <p style="color:var(--crd);line-height:1.72">parohia@email.ro<br>Răspundem în 24h</p>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 
 <!-- ═══════════════════════════ MAGAZIN ══════════════════════════ -->
@@ -989,10 +944,43 @@ async function fbGetUnul(col,id){
   const d = await db.collection(col).doc(id).get();
   return d.exists?{id:d.id,...d.data()}:null;
 }
-async function uploadImagine(file,cale){
-  const ref = storage.ref(cale);
-  await ref.put(file);
-  return ref.getDownloadURL();
+async function uploadImagine(file, cale){
+  try{
+    const ref = storage.ref(cale);
+    const snap = await ref.put(file, {contentType: file.type});
+    return await snap.ref.getDownloadURL();
+  }catch(e){
+    console.warn('Storage upload failed, using base64:', e.code);
+    return await fileToBase64(file);
+  }
+}
+
+function fileToBase64(file){
+  return new Promise((res,rej)=>{
+    const r = new FileReader();
+    r.onload  = ()=> res(r.result);
+    r.onerror = ()=> rej(new Error('Eroare citire fisier'));
+    r.readAsDataURL(file);
+  });
+}
+
+async function redimensioneaza(file){
+  return new Promise(res=>{
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = ()=>{
+      let w=img.width, h=img.height, maxW=900, maxH=900;
+      if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
+      if(h>maxH){w=Math.round(w*maxH/h);h=maxH;}
+      const c=document.createElement('canvas');
+      c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      URL.revokeObjectURL(url);
+      c.toBlob(b=>res(new File([b],file.name,{type:'image/jpeg'})),'image/jpeg',0.82);
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);res(file);};
+    img.src=url;
+  });
 }
 
 /* ── COS ─────────────────────────────────── */
@@ -1183,11 +1171,11 @@ function inchideModal(id){document.getElementById(id).classList.remove('vizibil'
    PAGINA ACASĂ
 ══════════════════════════════════════════ */
 async function incarcaAcasa(){
-  // Sfant
+  // Sfant zilei
   const [sNume,sDesc]=getSfant();
   document.getElementById('acasa-sfant').innerHTML=
-    '<div class="sfant-card"><div style="font-size:2.7rem;margin-bottom:13px">✝</div><div class="sfant-nume">'+sNume+'</div><p class="sfant-desc">'+sDesc+'</p></div>';
-  // Verset
+    '<div class="sfant-card"><div style="font-size:2.5rem;margin-bottom:11px">✝</div><div class="sfant-nume">'+sNume+'</div><p class="sfant-desc">'+sDesc+'</p></div>';
+  // Verset zilei
   const [vText,vRef]=getVerset();
   document.getElementById('acasa-verset').innerHTML=
     '<div class="verset-box"><p>'+vText+'</p><span class="verset-ref">— '+vRef+'</span></div>';
@@ -1424,6 +1412,7 @@ async function trimiteComanda(){
   const btn=document.getElementById('btnFinalizeaza');
   btn.disabled=true; btn.textContent='Se trimite…';
   try{
+    // Salvăm comanda
     await fbAdauga('comenzi',{
       name:nume, phone:tel,
       email:document.getElementById('oEmail').value,
@@ -1435,10 +1424,22 @@ async function trimiteComanda(){
       total:totalCos().toFixed(2),
       status:'noua'
     });
+    // Scădem stocul pentru fiecare produs comandat
+    for(const item of cos){
+      const prod = produseCach.find(p=>p.id===item.id);
+      if(prod && typeof prod.stock === 'number'){
+        const stocNou = Math.max(0, prod.stock - item.cantitate);
+        try{
+          await fbActualizeaza('produse', item.id, {stock: stocNou});
+          prod.stock = stocNou; // actualizam si cache-ul local
+        }catch(e){ console.warn('Stoc neactualizat pentru', item.id, e); }
+      }
+    }
     cos=[]; salveazaCos(); actualizeazaBadge();
     mergi('acasa');
     setTimeout(()=>afiseazaToast('✝ Comandă plasată cu succes! Vă mulțumim!',5000),400);
   }catch(e){
+    console.error(e);
     afiseazaToast('❌ Eroare la trimitere. Verificați conexiunea.');
     btn.disabled=false; btn.textContent='✝ Finalizează Comanda';
   }
@@ -1702,21 +1703,30 @@ async function salveazaProdus(){
   const price=parseFloat(document.getElementById('pPret').value);
   if(!name||!price){afiseazaToast('⚠️ Câmpuri obligatorii lipsesc!');return;}
   const btn=document.getElementById('btnSalveazaProd');
-  btn.disabled=true; btn.textContent='Se salvează…';
+  btn.disabled=true; btn.textContent='Se încarcă imaginile…';
   try{
     const imgFinal=[];
+    let i=0;
     for(const img of imgSelectateProd){
       if(typeof img==='string'){imgFinal.push(img);continue;}
-      const url=await uploadImagine(img,'produse/'+Date.now()+'_'+img.name);
+      i++;
+      btn.textContent='Se încarcă imaginea '+i+'/'+imgSelectateProd.filter(x=>typeof x!=='string').length+'…';
+      const mic = await redimensioneaza(img);
+      const url = await uploadImagine(mic, 'produse/'+Date.now()+'_'+i+'.jpg');
       imgFinal.push(url);
     }
+    btn.textContent='Se salvează…';
     const data={name,price,category:document.getElementById('pCategorie').value,stock:parseInt(document.getElementById('pStoc').value)||0,description:document.getElementById('pDescriere').value,bestSeller:document.getElementById('pBestSeller').checked,images:imgFinal};
     if(editProdId)await fbActualizeaza('produse',editProdId,data);
     else await fbAdauga('produse',data);
     produseCach=[];
-    afiseazaToast(editProdId?'✅ Produs actualizat!':'✅ Produs adăugat!');
+    afiseazaToast(editProdId?'✅ Produs actualizat cu '+imgFinal.length+' poze!':'✅ Produs adăugat cu '+imgFinal.length+' poze!');
     incarcaSectiuena('produse');
-  }catch(e){afiseazaToast('❌ Eroare: '+e.message);btn.disabled=false;btn.textContent='Salvează';}
+  }catch(e){
+    console.error(e);
+    afiseazaToast('❌ Eroare: '+e.message);
+    btn.disabled=false; btn.textContent='Salvează';
+  }
 }
 async function stergeProdus(id){
   if(!confirm('Ești sigur că vrei să ștergi acest produs?'))return;
@@ -1780,24 +1790,34 @@ function gestioneazaImgAnn(e){
 function stergeImgAnn(){imgSelectataAnn=null;document.getElementById('prevAnn').innerHTML='';}
 
 async function salveazaAnunt(){
-  const title=document.getElementById('aTitlu').value.trim();
-  const content=document.getElementById('aContinut').value.trim();
-  if(!title||!content){afiseazaToast('⚠️ Câmpuri obligatorii lipsesc!');return;}
+  const titlu=document.getElementById('aTitlu').value.trim();
+  const continut=document.getElementById('aContinut').value.trim();
+  if(!titlu||!continut){afiseazaToast('⚠️ Câmpuri obligatorii lipsesc!');return;}
   const btn=document.getElementById('btnSalveazaAnn');
   btn.disabled=true; btn.textContent='Se salvează…';
   try{
     let imgUrl='';
     if(imgSelectataAnn){
-      if(typeof imgSelectataAnn==='string')imgUrl=imgSelectataAnn;
-      else imgUrl=await uploadImagine(imgSelectataAnn,'anunturi/'+Date.now()+'_'+imgSelectataAnn.name);
+      if(typeof imgSelectataAnn==='string'){
+        imgUrl=imgSelectataAnn;
+      }else{
+        btn.textContent='Se încarcă fotografia…';
+        const mic=await redimensioneaza(imgSelectataAnn);
+        imgUrl=await uploadImagine(mic,'anunturi/'+Date.now()+'.jpg');
+      }
     }
-    const data={title,type:document.getElementById('aTip').value,content,image:imgUrl};
+    btn.textContent='Se salvează…';
+    const data={title:titlu,type:document.getElementById('aTip').value,content:continut,image:imgUrl};
     if(editAnnId)await fbActualizeaza('anunturi',editAnnId,data);
     else await fbAdauga('anunturi',data);
     anunturiCach=[];
     afiseazaToast(editAnnId?'✅ Anunț actualizat!':'✅ Anunț publicat!');
     incarcaSectiuena('anunturi');
-  }catch(e){afiseazaToast('❌ Eroare: '+e.message);btn.disabled=false;btn.textContent='Salvează';}
+  }catch(e){
+    console.error(e);
+    afiseazaToast('❌ Eroare: '+e.message);
+    btn.disabled=false; btn.textContent='Salvează';
+  }
 }
 async function stergeAnunt(id){
   if(!confirm('Ești sigur că vrei să ștergi acest anunț?'))return;
@@ -1822,4 +1842,3 @@ document.addEventListener('DOMContentLoaded',function(){
 </script>
 </body>
 </html>
-
