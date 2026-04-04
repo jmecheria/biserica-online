@@ -8,7 +8,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<!-- Storage nu este necesar - pozele se salvează în Firestore ca base64 -->
 <style>
 /* ── VARIABILE ─────────────────────────────── */
 :root{
@@ -909,7 +909,7 @@ firebase.initializeApp({
 });
 const db      = firebase.firestore();
 const auth    = firebase.auth();
-const storage = firebase.storage();
+// Storage dezactivat - se foloseste Firestore pentru imagini
 
 /* ── STATE ───────────────────────────────── */
 let cos        = JSON.parse(localStorage.getItem('bCos')||'[]');
@@ -944,41 +944,34 @@ async function fbGetUnul(col,id){
   const d = await db.collection(col).doc(id).get();
   return d.exists?{id:d.id,...d.data()}:null;
 }
-async function uploadImagine(file, cale){
-  try{
-    const ref = storage.ref(cale);
-    const snap = await ref.put(file, {contentType: file.type});
-    return await snap.ref.getDownloadURL();
-  }catch(e){
-    console.warn('Storage upload failed, using base64:', e.code);
-    return await fileToBase64(file);
-  }
-}
+// ── PROCESARE IMAGINI (fara Storage, doar Firestore) ────────────
+// Imaginile sunt comprimate cu Canvas si salvate ca base64 in Firestore.
+// Firestore free tier: 1GB stocare, suficient pentru sute de poze comprimate.
 
-function fileToBase64(file){
-  return new Promise((res,rej)=>{
-    const r = new FileReader();
-    r.onload  = ()=> res(r.result);
-    r.onerror = ()=> rej(new Error('Eroare citire fisier'));
-    r.readAsDataURL(file);
-  });
-}
-
-async function redimensioneaza(file){
+async function proceseazaImagine(file){
+  // Redimensioneaza la max 700px si comprima la calitate 0.75 (aprox 50-80KB/poza)
   return new Promise(res=>{
     const img = new Image();
     const url = URL.createObjectURL(file);
     img.onload = ()=>{
-      let w=img.width, h=img.height, maxW=900, maxH=900;
+      let w=img.width, h=img.height;
+      const maxW=700, maxH=700;
       if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
       if(h>maxH){w=Math.round(w*maxH/h);h=maxH;}
       const c=document.createElement('canvas');
       c.width=w; c.height=h;
       c.getContext('2d').drawImage(img,0,0,w,h);
       URL.revokeObjectURL(url);
-      c.toBlob(b=>res(new File([b],file.name,{type:'image/jpeg'})),'image/jpeg',0.82);
+      // Returnam base64 string
+      res(c.toDataURL('image/jpeg', 0.75));
     };
-    img.onerror=()=>{URL.revokeObjectURL(url);res(file);};
+    img.onerror=()=>{
+      URL.revokeObjectURL(url);
+      // Daca esueaza canvas, citim fisierul ca base64 direct
+      const r=new FileReader();
+      r.onload=()=>res(r.result);
+      r.readAsDataURL(file);
+    };
     img.src=url;
   });
 }
@@ -1706,14 +1699,14 @@ async function salveazaProdus(){
   btn.disabled=true; btn.textContent='Se încarcă imaginile…';
   try{
     const imgFinal=[];
+    const nrFisiere=imgSelectateProd.filter(x=>typeof x!=='string').length;
     let i=0;
     for(const img of imgSelectateProd){
       if(typeof img==='string'){imgFinal.push(img);continue;}
       i++;
-      btn.textContent='Se încarcă imaginea '+i+'/'+imgSelectateProd.filter(x=>typeof x!=='string').length+'…';
-      const mic = await redimensioneaza(img);
-      const url = await uploadImagine(mic, 'produse/'+Date.now()+'_'+i+'.jpg');
-      imgFinal.push(url);
+      btn.textContent='Se procesează imaginea '+i+'/'+nrFisiere+'…';
+      const b64 = await proceseazaImagine(img);
+      imgFinal.push(b64);
     }
     btn.textContent='Se salvează…';
     const data={name,price,category:document.getElementById('pCategorie').value,stock:parseInt(document.getElementById('pStoc').value)||0,description:document.getElementById('pDescriere').value,bestSeller:document.getElementById('pBestSeller').checked,images:imgFinal};
@@ -1801,9 +1794,8 @@ async function salveazaAnunt(){
       if(typeof imgSelectataAnn==='string'){
         imgUrl=imgSelectataAnn;
       }else{
-        btn.textContent='Se încarcă fotografia…';
-        const mic=await redimensioneaza(imgSelectataAnn);
-        imgUrl=await uploadImagine(mic,'anunturi/'+Date.now()+'.jpg');
+        btn.textContent='Se procesează fotografia…';
+        imgUrl=await proceseazaImagine(imgSelectataAnn);
       }
     }
     btn.textContent='Se salvează…';
