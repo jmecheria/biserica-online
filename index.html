@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Parohia Ortodoxă</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -579,6 +580,61 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
 .sfant-badges{margin-top:10px;display:flex;flex-wrap:wrap;gap:4px}
 
 /* ── RESPONSIVE ────────────────────────────── */
+/* ── GRID EGAL INALTIME (homepage) ──────────── */
+.grid-2-eq{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
+  gap:28px;
+  align-items:start;
+}
+.home-card-col{
+  display:flex;flex-direction:column;
+}
+.home-card-slot{
+  flex:1;
+}
+/* Forteaza card-produs si card-anunt sa aiba aceeasi inaltime minima pe homepage */
+#acasa-produs-rec .card-produs,
+#acasa-ultim-anunt .card-anunt{
+  min-height:340px;
+}
+#acasa-produs-rec .card-produs{
+  height:100%;display:flex;flex-direction:column;
+}
+#acasa-produs-rec .produs-img{
+  height:200px;flex-shrink:0;
+}
+#acasa-produs-rec .produs-corp{
+  flex:1;display:flex;flex-direction:column;
+}
+#acasa-produs-rec .produs-footer{
+  margin-top:auto;
+}
+#acasa-ultim-anunt .card-anunt{
+  height:100%;display:flex;flex-direction:column;min-height:340px;
+}
+#acasa-ultim-anunt .anunt-extras{
+  flex:1;
+}
+
+/* ── EMAIL SETUP BOX ─────────────────────── */
+.email-setup-box{
+  background:linear-gradient(135deg,#FFF9E6,#FFFBF0);
+  border:2px solid var(--g);border-radius:11px;
+  padding:20px 24px;margin-bottom:20px;
+}
+.email-setup-box h4{
+  font-family:'Cinzel',serif;color:var(--v);
+  margin-bottom:8px;font-size:.92rem;
+}
+.email-setup-box p{
+  font-size:.84rem;color:var(--tm);line-height:1.6;margin-bottom:10px;
+}
+.email-setup-box code{
+  background:rgba(107,26,42,.08);padding:2px 7px;
+  border-radius:4px;font-size:.82rem;color:var(--v);
+}
+
 /* ── MOBILE FIRST RESPONSIVE ─────────────── */
 @media(max-width:900px){
   nav{padding:0 14px;height:58px}
@@ -748,21 +804,21 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
   <!-- Produs recomandat + Ultimul anunt -->
   <div class="sectiune">
     <div class="container">
-      <div class="grid-2">
-        <div>
+      <div class="grid-2-eq">
+        <div class="home-card-col">
           <div class="ornament">🕯️</div>
           <h2 class="titlu-sec">Produs Recomandat</h2>
           <p class="subtitlu-sec">Din magazinul parohial</p>
-          <div id="acasa-produs-rec"><div class="incarcare"><div class="rotitor"></div> Se încarcă…</div></div>
+          <div id="acasa-produs-rec" class="home-card-slot"><div class="incarcare"><div class="rotitor"></div> Se încarcă…</div></div>
           <div style="text-align:center;margin-top:18px">
             <button class="btn btn-primar" onclick="mergi('magazin')">Vizitați Magazinul →</button>
           </div>
         </div>
-        <div>
+        <div class="home-card-col">
           <div class="ornament">📋</div>
           <h2 class="titlu-sec">Ultimul Anunț</h2>
           <p class="subtitlu-sec">Din viața parohiei</p>
-          <div id="acasa-ultim-anunt"><div class="incarcare"><div class="rotitor"></div> Se încarcă…</div></div>
+          <div id="acasa-ultim-anunt" class="home-card-slot"><div class="incarcare"><div class="rotitor"></div> Se încarcă…</div></div>
           <div style="text-align:center;margin-top:18px">
             <button class="btn btn-primar" onclick="mergi('anunturi')">Toate Anunțurile →</button>
           </div>
@@ -966,6 +1022,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
       <button class="nav-admin" id="nav-produse" onclick="incarcaSectiuena('produse')">🕯️ Produse</button>
       <button class="nav-admin" id="nav-anunturi" onclick="incarcaSectiuena('anunturi')">📋 Anunțuri</button>
       <button class="nav-admin" id="nav-import" onclick="incarcaSectiuena('import')">📥 Import Date</button>
+      <button class="nav-admin" id="nav-email" onclick="incarcaSectiuena('email')">✉️ Email Config</button>
       <div class="admin-sidebar-jos">
         <button class="btn btn-pericol btn-mic" style="width:100%;justify-content:center" onclick="faLogout()">🚪 Deconectare</button>
       </div>
@@ -1017,7 +1074,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
     </div>
     <div class="modal-body">
       <p id="maData" style="font-size:.78rem;color:var(--tl);font-family:'Lato',sans-serif;margin-bottom:16px"></p>
-      <img id="maImagine" src="" alt="" style="display:none;width:100%;max-height:270px;object-fit:cover;border-radius:9px;margin-bottom:18px">
+      <img id="maImagine" src="" alt="" style="display:none;width:100%;max-height:270px;object-fit:cover;border-radius:9px;margin-bottom:18px;cursor:zoom-in" onclick="if(this.src)deschideLightbox([this.src],0)" title="Click pentru a mari fotografia">
       <div id="maContinut" style="color:var(--tm);line-height:1.88;font-size:1rem"></div>
       <div style="margin-top:18px;text-align:right">
         <button class="btn btn-primar btn-mic" onclick="inchideModal('modalAnunt')">Închide</button>
@@ -1888,6 +1945,116 @@ firebase.initializeApp({
 const db   = firebase.firestore();
 const auth = firebase.auth();
 
+/* ── EMAILJS CONFIG ─────────────────────────
+   Pași pentru activare:
+   1. Mergi pe emailjs.com si creaza cont gratuit
+   2. Add Email Service (Gmail recomandat) -> copiaza SERVICE_ID
+   3. Create Template pentru clienti (template_client) si admin (template_admin)
+   4. Copiaza PUBLIC_KEY din Account -> API Keys
+   5. Inlocuieste valorile de mai jos cu ale tale
+──────────────────────────────────────────── */
+const EJS = {
+  publicKey:   'YOUR_PUBLIC_KEY',   // din EmailJS Account -> API Keys
+  serviceId:   'YOUR_SERVICE_ID',   // din EmailJS -> Email Services
+  tplClient:   'template_client',   // template pentru client (confirmare comanda)
+  tplAdmin:    'template_admin',    // template pentru admin (comanda noua)
+  tplStatus:   'template_status',   // template pentru update status
+  adminEmail:  'parohia@email.ro',  // emailul tau de admin
+  ejsReady:    false,
+};
+
+function initEmailJS(){
+  // Incarca config salvata din localStorage (daca exista)
+  const pk = localStorage.getItem('ejs_pk');
+  if(pk){
+    EJS.publicKey  = pk;
+    EJS.serviceId  = localStorage.getItem('ejs_sid')||EJS.serviceId;
+    EJS.tplClient  = localStorage.getItem('ejs_tpl_c')||EJS.tplClient;
+    EJS.tplAdmin   = localStorage.getItem('ejs_tpl_a')||EJS.tplAdmin;
+    EJS.tplStatus  = localStorage.getItem('ejs_tpl_s')||EJS.tplStatus;
+    EJS.adminEmail = localStorage.getItem('ejs_admin')||EJS.adminEmail;
+  }
+  if(!EJS.publicKey||EJS.publicKey==='YOUR_PUBLIC_KEY') return;
+  emailjs.init({publicKey: EJS.publicKey});
+  EJS.ejsReady = true;
+  console.log('EmailJS initialized cu config salvata');
+}
+
+// Template recomandat pentru EmailJS (copiaza in template):
+// Subiect: Comanda #{{order_id}} - {{status}}
+// Body:
+// Stimate/Stimata {{client_name}},
+// {{message}}
+// Produse: {{items}}
+// Total: {{total}} Lei
+// Adresa livrare: {{address}}
+// Metoda plata: {{payment}}
+// Multumim! Parohia Ortodoxa
+
+async function trimiteEmailClient(orderData){
+  if(!EJS.ejsReady||!orderData.email) return;
+  try{
+    const itemsList = (orderData.items||[]).map(it=>`${it.nume||it.name} x${it.cantitate||it.qty} = ${((it.pret||it.price)*(it.cantitate||it.qty)).toFixed(2)} Lei`).join('\n');
+    await emailjs.send(EJS.serviceId, EJS.tplClient, {
+      client_name: orderData.name,
+      client_email: orderData.email,
+      order_id: orderData.id ? orderData.id.substring(0,8) : '–',
+      status: 'NOUA',
+      message: 'Va multumim pentru comanda! O vom procesa in cel mai scurt timp si va vom contacta pentru confirmare.',
+      items: itemsList,
+      total: orderData.total+' Lei',
+      address: orderData.address+', '+( orderData.county||''),
+      payment: orderData.payment||'ramburs',
+      to_email: orderData.email,
+    });
+    console.log('Email client trimis');
+  }catch(e){ console.warn('Email client error:', e.text||e.message); }
+}
+
+async function trimiteEmailAdmin(orderData){
+  if(!EJS.ejsReady) return;
+  try{
+    const itemsList = (orderData.items||[]).map(it=>`${it.nume||it.name} x${it.cantitate||it.qty} = ${((it.pret||it.price)*(it.cantitate||it.qty)).toFixed(2)} Lei`).join('\n');
+    await emailjs.send(EJS.serviceId, EJS.tplAdmin, {
+      client_name: orderData.name,
+      client_email: orderData.email||'–',
+      client_phone: orderData.phone,
+      order_id: orderData.id ? orderData.id.substring(0,8) : 'NOU',
+      status: 'NOUA',
+      message: 'A fost plasata o comanda noua pe site-ul parohial!',
+      items: itemsList,
+      total: orderData.total+' Lei',
+      address: orderData.address+', '+(orderData.county||''),
+      payment: orderData.payment||'ramburs',
+      notes: orderData.notes||'–',
+      to_email: EJS.adminEmail,
+    });
+    console.log('Email admin trimis');
+  }catch(e){ console.warn('Email admin error:', e.text||e.message); }
+}
+
+async function trimiteEmailStatusUpdate(orderData, statusNou){
+  if(!EJS.ejsReady||!orderData.email) return;
+  const mesaje = {
+    procesata: 'Comanda dumneavoastra a fost preluata si este in curs de procesare.',
+    livrata:   'Comanda dumneavoastra a fost expediata si este in drum spre dumneavoastra!',
+    anulata:   'Ne pare rau, comanda dumneavoastra a fost anulata. Va rugam sa ne contactati pentru detalii.',
+  };
+  const mesaj = mesaje[statusNou];
+  if(!mesaj) return; // nu trimitem email la statusul 'noua' sau altele
+  try{
+    await emailjs.send(EJS.serviceId, EJS.tplStatus, {
+      client_name: orderData.name,
+      order_id: orderData.id ? orderData.id.substring(0,8) : '–',
+      status: statusNou.toUpperCase(),
+      message: mesaj,
+      total: orderData.total+' Lei',
+      to_email: orderData.email,
+    });
+    console.log('Email status trimis:', statusNou);
+  }catch(e){ console.warn('Email status error:', e.text||e.message); }
+}
+
 /* ── STATE ───────────────────────────────── */
 let cos          = JSON.parse(localStorage.getItem('bCos')||'[]');
 let produseCach  = [];
@@ -2462,6 +2629,20 @@ async function trimiteComanda(){
         catch(e){ console.warn('Stoc neactualizat:',item.id); }
       }
     }
+    // Trimite emailuri (client + admin)
+    const orderForEmail = {
+      name:     document.getElementById('oNume').value.trim(),
+      email:    document.getElementById('oEmail').value,
+      phone:    document.getElementById('oTelefon').value.trim(),
+      address:  document.getElementById('oAdresa').value.trim(),
+      county:   document.getElementById('oLocalitate').value,
+      payment:  document.getElementById('oPlata').value,
+      notes:    document.getElementById('oObservatii').value,
+      items:    [...cos],
+      total:    totalCos().toFixed(2),
+    };
+    trimiteEmailClient(orderForEmail);
+    trimiteEmailAdmin(orderForEmail);
     cos=[]; salveazaCos(); actualizeazaBadge();
     mergi('acasa');
     setTimeout(()=>afiseazaToast('✝ Comanda plasata cu succes! Va multumim!',5000),400);
@@ -2518,6 +2699,7 @@ async function incarcaSectiuena(sec){
   if(sec==='produse')   await secProduse(el);
   if(sec==='anunturi')  await secAnunturi(el);
   if(sec==='import')    await secImport(el);
+  if(sec==='email')     await secEmail(el);
 }
 
 function statCard(num,lbl,ico){
@@ -2628,10 +2810,20 @@ async function salveazaStatus(id){
   const s=document.getElementById('statusDetaliu').value;
   await fbActualizeaza('comenzi',id,{status:s});
   afiseazaToast('✅ Status actualizat!');
+  // Trimite email la client
+  try{
+    const o = await fbGetUnul('comenzi',id);
+    if(o) trimiteEmailStatusUpdate(o, s);
+  }catch(e){ console.warn('Email status err:',e); }
 }
 async function schimbaStatus(id,status){
   await fbActualizeaza('comenzi',id,{status});
   afiseazaToast('✅ Status: '+status.toUpperCase());
+  // Trimite email la client daca avem datele comenzii
+  try{
+    const o = await fbGetUnul('comenzi',id);
+    if(o) trimiteEmailStatusUpdate(o, status);
+  }catch(e){ console.warn('Email status err:',e); }
 }
 async function stergeComanda(id){
   if(!confirm('Esti sigur ca vrei sa stergi aceasta comanda?')) return;
@@ -2983,6 +3175,129 @@ function descarcaFisier(nume,continut,tip){
   URL.revokeObjectURL(url);
 }
 
+async function secEmail(el){
+  el.innerHTML=`
+    <h2 style="font-family:'Cinzel',serif;color:var(--v);margin-bottom:26px;font-size:1.4rem">✉️ Configurare Email</h2>
+
+    <div class="email-setup-box">
+      <h4>📋 Ghid Configurare EmailJS (gratuit, 200 emailuri/luna)</h4>
+      <p>1. Mergi pe <strong>emailjs.com</strong> si creaza un cont gratuit</p>
+      <p>2. <strong>Email Services</strong> → Add New Service → alege Gmail/Outlook → copiaza <code>Service ID</code></p>
+      <p>3. <strong>Email Templates</strong> → Create New Template → creaza 3 template-uri:<br>
+         &nbsp;&nbsp;• <code>template_client</code> — confirmare comanda pentru client<br>
+         &nbsp;&nbsp;• <code>template_admin</code> — notificare comanda noua pentru admin<br>
+         &nbsp;&nbsp;• <code>template_status</code> — notificare schimbare status pentru client</p>
+      <p>4. <strong>Account → API Keys</strong> → copiaza <code>Public Key</code></p>
+      <p>5. Completeaza campurile de mai jos si apasa Salveaza</p>
+    </div>
+
+    <div class="formular-admin">
+      <div class="form-grup">
+        <label>Public Key (EmailJS)</label>
+        <input id="ejsPublicKey" value="${localStorage.getItem('ejs_pk')||''}" placeholder="ex: user_aBcDeFgHiJkLmN">
+      </div>
+      <div class="form-grup">
+        <label>Service ID</label>
+        <input id="ejsServiceId" value="${localStorage.getItem('ejs_sid')||''}" placeholder="ex: service_xxxxxxx">
+      </div>
+      <div class="form-grup">
+        <label>Template Client (confirmare comanda)</label>
+        <input id="ejsTplClient" value="${localStorage.getItem('ejs_tpl_c')||'template_client'}" placeholder="template_client">
+      </div>
+      <div class="form-grup">
+        <label>Template Admin (comanda noua)</label>
+        <input id="ejsTplAdmin" value="${localStorage.getItem('ejs_tpl_a')||'template_admin'}" placeholder="template_admin">
+      </div>
+      <div class="form-grup">
+        <label>Template Status (schimbare status)</label>
+        <input id="ejsTplStatus" value="${localStorage.getItem('ejs_tpl_s')||'template_status'}" placeholder="template_status">
+      </div>
+      <div class="form-grup">
+        <label>Email Admin (al tau)</label>
+        <input id="ejsAdminEmail" value="${localStorage.getItem('ejs_admin')||''}" placeholder="parohia@email.ro">
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:5px">
+        <button class="btn btn-primar" onclick="salveazaConfigEmail()">💾 Salveaza Configurarea</button>
+        <button class="btn btn-contur" onclick="testeazaEmail()">📧 Trimite Email Test</button>
+      </div>
+      <div id="emailConfigResult" style="margin-top:14px"></div>
+    </div>
+
+    <div class="formular-admin" style="margin-top:20px">
+      <h4 style="font-family:'Cinzel',serif;color:var(--v);margin-bottom:14px">Variabile disponibile in template-uri EmailJS</h4>
+      <table style="width:100%;font-size:.84rem;border-collapse:collapse">
+        <tr style="background:var(--cr)"><th style="padding:8px;text-align:left;border:1px solid var(--crd)">Variabila</th><th style="padding:8px;text-align:left;border:1px solid var(--crd)">Continut</th></tr>
+        ${[
+          ['{{client_name}}','Numele clientului'],
+          ['{{client_email}}','Emailul clientului'],
+          ['{{client_phone}}','Telefonul clientului (doar in template_admin)'],
+          ['{{order_id}}','ID comanda (primele 8 caractere)'],
+          ['{{status}}','Statusul comenzii'],
+          ['{{message}}','Mesaj automat potrivit statusului'],
+          ['{{items}}','Lista produselor comandate'],
+          ['{{total}}','Total comanda'],
+          ['{{address}}','Adresa de livrare'],
+          ['{{payment}}','Metoda de plata'],
+          ['{{notes}}','Observatii client (doar in template_admin)'],
+          ['{{to_email}}','Emailul destinatarului'],
+        ].map(([v,d])=>`<tr><td style="padding:7px 8px;border:1px solid var(--crd);font-family:monospace;color:var(--v)">${v}</td><td style="padding:7px 8px;border:1px solid var(--crd)">${d}</td></tr>`).join('')}
+      </table>
+    </div>`;
+}
+
+function salveazaConfigEmail(){
+  const pk  = document.getElementById('ejsPublicKey').value.trim();
+  const sid = document.getElementById('ejsServiceId').value.trim();
+  const tc  = document.getElementById('ejsTplClient').value.trim();
+  const ta  = document.getElementById('ejsTplAdmin').value.trim();
+  const ts  = document.getElementById('ejsTplStatus').value.trim();
+  const ae  = document.getElementById('ejsAdminEmail').value.trim();
+  if(!pk||!sid){ afiseazaToast('Completeaza cel putin Public Key si Service ID!'); return; }
+  localStorage.setItem('ejs_pk', pk);
+  localStorage.setItem('ejs_sid', sid);
+  localStorage.setItem('ejs_tpl_c', tc);
+  localStorage.setItem('ejs_tpl_a', ta);
+  localStorage.setItem('ejs_tpl_s', ts);
+  localStorage.setItem('ejs_admin', ae);
+  // Reinitializeaza cu noile valori
+  EJS.publicKey  = pk;
+  EJS.serviceId  = sid;
+  EJS.tplClient  = tc;
+  EJS.tplAdmin   = ta;
+  EJS.tplStatus  = ts;
+  EJS.adminEmail = ae;
+  emailjs.init({publicKey: pk});
+  EJS.ejsReady = true;
+  const rez = document.getElementById('emailConfigResult');
+  rez.innerHTML='<div class="import-result ok" style="display:block">✅ Configurare salvata! EmailJS este activ.</div>';
+  setTimeout(()=>rez.innerHTML='',4000);
+}
+
+async function testeazaEmail(){
+  if(!EJS.ejsReady){ afiseazaToast('Salveaza mai intai configurarea EmailJS!'); return; }
+  const rez = document.getElementById('emailConfigResult');
+  rez.innerHTML='<div class="import-result ok" style="display:block">⏳ Se trimite email de test...</div>';
+  try{
+    await emailjs.send(EJS.serviceId, EJS.tplAdmin, {
+      client_name:  'TEST',
+      client_email: EJS.adminEmail,
+      client_phone: '0700000000',
+      order_id:     'TEST001',
+      status:       'NOUA',
+      message:      'Acesta este un email de test din panoul admin al parohiei!',
+      items:        'Lumanare pascala x1 = 15 Lei',
+      total:        '15 Lei',
+      address:      'Str. Bisericii nr. 1',
+      payment:      'ramburs',
+      notes:        'Email de test',
+      to_email:     EJS.adminEmail,
+    });
+    rez.innerHTML='<div class="import-result ok" style="display:block">✅ Email de test trimis cu succes la '+EJS.adminEmail+'!</div>';
+  }catch(e){
+    rez.innerHTML='<div class="import-result err" style="display:block">❌ Eroare: '+( e.text||e.message||JSON.stringify(e))+'</div>';
+  }
+}
+
 /* ── SEED DATE DEMO ──────────────────────── */
 async function semaneazaDateDemo(){
   try{
@@ -3009,6 +3324,7 @@ auth.onAuthStateChanged(user=>{
 document.addEventListener('DOMContentLoaded',function(){
   porniTimer();
   actualizeazaBadge();
+  initEmailJS();
   mergi('acasa');
   semaneazaDateDemo();
 });
@@ -3016,3 +3332,4 @@ document.addEventListener('DOMContentLoaded',function(){
 </script>
 </body>
 </html>
+
