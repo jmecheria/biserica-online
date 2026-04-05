@@ -580,6 +580,39 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
 .sfant-badges{margin-top:10px;display:flex;flex-wrap:wrap;gap:4px}
 
 /* ── RESPONSIVE ────────────────────────────── */
+/* ── CLIENT AUTH ─────────────────────────────── */
+.client-bar{
+  background:linear-gradient(90deg,var(--vd),#3a0d14);
+  color:var(--cr);padding:5px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.5px;
+  flex-wrap:wrap;gap:8px;
+}
+.client-bar span,.client-bar button{
+  color:var(--gl);background:none;border:none;
+  cursor:pointer;font-family:'Cinzel',serif;
+  font-size:.72rem;letter-spacing:.5px;
+  transition:color .2s;padding:0;
+}
+.client-bar button:hover{color:#fff}
+.disc-badge-bar{
+  background:var(--g);color:var(--vd);
+  padding:2px 10px;border-radius:12px;
+  font-weight:700;font-size:.7rem;margin-left:8px;
+}
+.modal-client{ background:var(--w);border-radius:14px;max-width:420px;width:100%;box-shadow:0 28px 75px rgba(0,0,0,.44)}
+.client-tabs{display:flex;border-bottom:2px solid var(--crd);margin-bottom:20px}
+.client-tab{flex:1;padding:11px;text-align:center;font-family:'Cinzel',serif;font-size:.8rem;cursor:pointer;color:var(--tl);transition:.2s;background:none;border:none;border-bottom:3px solid transparent}
+.client-tab.activ{color:var(--v);border-bottom-color:var(--v)}
+.discount-info{background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.06));border:1.5px solid var(--g);border-radius:9px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px;font-size:.88rem;color:var(--v)}
+.voucher-row{display:flex;gap:9px;margin-bottom:14px}
+.voucher-row input{flex:1;padding:10px 13px;border:2px solid var(--crd);border-radius:7px;font-size:.95rem;outline:none;transition:.22s}
+.voucher-row input:focus{border-color:var(--g)}
+.voucher-ok{background:#E8F5E9;border:1.5px solid #81C784;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#2E7D32;display:none;margin-bottom:12px}
+.voucher-ok.viz{display:block}
+.total-original{text-decoration:line-through;color:var(--tl);font-size:.9rem}
+.total-redus{color:#2E7D32;font-weight:700}
+
 /* ── GRID EGAL INALTIME (homepage) ──────────── */
 .grid-2-eq{
   display:grid;
@@ -757,6 +790,15 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
 </div>
 
 <!-- ═══════════════════════════ NAV ═════════════════════════════ -->
+<!-- Bara client logat -->
+<div id="clientBar" class="client-bar" style="display:none">
+  <span id="clientBarText">👤 Salut, <strong id="clientBarNume"></strong></span>
+  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+    <span class="disc-badge-bar">🎁 10% discount activ</span>
+    <button onclick="delogheazaClient()">Deconectare</button>
+  </div>
+</div>
+
 <nav>
   <a class="nav-logo" href="#" onclick="mergi('acasa');return false">
     <span class="nav-logo-icon">✝</span>
@@ -774,6 +816,9 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
   <div class="nav-right">
     <button class="cart-btn" onclick="mergi('cos')" title="Coș">
       🛒<span class="cart-badge" id="cosBadge">0</span>
+    </button>
+    <button class="cart-btn" onclick="deschideModal('modalClient')" title="Cont client" id="btnContClient" style="font-size:1.3rem">
+      👤
     </button>
     <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('deschis')">
       <span></span><span></span><span></span>
@@ -982,6 +1027,19 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
         <div class="form-grup"><label>Observații</label><textarea id="oObservatii" rows="3" placeholder="Mesaj pentru preot, instrucțiuni speciale…"></textarea></div>
       </div>
       <div class="card-formular" style="margin-bottom:18px">
+        <p class="titlu-formular">🎁 Reduceri</p>
+        <div id="discountInfoBox" style="display:none" class="discount-info">
+          <span class="disc-icon">🎁</span>
+          <span id="discountInfoText">10% discount pentru cont activ</span>
+        </div>
+        <p style="font-family:'Cinzel',serif;font-size:.8rem;color:var(--v);margin-bottom:7px">Cod de reducere:</p>
+        <div class="voucher-row">
+          <input id="voucherInput" placeholder="Introdu codul de reducere…" onkeydown="if(event.key==='Enter')aplicaVoucher()">
+          <button class="btn btn-contur" onclick="aplicaVoucher()">Aplică</button>
+        </div>
+        <div class="voucher-ok" id="voucherOk"></div>
+      </div>
+      <div class="card-formular" style="margin-bottom:18px">
         <p class="titlu-formular">🧾 Rezumat Comandă</p>
         <div id="rezumatComanda"></div>
       </div>
@@ -1079,6 +1137,19 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
       <div style="margin-top:18px;text-align:right">
         <button class="btn btn-primar btn-mic" onclick="inchideModal('modalAnunt')">Închide</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CLIENT LOGIN / REGISTER -->
+<div class="fundal-modal" id="modalClient" onclick="if(event.target===this)inchideModal('modalClient')">
+  <div class="modal modal-client">
+    <div class="modal-header">
+      <h2 id="modalClientTitlu">Cont Client</h2>
+      <button class="modal-inchide" onclick="inchideModal('modalClient')">✕</button>
+    </div>
+    <div class="modal-body" id="modalClientBody">
+      <!-- se randeaza dinamic -->
     </div>
   </div>
 </div>
@@ -1954,30 +2025,28 @@ const auth = firebase.auth();
    5. Inlocuieste valorile de mai jos cu ale tale
 ──────────────────────────────────────────── */
 const EJS = {
-  publicKey:   'YOUR_PUBLIC_KEY',   // din EmailJS Account -> API Keys
-  serviceId:   'YOUR_SERVICE_ID',   // din EmailJS -> Email Services
-  tplClient:   'template_client',   // template pentru client (confirmare comanda)
-  tplAdmin:    'template_admin',    // template pentru admin (comanda noua)
-  tplStatus:   'template_status',   // template pentru update status
-  adminEmail:  'parohia@email.ro',  // emailul tau de admin
+  publicKey:   'p2O-tLOxlx3BmOLQf',
+  serviceId:   'service_j3uce4r',
+  tplClient:   'template_a3n714t',   // template client - variabile: {{nume_client}}, {{numar_comanda}}, {{status_comanda}}, {{lista_produse}}, {{total}}
+  tplAdmin:    'template_viznvfb',   // template admin  - variabile: {{numar_comanda}}, {{status_comanda}}, {{total}}, {{lista_produse}}
+  tplStatus:   'template_a3n714t',   // refolosim template client pentru update status
+  adminEmail:  'irimia.teodor.17@gmail.com',
   ejsReady:    false,
 };
 
 function initEmailJS(){
-  // Incarca config salvata din localStorage (daca exista)
-  const pk = localStorage.getItem('ejs_pk');
-  if(pk){
-    EJS.publicKey  = pk;
-    EJS.serviceId  = localStorage.getItem('ejs_sid')||EJS.serviceId;
-    EJS.tplClient  = localStorage.getItem('ejs_tpl_c')||EJS.tplClient;
-    EJS.tplAdmin   = localStorage.getItem('ejs_tpl_a')||EJS.tplAdmin;
-    EJS.tplStatus  = localStorage.getItem('ejs_tpl_s')||EJS.tplStatus;
-    EJS.adminEmail = localStorage.getItem('ejs_admin')||EJS.adminEmail;
-  }
-  if(!EJS.publicKey||EJS.publicKey==='YOUR_PUBLIC_KEY') return;
-  emailjs.init({publicKey: EJS.publicKey});
-  EJS.ejsReady = true;
-  console.log('EmailJS initialized cu config salvata');
+  // Permite override din localStorage (sectiunea Email Config din admin)
+  EJS.publicKey  = localStorage.getItem('ejs_pk')  || EJS.publicKey;
+  EJS.serviceId  = localStorage.getItem('ejs_sid') || EJS.serviceId;
+  EJS.tplClient  = localStorage.getItem('ejs_tpl_c')|| EJS.tplClient;
+  EJS.tplAdmin   = localStorage.getItem('ejs_tpl_a')|| EJS.tplAdmin;
+  EJS.tplStatus  = localStorage.getItem('ejs_tpl_s')|| EJS.tplStatus;
+  EJS.adminEmail = localStorage.getItem('ejs_admin')|| EJS.adminEmail;
+  try{
+    emailjs.init({publicKey: EJS.publicKey});
+    EJS.ejsReady = true;
+    console.log('EmailJS initializat');
+  }catch(e){ console.warn('EmailJS init error:', e); }
 }
 
 // Template recomandat pentru EmailJS (copiaza in template):
@@ -1991,67 +2060,70 @@ function initEmailJS(){
 // Metoda plata: {{payment}}
 // Multumim! Parohia Ortodoxa
 
-async function trimiteEmailClient(orderData){
+async function trimiteEmailClient(orderData, statusText){
   if(!EJS.ejsReady||!orderData.email) return;
+  statusText = statusText || 'NOUA';
   try{
-    const itemsList = (orderData.items||[]).map(it=>`${it.nume||it.name} x${it.cantitate||it.qty} = ${((it.pret||it.price)*(it.cantitate||it.qty)).toFixed(2)} Lei`).join('\n');
+    const itemsList = construiesteListaProduse(orderData.items||[]);
     await emailjs.send(EJS.serviceId, EJS.tplClient, {
-      client_name: orderData.name,
-      client_email: orderData.email,
-      order_id: orderData.id ? orderData.id.substring(0,8) : '–',
-      status: 'NOUA',
-      message: 'Va multumim pentru comanda! O vom procesa in cel mai scurt timp si va vom contacta pentru confirmare.',
-      items: itemsList,
-      total: orderData.total+' Lei',
-      address: orderData.address+', '+( orderData.county||''),
-      payment: orderData.payment||'ramburs',
-      to_email: orderData.email,
+      nume_client:     orderData.name,
+      numar_comanda:   orderData.id ? '#'+orderData.id.substring(0,8) : '#NOU',
+      status_comanda:  statusText,
+      lista_produse:   itemsList,
+      total:           orderData.total,
+      to_email:        orderData.email,
     });
-    console.log('Email client trimis');
+    console.log('Email client trimis la', orderData.email);
   }catch(e){ console.warn('Email client error:', e.text||e.message); }
 }
 
 async function trimiteEmailAdmin(orderData){
   if(!EJS.ejsReady) return;
   try{
-    const itemsList = (orderData.items||[]).map(it=>`${it.nume||it.name} x${it.cantitate||it.qty} = ${((it.pret||it.price)*(it.cantitate||it.qty)).toFixed(2)} Lei`).join('\n');
+    const itemsList = construiesteListaProduse(orderData.items||[]);
+    const infoClient = `Client: ${orderData.name} | Tel: ${orderData.phone} | Email: ${orderData.email||'–'}\nAdresa: ${orderData.address}, ${orderData.county||''}\nPlata: ${orderData.payment||'ramburs'}${orderData.notes?'\nObservatii: '+orderData.notes:''}`;
     await emailjs.send(EJS.serviceId, EJS.tplAdmin, {
-      client_name: orderData.name,
-      client_email: orderData.email||'–',
-      client_phone: orderData.phone,
-      order_id: orderData.id ? orderData.id.substring(0,8) : 'NOU',
-      status: 'NOUA',
-      message: 'A fost plasata o comanda noua pe site-ul parohial!',
-      items: itemsList,
-      total: orderData.total+' Lei',
-      address: orderData.address+', '+(orderData.county||''),
-      payment: orderData.payment||'ramburs',
-      notes: orderData.notes||'–',
-      to_email: EJS.adminEmail,
+      numar_comanda:   '#'+(orderData.id?orderData.id.substring(0,8):'NOU'),
+      status_comanda:  'NOUA',
+      total:           orderData.total,
+      lista_produse:   infoClient + '\n\n' + itemsList,
+      to_email:        EJS.adminEmail,
     });
-    console.log('Email admin trimis');
+    console.log('Email admin trimis la', EJS.adminEmail);
   }catch(e){ console.warn('Email admin error:', e.text||e.message); }
+}
+
+function construiesteListaProduse(items){
+  if(!items||!items.length) return 'Niciun produs';
+  return items.map(it=>{
+    const nm  = it.nume||it.name||'Produs';
+    const qty = it.cantitate||it.qty||1;
+    const pr  = parseFloat(it.pret||it.price||0);
+    return `${nm} x${qty} = ${(pr*qty).toFixed(2)} RON`;
+  }).join('\n');
 }
 
 async function trimiteEmailStatusUpdate(orderData, statusNou){
   if(!EJS.ejsReady||!orderData.email) return;
-  const mesaje = {
-    procesata: 'Comanda dumneavoastra a fost preluata si este in curs de procesare.',
-    livrata:   'Comanda dumneavoastra a fost expediata si este in drum spre dumneavoastra!',
-    anulata:   'Ne pare rau, comanda dumneavoastra a fost anulata. Va rugam sa ne contactati pentru detalii.',
-  };
-  const mesaj = mesaje[statusNou];
-  if(!mesaj) return; // nu trimitem email la statusul 'noua' sau altele
+  const statusLabel = {
+    procesata: 'IN PROCESARE',
+    livrata:   'LIVRATA',
+    anulata:   'ANULATA',
+    noua:      'NOUA',
+  }[statusNou] || statusNou.toUpperCase();
+  // Trimitem email doar la statusuri relevante
+  if(!['procesata','livrata','anulata'].includes(statusNou)) return;
   try{
+    const itemsList = construiesteListaProduse(orderData.items||[]);
     await emailjs.send(EJS.serviceId, EJS.tplStatus, {
-      client_name: orderData.name,
-      order_id: orderData.id ? orderData.id.substring(0,8) : '–',
-      status: statusNou.toUpperCase(),
-      message: mesaj,
-      total: orderData.total+' Lei',
-      to_email: orderData.email,
+      nume_client:     orderData.name,
+      numar_comanda:   '#'+(orderData.id?orderData.id.substring(0,8):'–'),
+      status_comanda:  statusLabel,
+      lista_produse:   itemsList,
+      total:           orderData.total,
+      to_email:        orderData.email,
     });
-    console.log('Email status trimis:', statusNou);
+    console.log('Email status trimis:', statusNou, 'la', orderData.email);
   }catch(e){ console.warn('Email status error:', e.text||e.message); }
 }
 
@@ -2581,20 +2653,50 @@ function redeazaCos(){
     </div>`;
   }).join('');
   elSumar.style.display='block';
-  document.getElementById('valoareTotal').textContent=totalCos().toFixed(2)+' Lei';
+  const red=totalReductie();
+  const tf=totalFinalCos();
+  const tc=totalCos();
+  const totEl=document.getElementById('valoareTotal');
+  if(red>0){
+    totEl.innerHTML=`<span class="total-original">${tc.toFixed(2)} Lei</span> <span class="total-redus">${tf.toFixed(2)} Lei</span>`;
+  }else{
+    totEl.textContent=tc.toFixed(2)+' Lei';
+  }
 }
 function arataComanada(){
   document.getElementById('vedereaCos').style.display='none';
   document.getElementById('vedereComanda').style.display='block';
+  // Pre-fill form daca clientul e logat
+  if(clientCurent){
+    if(clientCurent.displayName) document.getElementById('oNume').value = clientCurent.displayName;
+    if(clientCurent.email)       document.getElementById('oEmail').value = clientCurent.email;
+  }
+  const red = totalReductie();
+  const totalInitial = totalCos();
+  const totalFinal   = totalFinalCos();
+  // Afiseaza discount info daca exista
+  const discBox = document.getElementById('discountInfoBox');
+  if(discBox){
+    if(red>0){
+      discBox.style.display='flex';
+      const src = discountActiv>=discountVoucher ? 'cont activ (10%)' : `voucher "${voucherAplicat}" (${discountVoucher}%)`;
+      document.getElementById('discountInfoText').textContent = `Reducere ${red}% aplicata (${src})`;
+    }else{
+      discBox.style.display='none';
+    }
+  }
   const el=document.getElementById('rezumatComanda');
+  const totalHTML = red>0
+    ? `<span class="total-original">${totalInitial.toFixed(2)} Lei</span> <span class="total-redus">${totalFinal.toFixed(2)} Lei (-${red}%)</span>`
+    : `<span style="color:var(--v)">${totalFinal.toFixed(2)} Lei</span>`;
   el.innerHTML=cos.map(it=>`
     <div class="rand-info">
       <span class="eticheta">${it.nume} x${it.cantitate}</span>
       <span class="valoare">${(it.pret*it.cantitate).toFixed(2)} Lei</span>
     </div>`).join('')+`
     <div class="rand-info" style="font-weight:700;font-size:1.05rem;border-top:2px solid var(--vp);padding-top:9px;margin-top:5px">
-      <span class="eticheta">TOTAL</span>
-      <span class="valoare" style="color:var(--v)">${totalCos().toFixed(2)} Lei</span>
+      <span class="eticheta">TOTAL${red>0?' (dupa reducere)':''}</span>
+      <span class="valoare">${totalHTML}</span>
     </div>`;
 }
 function inapoiLaCos(){
@@ -2639,7 +2741,7 @@ async function trimiteComanda(){
       payment:  document.getElementById('oPlata').value,
       notes:    document.getElementById('oObservatii').value,
       items:    [...cos],
-      total:    totalCos().toFixed(2),
+      total:    totalFinalCos().toFixed(2) + (totalReductie()>0 ? ' (reducere '+totalReductie()+'%)' : ''),
     };
     trimiteEmailClient(orderForEmail);
     trimiteEmailAdmin(orderForEmail);
@@ -3312,11 +3414,211 @@ async function semaneazaDateDemo(){
   }catch(e){ console.warn('Seed demo (normal daca reguli Firestore sunt restrictive):',e.code); }
 }
 
+/* ══════════════════════════════════════════
+   CLIENT AUTH (login optional cu discount 10%)
+══════════════════════════════════════════ */
+let clientCurent    = null;   // userul logat (Firebase Auth)
+let discountActiv   = 0;      // 0 sau 10 (procent)
+let discountVoucher = 0;      // 0 sau X din voucher
+let voucherAplicat  = '';     // codul aplicat
+
+// Vouchere valide (le poti schimba sau adauga oricand)
+const VOUCHERE = {
+  'PASTE2025':   15,   // 15% reducere
+  'SFNICOLAS':   10,   // 10% reducere
+  'CRACIUN10':   10,
+  'PAROHIA5':    5,
+  'BINEVENITI':  20,
+};
+
+function totalReductie(){
+  return Math.max(discountActiv, discountVoucher);
+}
+
+function totalFinalCos(){
+  const t = totalCos();
+  const red = totalReductie();
+  return red > 0 ? t * (1 - red/100) : t;
+}
+
+/* ── CLIENT MODAL ────────────────────────── */
+function deschideModal(id){
+  document.getElementById(id).classList.add('vizibil');
+  if(id==='modalClient') randeazaModalClient();
+}
+
+function randeazaModalClient(){
+  const body = document.getElementById('modalClientBody');
+  if(clientCurent){
+    // Logat - afiseaza profil
+    document.getElementById('modalClientTitlu').textContent = 'Contul Meu';
+    body.innerHTML = `
+      <div style="text-align:center;padding:10px 0 20px">
+        <div style="font-size:3rem;margin-bottom:12px">👤</div>
+        <p class="cinzel" style="color:var(--v);font-size:1.1rem;margin-bottom:4px">${clientCurent.displayName||'Client'}</p>
+        <p style="color:var(--tl);font-size:.88rem;margin-bottom:18px">${clientCurent.email}</p>
+        <div class="discount-info" style="justify-content:center">
+          <span style="font-size:1.3rem">🎁</span>
+          <span>Beneficiezi de <strong>10% discount</strong> la toate produsele!</span>
+        </div>
+        <button class="btn btn-pericol btn-mic" style="margin-top:16px;width:100%;justify-content:center" onclick="delogheazaClient()">Deconectare</button>
+      </div>`;
+  } else {
+    // Nelogat - afiseaza login/register
+    document.getElementById('modalClientTitlu').textContent = 'Cont Client';
+    body.innerHTML = `
+      <p style="color:var(--tl);font-size:.88rem;margin-bottom:16px;text-align:center">
+        Creează cont sau loghează-te pentru <strong style="color:var(--v)">10% discount</strong> la toate comenzile!
+      </p>
+      <div class="client-tabs">
+        <button class="client-tab activ" id="tabLogin" onclick="switchTab('login')">Conectare</button>
+        <button class="client-tab" id="tabReg" onclick="switchTab('reg')">Cont Nou</button>
+      </div>
+      <div id="formLogin">
+        <div class="form-grup"><label>Email</label><input id="cEmail" type="email" placeholder="email@exemplu.ro" onkeydown="if(event.key==='Enter')logheazaClient()"></div>
+        <div class="form-grup"><label>Parolă</label><input id="cParola" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')logheazaClient()"></div>
+        <div id="errClient" style="display:none;color:#C0392B;background:#FFEBEE;padding:9px;border-radius:5px;font-size:.8rem;margin-bottom:12px"></div>
+        <button class="btn btn-primar" style="width:100%;justify-content:center" onclick="logheazaClient()">Conectare</button>
+        <p style="text-align:center;margin-top:14px;font-size:.82rem;color:var(--tl)">
+          Sau continua fara cont — <button onclick="inchideModal('modalClient')" style="background:none;border:none;color:var(--v);cursor:pointer;font-size:.82rem;text-decoration:underline">cumpara fara login</button>
+        </p>
+      </div>
+      <div id="formReg" style="display:none">
+        <div class="form-grup"><label>Nume</label><input id="cNume" placeholder="Ion Ionescu"></div>
+        <div class="form-grup"><label>Email</label><input id="cEmailReg" type="email" placeholder="email@exemplu.ro"></div>
+        <div class="form-grup"><label>Parolă</label><input id="cParolaReg" type="password" placeholder="Minim 6 caractere"></div>
+        <div id="errReg" style="display:none;color:#C0392B;background:#FFEBEE;padding:9px;border-radius:5px;font-size:.8rem;margin-bottom:12px"></div>
+        <button class="btn btn-primar" style="width:100%;justify-content:center" onclick="inregistreazaClient()">Creează Cont + 10% Discount</button>
+      </div>`;
+  }
+}
+
+function switchTab(tab){
+  document.getElementById('tabLogin').classList.toggle('activ', tab==='login');
+  document.getElementById('tabReg').classList.toggle('activ',   tab==='reg');
+  document.getElementById('formLogin').style.display = tab==='login'?'block':'none';
+  document.getElementById('formReg').style.display   = tab==='reg'  ?'block':'none';
+}
+
+async function logheazaClient(){
+  const email  = document.getElementById('cEmail').value.trim();
+  const parola = document.getElementById('cParola').value;
+  const err    = document.getElementById('errClient');
+  err.style.display='none';
+  if(!email||!parola){ err.textContent='Completeaza email si parola!'; err.style.display='block'; return; }
+  try{
+    await auth.signInWithEmailAndPassword(email, parola);
+    // onAuthStateChanged va actualiza UI
+  }catch(e){
+    err.textContent = e.code==='auth/wrong-password'||e.code==='auth/user-not-found'
+      ? 'Email sau parola incorecta.'
+      : 'Eroare: '+e.message;
+    err.style.display='block';
+  }
+}
+
+async function inregistreazaClient(){
+  const nume   = document.getElementById('cNume').value.trim();
+  const email  = document.getElementById('cEmailReg').value.trim();
+  const parola = document.getElementById('cParolaReg').value;
+  const err    = document.getElementById('errReg');
+  err.style.display='none';
+  if(!nume||!email||!parola){ err.textContent='Completeaza toate campurile!'; err.style.display='block'; return; }
+  if(parola.length<6){ err.textContent='Parola trebuie sa aiba minim 6 caractere!'; err.style.display='block'; return; }
+  try{
+    const cred = await auth.createUserWithEmailAndPassword(email, parola);
+    await cred.user.updateProfile({displayName: nume});
+    // Salveaza si in Firestore
+    await db.collection('clienti').doc(cred.user.uid).set({name:nume,email,createdAt:TS(),discount:10});
+  }catch(e){
+    err.textContent = e.code==='auth/email-already-in-use'
+      ? 'Exista deja un cont cu acest email. Foloseste tab-ul Conectare.'
+      : 'Eroare: '+e.message;
+    err.style.display='block';
+  }
+}
+
+async function delogheazaClient(){
+  // Delogheaza doar clientul, nu adminul
+  if(clientCurent && !adminCurent){
+    await auth.signOut();
+  } else if(clientCurent) {
+    // Daca e si admin logat, nu il delogam pe admin
+    // Schimbam doar starea clientului local
+    clientCurent = null;
+    discountActiv = 0;
+    actualizeazaUIClient();
+  }
+  inchideModal('modalClient');
+  afiseazaToast('Ai fost deconectat. Poti continua fara cont.');
+}
+
+function actualizeazaUIClient(){
+  const bar = document.getElementById('clientBar');
+  const btn = document.getElementById('btnContClient');
+  if(clientCurent){
+    bar.style.display = 'flex';
+    document.getElementById('clientBarNume').textContent = clientCurent.displayName||clientCurent.email;
+    discountActiv = 10;
+    btn.title = 'Contul meu (10% discount activ)';
+    btn.textContent = '👤✓';
+    // Actualizeaza cosul cu discount
+    actualizeazaBadge();
+  } else {
+    bar.style.display = 'none';
+    discountActiv = 0;
+    btn.title = 'Cont client';
+    btn.innerHTML = '👤';
+  }
+}
+
+/* ── VOUCHER ─────────────────────────────── */
+function aplicaVoucher(){
+  const cod = (document.getElementById('voucherInput')?.value||'').trim().toUpperCase();
+  const okEl = document.getElementById('voucherOk');
+  if(!cod){ afiseazaToast('Introdu un cod de reducere!'); return; }
+  const proc = VOUCHERE[cod];
+  if(!proc){
+    okEl.style.background='#FFEBEE'; okEl.style.borderColor='#EF9A9A'; okEl.style.color='#C62828';
+    okEl.textContent = 'Cod invalid sau expirat.';
+    okEl.classList.add('viz');
+    setTimeout(()=>okEl.classList.remove('viz'),3000);
+    return;
+  }
+  discountVoucher = proc;
+  voucherAplicat  = cod;
+  okEl.style.background='#E8F5E9'; okEl.style.borderColor='#81C784'; okEl.style.color='#2E7D32';
+  okEl.textContent = '✅ Cod "'+cod+'" aplicat! -'+proc+'% reducere la comanda.';
+  okEl.classList.add('viz');
+  afiseazaToast('🎉 Voucher aplicat! -'+proc+'%');
+  // Actualizeaza rezumatul
+  if(document.getElementById('rezumatComanda').innerHTML) arataComanada();
+}
+
 /* ── AUTH LISTENER ───────────────────────── */
 auth.onAuthStateChanged(user=>{
-  adminCurent=user;
-  if(user&&document.getElementById('pagina-admin').classList.contains('activa')){
-    arataPanou(); incarcaSectiuena('dashboard');
+  if(!user){
+    // Delogat - reseteaza amandoua
+    adminCurent  = null;
+    clientCurent = null;
+    discountActiv = 0;
+    actualizeazaUIClient();
+    return;
+  }
+  // Verificam daca e admin (email-ul adminului)
+  if(user.email === EJS.adminEmail || user.email === 'irimia.teodor.17@gmail.com'){
+    adminCurent = user;
+    if(document.getElementById('pagina-admin').classList.contains('activa')){
+      arataPanou(); incarcaSectiuena('dashboard');
+    }
+  } else {
+    // E client normal
+    clientCurent  = user;
+    discountActiv = 10;
+    actualizeazaUIClient();
+    inchideModal('modalClient');
+    afiseazaToast('Bine ai venit, ' + (user.displayName||user.email) + '! 🎁 10% discount activ!', 4000);
+    randeazaModalClient();
   }
 });
 
@@ -3332,4 +3634,5 @@ document.addEventListener('DOMContentLoaded',function(){
 </script>
 </body>
 </html>
+
 
