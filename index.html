@@ -817,8 +817,10 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
     <button class="cart-btn" onclick="mergi('cos')" title="Coș">
       🛒<span class="cart-badge" id="cosBadge">0</span>
     </button>
-    <button class="cart-btn" onclick="deschideModal('modalClient')" title="Cont client" id="btnContClient" style="font-size:1.3rem">
-      👤
+    <button class="cart-btn" onclick="deschideModal('modalClient')" id="btnContClient"
+      style="font-size:1.1rem;display:flex;flex-direction:column;align-items:center;gap:1px;padding:3px 6px;min-width:44px">
+      <span id="btnContClientIcon">👤</span>
+      <span style="font-size:.48rem;font-family:'Lato',sans-serif;letter-spacing:.5px;color:var(--gl);line-height:1" id="btnContClientLabel">CONT</span>
     </button>
     <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('deschis')">
       <span></span><span></span><span></span>
@@ -1025,6 +1027,15 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
           </div>
         </div>
         <div class="form-grup"><label>Observații</label><textarea id="oObservatii" rows="3" placeholder="Mesaj pentru preot, instrucțiuni speciale…"></textarea></div>
+        <div class="form-grup">
+          <label>Tip Transport</label>
+          <select id="oTransport" onchange="if(document.getElementById('rezumatComanda').innerHTML)arataComanada()">
+            <option value="standard">🚚 Standard – 25 Lei (3-5 zile, ~50km până la Iași)</option>
+            <option value="express">⚡ Express – 45 Lei (1-2 zile)</option>
+            <option value="ridicare">🏛️ Ridicare personală – Gratuit (de la biserică)</option>
+          </select>
+          <p style="font-size:.78rem;color:var(--tl);margin-top:5px">🎁 Transport GRATUIT la comenzi peste 200 Lei</p>
+        </div>
       </div>
       <div class="card-formular" style="margin-bottom:18px">
         <p class="titlu-formular">🎁 Reduceri</p>
@@ -1079,7 +1090,6 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
       <button class="nav-admin" id="nav-comenzi" onclick="incarcaSectiuena('comenzi')">📦 Comenzi</button>
       <button class="nav-admin" id="nav-produse" onclick="incarcaSectiuena('produse')">🕯️ Produse</button>
       <button class="nav-admin" id="nav-anunturi" onclick="incarcaSectiuena('anunturi')">📋 Anunțuri</button>
-      <button class="nav-admin" id="nav-import" onclick="incarcaSectiuena('import')">📥 Import Date</button>
       <button class="nav-admin" id="nav-email" onclick="incarcaSectiuena('email')">✉️ Email Config</button>
       <div class="admin-sidebar-jos">
         <button class="btn btn-pericol btn-mic" style="width:100%;justify-content:center" onclick="faLogout()">🚪 Deconectare</button>
@@ -2653,15 +2663,21 @@ function redeazaCos(){
     </div>`;
   }).join('');
   elSumar.style.display='block';
-  const red=totalReductie();
-  const tf=totalFinalCos();
-  const tc=totalCos();
-  const totEl=document.getElementById('valoareTotal');
+  const red = totalReductie();
+  const tc  = totalCos();
+  const dupaDisc = red>0 ? tc*(1-red/100) : tc;
+  const trsp = tc>=TRANSPORT.gratuit_peste ? 0 : TRANSPORT.cost;
+  const totEl = document.getElementById('valoareTotal');
+  let html = '';
   if(red>0){
-    totEl.innerHTML=`<span class="total-original">${tc.toFixed(2)} Lei</span> <span class="total-redus">${tf.toFixed(2)} Lei</span>`;
+    html = `<span class="total-original">${tc.toFixed(2)}</span> <span class="total-redus">${dupaDisc.toFixed(2)} Lei</span>`;
+    html += ` + <span style="font-size:.82rem;color:var(--tl)">transport ${trsp===0?'Gratuit':trsp+' Lei'}</span>`;
   }else{
-    totEl.textContent=tc.toFixed(2)+' Lei';
+    html = `${(dupaDisc+trsp).toFixed(2)} Lei`;
+    if(tc<TRANSPORT.gratuit_peste) html += ` <span style="font-size:.78rem;color:var(--tl)">(incl. transport ${trsp} Lei)</span>`;
+    else html += ` <span style="font-size:.78rem;color:#2E7D32">(transport Gratuit)</span>`;
   }
+  totEl.innerHTML = html;
 }
 function arataComanada(){
   document.getElementById('vedereaCos').style.display='none';
@@ -2671,87 +2687,139 @@ function arataComanada(){
     if(clientCurent.displayName) document.getElementById('oNume').value = clientCurent.displayName;
     if(clientCurent.email)       document.getElementById('oEmail').value = clientCurent.email;
   }
-  const red = totalReductie();
-  const totalInitial = totalCos();
-  const totalFinal   = totalFinalCos();
-  // Afiseaza discount info daca exista
+  const red        = totalReductie();
+  const subTotal   = totalCos();
+  const transport  = calcTransport();
+  const dupaDisc   = totalFaraTrsp();
+  const totalFinal = totalFinalCos();
+
+  // Discount info box
   const discBox = document.getElementById('discountInfoBox');
   if(discBox){
     if(red>0){
       discBox.style.display='flex';
-      const src = discountActiv>=discountVoucher ? 'cont activ (10%)' : `voucher "${voucherAplicat}" (${discountVoucher}%)`;
-      document.getElementById('discountInfoText').textContent = `Reducere ${red}% aplicata (${src})`;
+      let surse = [];
+      if(discountActiv>0)   surse.push(`cont logat (+${discountActiv}%)`);
+      if(discountVoucher>0) surse.push(`voucher "${voucherAplicat}" (+${discountVoucher}%)`);
+      document.getElementById('discountInfoText').textContent =
+        `Reducere TOTALA ${red}% = ${surse.join(' + ')}`;
     }else{
       discBox.style.display='none';
     }
   }
+
   const el=document.getElementById('rezumatComanda');
-  const totalHTML = red>0
-    ? `<span class="total-original">${totalInitial.toFixed(2)} Lei</span> <span class="total-redus">${totalFinal.toFixed(2)} Lei (-${red}%)</span>`
-    : `<span style="color:var(--v)">${totalFinal.toFixed(2)} Lei</span>`;
-  el.innerHTML=cos.map(it=>`
+  let rows = cos.map(it=>`
     <div class="rand-info">
       <span class="eticheta">${it.nume} x${it.cantitate}</span>
       <span class="valoare">${(it.pret*it.cantitate).toFixed(2)} Lei</span>
-    </div>`).join('')+`
-    <div class="rand-info" style="font-weight:700;font-size:1.05rem;border-top:2px solid var(--vp);padding-top:9px;margin-top:5px">
-      <span class="eticheta">TOTAL${red>0?' (dupa reducere)':''}</span>
-      <span class="valoare">${totalHTML}</span>
+    </div>`).join('');
+
+  // Subtotal
+  rows += `<div class="rand-info" style="border-top:1px solid var(--crd);padding-top:7px;margin-top:5px">
+    <span class="eticheta">Subtotal produse</span>
+    <span class="valoare">${subTotal.toFixed(2)} Lei</span>
+  </div>`;
+
+  // Reducere
+  if(red>0){
+    rows += `<div class="rand-info">
+      <span class="eticheta" style="color:#2E7D32">🎁 Reducere ${red}%</span>
+      <span class="valoare" style="color:#2E7D32">-${(subTotal-dupaDisc).toFixed(2)} Lei</span>
     </div>`;
+  }
+
+  // Transport
+  const tipTrsp = document.getElementById('oTransport')?.value||'standard';
+  const trspTxt = tipTrsp==='ridicare' ? 'Ridicare personala (Gratuit)'
+    : tipTrsp==='express' ? 'Express 1-2 zile'
+    : 'Standard 3-5 zile (~50km Iasi)';
+  rows += `<div class="rand-info">
+    <span class="eticheta">🚚 Transport (${trspTxt})</span>
+    <span class="valoare">${transport===0?'<span style="color:#2E7D32">GRATUIT</span>':transport+' Lei'}</span>
+  </div>`;
+
+  // Total final
+  rows += `<div class="rand-info" style="font-weight:700;font-size:1.08rem;border-top:2px solid var(--vp);padding-top:9px;margin-top:5px">
+    <span class="eticheta">TOTAL DE PLATA</span>
+    <span class="valoare" style="color:var(--v);font-size:1.15rem">${totalFinal.toFixed(2)} Lei</span>
+  </div>`;
+
+  el.innerHTML = rows;
 }
 function inapoiLaCos(){
   document.getElementById('vedereComanda').style.display='none';
   document.getElementById('vedereaCos').style.display='block';
 }
 async function trimiteComanda(){
-  const nume=document.getElementById('oNume').value.trim();
-  const tel=document.getElementById('oTelefon').value.trim();
-  const adr=document.getElementById('oAdresa').value.trim();
-  if(!nume||!tel||!adr){ afiseazaToast('⚠️ Completati campurile obligatorii!'); return; }
-  const btn=document.getElementById('btnFinalizeaza');
-  btn.disabled=true; btn.textContent='Se trimite...';
+  const nume = document.getElementById('oNume').value.trim();
+  const tel  = document.getElementById('oTelefon').value.trim();
+  const adr  = document.getElementById('oAdresa').value.trim();
+  if(!nume||!tel||!adr){
+    afiseazaToast('⚠️ Completati: Nume, Telefon si Adresa!');
+    return;
+  }
+
+  const btn = document.getElementById('btnFinalizeaza');
+  btn.disabled = true;
+  btn.textContent = 'Se trimite...';
+
+  // Colecteaza datele comenzii
+  const red       = totalReductie();
+  const transport = calcTransport();
+  const tipTrsp   = document.getElementById('oTransport')?.value||'standard';
+  const totalNet  = totalFinalCos();
+
+  const dateleComenzii = {
+    name:      nume,
+    phone:     tel,
+    email:     document.getElementById('oEmail').value.trim(),
+    address:   adr,
+    county:    document.getElementById('oLocalitate').value.trim(),
+    payment:   document.getElementById('oPlata').value,
+    transport: tipTrsp,
+    notes:     document.getElementById('oObservatii').value.trim(),
+    items:     JSON.parse(JSON.stringify(cos)),
+    subtotal:  totalCos().toFixed(2),
+    discount:  red > 0 ? red+'%' : '0%',
+    transport_cost: transport.toFixed(2),
+    total:     totalNet.toFixed(2),
+    voucher:   voucherAplicat || '',
+    status:    'noua',
+  };
+
   try{
-    await fbAdauga('comenzi',{
-      name:nume, phone:tel,
-      email:document.getElementById('oEmail').value,
-      address:adr,
-      county:document.getElementById('oLocalitate').value,
-      payment:document.getElementById('oPlata').value,
-      notes:document.getElementById('oObservatii').value,
-      items:JSON.parse(JSON.stringify(cos)),
-      total:totalCos().toFixed(2),
-      status:'noua'
-    });
-    // Scade stocul
+    // Salveaza comanda in Firestore
+    const docRef = await fbAdauga('comenzi', dateleComenzii);
+
+    // Scade stocul pentru fiecare produs
     for(const item of cos){
-      const prod=produseCach.find(p=>p.id===item.id);
-      if(prod&&typeof prod.stock==='number'){
-        const nou=Math.max(0,prod.stock-item.cantitate);
-        try{ await fbActualizeaza('produse',item.id,{stock:nou}); prod.stock=nou; }
-        catch(e){ console.warn('Stoc neactualizat:',item.id); }
+      const prod = produseCach.find(p=>p.id===item.id);
+      if(prod && typeof prod.stock==='number'){
+        const stocNou = Math.max(0, prod.stock - item.cantitate);
+        try{
+          await fbActualizeaza('produse', item.id, {stock: stocNou});
+          prod.stock = stocNou;
+        }catch(e){ console.warn('Stoc neactualizat:', item.id, e.message); }
       }
     }
-    // Trimite emailuri (client + admin)
-    const orderForEmail = {
-      name:     document.getElementById('oNume').value.trim(),
-      email:    document.getElementById('oEmail').value,
-      phone:    document.getElementById('oTelefon').value.trim(),
-      address:  document.getElementById('oAdresa').value.trim(),
-      county:   document.getElementById('oLocalitate').value,
-      payment:  document.getElementById('oPlata').value,
-      notes:    document.getElementById('oObservatii').value,
-      items:    [...cos],
-      total:    totalFinalCos().toFixed(2) + (totalReductie()>0 ? ' (reducere '+totalReductie()+'%)' : ''),
-    };
-    trimiteEmailClient(orderForEmail);
-    trimiteEmailAdmin(orderForEmail);
-    cos=[]; salveazaCos(); actualizeazaBadge();
+
+    // Trimite emailuri (fara await - nu blocam UI-ul)
+    const emailData = {...dateleComenzii, id: docRef.id};
+    trimiteEmailClient(emailData, 'NOUA').catch(e=>console.warn('Email client:',e));
+    trimiteEmailAdmin(emailData).catch(e=>console.warn('Email admin:',e));
+
+    // Reseteaza cosul si discountul voucher
+    cos = []; discountVoucher = 0; voucherAplicat = '';
+    salveazaCos(); actualizeazaBadge();
     mergi('acasa');
-    setTimeout(()=>afiseazaToast('✝ Comanda plasata cu succes! Va multumim!',5000),400);
+    setTimeout(()=>afiseazaToast('✝ Comanda plasata cu succes! Va multumim!', 5000), 400);
+
   }catch(e){
-    console.error(e);
-    afiseazaToast('❌ Eroare la trimitere. Verificati conexiunea.');
-    btn.disabled=false; btn.textContent='✝ Finalizeaza Comanda';
+    console.error('Eroare comanda:', e);
+    afiseazaToast('❌ Eroare: '+e.message+'. Verificati conexiunea la internet.');
+    btn.disabled = false;
+    btn.textContent = '✝ Finalizeaza Comanda';
   }
 }
 
@@ -2759,8 +2827,10 @@ async function trimiteComanda(){
    ADMIN
 ══════════════════════════════════════════ */
 function initAdmin(){
-  if(adminCurent){ arataPanou(); incarcaSectiuena('dashboard'); }
-  else aratLogin();
+  if(adminCurent){ arataPanou(); incarcaSectiuena('dashboard'); return; }
+  // Verifica sesiune salvata
+  if(verificaSesiuneAdmin()){ arataPanou(); incarcaSectiuena('dashboard'); return; }
+  aratLogin();
 }
 function aratLogin(){
   document.getElementById('adminLogin').style.display='flex';
@@ -2770,22 +2840,57 @@ function arataPanou(){
   document.getElementById('adminLogin').style.display='none';
   document.getElementById('adminPanel').style.display='flex';
 }
+// ── ADMIN AUTH (separat de clienti, bazat pe token local) ──────
+const ADMIN_CREDS = {
+  email:  'irimia.teodor.17@gmail.com',
+  // parola e verificata prin hash simplu - schimb-o tu la nevoie
+  // parola curenta: admin2025
+  hash: '9afb0958f1b006da07b12b45c24ac98a2da28d12' // SHA1 de "admin2025"
+};
+
+async function sha1(str){
+  const buf = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
 async function faLogin(){
-  const email=document.getElementById('aEmail').value;
-  const parola=document.getElementById('aParola').value;
-  const btn=document.getElementById('btnLogin');
-  const err=document.getElementById('eroareLogin');
+  const email  = document.getElementById('aEmail').value.trim();
+  const parola = document.getElementById('aParola').value;
+  const btn    = document.getElementById('btnLogin');
+  const err    = document.getElementById('eroareLogin');
   err.style.display='none';
-  btn.disabled=true; btn.textContent='Se conecteaza...';
-  try{
-    await auth.signInWithEmailAndPassword(email,parola);
+  btn.disabled=true; btn.textContent='Se verifica...';
+
+  // Verifica credentiale admin local (nu Firebase Auth)
+  const hash = await sha1(parola);
+  if(email === ADMIN_CREDS.email && hash === ADMIN_CREDS.hash){
+    adminCurent = {email, displayName:'Administrator'};
+    localStorage.setItem('adminSesiune', JSON.stringify({email, ts: Date.now()}));
     arataPanou(); incarcaSectiuena('dashboard');
-  }catch(e){
+  } else {
     err.style.display='block';
+    err.textContent='Email sau parolă incorectă.';
   }
   btn.disabled=false; btn.textContent='Conectare';
 }
-async function faLogout(){ await auth.signOut(); aratLogin(); }
+
+function faLogout(){
+  adminCurent = null;
+  localStorage.removeItem('adminSesiune');
+  aratLogin();
+  afiseazaToast('Deconectat din admin.');
+}
+
+function verificaSesiuneAdmin(){
+  try{
+    const s = JSON.parse(localStorage.getItem('adminSesiune')||'null');
+    if(s && s.email === ADMIN_CREDS.email && Date.now()-s.ts < 8*3600*1000){
+      adminCurent = {email: s.email, displayName:'Administrator'};
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
 
 function seteazaNavAdmin(sec){
   document.querySelectorAll('.nav-admin').forEach(b=>b.classList.remove('activ'));
@@ -2800,7 +2905,6 @@ async function incarcaSectiuena(sec){
   if(sec==='comenzi')   await secComenzi(el);
   if(sec==='produse')   await secProduse(el);
   if(sec==='anunturi')  await secAnunturi(el);
-  if(sec==='import')    await secImport(el);
   if(sec==='email')     await secEmail(el);
 }
 
@@ -3432,13 +3536,36 @@ const VOUCHERE = {
 };
 
 function totalReductie(){
-  return Math.max(discountActiv, discountVoucher);
+  // Reducerile se aduna: discount cont (10%) + voucher (X%)
+  // Dar nu poate depasi 50% total
+  return Math.min(50, discountActiv + discountVoucher);
+}
+
+const TRANSPORT = {
+  // Transport calculat - 50km pana la Iasi
+  gratuit_peste: 200,   // transport gratuit la comenzi peste 200 Lei
+  cost:          25,    // 25 Lei transport standard
+  express:       45,    // 45 Lei transport express
+};
+
+function calcTransport(){
+  const t = totalCos();
+  if(t >= TRANSPORT.gratuit_peste) return 0;
+  const tipTransp = document.getElementById('oTransport')?.value || 'standard';
+  return tipTransp === 'express' ? TRANSPORT.express : TRANSPORT.cost;
 }
 
 function totalFinalCos(){
-  const t = totalCos();
+  const t    = totalCos();
+  const red  = totalReductie();
+  const dupaDisc = red > 0 ? t*(1-red/100) : t;
+  return dupaDisc + calcTransport();
+}
+
+function totalFaraTrsp(){
+  const t   = totalCos();
   const red = totalReductie();
-  return red > 0 ? t * (1 - red/100) : t;
+  return red > 0 ? t*(1-red/100) : t;
 }
 
 /* ── CLIENT MODAL ────────────────────────── */
@@ -3554,21 +3681,21 @@ async function delogheazaClient(){
 }
 
 function actualizeazaUIClient(){
-  const bar = document.getElementById('clientBar');
-  const btn = document.getElementById('btnContClient');
+  const bar  = document.getElementById('clientBar');
+  const ico  = document.getElementById('btnContClientIcon');
+  const lbl  = document.getElementById('btnContClientLabel');
   if(clientCurent){
     bar.style.display = 'flex';
     document.getElementById('clientBarNume').textContent = clientCurent.displayName||clientCurent.email;
     discountActiv = 10;
-    btn.title = 'Contul meu (10% discount activ)';
-    btn.textContent = '👤✓';
-    // Actualizeaza cosul cu discount
+    if(ico) ico.textContent = '👤✓';
+    if(lbl){ lbl.textContent = '10% OFF'; lbl.style.color = '#E8C97A'; }
     actualizeazaBadge();
   } else {
     bar.style.display = 'none';
     discountActiv = 0;
-    btn.title = 'Cont client';
-    btn.innerHTML = '👤';
+    if(ico) ico.textContent = '👤';
+    if(lbl){ lbl.textContent = 'CONT'; lbl.style.color = 'var(--gl)'; }
   }
 }
 
@@ -3596,30 +3723,22 @@ function aplicaVoucher(){
 }
 
 /* ── AUTH LISTENER ───────────────────────── */
+// Firebase Auth e DOAR pentru clienti
 auth.onAuthStateChanged(user=>{
   if(!user){
-    // Delogat - reseteaza amandoua
-    adminCurent  = null;
-    clientCurent = null;
+    clientCurent  = null;
     discountActiv = 0;
     actualizeazaUIClient();
     return;
   }
-  // Verificam daca e admin (email-ul adminului)
-  if(user.email === EJS.adminEmail || user.email === 'irimia.teodor.17@gmail.com'){
-    adminCurent = user;
-    if(document.getElementById('pagina-admin').classList.contains('activa')){
-      arataPanou(); incarcaSectiuena('dashboard');
-    }
-  } else {
-    // E client normal
-    clientCurent  = user;
-    discountActiv = 10;
-    actualizeazaUIClient();
-    inchideModal('modalClient');
-    afiseazaToast('Bine ai venit, ' + (user.displayName||user.email) + '! 🎁 10% discount activ!', 4000);
-    randeazaModalClient();
-  }
+  // Oricine se logheza prin Firebase Auth e CLIENT, nu admin
+  // Adminul are sistem separat (verificaSesiuneAdmin)
+  clientCurent  = user;
+  discountActiv = 10;
+  actualizeazaUIClient();
+  inchideModal('modalClient');
+  afiseazaToast('Bine ai venit, '+(user.displayName||user.email)+'! 🎁 10% discount activ!', 4000);
+  randeazaModalClient();
 });
 
 /* ── INIT ────────────────────────────────── */
@@ -3627,6 +3746,8 @@ document.addEventListener('DOMContentLoaded',function(){
   porniTimer();
   actualizeazaBadge();
   initEmailJS();
+  // Verifica sesiune admin salvata
+  verificaSesiuneAdmin();
   mergi('acasa');
   semaneazaDateDemo();
 });
@@ -3634,5 +3755,3 @@ document.addEventListener('DOMContentLoaded',function(){
 </script>
 </body>
 </html>
-
-
