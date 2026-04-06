@@ -669,6 +669,32 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
   border-radius:4px;font-size:.82rem;color:var(--v);
 }
 
+/* ── GDPR & COOKIE BANNER ──────────────────── */
+#cookieBanner{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--vd);color:var(--cr);
+  padding:16px 20px;z-index:9999;
+  border-top:3px solid var(--g);
+  display:none;animation:slideUp .4s ease;
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+#cookieBanner.viz{display:block}
+.cookie-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.cookie-inner p{flex:1;font-size:.82rem;line-height:1.5;color:var(--crd)}
+.cookie-inner a{color:var(--gl);text-decoration:underline;cursor:pointer}
+.cookie-btns{display:flex;gap:9px;flex-shrink:0}
+.gdpr-check{display:flex;align-items:flex-start;gap:9px;margin-bottom:10px;font-size:.84rem;color:var(--tm);line-height:1.4}
+.gdpr-check input[type=checkbox]{width:16px;height:16px;flex-shrink:0;margin-top:2px;accent-color:var(--v);cursor:pointer}
+.gdpr-check a{color:var(--v);text-decoration:underline;cursor:pointer}
+.gdpr-err{display:none;color:#C0392B;font-size:.78rem;margin-bottom:8px}
+
+/* ── MODAL TERMENI ──────────────────────────── */
+#modalTermeni .modal{max-width:750px}
+.termeni-body{padding:26px;max-height:70vh;overflow-y:auto}
+.termeni-body h3{font-family:'Cinzel',serif;color:var(--v);margin:18px 0 8px;font-size:.95rem}
+.termeni-body p,.termeni-body li{font-size:.88rem;color:var(--tm);line-height:1.7;margin-bottom:6px}
+.termeni-body ul{padding-left:18px}
+
 /* ── MOBILE FIRST RESPONSIVE ─────────────── */
 @media(max-width:900px){
   nav{padding:0 14px;height:58px}
@@ -795,7 +821,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
 <div id="clientBar" class="client-bar" style="display:none">
   <span id="clientBarText">👤 Salut, <strong id="clientBarNume"></strong></span>
   <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-    <span class="disc-badge-bar">🎁 10% discount activ</span>
+    <span class="disc-badge-bar">🎁 5% discount activ</span>
     <button onclick="delogheazaClient()">Deconectare</button>
   </div>
 </div>
@@ -991,7 +1017,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
           <!-- Discount activ daca e logat -->
           <div id="discountContBox" style="display:none" class="discount-info">
             <span style="font-size:1.3rem">🎁</span>
-            <span id="discountContText">10% discount cont activ</span>
+            <span id="discountContText">5% discount cont activ</span>
           </div>
           <!-- Voucher - in cos -->
           <div style="margin-bottom:14px">
@@ -1045,17 +1071,24 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
         <div class="form-grup">
           <label>Tip Transport</label>
           <select id="oTransport" onchange="if(document.getElementById('rezumatComanda').innerHTML)arataComanada()">
-            <option value="standard">🚚 Standard – 25 Lei (3-5 zile, ~50km până la Iași)</option>
-            <option value="express">⚡ Express – 45 Lei (1-2 zile)</option>
-            <option value="ridicare">🏛️ Ridicare personală – Gratuit (de la biserică)</option>
+            <option value="standard">🚚 Curier Standard – 25 Lei (3-5 zile, ~50km Iași)</option>
+            <option value="express">⚡ Curier Express – 45 Lei (1-2 zile)</option>
+            <option value="ridicare">🏛️ Ridicare personală – 10 Lei (taxă procesare online)</option>
           </select>
-          <p style="font-size:.78rem;color:var(--tl);margin-top:5px">🎁 Transport GRATUIT la comenzi peste 200 Lei</p>
+          <p style="font-size:.78rem;color:var(--tl);margin-top:5px">🎁 Transport curier GRATUIT la comenzi peste 200 Lei · Ridicare personală: 10 Lei taxă procesare online</p>
         </div>
       </div>
 
       <div class="card-formular" style="margin-bottom:18px">
         <p class="titlu-formular">🧾 Rezumat Comandă</p>
         <div id="rezumatComanda"></div>
+      </div>
+      <div style="margin-bottom:14px">
+        <div class="gdpr-check">
+          <input type="checkbox" id="gdprComanda">
+          <label for="gdprComanda">Am citit și sunt de acord cu <a onclick="deschideModal('modalTermeni')" style="color:var(--v)">Termenii și Condițiile</a> și Politica de Confidențialitate GDPR. *</label>
+        </div>
+        <div class="gdpr-err" id="gdprComandaErr">Trebuie să accepți termenii pentru a plasa comanda.</div>
       </div>
       <div style="display:flex;gap:13px;flex-wrap:wrap">
         <button class="btn btn-contur" onclick="inapoiLaCos()">← Înapoi la Coș</button>
@@ -1169,13 +1202,13 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
 </div>
 
 <!-- MODAL CALENDAR ORTODOX 2026 -->
-<div class="fundal-modal" id="modalCalendar" onclick="if(event.target===this)inchideModal('modalCalendar')" style="align-items:flex-start;padding:16px;overflow-y:auto">
-  <div class="modal" style="max-width:900px;max-height:none">
-    <div class="modal-header" style="position:sticky;top:0;z-index:10">
-      <h2>📅 Calendar Ortodox 2026</h2>
-      <button class="modal-inchide" onclick="inchideModal('modalCalendar')">✕</button>
+<div class="fundal-modal" id="modalCalendar" onclick="if(event.target===this)inchideModal('modalCalendar')" style="align-items:flex-start;padding:10px;overflow-y:auto">
+  <div style="background:var(--w);border-radius:14px;max-width:960px;width:100%;box-shadow:0 28px 75px rgba(0,0,0,.44);position:relative">
+    <div class="modal-header" style="position:sticky;top:0;z-index:10;border-radius:14px 14px 0 0;display:flex;align-items:center;justify-content:space-between">
+      <h2 style="font-family:'Cinzel',serif;font-size:1.1rem;color:#fff">📅 Calendar Ortodox 2026</h2>
+      <button class="modal-inchide" onclick="inchideModal('modalCalendar')" style="position:static;font-size:1.5rem;color:var(--gl)">✕</button>
     </div>
-    <div class="modal-body" id="calendarBody" style="padding:16px">
+    <div id="calendarBody" style="padding:20px">
       <!-- randat dinamic -->
     </div>
   </div>
@@ -1230,6 +1263,52 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
     <div class="footer-jos">✝ Slavă lui Dumnezeu pentru toate! ✝ &nbsp;|&nbsp; © 2025 Parohia Ortodoxă</div>
   </div>
 </footer>
+
+<!-- ═══ COOKIE BANNER ═══ -->
+<div id="cookieBanner">
+  <div class="cookie-inner">
+    <p>🍪 Folosim cookie-uri pentru funcționarea site-ului. Prin continuare ești de acord cu <a onclick="deschideModal('modalTermeni')" style="cursor:pointer">Termenii și Politica GDPR</a>.</p>
+    <div class="cookie-btns">
+      <button class="btn btn-contur-aur btn-mic" onclick="acceptaCookies()">Accept</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL TERMENI & GDPR ═══ -->
+<div class="fundal-modal" id="modalTermeni" onclick="if(event.target===this)inchideModal('modalTermeni')">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>📋 Termeni, Condiții și Politica GDPR</h2>
+      <button class="modal-inchide" onclick="inchideModal('modalTermeni')">✕</button>
+    </div>
+    <div class="termeni-body">
+      <h3>1. Cine suntem</h3>
+      <p>Parohia Ortodoxă operează acest site cu scop de informare și vânzare de obiecte de cult. Contact: parohia@email.ro</p>
+      <h3>2. Date colectate</h3>
+      <ul>
+        <li><strong>Cont client:</strong> Nume, email — stocate prin Firebase Authentication (Google).</li>
+        <li><strong>Comandă:</strong> Nume, telefon, email, adresă — necesare pentru livrare.</li>
+        <li><strong>Cookie-uri tehnice:</strong> Sesiune autentificare Firebase, necesare funcționării.</li>
+      </ul>
+      <h3>3. Temeiul legal (GDPR)</h3>
+      <p>Prelucrăm datele în baza <strong>Art. 6(1)(b) GDPR</strong> (executarea contractului/comenzii) și <strong>Art. 6(1)(a)</strong> (consimțământul la crearea contului).</p>
+      <h3>4. Drepturile tale</h3>
+      <ul>
+        <li>Drept de <strong>acces, rectificare, ștergere</strong> a datelor personale.</li>
+        <li>Drept de <strong>portabilitate</strong> și <strong>opoziție</strong> la prelucrare.</li>
+        <li>Contact pentru exercitarea drepturilor: parohia@email.ro</li>
+      </ul>
+      <h3>5. Securitate și stocare</h3>
+      <p>Datele sunt stocate în Google Firebase (infrastructură securizată). Nu vindem date către terți. Comenzile se păstrează 5 ani conform legislației fiscale.</p>
+      <h3>6. Retururi</h3>
+      <p>Return posibil în 14 zile de la livrare pentru produse nefolosite, cu notificare prealabilă la parohia@email.ro</p>
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--crd);font-size:.76rem;color:var(--tl)">Ultima actualizare: Aprilie 2025</div>
+    </div>
+    <div style="padding:14px 26px;border-top:1px solid var(--crd);text-align:right">
+      <button class="btn btn-primar btn-mic" onclick="inchideModal('modalTermeni')">Am înțeles ✓</button>
+    </div>
+  </div>
+</div>
 
 <!-- ═══════════════════ JAVASCRIPT ═══════════════════════════════ -->
 <script>
@@ -2054,12 +2133,29 @@ const auth = firebase.auth();
 const EJS = {
   publicKey:   'p2O-tLOxlx3BmOLQf',
   serviceId:   'service_j3uce4r',
-  tplClient:   'template_a3n714t',   // template client - variabile: {{nume_client}}, {{numar_comanda}}, {{status_comanda}}, {{lista_produse}}, {{total}}
-  tplAdmin:    'template_viznvfb',   // template admin  - variabile: {{numar_comanda}}, {{status_comanda}}, {{total}}, {{lista_produse}}
-  tplStatus:   'template_a3n714t',   // refolosim template client pentru update status
+  tplClient:   'template_a3n714t',   // confirmare comanda client
+  tplAdmin:    'template_viznvfb',   // notificare comanda noua admin
+  tplStatus:   'template_a3n714t',   // update status catre client (acelasi template, alt status)
   adminEmail:  'irimia.teodor.17@gmail.com',
   ejsReady:    false,
 };
+
+/* ═══════════════════════════════════════════════
+   TEMPLATE EMAIL CLIENT (template_a3n714t):
+   Variabile folosite:
+     {{nume_client}}    - Numele clientului
+     {{numar_comanda}}  - ex: #A1B2C3D4
+     {{status_comanda}} - NOUA / IN PROCESARE / LIVRATA / ANULATA
+     {{lista_produse}}  - lista produse + total + transport + reducere
+     {{total}}          - suma finala in RON
+
+   TEMPLATE EMAIL ADMIN (template_viznvfb):
+   Variabile folosite:
+     {{numar_comanda}}  - ID comanda
+     {{status_comanda}} - NOUA
+     {{total}}          - suma finala
+     {{lista_produse}}  - detalii complete (client + produse)
+════════════════════════════════════════════════ */
 
 function initEmailJS(){
   // Permite override din localStorage (sectiunea Email Config din admin)
@@ -2088,20 +2184,35 @@ function initEmailJS(){
 // Multumim! Parohia Ortodoxa
 
 async function trimiteEmailClient(orderData, statusText){
-  if(!EJS.ejsReady||!orderData.email) return;
+  if(!EJS.ejsReady){ console.warn('EmailJS nu e initializat'); return; }
+  if(!orderData.email){ console.warn('Lipseste emailul clientului'); return; }
   statusText = statusText || 'NOUA';
   try{
     const itemsList = construiesteListaProduse(orderData.items||[]);
-    await emailjs.send(EJS.serviceId, EJS.tplClient, {
+    // Adauga transport si reducere in lista produse
+    let detaliiExtra = '';
+    if(orderData.discount && orderData.discount !== '0%'){
+      detaliiExtra += `\nReducere aplicata: -${orderData.discount}`;
+    }
+    if(orderData.transport_cost){
+      const tipT = orderData.transport||'standard';
+      const labelT = tipT==='ridicare'?'Ridicare personala (taxa online)':tipT==='express'?'Curier Express':'Curier Standard';
+      detaliiExtra += `\nTransport (${labelT}): ${parseFloat(orderData.transport_cost)===0?'GRATUIT':orderData.transport_cost+' RON'}`;
+    }
+    const params = {
       nume_client:     orderData.name,
-      numar_comanda:   orderData.id ? '#'+orderData.id.substring(0,8) : '#NOU',
+      numar_comanda:   orderData.id ? '#'+orderData.id.substring(0,8).toUpperCase() : '#NOU',
       status_comanda:  statusText,
-      lista_produse:   itemsList,
-      total:           orderData.total,
+      lista_produse:   itemsList + detaliiExtra,
+      total:           orderData.total + ' RON',
       to_email:        orderData.email,
-    });
-    console.log('Email client trimis la', orderData.email);
-  }catch(e){ console.warn('Email client error:', e.text||e.message); }
+    };
+    console.log('Trimit email client la:', orderData.email, 'params:', params);
+    const resp = await emailjs.send(EJS.serviceId, EJS.tplClient, params);
+    console.log('Email client trimis OK:', resp.status, resp.text);
+  }catch(e){
+    console.error('Email client EROARE:', e);
+  }
 }
 
 async function trimiteEmailAdmin(orderData){
@@ -2459,8 +2570,16 @@ async function incarcaAcasa(){
   if(ua){
     const urgCls=ua.type==='urgent'?'urgent':'';
     const extras=(ua.content||'').substring(0,180);
+    // Placeholder imagine pentru anunt fara poza
+    const imgAnunt = ua.image
+      ? `<img src="${ua.image}" class="ann-cover" alt="${ua.title}" style="border-radius:9px 9px 0 0;margin:-18px -22px 14px;width:calc(100% + 44px);max-height:160px;object-fit:cover">`
+      : `<div style="background:linear-gradient(135deg,var(--vd),var(--v));border-radius:9px 9px 0 0;margin:-18px -22px 14px;padding:22px;text-align:center;display:flex;align-items:center;justify-content:center;gap:12px">
+           <span style="font-size:2rem;color:var(--g)">📋</span>
+           <span style="font-family:'Cinzel',serif;font-size:.9rem;color:var(--gl)">${textInsigna(ua.type)}</span>
+         </div>`;
     elUa.innerHTML=`
-      <div class="card-anunt ${urgCls}" onclick="deschideModalAnunt('${ua.id}')">
+      <div class="card-anunt ${urgCls}" onclick="deschideModalAnunt('${ua.id}')" style="padding:18px 22px">
+        ${imgAnunt}
         <span class="insigna ${clasaInsigna(ua.type)}">${textInsigna(ua.type)}</span>
         <h3>${ua.title}</h3>
         <p class="anunt-extras">${extras}${ua.content&&ua.content.length>180?'...':''}</p>
@@ -2799,6 +2918,15 @@ async function trimiteComanda(){
     afiseazaToast('⚠️ Completati: Nume, Telefon si Adresa!');
     return;
   }
+  // Verifica GDPR
+  const gdprComEl  = document.getElementById('gdprComanda');
+  const gdprComErr = document.getElementById('gdprComandaErr');
+  if(gdprComEl && !gdprComEl.checked){
+    if(gdprComErr) gdprComErr.style.display='block';
+    gdprComEl.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  if(gdprComErr) gdprComErr.style.display='none';
 
   const btn = document.getElementById('btnFinalizeaza');
   btn.disabled = true;
@@ -3731,9 +3859,9 @@ async function secVouchere(el){
     </table>`}
 
     <div class="email-setup-box" style="margin-top:20px">
-      <h4>ℹ️ Voucherele demo (in cod)</h4>
-      <p>Pe langa voucherele din Firestore, urmatoarele coduri functoneaza si offline:</p>
-      ${Object.entries(VOUCHERE).map(([k,v])=>`<code style="display:inline-block;margin:3px 4px;background:var(--cr);padding:3px 9px;border-radius:4px">${k}: -${v}%</code>`).join('')}
+      <h4>ℹ️ Cum funcționează voucherele</h4>
+      <p>Adaugă coduri de reducere mai sus. Clienții le introduc în coș înainte de finalizare.<br>
+      Voucherele se combină cu discountul de cont (5%) — totalul nu depășește 50%.</p>
     </div>`;
 }
 
@@ -3908,14 +4036,8 @@ let discountActiv   = 0;      // 0 sau 10 (procent)
 let discountVoucher = 0;      // 0 sau X din voucher
 let voucherAplicat  = '';     // codul aplicat
 
-// Vouchere valide (le poti schimba sau adauga oricand)
-const VOUCHERE = {
-  'PASTE2025':   15,   // 15% reducere
-  'SFNICOLAS':   10,   // 10% reducere
-  'CRACIUN10':   10,
-  'PAROHIA5':    5,
-  'BINEVENITI':  20,
-};
+// Vouchere fallback (offline) - adauga vouchere din Admin > Vouchere
+const VOUCHERE = {};  // gol - toate voucherele se gestioneaza din Admin
 
 function totalReductie(){
   // Reducerile se aduna: discount cont (10%) + voucher (X%)
@@ -3924,17 +4046,18 @@ function totalReductie(){
 }
 
 const TRANSPORT = {
-  // Transport calculat - 50km pana la Iasi
-  gratuit_peste: 200,   // transport gratuit la comenzi peste 200 Lei
-  cost:          25,    // 25 Lei transport standard
-  express:       45,    // 45 Lei transport express
+  gratuit_peste: 200,  // transport CURIER gratuit peste 200 Lei
+  standard:      25,   // 25 Lei curier standard 3-5 zile
+  express:       45,   // 45 Lei curier express 1-2 zile
+  ridicare:      10,   // 10 Lei taxa procesare online (ridicare personala)
 };
 
 function calcTransport(){
   const t = totalCos();
-  if(t >= TRANSPORT.gratuit_peste) return 0;
-  const tipTransp = document.getElementById('oTransport')?.value || 'standard';
-  return tipTransp === 'express' ? TRANSPORT.express : TRANSPORT.cost;
+  const tip = document.getElementById('oTransport')?.value || 'standard';
+  if(tip === 'ridicare') return TRANSPORT.ridicare; // taxa online fixa
+  if(t >= TRANSPORT.gratuit_peste) return 0; // curier gratuit
+  return tip === 'express' ? TRANSPORT.express : TRANSPORT.standard;
 }
 
 function totalFinalCos(){
@@ -3968,7 +4091,7 @@ function randeazaModalClient(){
         <p style="color:var(--tl);font-size:.88rem;margin-bottom:18px">${clientCurent.email}</p>
         <div class="discount-info" style="justify-content:center">
           <span style="font-size:1.3rem">🎁</span>
-          <span>Beneficiezi de <strong>10% discount</strong> la toate produsele!</span>
+          <span>Beneficiezi de <strong>5% discount</strong> la toate produsele!</span>
         </div>
         <button class="btn btn-pericol btn-mic" style="margin-top:16px;width:100%;justify-content:center" onclick="delogheazaClient()">Deconectare</button>
       </div>`;
@@ -3977,7 +4100,7 @@ function randeazaModalClient(){
     document.getElementById('modalClientTitlu').textContent = 'Cont Client';
     body.innerHTML = `
       <p style="color:var(--tl);font-size:.88rem;margin-bottom:16px;text-align:center">
-        Creează cont sau loghează-te pentru <strong style="color:var(--v)">10% discount</strong> la toate comenzile!
+        Creează cont sau loghează-te pentru <strong style="color:var(--v)">5% discount</strong> la toate comenzile!
       </p>
       <div class="client-tabs">
         <button class="client-tab activ" id="tabLogin" onclick="switchTab('login')">Conectare</button>
@@ -3997,7 +4120,12 @@ function randeazaModalClient(){
         <div class="form-grup"><label>Email</label><input id="cEmailReg" type="email" placeholder="email@exemplu.ro"></div>
         <div class="form-grup"><label>Parolă</label><input id="cParolaReg" type="password" placeholder="Minim 6 caractere"></div>
         <div id="errReg" style="display:none;color:#C0392B;background:#FFEBEE;padding:9px;border-radius:5px;font-size:.8rem;margin-bottom:12px"></div>
-        <button class="btn btn-primar" style="width:100%;justify-content:center" onclick="inregistreazaClient()">Creează Cont + 10% Discount</button>
+        <div class="gdpr-check">
+          <input type="checkbox" id="gdprReg">
+          <label for="gdprReg">Sunt de acord cu <a onclick="inchideModal('modalClient');deschideModal('modalTermeni')">Termenii și Condițiile</a> și Politica GDPR. *</label>
+        </div>
+        <div class="gdpr-err" id="gdprRegErr">Trebuie să accepți termenii pentru a crea un cont.</div>
+        <button class="btn btn-primar" style="width:100%;justify-content:center" onclick="inregistreazaClient()">Creează Cont + 5% Discount</button>
       </div>`;
   }
 }
@@ -4031,7 +4159,12 @@ async function inregistreazaClient(){
   const email  = document.getElementById('cEmailReg').value.trim();
   const parola = document.getElementById('cParolaReg').value;
   const err    = document.getElementById('errReg');
+  const gdprEl = document.getElementById('gdprReg');
+  const gdprErr= document.getElementById('gdprRegErr');
   err.style.display='none';
+  if(gdprErr) gdprErr.style.display='none';
+  // Verifica GDPR
+  if(gdprEl && !gdprEl.checked){ if(gdprErr) gdprErr.style.display='block'; return; }
   if(!nume||!email||!parola){ err.textContent='Completeaza toate campurile!'; err.style.display='block'; return; }
   if(parola.length<6){ err.textContent='Parola trebuie sa aiba minim 6 caractere!'; err.style.display='block'; return; }
   try{
@@ -4069,7 +4202,7 @@ function actualizeazaUIClient(){
   if(clientCurent){
     bar.style.display = 'flex';
     document.getElementById('clientBarNume').textContent = clientCurent.displayName||clientCurent.email;
-    discountActiv = 10;
+    discountActiv = 5;
     if(ico) ico.textContent = '👤✓';
     if(lbl){ lbl.textContent = '10% OFF'; lbl.style.color = '#E8C97A'; }
     actualizeazaBadge();
@@ -4163,25 +4296,34 @@ auth.onAuthStateChanged(async user=>{
   } else {
     // E client normal
     clientCurent  = user;
-    discountActiv = 10;
+    discountActiv = 5;
     actualizeazaUIClient();
     inchideModal('modalClient');
-    afiseazaToast('Bine ai venit, '+(user.displayName||user.email)+'! 🎁 10% discount activ!', 4000);
+    afiseazaToast('Bine ai venit, '+(user.displayName||user.email)+'! 🎁 5% discount activ!', 4000);
     randeazaModalClient();
   }
 });
 
 /* ── INIT ────────────────────────────────── */
+function acceptaCookies(){
+  localStorage.setItem('cookiesAcceptate', '1');
+  document.getElementById('cookieBanner').classList.remove('viz');
+}
+
 document.addEventListener('DOMContentLoaded',function(){
   porniTimer();
   actualizeazaBadge();
   initEmailJS();
-  // Verifica sesiune admin salvata
   verificaSesiuneAdmin();
   mergi('acasa');
   semaneazaDateDemo();
+  // Arata cookie banner daca nu a acceptat
+  if(!localStorage.getItem('cookiesAcceptate')){
+    setTimeout(()=>document.getElementById('cookieBanner').classList.add('viz'), 1500);
+  }
 });
 
 </script>
 </body>
 </html>
+
