@@ -131,6 +131,7 @@ nav{
 .btn-contur{background:transparent;border:2px solid var(--v);color:var(--v)}.btn-contur:hover{background:var(--v);color:var(--w)}
 .btn-contur-aur{background:transparent;border:2px solid var(--g);color:var(--gl)}.btn-contur-aur:hover{background:var(--g);color:var(--vd)}
 .btn-pericol{background:#C0392B;color:#fff}.btn-pericol:hover{background:#922B21}
+.btn-success{background:#27AE60;color:#fff}.btn-success:hover{background:#1E8449}
 .btn-mic{padding:6px 13px;font-size:.68rem}
 .btn-xs{padding:4px 9px;font-size:.65rem}
 
@@ -987,8 +988,22 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
       <div id="itemeCos"></div>
       <div id="sumarulCos" style="display:none">
         <div class="sumar-cos">
+          <!-- Discount activ daca e logat -->
+          <div id="discountContBox" style="display:none" class="discount-info">
+            <span style="font-size:1.3rem">🎁</span>
+            <span id="discountContText">10% discount cont activ</span>
+          </div>
+          <!-- Voucher - in cos -->
+          <div style="margin-bottom:14px">
+            <p style="font-family:'Cinzel',serif;font-size:.8rem;color:var(--v);margin-bottom:7px">🏷️ Cod de reducere:</p>
+            <div class="voucher-row">
+              <input id="voucherInput" placeholder="Introdu codul de reducere…" onkeydown="if(event.key==='Enter')aplicaVoucher()">
+              <button class="btn btn-contur" onclick="aplicaVoucher()">Aplică</button>
+            </div>
+            <div class="voucher-ok" id="voucherOk"></div>
+          </div>
           <div class="total-cos-rand">
-            <span>Total comandă:</span>
+            <span>Total (cu transport estimat):</span>
             <span id="valoareTotal">0.00 Lei</span>
           </div>
           <div style="display:flex;gap:13px;flex-wrap:wrap">
@@ -1037,19 +1052,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
           <p style="font-size:.78rem;color:var(--tl);margin-top:5px">🎁 Transport GRATUIT la comenzi peste 200 Lei</p>
         </div>
       </div>
-      <div class="card-formular" style="margin-bottom:18px">
-        <p class="titlu-formular">🎁 Reduceri</p>
-        <div id="discountInfoBox" style="display:none" class="discount-info">
-          <span class="disc-icon">🎁</span>
-          <span id="discountInfoText">10% discount pentru cont activ</span>
-        </div>
-        <p style="font-family:'Cinzel',serif;font-size:.8rem;color:var(--v);margin-bottom:7px">Cod de reducere:</p>
-        <div class="voucher-row">
-          <input id="voucherInput" placeholder="Introdu codul de reducere…" onkeydown="if(event.key==='Enter')aplicaVoucher()">
-          <button class="btn btn-contur" onclick="aplicaVoucher()">Aplică</button>
-        </div>
-        <div class="voucher-ok" id="voucherOk"></div>
-      </div>
+
       <div class="card-formular" style="margin-bottom:18px">
         <p class="titlu-formular">🧾 Rezumat Comandă</p>
         <div id="rezumatComanda"></div>
@@ -1090,6 +1093,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
       <button class="nav-admin" id="nav-comenzi" onclick="incarcaSectiuena('comenzi')">📦 Comenzi</button>
       <button class="nav-admin" id="nav-produse" onclick="incarcaSectiuena('produse')">🕯️ Produse</button>
       <button class="nav-admin" id="nav-anunturi" onclick="incarcaSectiuena('anunturi')">📋 Anunțuri</button>
+      <button class="nav-admin" id="nav-vouchere" onclick="incarcaSectiuena('vouchere')">🏷️ Vouchere</button>
       <button class="nav-admin" id="nav-email" onclick="incarcaSectiuena('email')">✉️ Email Config</button>
       <div class="admin-sidebar-jos">
         <button class="btn btn-pericol btn-mic" style="width:100%;justify-content:center" onclick="faLogout()">🚪 Deconectare</button>
@@ -1160,6 +1164,19 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
     </div>
     <div class="modal-body" id="modalClientBody">
       <!-- se randeaza dinamic -->
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CALENDAR ORTODOX 2026 -->
+<div class="fundal-modal" id="modalCalendar" onclick="if(event.target===this)inchideModal('modalCalendar')" style="align-items:flex-start;padding:16px;overflow-y:auto">
+  <div class="modal" style="max-width:900px;max-height:none">
+    <div class="modal-header" style="position:sticky;top:0;z-index:10">
+      <h2>📅 Calendar Ortodox 2026</h2>
+      <button class="modal-inchide" onclick="inchideModal('modalCalendar')">✕</button>
+    </div>
+    <div class="modal-body" id="calendarBody" style="padding:16px">
+      <!-- randat dinamic -->
     </div>
   </div>
 </div>
@@ -2380,11 +2397,14 @@ async function incarcaAcasa(){
   if(sf.post)       badgesHTML+=`<span class="cal-post">✗ ${sf.post}</span>`;
   if(sf.dezlegare)  badgesHTML+=`<span class="cal-dezlegare">✓ ${sf.dezlegare}</span>`;
   document.getElementById('acasa-sfant').innerHTML=`
-    <div class="sfant-card-nou">
+    <div class="sfant-card-nou" onclick="deschideCalendar()" style="cursor:pointer" title="Click pentru calendar complet">
       <div class="sfant-data-azi">${dataStr}</div>
       <div class="sfant-titlu-azi">${sf.t}</div>
       <p class="sfant-desc-azi">${sf.d}</p>
       ${badgesHTML?`<div class="sfant-badges">${badgesHTML}</div>`:''}
+      <div style="margin-top:12px;font-size:.75rem;color:rgba(255,255,255,.6);font-family:'Cinzel',serif;letter-spacing:.5px">
+        📅 Click pentru Calendar Ortodox complet 2026
+      </div>
     </div>`;
 
   // Verset zilei
@@ -2663,19 +2683,39 @@ function redeazaCos(){
     </div>`;
   }).join('');
   elSumar.style.display='block';
-  const red = totalReductie();
-  const tc  = totalCos();
+  const red      = totalReductie();
+  const tc       = totalCos();
   const dupaDisc = red>0 ? tc*(1-red/100) : tc;
-  const trsp = tc>=TRANSPORT.gratuit_peste ? 0 : TRANSPORT.cost;
-  const totEl = document.getElementById('valoareTotal');
+  const trsp     = tc>=TRANSPORT.gratuit_peste ? 0 : TRANSPORT.cost;
+  const totFinal = dupaDisc + trsp;
+  const totEl    = document.getElementById('valoareTotal');
+
+  // Arata/ascunde box discount cont
+  const discContBox = document.getElementById('discountContBox');
+  if(discContBox){
+    if(discountActiv>0){
+      discContBox.style.display='flex';
+      let txt = `🎁 Reducere cont ${discountActiv}%`;
+      if(discountVoucher>0) txt += ` + voucher "${voucherAplicat}" ${discountVoucher}% = TOTAL ${red}%`;
+      document.getElementById('discountContText').textContent = txt;
+    } else if(discountVoucher>0){
+      discContBox.style.display='flex';
+      document.getElementById('discountContText').textContent = `🏷️ Voucher "${voucherAplicat}": -${discountVoucher}%`;
+    } else {
+      discContBox.style.display='none';
+    }
+  }
+
   let html = '';
   if(red>0){
-    html = `<span class="total-original">${tc.toFixed(2)}</span> <span class="total-redus">${dupaDisc.toFixed(2)} Lei</span>`;
-    html += ` + <span style="font-size:.82rem;color:var(--tl)">transport ${trsp===0?'Gratuit':trsp+' Lei'}</span>`;
-  }else{
-    html = `${(dupaDisc+trsp).toFixed(2)} Lei`;
-    if(tc<TRANSPORT.gratuit_peste) html += ` <span style="font-size:.78rem;color:var(--tl)">(incl. transport ${trsp} Lei)</span>`;
-    else html += ` <span style="font-size:.78rem;color:#2E7D32">(transport Gratuit)</span>`;
+    html = `<span class="total-original">${tc.toFixed(2)}</span> → <span class="total-redus">${dupaDisc.toFixed(2)} Lei</span>`;
+    html += ` + <span style="font-size:.82rem;color:var(--tl)">${trsp===0?'<span style="color:#2E7D32">transport Gratuit</span>':'transport '+trsp+' Lei'}</span>`;
+    html += ` = <strong style="color:var(--v)">${totFinal.toFixed(2)} Lei</strong>`;
+  } else {
+    html = `<strong>${totFinal.toFixed(2)} Lei</strong>`;
+    html += trsp===0
+      ? ` <span style="font-size:.78rem;color:#2E7D32">(transport Gratuit)</span>`
+      : ` <span style="font-size:.78rem;color:var(--tl)">(incl. transport ${trsp} Lei)</span>`;
   }
   totEl.innerHTML = html;
 }
@@ -2826,10 +2866,16 @@ async function trimiteComanda(){
 /* ══════════════════════════════════════════
    ADMIN
 ══════════════════════════════════════════ */
-function initAdmin(){
+async function initAdmin(){
   if(adminCurent){ arataPanou(); incarcaSectiuena('dashboard'); return; }
-  // Verifica sesiune salvata
-  if(verificaSesiuneAdmin()){ arataPanou(); incarcaSectiuena('dashboard'); return; }
+  // Asteapta Firebase sa se initializeze
+  const user = auth.currentUser;
+  if(user && await verificaRolAdmin(user)){
+    adminCurent = user;
+    arataPanou(); incarcaSectiuena('dashboard');
+    return;
+  }
+  if(await verificaSesiuneAdmin()){ arataPanou(); incarcaSectiuena('dashboard'); return; }
   aratLogin();
 }
 function aratLogin(){
@@ -2840,18 +2886,12 @@ function arataPanou(){
   document.getElementById('adminLogin').style.display='none';
   document.getElementById('adminPanel').style.display='flex';
 }
-// ── ADMIN AUTH (separat de clienti, bazat pe token local) ──────
-const ADMIN_CREDS = {
-  email:  'irimia.teodor.17@gmail.com',
-  // parola e verificata prin hash simplu - schimb-o tu la nevoie
-  // parola curenta: admin2025
-  hash: '9afb0958f1b006da07b12b45c24ac98a2da28d12' // SHA1 de "admin2025"
-};
+// ── ADMIN AUTH prin Firebase + rol în Firestore ─────────────────
+// Adminul se loghează cu Firebase Auth normal.
+// Diferența: în Firestore colecția 'admini' există documentul cu emailul său.
+// Clienții normali NU au document în 'admini'.
 
-async function sha1(str){
-  const buf = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
+const ADMIN_EMAIL = 'irimia.teodor.17@gmail.com';
 
 async function faLogin(){
   const email  = document.getElementById('aEmail').value.trim();
@@ -2859,34 +2899,58 @@ async function faLogin(){
   const btn    = document.getElementById('btnLogin');
   const err    = document.getElementById('eroareLogin');
   err.style.display='none';
-  btn.disabled=true; btn.textContent='Se verifica...';
-
-  // Verifica credentiale admin local (nu Firebase Auth)
-  const hash = await sha1(parola);
-  if(email === ADMIN_CREDS.email && hash === ADMIN_CREDS.hash){
-    adminCurent = {email, displayName:'Administrator'};
-    localStorage.setItem('adminSesiune', JSON.stringify({email, ts: Date.now()}));
-    arataPanou(); incarcaSectiuena('dashboard');
-  } else {
+  btn.disabled=true; btn.textContent='Se verifică...';
+  try{
+    const cred = await auth.signInWithEmailAndPassword(email, parola);
+    // Verifică dacă e admin
+    const esteAdmin = await verificaRolAdmin(cred.user);
+    if(esteAdmin){
+      adminCurent = cred.user;
+      localStorage.setItem('adminSesiune', JSON.stringify({uid: cred.user.uid, ts: Date.now()}));
+      arataPanou(); incarcaSectiuena('dashboard');
+    } else {
+      // E client normal, nu admin — deloghează din panoul admin
+      err.textContent = 'Acest cont nu are acces la panou. Folosiți butonul 👤 pentru cont client.';
+      err.style.display = 'block';
+      await auth.signOut();
+    }
+  }catch(e){
+    err.textContent = e.code==='auth/wrong-password'||e.code==='auth/user-not-found'
+      ? 'Email sau parolă incorectă.'
+      : 'Eroare: '+e.message;
     err.style.display='block';
-    err.textContent='Email sau parolă incorectă.';
   }
   btn.disabled=false; btn.textContent='Conectare';
 }
 
-function faLogout(){
-  adminCurent = null;
-  localStorage.removeItem('adminSesiune');
-  aratLogin();
-  afiseazaToast('Deconectat din admin.');
+async function verificaRolAdmin(user){
+  if(!user) return false;
+  // Verificare 1: email hardcodat (admin principal)
+  if(user.email === ADMIN_EMAIL) return true;
+  // Verificare 2: document în colecția 'admini' din Firestore
+  try{
+    const doc = await db.collection('admini').doc(user.uid).get();
+    return doc.exists;
+  }catch(e){ return false; }
 }
 
-function verificaSesiuneAdmin(){
+async function faLogout(){
+  adminCurent = null;
+  localStorage.removeItem('adminSesiune');
+  await auth.signOut();
+  aratLogin();
+}
+
+async function verificaSesiuneAdmin(){
   try{
     const s = JSON.parse(localStorage.getItem('adminSesiune')||'null');
-    if(s && s.email === ADMIN_CREDS.email && Date.now()-s.ts < 8*3600*1000){
-      adminCurent = {email: s.email, displayName:'Administrator'};
-      return true;
+    if(s && s.uid && Date.now()-s.ts < 8*3600*1000){
+      // Sesiune valida, verificam userul curent
+      const user = auth.currentUser;
+      if(user && await verificaRolAdmin(user)){
+        adminCurent = user;
+        return true;
+      }
     }
   }catch(e){}
   return false;
@@ -2905,6 +2969,7 @@ async function incarcaSectiuena(sec){
   if(sec==='comenzi')   await secComenzi(el);
   if(sec==='produse')   await secProduse(el);
   if(sec==='anunturi')  await secAnunturi(el);
+  if(sec==='vouchere')  await secVouchere(el);
   if(sec==='email')     await secEmail(el);
 }
 
@@ -2979,38 +3044,130 @@ async function veziComanda(id){
   el.innerHTML=`<div class="incarcare"><div class="rotitor"></div></div>`;
   const o=await fbGetUnul('comenzi',id);
   if(!o) return;
+
+  // Starea bifarii produselor (salvata in comanda)
+  const produseBifate = o.produseBifate || {};
+
+  const etape = [
+    {k:'noua',      lbl:'🆕 Noua',        desc:'Comanda primita'},
+    {k:'pregatire', lbl:'📦 Pregatire',    desc:'Se cauta produsele'},
+    {k:'procesata', lbl:'✅ Procesata',    desc:'Produse gasite, gata de ambalat'},
+    {k:'livrata',   lbl:'🚚 Livrata',      desc:'Trimisa catre client'},
+    {k:'anulata',   lbl:'❌ Anulata',      desc:'Comanda anulata'},
+  ];
+  const idxCurent = etape.findIndex(e=>e.k===o.status);
+
   el.innerHTML=`
     <div style="display:flex;align-items:center;gap:13px;margin-bottom:22px;flex-wrap:wrap">
       <button class="btn btn-contur btn-mic" onclick="incarcaSectiuena('comenzi')">← Inapoi</button>
       <h2 style="font-family:'Cinzel',serif;color:var(--v)">Comanda #${o.id.substring(0,8)}</h2>
-      <span class="insigna-status st-${o.status}">${o.status.toUpperCase()}</span>
     </div>
+
+    <!-- Etape vizuale -->
+    <div style="display:flex;gap:0;margin-bottom:24px;overflow-x:auto;padding:4px 0">
+      ${etape.filter(e=>e.k!=='anulata').map((e,i)=>{
+        const activ  = e.k===o.status;
+        const trecut = idxCurent>i && o.status!=='anulata';
+        const bg     = activ?'var(--v)':trecut?'#2E7D32':'var(--crd)';
+        const col    = (activ||trecut)?'#fff':'var(--tl)';
+        return `<div style="display:flex;align-items:center;gap:0">
+          <div onclick="schimbaStatusRapid('${o.id}','${e.k}')" style="padding:9px 14px;background:${bg};color:${col};cursor:pointer;border-radius:6px;font-family:'Cinzel',serif;font-size:.72rem;white-space:nowrap;transition:.2s" title="${e.desc}">
+            ${e.lbl}
+          </div>
+          ${i<3?'<div style="width:20px;height:2px;background:var(--crd)"></div>':''}
+        </div>`;
+      }).join('')}
+      <div onclick="schimbaStatusRapid('${o.id}','anulata')" style="padding:9px 14px;background:${o.status==='anulata'?'#C0392B':'var(--crd)'};color:${o.status==='anulata'?'#fff':'var(--tl)'};cursor:pointer;border-radius:6px;font-family:'Cinzel',serif;font-size:.72rem;margin-left:12px">
+        ❌ Anulata
+      </div>
+    </div>
+
     <div class="grid-detalii-comanda">
       <div class="cutie-info"><h4>Date Client</h4>
         <div class="rand-info"><span class="eticheta">Nume</span><span class="valoare">${o.name}</span></div>
-        <div class="rand-info"><span class="eticheta">Telefon</span><span class="valoare">${o.phone}</span></div>
+        <div class="rand-info"><span class="eticheta">Telefon</span><span class="valoare"><a href="tel:${o.phone}">${o.phone}</a></span></div>
         <div class="rand-info"><span class="eticheta">Email</span><span class="valoare">${o.email||'–'}</span></div>
       </div>
       <div class="cutie-info"><h4>Livrare</h4>
         <div class="rand-info"><span class="eticheta">Adresa</span><span class="valoare">${o.address}</span></div>
         <div class="rand-info"><span class="eticheta">Localitate</span><span class="valoare">${o.county||'–'}</span></div>
+        <div class="rand-info"><span class="eticheta">Transport</span><span class="valoare">${o.transport||'standard'}</span></div>
         <div class="rand-info"><span class="eticheta">Plata</span><span class="valoare">${o.payment||'ramburs'}</span></div>
+        ${o.discount&&o.discount!=='0%'?`<div class="rand-info"><span class="eticheta">Reducere</span><span class="valoare" style="color:#2E7D32">${o.discount}</span></div>`:''}
       </div>
     </div>
     ${o.notes?`<div class="cutie-info" style="margin-bottom:15px"><h4>Observatii</h4><p style="font-size:.9rem;color:var(--tm)">${o.notes}</p></div>`:''}
-    <div class="cutie-info" style="margin-bottom:18px"><h4>Produse Comandate</h4>
-      ${(o.items||[]).map(it=>`<div class="rand-info"><span class="eticheta">${it.nume||it.name} x${it.cantitate||it.qty}</span><span class="valoare">${((it.pret||it.price)*(it.cantitate||it.qty)).toFixed(2)} Lei</span></div>`).join('')}
-      <div class="rand-info" style="font-weight:700;font-size:1rem;border-top:2px solid var(--vp);padding-top:8px;margin-top:5px">
-        <span class="eticheta">TOTAL</span><span class="valoare" style="color:var(--v)">${o.total} Lei</span>
+
+    <!-- Lista produse cu bifari -->
+    <div class="cutie-info" style="margin-bottom:18px">
+      <h4 style="display:flex;justify-content:space-between;align-items:center">
+        Produse Comandate
+        <span style="font-size:.75rem;color:var(--tl);font-weight:400">✓ bifează produsele găsite</span>
+      </h4>
+      ${(o.items||[]).map((it,i)=>{
+        const bifat = produseBifate[i]===true;
+        const nm = it.nume||it.name||'Produs';
+        const qty = it.cantitate||it.qty||1;
+        const pr  = parseFloat(it.pret||it.price||0);
+        return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed var(--crd);cursor:pointer" onclick="bifezaProdus('${o.id}',${i},${bifat})">
+          <div style="width:28px;height:28px;border-radius:50%;border:2px solid ${bifat?'#2E7D32':'var(--crd)'};background:${bifat?'#2E7D32':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.2s">
+            ${bifat?'<span style="color:#fff;font-size:1rem">✓</span>':''}
+          </div>
+          <div style="flex:1">
+            <div style="font-family:'Cinzel',serif;font-size:.88rem;color:${bifat?'#2E7D32':'var(--v)'};${bifat?'text-decoration:line-through opacity:.7':''}">${nm}</div>
+            <div style="font-size:.8rem;color:var(--tl)">Cantitate: ${qty} buc.</div>
+          </div>
+          <strong style="color:var(--v)">${(pr*qty).toFixed(2)} Lei</strong>
+        </div>`;
+      }).join('')}
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-weight:700;font-size:1rem;border-top:2px solid var(--vp);margin-top:5px">
+        <span>TOTAL</span>
+        <span style="color:var(--v);font-size:1.1rem">${o.total} Lei</span>
       </div>
     </div>
+
+    <!-- Actiuni rapide -->
     <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:18px">
-      <select id="statusDetaliu" class="select-filter-anunturi">
-        ${['noua','procesata','livrata','anulata'].map(s=>`<option value="${s}"${o.status===s?' selected':''}>${s.toUpperCase()}</option>`).join('')}
-      </select>
-      <button class="btn btn-primar btn-mic" onclick="salveazaStatus('${o.id}')">Salveaza Status</button>
-      <button class="btn btn-pericol btn-mic" onclick="stergeComanda('${o.id}')">🗑️ Sterge Comanda</button>
+      <button class="btn btn-success btn-mic" onclick="marcheazaGataAmbalare('${o.id}')">📦 Gata de ambalat</button>
+      <button class="btn btn-primar btn-mic" onclick="marcheazaLivrata('${o.id}')">🚚 Marcheaza Livrata</button>
+      <button class="btn btn-pericol btn-mic" onclick="stergeComanda('${o.id}')">🗑️ Sterge</button>
     </div>`;
+}
+
+async function bifezaProdus(orderId, idx, eraFBifat){
+  try{
+    const o = await fbGetUnul('comenzi', orderId);
+    const bifate = o.produseBifate || {};
+    bifate[idx] = !eraFBifat;
+    await fbActualizeaza('comenzi', orderId, {produseBifate: bifate});
+    veziComanda(orderId); // reincarca
+  }catch(e){ afiseazaToast('Eroare la bifat: '+e.message); }
+}
+
+async function schimbaStatusRapid(id, status){
+  await fbActualizeaza('comenzi', id, {status});
+  try{
+    const o = await fbGetUnul('comenzi', id);
+    if(o) trimiteEmailStatusUpdate(o, status).catch(e=>console.warn(e));
+  }catch(e){}
+  afiseazaToast('✅ Status: '+status.toUpperCase());
+  veziComanda(id);
+}
+
+async function marcheazaGataAmbalare(id){
+  await fbActualizeaza('comenzi', id, {status:'procesata'});
+  afiseazaToast('📦 Comanda marcata ca procesata / gata de ambalat!');
+  veziComanda(id);
+}
+
+async function marcheazaLivrata(id){
+  await fbActualizeaza('comenzi', id, {status:'livrata'});
+  try{
+    const o = await fbGetUnul('comenzi', id);
+    if(o) trimiteEmailStatusUpdate(o, 'livrata').catch(e=>console.warn(e));
+  }catch(e){}
+  afiseazaToast('🚚 Comanda marcata ca livrata! Email trimis clientului.');
+  veziComanda(id);
 }
 async function salveazaStatus(id){
   const s=document.getElementById('statusDetaliu').value;
@@ -3504,6 +3661,231 @@ async function testeazaEmail(){
   }
 }
 
+/* ── SECTIUNEA VOUCHERE ADMIN ─────────────── */
+async function secVouchere(el){
+  const snap = await db.collection('vouchere').orderBy('creatLa','desc').get().catch(()=>({docs:[]}));
+  const lista = snap.docs.map(d=>({id:d.id,...d.data()}));
+
+  el.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:13px">
+      <h2 style="font-family:'Cinzel',serif;color:var(--v);font-size:1.35rem">🏷️ Vouchere de Reducere</h2>
+    </div>
+
+    <!-- Formular adauga voucher -->
+    <div class="formular-admin" style="margin-bottom:24px">
+      <p style="font-family:'Cinzel',serif;color:var(--v);margin-bottom:16px;font-size:.92rem">Adaugă Voucher Nou</p>
+      <div class="form-rand">
+        <div class="form-grup">
+          <label>Cod Voucher *</label>
+          <input id="vCod" placeholder="ex: PASTE2025" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()">
+        </div>
+        <div class="form-grup">
+          <label>Reducere (%) *</label>
+          <input id="vProcent" type="number" min="1" max="99" placeholder="ex: 15">
+        </div>
+      </div>
+      <div class="form-rand">
+        <div class="form-grup">
+          <label>Data Expirare (optional)</label>
+          <input id="vExpira" type="date">
+        </div>
+        <div class="form-grup">
+          <label>Descriere (optional)</label>
+          <input id="vDesc" placeholder="ex: Cod Paste 2025">
+        </div>
+      </div>
+      <div class="form-grup" style="display:flex;align-items:center;gap:9px">
+        <input type="checkbox" id="vActiv" checked>
+        <label for="vActiv" style="cursor:pointer">Voucher activ imediat</label>
+      </div>
+      <button class="btn btn-primar" onclick="adaugaVoucher()">➕ Adaugă Voucher</button>
+      <div id="voucherAdminResult" style="margin-top:12px"></div>
+    </div>
+
+    <!-- Lista vouchere -->
+    <h3 style="font-family:'Cinzel',serif;color:var(--v);margin-bottom:14px;font-size:1rem">Vouchere Existente (${lista.length})</h3>
+    ${!lista.length ? '<div class="gol"><div class="icon-gol">🏷️</div><h3>Niciun voucher</h3><p>Adaugă primul cod de reducere.</p></div>' :
+    `<table class="tabel-admin">
+      <thead><tr><th>Cod</th><th>Reducere</th><th>Expira</th><th>Status</th><th>Descriere</th><th>Actiuni</th></tr></thead>
+      <tbody>${lista.map(v=>{
+        const expirat = v.expira && new Date(v.expira) < new Date();
+        const stare = !v.activ ? 'Inactiv' : expirat ? 'Expirat' : 'Activ';
+        const stareCol = stare==='Activ'?'#2E7D32':stare==='Expirat'?'#E65100':'#C62828';
+        return `<tr>
+          <td><strong style="font-family:monospace;font-size:.95rem;color:var(--v)">${v.id}</strong></td>
+          <td><strong style="color:#2E7D32">-${v.procent}%</strong></td>
+          <td style="font-size:.82rem">${v.expira||'Fara exp.'}</td>
+          <td><span style="color:${stareCol};font-weight:700;font-size:.8rem">${stare}</span></td>
+          <td style="font-size:.82rem">${v.descriere||'–'}</td>
+          <td>
+            <div class="butoane-tabel">
+              <button class="btn btn-contur btn-xs" onclick="toggleVoucher('${v.id}',${v.activ!==false})" title="${v.activ!==false?'Dezactiveaza':'Activeaza'}">
+                ${v.activ!==false?'⏸️':'▶️'}
+              </button>
+              <button class="btn btn-pericol btn-xs" onclick="stergeVoucher('${v.id}')">🗑️</button>
+            </div>
+          </td>
+        </tr>`;
+      }).join('')}
+      </tbody>
+    </table>`}
+
+    <div class="email-setup-box" style="margin-top:20px">
+      <h4>ℹ️ Voucherele demo (in cod)</h4>
+      <p>Pe langa voucherele din Firestore, urmatoarele coduri functoneaza si offline:</p>
+      ${Object.entries(VOUCHERE).map(([k,v])=>`<code style="display:inline-block;margin:3px 4px;background:var(--cr);padding:3px 9px;border-radius:4px">${k}: -${v}%</code>`).join('')}
+    </div>`;
+}
+
+async function adaugaVoucher(){
+  const cod    = document.getElementById('vCod').value.trim().toUpperCase();
+  const proc   = parseInt(document.getElementById('vProcent').value);
+  const expira = document.getElementById('vExpira').value;
+  const desc   = document.getElementById('vDesc').value.trim();
+  const activ  = document.getElementById('vActiv').checked;
+  const rez    = document.getElementById('voucherAdminResult');
+
+  if(!cod||!proc||proc<1||proc>99){
+    rez.innerHTML='<div class="import-result err" style="display:block">⚠️ Cod si reducere sunt obligatorii (1-99%)!</div>';
+    return;
+  }
+  try{
+    await db.collection('vouchere').doc(cod).set({
+      procent: proc,
+      expira:  expira||null,
+      descriere: desc,
+      activ,
+      creatLa: TS(),
+    });
+    rez.innerHTML=`<div class="import-result ok" style="display:block">✅ Voucher "${cod}" (-${proc}%) adaugat cu succes!</div>`;
+    setTimeout(()=>incarcaSectiuena('vouchere'), 1500);
+  }catch(e){
+    rez.innerHTML=`<div class="import-result err" style="display:block">❌ Eroare: ${e.message}</div>`;
+  }
+}
+
+async function toggleVoucher(cod, eraActiv){
+  await db.collection('vouchere').doc(cod).update({activ: !eraActiv});
+  afiseazaToast(!eraActiv ? `✅ Voucher "${cod}" activat!` : `⏸️ Voucher "${cod}" dezactivat!`);
+  incarcaSectiuena('vouchere');
+}
+
+async function stergeVoucher(cod){
+  if(!confirm(`Stergi voucher-ul "${cod}"? Actiunea nu poate fi anulata.`)) return;
+  await db.collection('vouchere').doc(cod).delete();
+  afiseazaToast(`🗑️ Voucher "${cod}" sters!`);
+  incarcaSectiuena('vouchere');
+}
+
+/* ── CALENDAR COMPLET 2026 ──────────────────────
+   Tot anul cu sarbatori, sfinti, posturi
+────────────────────────────────────────────────── */
+function deschideCalendar(){
+  deschideModal('modalCalendar');
+  const body = document.getElementById('calendarBody');
+  if(body.innerHTML.trim()) return; // deja randat
+  body.innerHTML = '<div class="incarcare"><div class="rotitor"></div> Se construieste calendarul...</div>';
+  setTimeout(()=>{ body.innerHTML = construiesteCalendar2026(); }, 50);
+}
+
+function construiesteCalendar2026(){
+  const luni = ['Ianuarie','Februarie','Martie','Aprilie','Mai','Iunie',
+                'Iulie','August','Septembrie','Octombrie','Noiembrie','Decembrie'];
+  const ziSapt = ['Du','Lu','Ma','Mi','Jo','Vi','Sa'];
+  let html = '';
+
+  for(let luna=0; luna<12; luna++){
+    const primaPagina = new Date(2026, luna, 1);
+    const zileleLunii = new Date(2026, luna+1, 0).getDate();
+    const startZi     = primaPagina.getDay(); // 0=Dum
+
+    html += `<div style="margin-bottom:28px">
+      <h3 style="font-family:'Cinzel',serif;color:var(--v);font-size:1.1rem;
+                 border-bottom:2px solid var(--g);padding-bottom:8px;margin-bottom:12px;
+                 display:flex;align-items:center;gap:8px">
+        <span style="background:var(--v);color:var(--g);padding:3px 10px;border-radius:5px;font-size:.85rem">${luna+1}</span>
+        ${luni[luna]} 2026
+      </h3>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px">`;
+
+    // Header zile saptamana
+    ziSapt.forEach((z,i)=>{
+      const col = i===0?'var(--v)':i===6?'#1565C0':'var(--tl)';
+      html += `<div style="text-align:center;font-family:'Cinzel',serif;font-size:.65rem;
+                color:${col};padding:5px;font-weight:700">${z}</div>`;
+    });
+
+    // Celule goale inainte de prima zi
+    for(let i=0; i<startZi; i++){
+      html += `<div></div>`;
+    }
+
+    // Zilele lunii
+    for(let zi=1; zi<=zileleLunii; zi++){
+      const data = new Date(2026, luna, zi);
+      const ziuaSapt = data.getDay();
+      const cheie = String(luna+1).padStart(2,'0') + String(zi).padStart(2,'0');
+      const sf = CAL[cheie];
+      const eDuminica = ziuaSapt === 0;
+      const eSambata  = ziuaSapt === 6;
+      const ePraznic  = sf && sf.praznic;
+      const ePost     = sf && sf.post;
+
+      let bg    = '#fff';
+      let border= '1px solid var(--crd)';
+      let colZi = eDuminica?'var(--v)':eSambata?'#1565C0':'var(--td)';
+      if(ePraznic){ bg='rgba(201,168,76,.15)'; border='1.5px solid var(--g)'; }
+      if(ePost)   { bg='rgba(192,57,43,.07)';  border='1.5px solid #E74C3C'; }
+
+      const sfNume = sf ? sf.t.split(';')[0].trim() : '';
+      const scurtNume = sfNume.length>28 ? sfNume.substring(0,26)+'…' : sfNume;
+
+      html += `<div onclick="deschideZiCalendar('${cheie}','${zi} ${luni[luna]}')"
+        style="background:${bg};border:${border};border-radius:5px;padding:5px;
+               min-height:58px;cursor:pointer;transition:.2s;font-size:.72rem;
+               position:relative;overflow:hidden"
+        title="${sfNume}"
+        onmouseover="this.style.boxShadow='0 2px 8px var(--sh)'"
+        onmouseout="this.style.boxShadow=''">
+        <div style="font-family:'Cinzel',serif;font-size:.82rem;font-weight:700;
+                    color:${colZi};margin-bottom:3px">${zi}</div>
+        ${ePraznic?'<div style="font-size:.58rem;color:var(--g);font-weight:700">✝ PRAZNIC</div>':''}
+        ${ePost?`<div style="font-size:.58rem;color:#C0392B;font-weight:700">✗ Post</div>`:''}
+        <div style="font-size:.6rem;color:var(--tl);line-height:1.3">${scurtNume}</div>
+        ${sf&&sf.dezlegare?`<div style="font-size:.55rem;color:#2E7D32;position:absolute;bottom:3px;right:3px">🐟</div>`:''}
+      </div>`;
+    }
+    html += '</div></div>';
+  }
+
+  // Legenda
+  html += `<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;
+                        padding:12px;background:var(--cr);border-radius:9px;
+                        font-size:.78rem;font-family:'Lato',sans-serif">
+    <span><span style="display:inline-block;width:12px;height:12px;background:rgba(201,168,76,.15);
+           border:1.5px solid var(--g);border-radius:2px;margin-right:4px"></span>Praznic</span>
+    <span><span style="display:inline-block;width:12px;height:12px;background:rgba(192,57,43,.07);
+           border:1.5px solid #E74C3C;border-radius:2px;margin-right:4px"></span>Post</span>
+    <span>🐟 Dezlegare la pește</span>
+    <span style="color:var(--v)">■ Duminică</span>
+    <span style="color:#1565C0">■ Sâmbătă</span>
+  </div>`;
+
+  return html;
+}
+
+function deschideZiCalendar(cheie, dataStr){
+  const sf = CAL[cheie];
+  if(!sf) return;
+  let info = `<strong>${dataStr}</strong><br><br>`;
+  info += `<strong style="color:var(--v)">${sf.t}</strong><br><br>`;
+  info += sf.d + '<br>';
+  if(sf.praznic)    info += '<br><span style="color:var(--g)">✝ Praznic împărătesc</span>';
+  if(sf.post)       info += `<br><span style="color:#C0392B">✗ ${sf.post}</span>`;
+  if(sf.dezlegare)  info += `<br><span style="color:#2E7D32">✓ ${sf.dezlegare}</span>`;
+  afiseazaToast(sf.t.split(';')[0], 4000);
+}
+
 /* ── SEED DATE DEMO ──────────────────────── */
 async function semaneazaDateDemo(){
   try{
@@ -3700,45 +4082,93 @@ function actualizeazaUIClient(){
 }
 
 /* ── VOUCHER ─────────────────────────────── */
-function aplicaVoucher(){
-  const cod = (document.getElementById('voucherInput')?.value||'').trim().toUpperCase();
+async function aplicaVoucher(){
+  const cod  = (document.getElementById('voucherInput')?.value||'').trim().toUpperCase();
   const okEl = document.getElementById('voucherOk');
   if(!cod){ afiseazaToast('Introdu un cod de reducere!'); return; }
-  const proc = VOUCHERE[cod];
-  if(!proc){
-    okEl.style.background='#FFEBEE'; okEl.style.borderColor='#EF9A9A'; okEl.style.color='#C62828';
-    okEl.textContent = 'Cod invalid sau expirat.';
-    okEl.classList.add('viz');
-    setTimeout(()=>okEl.classList.remove('viz'),3000);
-    return;
+
+  okEl.style.cssText='background:#FFF9C4;border:1.5px solid #F9A825;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#E65100;display:block;margin-bottom:12px';
+  okEl.textContent = '⏳ Se verifică codul...';
+
+  try{
+    // Verifica in Firestore
+    const snap = await db.collection('vouchere').doc(cod).get();
+    if(snap.exists){
+      const v = snap.data();
+      const activ = v.activ !== false; // default activ
+      const expirat = v.expira && new Date(v.expira) < new Date();
+      if(!activ||expirat){
+        okEl.style.cssText='background:#FFEBEE;border:1.5px solid #EF9A9A;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#C62828;display:block;margin-bottom:12px';
+        okEl.textContent = '❌ Codul este expirat sau inactiv.';
+        return;
+      }
+      discountVoucher = v.procent||0;
+      voucherAplicat  = cod;
+      okEl.style.cssText='background:#E8F5E9;border:1.5px solid #81C784;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#2E7D32;display:block;margin-bottom:12px';
+      okEl.textContent = `✅ Cod "${cod}" aplicat! -${discountVoucher}% reducere.`;
+      afiseazaToast(`🎉 Voucher aplicat! -${discountVoucher}%`);
+      redeazaCos();
+    } else {
+      // Fallback: verifica si in obiectul local (vouchere demo)
+      const proc = VOUCHERE[cod];
+      if(proc){
+        discountVoucher = proc;
+        voucherAplicat  = cod;
+        okEl.style.cssText='background:#E8F5E9;border:1.5px solid #81C784;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#2E7D32;display:block;margin-bottom:12px';
+        okEl.textContent = `✅ Cod "${cod}" aplicat! -${proc}% reducere.`;
+        afiseazaToast(`🎉 Voucher aplicat! -${proc}%`);
+        redeazaCos();
+      } else {
+        okEl.style.cssText='background:#FFEBEE;border:1.5px solid #EF9A9A;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#C62828;display:block;margin-bottom:12px';
+        okEl.textContent = '❌ Cod invalid sau inexistent.';
+      }
+    }
+  }catch(e){
+    console.warn('Voucher check error:', e);
+    // Fallback offline
+    const proc = VOUCHERE[cod];
+    if(proc){
+      discountVoucher=proc; voucherAplicat=cod;
+      okEl.style.cssText='background:#E8F5E9;border:1.5px solid #81C784;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#2E7D32;display:block;margin-bottom:12px';
+      okEl.textContent=`✅ Cod "${cod}" aplicat! -${proc}%`;
+      redeazaCos();
+    } else {
+      okEl.style.cssText='background:#FFEBEE;border:1.5px solid #EF9A9A;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#C62828;display:block;margin-bottom:12px';
+      okEl.textContent='❌ Eroare verificare cod.';
+    }
   }
-  discountVoucher = proc;
-  voucherAplicat  = cod;
-  okEl.style.background='#E8F5E9'; okEl.style.borderColor='#81C784'; okEl.style.color='#2E7D32';
-  okEl.textContent = '✅ Cod "'+cod+'" aplicat! -'+proc+'% reducere la comanda.';
-  okEl.classList.add('viz');
-  afiseazaToast('🎉 Voucher aplicat! -'+proc+'%');
-  // Actualizeaza rezumatul
-  if(document.getElementById('rezumatComanda').innerHTML) arataComanada();
 }
 
 /* ── AUTH LISTENER ───────────────────────── */
-// Firebase Auth e DOAR pentru clienti
-auth.onAuthStateChanged(user=>{
+// Firebase Auth - separa admin de client
+auth.onAuthStateChanged(async user=>{
   if(!user){
-    clientCurent  = null;
-    discountActiv = 0;
-    actualizeazaUIClient();
+    // Delogat total
+    if(!adminCurent){ // nu reseta admin daca adminul tocmai s-a logat
+      clientCurent  = null;
+      discountActiv = 0;
+      actualizeazaUIClient();
+    }
     return;
   }
-  // Oricine se logheza prin Firebase Auth e CLIENT, nu admin
-  // Adminul are sistem separat (verificaSesiuneAdmin)
-  clientCurent  = user;
-  discountActiv = 10;
-  actualizeazaUIClient();
-  inchideModal('modalClient');
-  afiseazaToast('Bine ai venit, '+(user.displayName||user.email)+'! 🎁 10% discount activ!', 4000);
-  randeazaModalClient();
+  // Verifica daca e admin
+  const eAdmin = await verificaRolAdmin(user);
+  if(eAdmin){
+    // E admin - nu il tratam ca si client
+    adminCurent = user;
+    // Daca pagina admin e activa, arata panoul
+    if(document.getElementById('pagina-admin').classList.contains('activa')){
+      arataPanou(); incarcaSectiuena('dashboard');
+    }
+  } else {
+    // E client normal
+    clientCurent  = user;
+    discountActiv = 10;
+    actualizeazaUIClient();
+    inchideModal('modalClient');
+    afiseazaToast('Bine ai venit, '+(user.displayName||user.email)+'! 🎁 10% discount activ!', 4000);
+    randeazaModalClient();
+  }
 });
 
 /* ── INIT ────────────────────────────────── */
