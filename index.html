@@ -360,6 +360,17 @@ nav{
   max-width:700px;width:100%;max-height:92vh;overflow-y:auto;
   box-shadow:0 28px 75px rgba(0,0,0,.44);
 }
+/* Calendar are scroll propriu */
+#modalCalendar .modal-cal-inner{
+  background:var(--w);border-radius:14px;
+  max-width:960px;width:100%;
+  box-shadow:0 28px 75px rgba(0,0,0,.44);
+  max-height:none;overflow-y:visible;
+}
+#modalCalendar{
+  overflow-y:auto;
+  align-items:flex-start;
+}
 .modal-header{
   background:var(--v);color:var(--w);
   padding:22px 28px;border-radius:14px 14px 0 0;position:relative;
@@ -1202,14 +1213,14 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
 </div>
 
 <!-- MODAL CALENDAR ORTODOX 2026 -->
-<div class="fundal-modal" id="modalCalendar" onclick="if(event.target===this)inchideModal('modalCalendar')" style="align-items:flex-start;padding:10px;overflow-y:auto">
-  <div style="background:var(--w);border-radius:14px;max-width:960px;width:100%;box-shadow:0 28px 75px rgba(0,0,0,.44);position:relative">
-    <div class="modal-header" style="position:sticky;top:0;z-index:10;border-radius:14px 14px 0 0;display:flex;align-items:center;justify-content:space-between">
-      <h2 style="font-family:'Cinzel',serif;font-size:1.1rem;color:#fff">📅 Calendar Ortodox 2026</h2>
-      <button class="modal-inchide" onclick="inchideModal('modalCalendar')" style="position:static;font-size:1.5rem;color:var(--gl)">✕</button>
+<div id="modalCalendar" style="display:none;position:fixed;inset:0;background:rgba(74,15,28,.7);z-index:2000;overflow-y:auto;padding:10px" onclick="if(event.target===this)inchideModal('modalCalendar')">
+  <div style="background:var(--w);border-radius:14px;max-width:980px;width:100%;margin:0 auto;box-shadow:0 28px 75px rgba(0,0,0,.5)">
+    <div style="background:var(--v);padding:20px 26px;border-radius:14px 14px 0 0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5">
+      <h2 style="font-family:'Cinzel',serif;font-size:1.1rem;color:#fff;margin:0">📅 Calendar Ortodox 2026 — toate lunile</h2>
+      <button onclick="inchideModal('modalCalendar')" style="background:none;border:none;color:var(--gl);font-size:1.6rem;cursor:pointer;padding:0;line-height:1">✕</button>
     </div>
     <div id="calendarBody" style="padding:20px">
-      <!-- randat dinamic -->
+      <div style="text-align:center;padding:40px;color:var(--tl)"><div style="font-size:2rem">📅</div><p>Se incarca calendarul...</p></div>
     </div>
   </div>
 </div>
@@ -2457,7 +2468,16 @@ function formateazaData(ts){
 
 /* ── MODAL ───────────────────────────────── */
 function deschideModal(id){ document.getElementById(id).classList.add('vizibil'); }
-function inchideModal(id){ document.getElementById(id).classList.remove('vizibil'); }
+function inchideModal(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  if(id==='modalCalendar'){
+    el.style.display='none';
+    document.body.style.overflow='';
+    return;
+  }
+  el.classList.remove('vizibil');
+}
 
 /* ── LIGHTBOX ────────────────────────────── */
 function deschideLightbox(imgs,startIdx){
@@ -3258,6 +3278,7 @@ async function veziComanda(id){
     <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:18px">
       <button class="btn btn-success btn-mic" onclick="marcheazaGataAmbalare('${o.id}')">📦 Gata de ambalat</button>
       <button class="btn btn-primar btn-mic" onclick="marcheazaLivrata('${o.id}')">🚚 Marcheaza Livrata</button>
+      ${o.email?`<button class="btn btn-contur btn-mic" onclick="trimitEmailManual('${o.id}')">✉️ Trimite Email Client</button>`:''}
       <button class="btn btn-pericol btn-mic" onclick="stergeComanda('${o.id}')">🗑️ Sterge</button>
     </div>`;
 }
@@ -3276,15 +3297,29 @@ async function schimbaStatusRapid(id, status){
   await fbActualizeaza('comenzi', id, {status});
   try{
     const o = await fbGetUnul('comenzi', id);
-    if(o) trimiteEmailStatusUpdate(o, status).catch(e=>console.warn(e));
-  }catch(e){}
-  afiseazaToast('✅ Status: '+status.toUpperCase());
+    if(o){
+      if(o.email && ['procesata','livrata','anulata'].includes(status)){
+        await trimiteEmailStatusUpdate(o, status);
+        afiseazaToast('✅ Status '+status.toUpperCase()+' + email trimis la '+o.email);
+      } else {
+        afiseazaToast('✅ Status: '+status.toUpperCase());
+      }
+    }
+  }catch(e){ afiseazaToast('✅ Status: '+status.toUpperCase()); }
   veziComanda(id);
 }
 
 async function marcheazaGataAmbalare(id){
   await fbActualizeaza('comenzi', id, {status:'procesata'});
-  afiseazaToast('📦 Comanda marcata ca procesata / gata de ambalat!');
+  try{
+    const o = await fbGetUnul('comenzi', id);
+    if(o && o.email) {
+      await trimiteEmailStatusUpdate(o, 'procesata');
+      afiseazaToast('📦 Gata de ambalat! Email trimis la '+o.email);
+    } else {
+      afiseazaToast('📦 Comanda marcata ca procesata!');
+    }
+  }catch(e){ afiseazaToast('📦 Comanda marcata ca procesata!'); }
   veziComanda(id);
 }
 
@@ -3292,20 +3327,27 @@ async function marcheazaLivrata(id){
   await fbActualizeaza('comenzi', id, {status:'livrata'});
   try{
     const o = await fbGetUnul('comenzi', id);
-    if(o) trimiteEmailStatusUpdate(o, 'livrata').catch(e=>console.warn(e));
-  }catch(e){}
-  afiseazaToast('🚚 Comanda marcata ca livrata! Email trimis clientului.');
+    if(o && o.email) {
+      await trimiteEmailStatusUpdate(o, 'livrata');
+      afiseazaToast('🚚 Livrata! Email trimis la '+o.email);
+    } else {
+      afiseazaToast('🚚 Comanda marcata ca livrata!');
+    }
+  }catch(e){ afiseazaToast('🚚 Comanda marcata ca livrata!'); }
   veziComanda(id);
 }
 async function salveazaStatus(id){
   const s=document.getElementById('statusDetaliu').value;
   await fbActualizeaza('comenzi',id,{status:s});
-  afiseazaToast('✅ Status actualizat!');
-  // Trimite email la client
   try{
     const o = await fbGetUnul('comenzi',id);
-    if(o) trimiteEmailStatusUpdate(o, s);
-  }catch(e){ console.warn('Email status err:',e); }
+    if(o && o.email && ['procesata','livrata','anulata'].includes(s)){
+      await trimiteEmailStatusUpdate(o, s);
+      afiseazaToast('✅ Status '+s.toUpperCase()+' + email trimis la '+o.email+'!');
+    } else {
+      afiseazaToast('✅ Status '+s.toUpperCase()+' salvat!');
+    }
+  }catch(e){ afiseazaToast('✅ Status actualizat!'); }
 }
 async function schimbaStatus(id,status){
   await fbActualizeaza('comenzi',id,{status});
@@ -3316,6 +3358,16 @@ async function schimbaStatus(id,status){
     if(o) trimiteEmailStatusUpdate(o, status);
   }catch(e){ console.warn('Email status err:',e); }
 }
+async function trimitEmailManual(id){
+  try{
+    const o = await fbGetUnul('comenzi', id);
+    if(!o){ afiseazaToast('Comanda nu a fost gasita.'); return; }
+    if(!o.email){ afiseazaToast('Comanda nu are email de contact!'); return; }
+    await trimiteEmailClient(o, o.status ? o.status.toUpperCase() : 'NOUA');
+    afiseazaToast('✉️ Email trimis la '+o.email+'!', 4000);
+  }catch(e){ afiseazaToast('❌ Eroare email: '+e.message); }
+}
+
 async function stergeComanda(id){
   if(!confirm('Esti sigur ca vrei sa stergi aceasta comanda?')) return;
   await fbSterge('comenzi',id);
@@ -3791,21 +3843,29 @@ async function testeazaEmail(){
 
 /* ── SECTIUNEA VOUCHERE ADMIN ─────────────── */
 async function secVouchere(el){
-  const snap = await db.collection('vouchere').orderBy('creatLa','desc').get().catch(()=>({docs:[]}));
-  const lista = snap.docs.map(d=>({id:d.id,...d.data()}));
+  // Citeste din localStorage (merge mereu) + Firestore (optional)
+  const locale = getVouchereLocale();
+  let lista = Object.entries(locale).map(([id,v])=>({id,...v}));
+
+  try{
+    const snap = await db.collection('vouchere').orderBy('creatLa','desc').get();
+    const fsIds = new Set(snap.docs.map(d=>d.id));
+    const fsLista = snap.docs.map(d=>({id:d.id,...d.data()}));
+    const numaiLocale = lista.filter(v=>!fsIds.has(v.id));
+    lista = [...fsLista, ...numaiLocale];
+  }catch(e){ /* folosim doar localStorage */ }
 
   el.innerHTML=`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:13px">
       <h2 style="font-family:'Cinzel',serif;color:var(--v);font-size:1.35rem">🏷️ Vouchere de Reducere</h2>
     </div>
 
-    <!-- Formular adauga voucher -->
     <div class="formular-admin" style="margin-bottom:24px">
       <p style="font-family:'Cinzel',serif;color:var(--v);margin-bottom:16px;font-size:.92rem">Adaugă Voucher Nou</p>
       <div class="form-rand">
         <div class="form-grup">
           <label>Cod Voucher *</label>
-          <input id="vCod" placeholder="ex: PASTE2025" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()">
+          <input id="vCod" placeholder="ex: PASTE2025" oninput="this.value=this.value.toUpperCase()">
         </div>
         <div class="form-grup">
           <label>Reducere (%) *</label>
@@ -3830,39 +3890,46 @@ async function secVouchere(el){
       <div id="voucherAdminResult" style="margin-top:12px"></div>
     </div>
 
-    <!-- Lista vouchere -->
-    <h3 style="font-family:'Cinzel',serif;color:var(--v);margin-bottom:14px;font-size:1rem">Vouchere Existente (${lista.length})</h3>
-    ${!lista.length ? '<div class="gol"><div class="icon-gol">🏷️</div><h3>Niciun voucher</h3><p>Adaugă primul cod de reducere.</p></div>' :
-    `<table class="tabel-admin">
-      <thead><tr><th>Cod</th><th>Reducere</th><th>Expira</th><th>Status</th><th>Descriere</th><th>Actiuni</th></tr></thead>
-      <tbody>${lista.map(v=>{
-        const expirat = v.expira && new Date(v.expira) < new Date();
-        const stare = !v.activ ? 'Inactiv' : expirat ? 'Expirat' : 'Activ';
-        const stareCol = stare==='Activ'?'#2E7D32':stare==='Expirat'?'#E65100':'#C62828';
-        return `<tr>
-          <td><strong style="font-family:monospace;font-size:.95rem;color:var(--v)">${v.id}</strong></td>
-          <td><strong style="color:#2E7D32">-${v.procent}%</strong></td>
-          <td style="font-size:.82rem">${v.expira||'Fara exp.'}</td>
-          <td><span style="color:${stareCol};font-weight:700;font-size:.8rem">${stare}</span></td>
-          <td style="font-size:.82rem">${v.descriere||'–'}</td>
-          <td>
-            <div class="butoane-tabel">
-              <button class="btn btn-contur btn-xs" onclick="toggleVoucher('${v.id}',${v.activ!==false})" title="${v.activ!==false?'Dezactiveaza':'Activeaza'}">
-                ${v.activ!==false?'⏸️':'▶️'}
-              </button>
-              <button class="btn btn-pericol btn-xs" onclick="stergeVoucher('${v.id}')">🗑️</button>
-            </div>
-          </td>
-        </tr>`;
-      }).join('')}
-      </tbody>
-    </table>`}
+    <h3 style="font-family:'Cinzel',serif;color:var(--v);margin-bottom:14px;font-size:1rem">Vouchere Active (${lista.length})</h3>
+    ${!lista.length
+      ? '<div class="gol"><div class="icon-gol">🏷️</div><h3>Niciun voucher</h3><p>Adaugă primul cod de reducere mai sus.</p></div>'
+      : `<table class="tabel-admin">
+          <thead><tr><th>Cod</th><th>Reducere</th><th>Expira</th><th>Status</th><th>Descriere</th><th>Actiuni</th></tr></thead>
+          <tbody>${lista.map(v=>{
+            const expirat = v.expira && new Date(v.expira) < new Date();
+            const stare = !v.activ ? 'Inactiv' : expirat ? 'Expirat' : 'Activ';
+            const col = stare==='Activ'?'#2E7D32':stare==='Expirat'?'#E65100':'#C62828';
+            return `<tr>
+              <td><strong style="font-family:monospace;color:var(--v)">${v.id}</strong></td>
+              <td><strong style="color:#2E7D32">-${v.procent}%</strong></td>
+              <td style="font-size:.82rem">${v.expira||'Fara'}</td>
+              <td><span style="color:${col};font-weight:700;font-size:.8rem">${stare}</span></td>
+              <td style="font-size:.82rem">${v.descriere||'–'}</td>
+              <td><div class="butoane-tabel">
+                <button class="btn btn-contur btn-xs" onclick="toggleVoucher('${v.id}',${v.activ!==false})">${v.activ!==false?'⏸️':'▶️'}</button>
+                <button class="btn btn-pericol btn-xs" onclick="stergeVoucher('${v.id}')">🗑️</button>
+              </div></td>
+            </tr>`;
+          }).join('')}
+          </tbody>
+        </table>`
+    }
 
     <div class="email-setup-box" style="margin-top:20px">
-      <h4>ℹ️ Cum funcționează voucherele</h4>
-      <p>Adaugă coduri de reducere mai sus. Clienții le introduc în coș înainte de finalizare.<br>
-      Voucherele se combină cu discountul de cont (5%) — totalul nu depășește 50%.</p>
+      <h4>ℹ️ Cum funcționează</h4>
+      <p>Voucherele se salvează local în browser (merg imediat) și opțional în Firestore (dacă regulile permit).<br>
+      Clienții introduc codul în coș și primesc reducerea specificată, cumulată cu discountul de cont (5%).</p>
     </div>`;
+}
+
+
+/* ── VOUCHERE localStorage helpers ── */
+function getVouchereLocale(){
+  try{ return JSON.parse(localStorage.getItem('parohiaVouchere')||'{}'); }
+  catch(e){ return {}; }
+}
+function salveazaVouchereLocale(obj){
+  localStorage.setItem('parohiaVouchere', JSON.stringify(obj));
 }
 
 async function adaugaVoucher(){
@@ -3877,30 +3944,38 @@ async function adaugaVoucher(){
     rez.innerHTML='<div class="import-result err" style="display:block">⚠️ Cod si reducere sunt obligatorii (1-99%)!</div>';
     return;
   }
+  const vData = { procent:proc, expira:expira||null, descriere:desc, activ, creatLa: new Date().toISOString() };
+
+  // Salveaza local IMEDIAT (functioneaza fara Firestore Rules)
+  const locale = getVouchereLocale();
+  locale[cod] = vData;
+  salveazaVouchereLocale(locale);
+
+  // Incearca si in Firestore (optional, nu blocheaza)
   try{
-    await db.collection('vouchere').doc(cod).set({
-      procent: proc,
-      expira:  expira||null,
-      descriere: desc,
-      activ,
-      creatLa: TS(),
-    });
-    rez.innerHTML=`<div class="import-result ok" style="display:block">✅ Voucher "${cod}" (-${proc}%) adaugat cu succes!</div>`;
-    setTimeout(()=>incarcaSectiuena('vouchere'), 1500);
+    await db.collection('vouchere').doc(cod).set({...vData, creatLa: TS()});
+    rez.innerHTML=`<div class="import-result ok" style="display:block">✅ Voucher "${cod}" (-${proc}%) salvat in Firestore si local!</div>`;
   }catch(e){
-    rez.innerHTML=`<div class="import-result err" style="display:block">❌ Eroare: ${e.message}</div>`;
+    rez.innerHTML=`<div class="import-result ok" style="display:block">✅ Voucher "${cod}" (-${proc}%) salvat local! (Firestore: ${e.code||e.message})</div>`;
   }
+  setTimeout(()=>incarcaSectiuena('vouchere'), 1800);
 }
 
 async function toggleVoucher(cod, eraActiv){
-  await db.collection('vouchere').doc(cod).update({activ: !eraActiv});
+  const locale = getVouchereLocale();
+  if(locale[cod]) locale[cod].activ = !eraActiv;
+  salveazaVouchereLocale(locale);
+  try{ await db.collection('vouchere').doc(cod).update({activ: !eraActiv}); }catch(e){}
   afiseazaToast(!eraActiv ? `✅ Voucher "${cod}" activat!` : `⏸️ Voucher "${cod}" dezactivat!`);
   incarcaSectiuena('vouchere');
 }
 
 async function stergeVoucher(cod){
-  if(!confirm(`Stergi voucher-ul "${cod}"? Actiunea nu poate fi anulata.`)) return;
-  await db.collection('vouchere').doc(cod).delete();
+  if(!confirm(`Stergi voucher-ul "${cod}"?`)) return;
+  const locale = getVouchereLocale();
+  delete locale[cod];
+  salveazaVouchereLocale(locale);
+  try{ await db.collection('vouchere').doc(cod).delete(); }catch(e){}
   afiseazaToast(`🗑️ Voucher "${cod}" sters!`);
   incarcaSectiuena('vouchere');
 }
@@ -3909,11 +3984,18 @@ async function stergeVoucher(cod){
    Tot anul cu sarbatori, sfinti, posturi
 ────────────────────────────────────────────────── */
 function deschideCalendar(){
-  deschideModal('modalCalendar');
+  const modal = document.getElementById('modalCalendar');
+  if(!modal) return;
+  modal.style.display = 'block';
+  document.body.style.overflow = 'hidden';
   const body = document.getElementById('calendarBody');
-  if(body.innerHTML.trim()) return; // deja randat
-  body.innerHTML = '<div class="incarcare"><div class="rotitor"></div> Se construieste calendarul...</div>';
-  setTimeout(()=>{ body.innerHTML = construiesteCalendar2026(); }, 50);
+  // Randeaza doar daca nu e deja randat
+  if(body.dataset.randat === '1') return;
+  body.innerHTML = '<div style="text-align:center;padding:40px"><div style="font-size:2rem">⏳</div><p style="color:var(--tl)">Se construieste calendarul...</p></div>';
+  setTimeout(()=>{
+    body.innerHTML = construiesteCalendar2026();
+    body.dataset.randat = '1';
+  }, 80);
 }
 
 function construiesteCalendar2026(){
@@ -4075,7 +4157,9 @@ function totalFaraTrsp(){
 
 /* ── CLIENT MODAL ────────────────────────── */
 function deschideModal(id){
-  document.getElementById(id).classList.add('vizibil');
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.classList.add('vizibil');
   if(id==='modalClient') randeazaModalClient();
 }
 
@@ -4204,7 +4288,7 @@ function actualizeazaUIClient(){
     document.getElementById('clientBarNume').textContent = clientCurent.displayName||clientCurent.email;
     discountActiv = 5;
     if(ico) ico.textContent = '👤✓';
-    if(lbl){ lbl.textContent = '10% OFF'; lbl.style.color = '#E8C97A'; }
+    if(lbl){ lbl.textContent = '5% OFF'; lbl.style.color = '#E8C97A'; }
     actualizeazaBadge();
   } else {
     bar.style.display = 'none';
@@ -4223,52 +4307,34 @@ async function aplicaVoucher(){
   okEl.style.cssText='background:#FFF9C4;border:1.5px solid #F9A825;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#E65100;display:block;margin-bottom:12px';
   okEl.textContent = '⏳ Se verifică codul...';
 
-  try{
-    // Verifica in Firestore
-    const snap = await db.collection('vouchere').doc(cod).get();
-    if(snap.exists){
-      const v = snap.data();
-      const activ = v.activ !== false; // default activ
-      const expirat = v.expira && new Date(v.expira) < new Date();
-      if(!activ||expirat){
-        okEl.style.cssText='background:#FFEBEE;border:1.5px solid #EF9A9A;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#C62828;display:block;margin-bottom:12px';
-        okEl.textContent = '❌ Codul este expirat sau inactiv.';
-        return;
-      }
-      discountVoucher = v.procent||0;
-      voucherAplicat  = cod;
-      okEl.style.cssText='background:#E8F5E9;border:1.5px solid #81C784;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#2E7D32;display:block;margin-bottom:12px';
-      okEl.textContent = `✅ Cod "${cod}" aplicat! -${discountVoucher}% reducere.`;
-      afiseazaToast(`🎉 Voucher aplicat! -${discountVoucher}%`);
-      redeazaCos();
-    } else {
-      // Fallback: verifica si in obiectul local (vouchere demo)
-      const proc = VOUCHERE[cod];
-      if(proc){
-        discountVoucher = proc;
-        voucherAplicat  = cod;
-        okEl.style.cssText='background:#E8F5E9;border:1.5px solid #81C784;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#2E7D32;display:block;margin-bottom:12px';
-        okEl.textContent = `✅ Cod "${cod}" aplicat! -${proc}% reducere.`;
-        afiseazaToast(`🎉 Voucher aplicat! -${proc}%`);
-        redeazaCos();
-      } else {
-        okEl.style.cssText='background:#FFEBEE;border:1.5px solid #EF9A9A;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#C62828;display:block;margin-bottom:12px';
-        okEl.textContent = '❌ Cod invalid sau inexistent.';
-      }
-    }
-  }catch(e){
-    console.warn('Voucher check error:', e);
-    // Fallback offline
-    const proc = VOUCHERE[cod];
-    if(proc){
-      discountVoucher=proc; voucherAplicat=cod;
-      okEl.style.cssText='background:#E8F5E9;border:1.5px solid #81C784;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#2E7D32;display:block;margin-bottom:12px';
-      okEl.textContent=`✅ Cod "${cod}" aplicat! -${proc}%`;
-      redeazaCos();
-    } else {
+  // 1. Verifica in localStorage (vouchere adaugate din admin)
+  const locale = getVouchereLocale();
+  let gasit = locale[cod] || null;
+
+  // 2. Daca nu e local, incearca Firestore
+  if(!gasit){
+    try{
+      const snap = await db.collection('vouchere').doc(cod).get();
+      if(snap.exists) gasit = snap.data();
+    }catch(e){ /* Firestore nu e disponibil */ }
+  }
+
+  if(gasit){
+    const expirat = gasit.expira && new Date(gasit.expira) < new Date();
+    if(gasit.activ===false || expirat){
       okEl.style.cssText='background:#FFEBEE;border:1.5px solid #EF9A9A;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#C62828;display:block;margin-bottom:12px';
-      okEl.textContent='❌ Eroare verificare cod.';
+      okEl.textContent = expirat ? `❌ Codul "${cod}" a expirat.` : `❌ Codul "${cod}" este inactiv.`;
+      return;
     }
+    discountVoucher = gasit.procent || 0;
+    voucherAplicat  = cod;
+    okEl.style.cssText='background:#E8F5E9;border:1.5px solid #81C784;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#2E7D32;display:block;margin-bottom:12px';
+    okEl.textContent = `✅ Cod "${cod}" aplicat! -${discountVoucher}% reducere.`;
+    afiseazaToast(`🎉 Voucher aplicat! -${discountVoucher}%`);
+    redeazaCos();
+  } else {
+    okEl.style.cssText='background:#FFEBEE;border:1.5px solid #EF9A9A;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#C62828;display:block;margin-bottom:12px';
+    okEl.textContent = '❌ Cod invalid. Verifica scrierea sau cere un cod valid.';
   }
 }
 
@@ -4326,4 +4392,3 @@ document.addEventListener('DOMContentLoaded',function(){
 </script>
 </body>
 </html>
-
