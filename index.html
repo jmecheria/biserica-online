@@ -700,11 +700,12 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
 .gdpr-err{display:none;color:#C0392B;font-size:.78rem;margin-bottom:8px}
 
 /* ── MODAL TERMENI ──────────────────────────── */
-#modalTermeni .modal{max-width:750px}
-.termeni-body{padding:26px;max-height:70vh;overflow-y:auto}
-.termeni-body h3{font-family:'Cinzel',serif;color:var(--v);margin:18px 0 8px;font-size:.95rem}
-.termeni-body p,.termeni-body li{font-size:.88rem;color:var(--tm);line-height:1.7;margin-bottom:6px}
-.termeni-body ul{padding-left:18px}
+#modalTermeni .modal{max-width:820px}
+.termeni-body{padding:28px;overflow-y:auto}
+.termeni-body h3{font-family:'Cinzel',serif;color:var(--v);margin:22px 0 10px;font-size:1rem;border-left:3px solid var(--g);padding-left:10px}
+.termeni-body p,.termeni-body li{font-size:.95rem;color:var(--tm);line-height:1.8;margin-bottom:8px}
+.termeni-body ul{padding-left:20px;margin-bottom:12px}
+.termeni-body li{margin-bottom:5px}
 
 /* ── MOBILE FIRST RESPONSIVE ─────────────── */
 @media(max-width:900px){
@@ -1271,7 +1272,11 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
         <a href="#" onclick="mergi('cos');return false">🛒 Coș</a>
       </div>
     </div>
-    <div class="footer-jos">✝ Slavă lui Dumnezeu pentru toate! ✝ &nbsp;|&nbsp; © 2025 Parohia Ortodoxă</div>
+    <div class="footer-jos">
+      ✝ Slavă lui Dumnezeu pentru toate! ✝ &nbsp;|&nbsp; © 2025 Parohia Ortodoxă
+      &nbsp;|&nbsp;
+      <a onclick="deschideModal('modalTermeni')" style="color:var(--gl);text-decoration:underline;cursor:pointer;font-size:.82rem">📋 Termeni & Condiții / GDPR</a>
+    </div>
   </div>
 </footer>
 
@@ -2152,20 +2157,18 @@ const EJS = {
 };
 
 /* ═══════════════════════════════════════════════
-   TEMPLATE EMAIL CLIENT (template_a3n714t):
-   Variabile folosite:
-     {{nume_client}}    - Numele clientului
-     {{numar_comanda}}  - ex: #A1B2C3D4
-     {{status_comanda}} - NOUA / IN PROCESARE / LIVRATA / ANULATA
-     {{lista_produse}}  - lista produse + total + transport + reducere
-     {{total}}          - suma finala in RON
+   TEMPLATE CLIENT (template_a3n714t) - setari EmailJS:
+     To Email:       {{email_client}}
+     Variabile body: {{nume_client}}, {{numar_comanda}},
+                     {{status_comanda}}, {{lista_produse}}, {{total}}
 
-   TEMPLATE EMAIL ADMIN (template_viznvfb):
-   Variabile folosite:
-     {{numar_comanda}}  - ID comanda
-     {{status_comanda}} - NOUA
-     {{total}}          - suma finala
-     {{lista_produse}}  - detalii complete (client + produse)
+   TEMPLATE ADMIN (template_viznvfb) - setari EmailJS:
+     To Email:       {{email_client}}  (trimite la admin)
+     Variabile body: {{numar_comanda}}, {{status_comanda}},
+                     {{total}}, {{lista_produse}}
+
+   IMPORTANT: In EmailJS Dashboard, la fiecare template,
+   seteaza campul "To Email" la: {{email_client}}
 ════════════════════════════════════════════════ */
 
 function initEmailJS(){
@@ -2211,12 +2214,12 @@ async function trimiteEmailClient(orderData, statusText){
       detaliiExtra += `\nTransport (${labelT}): ${parseFloat(orderData.transport_cost)===0?'GRATUIT':orderData.transport_cost+' RON'}`;
     }
     const params = {
+      email_client:    orderData.email,          // ← "To Email" in EmailJS template
       nume_client:     orderData.name,
       numar_comanda:   orderData.id ? '#'+orderData.id.substring(0,8).toUpperCase() : '#NOU',
       status_comanda:  statusText,
       lista_produse:   itemsList + detaliiExtra,
       total:           orderData.total + ' RON',
-      to_email:        orderData.email,
     };
     console.log('Trimit email client la:', orderData.email, 'params:', params);
     const resp = await emailjs.send(EJS.serviceId, EJS.tplClient, params);
@@ -2232,11 +2235,11 @@ async function trimiteEmailAdmin(orderData){
     const itemsList = construiesteListaProduse(orderData.items||[]);
     const infoClient = `Client: ${orderData.name} | Tel: ${orderData.phone} | Email: ${orderData.email||'–'}\nAdresa: ${orderData.address}, ${orderData.county||''}\nPlata: ${orderData.payment||'ramburs'}${orderData.notes?'\nObservatii: '+orderData.notes:''}`;
     await emailjs.send(EJS.serviceId, EJS.tplAdmin, {
+      email_client:    EJS.adminEmail,           // ← "To Email" in EmailJS template
       numar_comanda:   '#'+(orderData.id?orderData.id.substring(0,8):'NOU'),
       status_comanda:  'NOUA',
-      total:           orderData.total,
+      total:           orderData.total + ' RON',
       lista_produse:   infoClient + '\n\n' + itemsList,
-      to_email:        EJS.adminEmail,
     });
     console.log('Email admin trimis la', EJS.adminEmail);
   }catch(e){ console.warn('Email admin error:', e.text||e.message); }
@@ -2265,12 +2268,12 @@ async function trimiteEmailStatusUpdate(orderData, statusNou){
   try{
     const itemsList = construiesteListaProduse(orderData.items||[]);
     await emailjs.send(EJS.serviceId, EJS.tplStatus, {
+      email_client:    orderData.email,          // ← "To Email" in EmailJS template
       nume_client:     orderData.name,
       numar_comanda:   '#'+(orderData.id?orderData.id.substring(0,8):'–'),
       status_comanda:  statusLabel,
       lista_produse:   itemsList,
-      total:           orderData.total,
-      to_email:        orderData.email,
+      total:           orderData.total + ' RON',
     });
     console.log('Email status trimis:', statusNou, 'la', orderData.email);
   }catch(e){ console.warn('Email status error:', e.text||e.message); }
@@ -3033,6 +3036,7 @@ function aratLogin(){
 function arataPanou(){
   document.getElementById('adminLogin').style.display='none';
   document.getElementById('adminPanel').style.display='flex';
+  initVouchere(); // initializeaza voucherele demo daca nu exista
 }
 // ── ADMIN AUTH prin Firebase + rol în Firestore ─────────────────
 // Adminul se loghează cu Firebase Auth normal.
@@ -3759,6 +3763,12 @@ async function secEmail(el){
         <label>Email Admin (al tau)</label>
         <input id="ejsAdminEmail" value="${localStorage.getItem('ejs_admin')||''}" placeholder="parohia@email.ro">
       </div>
+      <div class="email-setup-box" style="margin-bottom:18px;border-color:var(--g)">
+        <h4>⭐ Pas important in EmailJS Dashboard</h4>
+        <p>La fiecare template (<strong>template_a3n714t</strong> și <strong>template_viznvfb</strong>), 
+        in campul <strong>"To Email"</strong> trebuie sa scrii exact: <code>{{email_client}}</code><br>
+        Asta e cauza principala de "recipients address is empty".</p>
+      </div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:5px">
         <button class="btn btn-primar" onclick="salveazaConfigEmail()">💾 Salveaza Configurarea</button>
         <button class="btn btn-contur" onclick="testeazaEmail()">📧 Trimite Email Test</button>
@@ -3771,19 +3781,13 @@ async function secEmail(el){
       <table style="width:100%;font-size:.84rem;border-collapse:collapse">
         <tr style="background:var(--cr)"><th style="padding:8px;text-align:left;border:1px solid var(--crd)">Variabila</th><th style="padding:8px;text-align:left;border:1px solid var(--crd)">Continut</th></tr>
         ${[
-          ['{{client_name}}','Numele clientului'],
-          ['{{client_email}}','Emailul clientului'],
-          ['{{client_phone}}','Telefonul clientului (doar in template_admin)'],
-          ['{{order_id}}','ID comanda (primele 8 caractere)'],
-          ['{{status}}','Statusul comenzii'],
-          ['{{message}}','Mesaj automat potrivit statusului'],
-          ['{{items}}','Lista produselor comandate'],
-          ['{{total}}','Total comanda'],
-          ['{{address}}','Adresa de livrare'],
-          ['{{payment}}','Metoda de plata'],
-          ['{{notes}}','Observatii client (doar in template_admin)'],
-          ['{{to_email}}','Emailul destinatarului'],
-        ].map(([v,d])=>`<tr><td style="padding:7px 8px;border:1px solid var(--crd);font-family:monospace;color:var(--v)">${v}</td><td style="padding:7px 8px;border:1px solid var(--crd)">${d}</td></tr>`).join('')}
+          ['{{email_client}}','⭐ OBLIGATORIU — Emailul destinatarului (To Email in EmailJS)'],
+          ['{{nume_client}}','Numele clientului'],
+          ['{{numar_comanda}}','ID comanda (ex: #A1B2C3D4)'],
+          ['{{status_comanda}}','Statusul comenzii (NOUA / IN PROCESARE / LIVRATA / ANULATA)'],
+          ['{{lista_produse}}','Lista produselor + detalii livrare + reduceri'],
+          ['{{total}}','Total comanda in RON'],
+        ].map(([v,d])=>`<tr><td style="padding:8px 10px;border:1px solid var(--crd);font-family:monospace;color:var(--v);white-space:nowrap">${v}</td><td style="padding:8px 10px;border:1px solid var(--crd)">${d}</td></tr>`).join('')}
       </table>
     </div>`;
 }
@@ -3906,8 +3910,9 @@ async function secVouchere(el){
               <td><span style="color:${col};font-weight:700;font-size:.8rem">${stare}</span></td>
               <td style="font-size:.82rem">${v.descriere||'–'}</td>
               <td><div class="butoane-tabel">
-                <button class="btn btn-contur btn-xs" onclick="toggleVoucher('${v.id}',${v.activ!==false})">${v.activ!==false?'⏸️':'▶️'}</button>
-                <button class="btn btn-pericol btn-xs" onclick="stergeVoucher('${v.id}')">🗑️</button>
+                <button class="btn btn-contur btn-xs" onclick="editeazaVoucher('${v.id}',${v.procent},'${v.expira||''}','${(v.descriere||'').replace(/'/g,'')}')" title="Editeaza">✏️</button>
+                <button class="btn btn-contur btn-xs" onclick="toggleVoucher('${v.id}',${v.activ!==false})" title="${v.activ!==false?'Dezactiveaza':'Activeaza'}">${v.activ!==false?'⏸️':'▶️'}</button>
+                <button class="btn btn-pericol btn-xs" onclick="stergeVoucher('${v.id}')" title="Sterge">🗑️</button>
               </div></td>
             </tr>`;
           }).join('')}
@@ -3959,6 +3964,18 @@ async function adaugaVoucher(){
     rez.innerHTML=`<div class="import-result ok" style="display:block">✅ Voucher "${cod}" (-${proc}%) salvat local! (Firestore: ${e.code||e.message})</div>`;
   }
   setTimeout(()=>incarcaSectiuena('vouchere'), 1800);
+}
+
+function editeazaVoucher(cod, procent, expira, desc){
+  // Umple formularul de adaugare cu datele voucher-ului pentru editare
+  document.getElementById('vCod').value = cod;
+  document.getElementById('vCod').readOnly = true;
+  document.getElementById('vProcent').value = procent;
+  document.getElementById('vExpira').value = expira;
+  document.getElementById('vDesc').value = desc;
+  document.getElementById('voucherAdminResult').innerHTML =
+    '<div class="import-result ok" style="display:block">✏️ Editezi voucher-ul "'+cod+'". Modifică valorile si apasă Adaugă.</div>';
+  document.getElementById('vCod').scrollIntoView({behavior:'smooth', block:'center'});
 }
 
 async function toggleVoucher(cod, eraActiv){
@@ -4097,6 +4114,13 @@ function deschideZiCalendar(cheie, dataStr){
 }
 
 /* ── SEED DATE DEMO ──────────────────────── */
+const VOUCHERE_DEMO = {
+  'PASTE2025':   {procent:15, descriere:'Voucher Paste 2025', activ:true, expira:'2025-12-31'},
+  'PAROHIA10':   {procent:10, descriere:'Discount parohieni', activ:true, expira:null},
+  'CRACIUN2025': {procent:20, descriere:'Reducere Craciun',   activ:false, expira:'2025-12-26'},
+  'BINEVENITI':  {procent:5,  descriere:'Bun venit!',         activ:true, expira:null},
+};
+
 async function semaneazaDateDemo(){
   try{
     const [testP,testA]=await Promise.all([
@@ -4107,7 +4131,31 @@ async function semaneazaDateDemo(){
     if(testP.empty) for(const p of PRODUSE_DEMO) await fbAdauga('produse',p);
     if(testA.empty) for(const a of ANUNTURI_DEMO) await fbAdauga('anunturi',a);
     console.log('Date demo adaugate cu succes!');
-  }catch(e){ console.warn('Seed demo (normal daca reguli Firestore sunt restrictive):',e.code); }
+  }catch(e){ console.warn('Seed demo:',e.code); }
+}
+
+// Populeaza vouchere Firestore + localStorage la primul login admin
+async function initVouchere(){
+  const locale = getVouchereLocale();
+  const areLocale = Object.keys(locale).length > 0;
+  if(areLocale) return; // deja are vouchere
+
+  // Pune voucherele demo in localStorage mereu
+  Object.entries(VOUCHERE_DEMO).forEach(([cod,v])=>{
+    locale[cod] = {...v, creatLa: new Date().toISOString()};
+  });
+  salveazaVouchereLocale(locale);
+
+  // Incearca si Firestore
+  try{
+    const snap = await db.collection('vouchere').limit(1).get();
+    if(snap.empty){
+      for(const [cod,v] of Object.entries(VOUCHERE_DEMO)){
+        await db.collection('vouchere').doc(cod).set({...v, creatLa:TS()});
+      }
+      console.log('Vouchere demo adaugate in Firestore!');
+    }
+  }catch(e){ console.log('Vouchere salvate local (Firestore optional)'); }
 }
 
 /* ══════════════════════════════════════════
