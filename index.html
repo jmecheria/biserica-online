@@ -1068,7 +1068,16 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
           <div class="form-grup"><label>Telefon *</label><input id="oTelefon" placeholder="07XX XXX XXX"></div>
         </div>
         <div class="form-grup"><label>Email</label><input id="oEmail" type="email" placeholder="email@exemplu.ro"></div>
-        <div class="form-grup"><label>Adresă Completă *</label><input id="oAdresa" placeholder="Strada, nr., bloc, ap."></div>
+        <div class="form-grup">
+          <label>Adresă Completă *</label>
+          <input id="oAdresa" placeholder="Strada, nr., bloc, ap.">
+          <div id="altAdresaToggle" style="display:none;margin-top:6px">
+            <label style="display:flex;align-items:center;gap:7px;font-family:'Lato',sans-serif;font-size:.8rem;cursor:pointer;color:var(--tl)">
+              <input type="checkbox" id="altAdresaCb" onchange="toggleAltAdresa(this.checked)">
+              Livrare la altă adresă decât cea din cont
+            </label>
+          </div>
+        </div>
         <div class="form-rand">
           <div class="form-grup"><label>Localitate / Județ</label><input id="oLocalitate" placeholder="Cluj-Napoca, Cluj"></div>
           <div class="form-grup"><label>Metodă Plată</label>
@@ -1251,11 +1260,25 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
         <p>Comunitatea noastră vă este alături în toate momentele vieții – bucurii și necazuri, de la naștere până la trecerea la cele veșnice.</p>
       </div>
       <div class="footer-col">
-        <h4>Program Slujbe</h4>
-        <p>Duminică – 09:00 Sf. Liturghie</p>
-        <p>Sâmbătă – 18:00 Vecernie</p>
-        <p>Miercuri – 18:00 Acatist</p>
-        <p>Joi – 17:30 Moliftă</p>
+        <h4>Protecția Consumatorilor</h4>
+        <!-- Logo ANPC oficial SVG -->
+        <a href="https://anpc.ro" target="_blank" rel="noopener" title="Autoritatea Națională pentru Protecția Consumatorilor" style="display:inline-block;margin-bottom:12px">
+          <svg width="140" height="52" viewBox="0 0 140 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="140" height="52" rx="6" fill="#003087"/>
+            <rect x="3" y="3" width="134" height="46" rx="4" fill="none" stroke="#FFD700" stroke-width="1.5"/>
+            <text x="70" y="20" font-family="Arial,sans-serif" font-weight="900" font-size="16" fill="#FFD700" text-anchor="middle" letter-spacing="3">ANPC</text>
+            <line x1="12" y1="26" x2="128" y2="26" stroke="#FFD700" stroke-width=".8" opacity=".5"/>
+            <text x="70" y="35" font-family="Arial,sans-serif" font-size="6.5" fill="#ffffff" text-anchor="middle">Autoritatea Națională pentru</text>
+            <text x="70" y="45" font-family="Arial,sans-serif" font-size="6.5" fill="#ffffff" text-anchor="middle">Protecția Consumatorilor</text>
+          </svg>
+        </a>
+        <p style="font-size:.79rem;margin-bottom:5px">📞 <a href="tel:0800080999" style="color:var(--gl)">0800 080 999</a> — linie verde gratuită</p>
+        <p style="font-size:.79rem;margin-bottom:5px">🌐 <a href="https://anpc.ro" target="_blank" rel="noopener" style="color:var(--gl)">anpc.ro</a></p>
+        <p style="font-size:.79rem;margin-bottom:5px">⚖️ Litigii online: <a href="https://ec.europa.eu/consumers/odr" target="_blank" style="color:var(--gl)">ec.europa.eu/odr</a></p>
+        <p style="font-size:.78rem;margin-top:8px;color:var(--vp);line-height:1.5">
+          Retururi 14 zile · GDPR conform<br>
+          <a onclick="deschideModal('modalTermeni')" style="color:var(--vp);text-decoration:underline;cursor:pointer">Termeni & Condiții</a>
+        </p>
       </div>
       <div class="footer-col">
         <h4>Contact</h4>
@@ -2861,14 +2884,45 @@ function redeazaCos(){
   }
   totEl.innerHTML = html;
 }
+async function preCompleteazaFormular(){
+  if(!clientCurent) return;
+  const nEl = document.getElementById('oNume');
+  const eEl = document.getElementById('oEmail');
+  const tEl = document.getElementById('oTelefon');
+  const aEl = document.getElementById('oAdresa');
+  const lEl = document.getElementById('oLocalitate');
+  if(clientCurent.displayName && !nEl.value) nEl.value = clientCurent.displayName;
+  if(clientCurent.email && !eEl.value)       eEl.value = clientCurent.email;
+  try{
+    const profil = await db.collection('clienti').doc(clientCurent.uid).get();
+    if(profil.exists){
+      const d = profil.data();
+      if(d.phone && !tEl.value)   tEl.value = d.phone;
+      if(d.address && !aEl.value){ aEl.value = d.address; }
+      if(d.county && !lEl.value)  lEl.value = d.county;
+      // Arata toggle "alta adresa" daca are adresa in cont
+      if(d.address){
+        const tog = document.getElementById('altAdresaToggle');
+        if(tog) tog.style.display = 'block';
+      }
+    }
+  }catch(e){}
+}
+
+function toggleAltAdresa(altaAdresa){
+  // Cand bifezi "alta adresa", curata campurile ca sa poata scrie altele
+  if(altaAdresa){
+    document.getElementById('oAdresa').value = '';
+    document.getElementById('oLocalitate').value = '';
+    document.getElementById('oAdresa').focus();
+  }
+}
+
 function arataComanada(){
   document.getElementById('vedereaCos').style.display='none';
   document.getElementById('vedereComanda').style.display='block';
-  // Pre-fill form daca clientul e logat
-  if(clientCurent){
-    if(clientCurent.displayName) document.getElementById('oNume').value = clientCurent.displayName;
-    if(clientCurent.email)       document.getElementById('oEmail').value = clientCurent.email;
-  }
+  // Pre-fill form din cont (async)
+  preCompleteazaFormular();
   const red        = totalReductie();
   const subTotal   = totalCos();
   const transport  = calcTransport();
@@ -3769,6 +3823,22 @@ async function secEmail(el){
         in campul <strong>"To Email"</strong> trebuie sa scrii exact: <code>{{email_client}}</code><br>
         Asta e cauza principala de "recipients address is empty".</p>
       </div>
+      <div class="email-setup-box" style="margin-bottom:18px;border-color:#2E7D32">
+        <h4>🌐 Firestore Rules — pentru Vouchere Globale</h4>
+        <p>Pentru ca voucherele să fie vizibile de toți clienții, adaugă aceste reguli în
+        <strong>Firebase Console → Firestore Database → Rules</strong>:</p>
+        <pre style="background:var(--crd);padding:12px;border-radius:6px;font-size:.76rem;overflow-x:auto;margin-top:8px;line-height:1.5">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /produse/{id}  { allow read: if true; allow write: if request.auth != null; }
+    match /anunturi/{id} { allow read: if true; allow write: if request.auth != null; }
+    match /comenzi/{id}  { allow create: if true; allow read,update,delete: if request.auth != null; }
+    match /vouchere/{id} { allow read: if true; allow write: if request.auth != null; }
+    match /clienti/{id}  { allow read,write: if request.auth != null && request.auth.uid == id; }
+    match /admini/{id}   { allow read: if request.auth != null; }
+  }
+}</pre>
+      </div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:5px">
         <button class="btn btn-primar" onclick="salveazaConfigEmail()">💾 Salveaza Configurarea</button>
         <button class="btn btn-contur" onclick="testeazaEmail()">📧 Trimite Email Test</button>
@@ -3847,17 +3917,32 @@ async function testeazaEmail(){
 
 /* ── SECTIUNEA VOUCHERE ADMIN ─────────────── */
 async function secVouchere(el){
-  // Citeste din localStorage (merge mereu) + Firestore (optional)
-  const locale = getVouchereLocale();
-  let lista = Object.entries(locale).map(([id,v])=>({id,...v}));
-
+  let lista = [];
   try{
     const snap = await db.collection('vouchere').orderBy('creatLa','desc').get();
-    const fsIds = new Set(snap.docs.map(d=>d.id));
-    const fsLista = snap.docs.map(d=>({id:d.id,...d.data()}));
-    const numaiLocale = lista.filter(v=>!fsIds.has(v.id));
-    lista = [...fsLista, ...numaiLocale];
-  }catch(e){ /* folosim doar localStorage */ }
+    lista = snap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){
+    // Firestore Rules nu permite - afiseaza instructiuni
+    el.innerHTML=`
+      <h2 style="font-family:'Cinzel',serif;color:var(--v);margin-bottom:20px;font-size:1.35rem">🏷️ Vouchere</h2>
+      <div class="email-setup-box" style="border-color:#C0392B">
+        <h4 style="color:#C0392B">⚠️ Actualizează Firestore Rules</h4>
+        <p>Adaugă în Firebase Console → Firestore → Rules aceste linii și salvează:</p>
+        <pre style="background:#1a1a2e;color:#00ff88;padding:14px;border-radius:8px;font-size:.8rem;overflow-x:auto;margin-top:10px;line-height:1.6">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /produse/{id}  { allow read: if true; allow write: if request.auth != null; }
+    match /anunturi/{id} { allow read: if true; allow write: if request.auth != null; }
+    match /comenzi/{id}  { allow create: if true; allow read,update,delete: if request.auth != null; }
+    match /vouchere/{id} { allow read: if true; allow write: if request.auth != null; }
+    match /clienti/{id}  { allow read,write: if request.auth != null && request.auth.uid == id; }
+    match /admini/{id}   { allow read: if request.auth != null; }
+  }
+}</pre>
+        <button class="btn btn-primar btn-mic" style="margin-top:14px" onclick="initVouchere().then(()=>incarcaSectiuena('vouchere'))">🔄 Incearcă din nou</button>
+      </div>`;
+    return;
+  }
 
   el.innerHTML=`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:13px">
@@ -3921,9 +4006,24 @@ async function secVouchere(el){
     }
 
     <div class="email-setup-box" style="margin-top:20px">
-      <h4>ℹ️ Cum funcționează</h4>
-      <p>Voucherele se salvează local în browser (merg imediat) și opțional în Firestore (dacă regulile permit).<br>
-      Clienții introduc codul în coș și primesc reducerea specificată, cumulată cu discountul de cont (5%).</p>
+      <h4>🌍 Vouchere globale (toți clienții)</h4>
+      <p>Pentru ca voucherele să fie globale (nu doar pe browserul tău), actualizează <strong>Firestore Rules</strong>:<br>
+      Firebase Console → Firestore → Rules → copiaza regulile de mai jos:</p>
+      <pre style="background:var(--crd);padding:12px;border-radius:7px;font-size:.72rem;overflow-x:auto;margin:10px 0;line-height:1.5">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /produse/{id}   { allow read: if true; allow write: if request.auth != null; }
+    match /anunturi/{id}  { allow read: if true; allow write: if request.auth != null; }
+    match /comenzi/{id}   { allow create: if true; allow read,update,delete: if request.auth != null; }
+    match /vouchere/{id}  { allow read: if true; allow write: if request.auth != null; }
+    match /clienti/{id}   { allow read,write: if request.auth != null && request.auth.uid == id; }
+    match /admini/{id}    { allow read: if request.auth != null; }
+  }
+}</pre>
+      <p>Dupa ce salvezi regulile, voucherele din Firestore sunt citite de <strong>toți clienții</strong> indiferent de browser.<br>
+      Momentan funcționează local în browserul de admin.</p>
+      <button class="btn btn-primar btn-mic" onclick="publicaVouchereGlobal()" style="margin-top:8px">☁️ Publică toate în Firestore</button>
+      <div id="publicaResult" style="margin-top:9px"></div>
     </div>`;
 }
 
@@ -3951,19 +4051,33 @@ async function adaugaVoucher(){
   }
   const vData = { procent:proc, expira:expira||null, descriere:desc, activ, creatLa: new Date().toISOString() };
 
-  // Salveaza local IMEDIAT (functioneaza fara Firestore Rules)
-  const locale = getVouchereLocale();
-  locale[cod] = vData;
-  salveazaVouchereLocale(locale);
-
-  // Incearca si in Firestore (optional, nu blocheaza)
   try{
     await db.collection('vouchere').doc(cod).set({...vData, creatLa: TS()});
-    rez.innerHTML=`<div class="import-result ok" style="display:block">✅ Voucher "${cod}" (-${proc}%) salvat in Firestore si local!</div>`;
+    rez.innerHTML=`<div class="import-result ok" style="display:block">✅ Voucher "${cod}" (-${proc}%) adăugat! Disponibil tuturor clienților.</div>`;
+    setTimeout(()=>incarcaSectiuena('vouchere'), 1500);
   }catch(e){
-    rez.innerHTML=`<div class="import-result ok" style="display:block">✅ Voucher "${cod}" (-${proc}%) salvat local! (Firestore: ${e.code||e.message})</div>`;
+    rez.innerHTML=`<div class="import-result err" style="display:block">❌ Eroare Firestore: ${e.message}<br><small>Adaugă în Firestore Rules: <code>match /vouchere/{id}{ allow read:if true; allow write:if request.auth!=null; }</code></small></div>`;
   }
-  setTimeout(()=>incarcaSectiuena('vouchere'), 1800);
+}
+
+async function publicaVouchereGlobal(){
+  const rez = document.getElementById('publicaResult');
+  rez.innerHTML='<span style="color:var(--tl);font-size:.84rem">⏳ Se publică...</span>';
+  const locale = getVouchereLocale();
+  const entries = Object.entries(locale);
+  if(!entries.length){ rez.innerHTML='<span style="color:var(--tl);font-size:.84rem">Niciun voucher de publicat.</span>'; return; }
+  let ok=0, erori=0;
+  for(const [cod,v] of entries){
+    try{
+      await db.collection('vouchere').doc(cod).set({...v, creatLa:TS()});
+      ok++;
+    }catch(e){ erori++; }
+  }
+  if(erori===0){
+    rez.innerHTML=`<div class="import-result ok" style="display:block">✅ ${ok} vouchere publicate global în Firestore!</div>`;
+  } else {
+    rez.innerHTML=`<div class="import-result err" style="display:block">⚠️ ${ok} publicate, ${erori} erori (actualizeaza Firestore Rules).</div>`;
+  }
 }
 
 function editeazaVoucher(cod, procent, expira, desc){
@@ -3979,21 +4093,19 @@ function editeazaVoucher(cod, procent, expira, desc){
 }
 
 async function toggleVoucher(cod, eraActiv){
-  const locale = getVouchereLocale();
-  if(locale[cod]) locale[cod].activ = !eraActiv;
-  salveazaVouchereLocale(locale);
-  try{ await db.collection('vouchere').doc(cod).update({activ: !eraActiv}); }catch(e){}
-  afiseazaToast(!eraActiv ? `✅ Voucher "${cod}" activat!` : `⏸️ Voucher "${cod}" dezactivat!`);
+  try{
+    await db.collection('vouchere').doc(cod).update({activ: !eraActiv});
+    afiseazaToast(!eraActiv ? `✅ "${cod}" activat!` : `⏸️ "${cod}" dezactivat!`);
+  }catch(e){ afiseazaToast('❌ Eroare Firestore: '+e.message); }
   incarcaSectiuena('vouchere');
 }
 
 async function stergeVoucher(cod){
   if(!confirm(`Stergi voucher-ul "${cod}"?`)) return;
-  const locale = getVouchereLocale();
-  delete locale[cod];
-  salveazaVouchereLocale(locale);
-  try{ await db.collection('vouchere').doc(cod).delete(); }catch(e){}
-  afiseazaToast(`🗑️ Voucher "${cod}" sters!`);
+  try{
+    await db.collection('vouchere').doc(cod).delete();
+    afiseazaToast(`🗑️ Voucher "${cod}" sters!`);
+  }catch(e){ afiseazaToast('❌ Eroare Firestore: '+e.message); return; }
   incarcaSectiuena('vouchere');
 }
 
@@ -4130,32 +4242,68 @@ async function semaneazaDateDemo(){
     if(!testP.empty&&!testA.empty) return;
     if(testP.empty) for(const p of PRODUSE_DEMO) await fbAdauga('produse',p);
     if(testA.empty) for(const a of ANUNTURI_DEMO) await fbAdauga('anunturi',a);
-    console.log('Date demo adaugate cu succes!');
+    console.log('Date demo adaugate!');
   }catch(e){ console.warn('Seed demo:',e.code); }
 }
 
-// Populeaza vouchere Firestore + localStorage la primul login admin
+// Populeaza voucherele in Firestore (read:true pentru toti clientii)
+async function populareVouchere(){
+  // Verificam daca localStorage are deja voucherele (evitam dublu-scriere)
+  if(localStorage.getItem('voucherePopulate')) return;
+  try{
+    const snap = await db.collection('vouchere').limit(1).get();
+    if(!snap.empty){ localStorage.setItem('voucherePopulate','1'); return; }
+    // Colectia e goala - adaugam voucherele demo
+    const batch = db.batch();
+    Object.entries(VOUCHERE_DEMO).forEach(([cod,v])=>{
+      batch.set(db.collection('vouchere').doc(cod), {...v, creatLa: firebase.firestore.FieldValue.serverTimestamp()});
+    });
+    await batch.commit();
+    localStorage.setItem('voucherePopulate','1');
+    console.log('Vouchere populate in Firestore!');
+  }catch(e){
+    // Firestore rules nu permit - fallback la localStorage
+    const locale = getVouchereLocale();
+    if(Object.keys(locale).length === 0){
+      Object.entries(VOUCHERE_DEMO).forEach(([cod,v])=>{
+        locale[cod] = {...v, creatLa: new Date().toISOString()};
+      });
+      salveazaVouchereLocale(locale);
+    }
+  }
+}
+
+// Populeaza vouchere Firestore la primul login admin
 async function initVouchere(){
-  const locale = getVouchereLocale();
-  const areLocale = Object.keys(locale).length > 0;
-  if(areLocale) return; // deja are vouchere
-
-  // Pune voucherele demo in localStorage mereu
-  Object.entries(VOUCHERE_DEMO).forEach(([cod,v])=>{
-    locale[cod] = {...v, creatLa: new Date().toISOString()};
-  });
-  salveazaVouchereLocale(locale);
-
-  // Incearca si Firestore
   try{
     const snap = await db.collection('vouchere').limit(1).get();
     if(snap.empty){
-      for(const [cod,v] of Object.entries(VOUCHERE_DEMO)){
-        await db.collection('vouchere').doc(cod).set({...v, creatLa:TS()});
-      }
-      console.log('Vouchere demo adaugate in Firestore!');
+      // Prima rulare - scrie demo-urile global in Firestore
+      const batch = db.batch();
+      Object.entries(VOUCHERE_DEMO).forEach(([cod,v])=>{
+        batch.set(db.collection('vouchere').doc(cod), {...v, creatLa:TS()});
+      });
+      await batch.commit();
+      console.log('Vouchere demo scrise in Firestore (globale)!');
     }
-  }catch(e){ console.log('Vouchere salvate local (Firestore optional)'); }
+    // Sincronizeaza toate voucherele in localStorage (cache offline)
+    const all = await db.collection('vouchere').get();
+    const cache = {};
+    all.docs.forEach(d=>{ cache[d.id] = d.data(); });
+    salveazaVouchereLocale(cache);
+    console.log('Vouchere sincronizate local din Firestore:', Object.keys(cache).length);
+  }catch(e){
+    // Firestore nu merge - fallback cu demo in localStorage
+    console.warn('Firestore vouchere indisponibil:', e.code);
+    const locale = getVouchereLocale();
+    if(Object.keys(locale).length === 0){
+      Object.entries(VOUCHERE_DEMO).forEach(([cod,v])=>{
+        locale[cod] = {...v, creatLa: new Date().toISOString()};
+      });
+      salveazaVouchereLocale(locale);
+    }
+    afiseazaToast('⚠️ Vouchere salvate local. Adaugă Firestore Rules pentru acces global.', 4000);
+  }
 }
 
 /* ══════════════════════════════════════════
@@ -4248,9 +4396,14 @@ function randeazaModalClient(){
         </p>
       </div>
       <div id="formReg" style="display:none">
-        <div class="form-grup"><label>Nume</label><input id="cNume" placeholder="Ion Ionescu"></div>
-        <div class="form-grup"><label>Email</label><input id="cEmailReg" type="email" placeholder="email@exemplu.ro"></div>
-        <div class="form-grup"><label>Parolă</label><input id="cParolaReg" type="password" placeholder="Minim 6 caractere"></div>
+        <div class="form-rand">
+          <div class="form-grup"><label>Nume și Prenume *</label><input id="cNume" placeholder="Ion Ionescu"></div>
+          <div class="form-grup"><label>Telefon *</label><input id="cTelefon" type="tel" placeholder="07XX XXX XXX"></div>
+        </div>
+        <div class="form-grup"><label>Email *</label><input id="cEmailReg" type="email" placeholder="email@exemplu.ro"></div>
+        <div class="form-grup"><label>Adresă Completă *</label><input id="cAdresa" placeholder="Strada, nr., bloc, ap." required></div>
+        <div class="form-grup"><label>Localitate / Județ *</label><input id="cLocalitate" placeholder="Cluj-Napoca, Cluj" required></div>
+        <div class="form-grup"><label>Parolă *</label><input id="cParolaReg" type="password" placeholder="Minim 6 caractere"></div>
         <div id="errReg" style="display:none;color:#C0392B;background:#FFEBEE;padding:9px;border-radius:5px;font-size:.8rem;margin-bottom:12px"></div>
         <div class="gdpr-check">
           <input type="checkbox" id="gdprReg">
@@ -4287,26 +4440,35 @@ async function logheazaClient(){
 }
 
 async function inregistreazaClient(){
-  const nume   = document.getElementById('cNume').value.trim();
-  const email  = document.getElementById('cEmailReg').value.trim();
-  const parola = document.getElementById('cParolaReg').value;
-  const err    = document.getElementById('errReg');
-  const gdprEl = document.getElementById('gdprReg');
-  const gdprErr= document.getElementById('gdprRegErr');
+  const nume    = document.getElementById('cNume').value.trim();
+  const telefon = document.getElementById('cTelefon')?.value.trim()||'';
+  const email   = document.getElementById('cEmailReg').value.trim();
+  const parola  = document.getElementById('cParolaReg').value;
+  const err      = document.getElementById('errReg');
+  const gdprEl   = document.getElementById('gdprReg');
+  const gdprErr  = document.getElementById('gdprRegErr');
   err.style.display='none';
   if(gdprErr) gdprErr.style.display='none';
-  // Verifica GDPR
   if(gdprEl && !gdprEl.checked){ if(gdprErr) gdprErr.style.display='block'; return; }
-  if(!nume||!email||!parola){ err.textContent='Completeaza toate campurile!'; err.style.display='block'; return; }
-  if(parola.length<6){ err.textContent='Parola trebuie sa aiba minim 6 caractere!'; err.style.display='block'; return; }
+  const adresa  = document.getElementById('cAdresa')?.value.trim()||'';
+  const localit = document.getElementById('cLocalitate')?.value.trim()||'';
+  if(!nume||!email||!parola||!telefon||!adresa||!localit){
+    err.textContent='Completează toate câmpurile obligatorii: Nume, Telefon, Email, Adresă, Localitate și Parolă!';
+    err.style.display='block'; return;
+  }
+  if(parola.length<6){ err.textContent='Parola trebuie să aibă minim 6 caractere!'; err.style.display='block'; return; }
   try{
     const cred = await auth.createUserWithEmailAndPassword(email, parola);
     await cred.user.updateProfile({displayName: nume});
-    // Salveaza si in Firestore
-    await db.collection('clienti').doc(cred.user.uid).set({name:nume,email,createdAt:TS(),discount:10});
+    await db.collection('clienti').doc(cred.user.uid).set({
+      name: nume, email, phone: telefon,
+      address: adresa, county: localit,
+      createdAt: TS(), discount: 5,
+      gdprAcceptat: true,
+    });
   }catch(e){
     err.textContent = e.code==='auth/email-already-in-use'
-      ? 'Exista deja un cont cu acest email. Foloseste tab-ul Conectare.'
+      ? 'Există deja un cont cu acest email. Folosește tab-ul Conectare.'
       : 'Eroare: '+e.message;
     err.style.display='block';
   }
@@ -4347,6 +4509,29 @@ function actualizeazaUIClient(){
 }
 
 /* ── VOUCHER ─────────────────────────────── */
+function toggleAltAdresa(altaAdresa){
+  const adresaInput = document.getElementById('oAdresa');
+  const localitInput = document.getElementById('oLocalitate');
+  if(altaAdresa){
+    adresaInput.value = '';
+    localitInput.value = '';
+    adresaInput.placeholder = 'Adresă alternativă de livrare...';
+    adresaInput.focus();
+  } else {
+    // Restaureaza adresa din cont
+    if(clientCurent){
+      db.collection('clienti').doc(clientCurent.uid).get().then(doc=>{
+        if(doc.exists){
+          const d = doc.data();
+          if(d.address) adresaInput.value = d.address;
+          if(d.county)  localitInput.value = d.county;
+        }
+      }).catch(()=>{});
+    }
+    adresaInput.placeholder = 'Strada, nr., bloc, ap.';
+  }
+}
+
 async function aplicaVoucher(){
   const cod  = (document.getElementById('voucherInput')?.value||'').trim().toUpperCase();
   const okEl = document.getElementById('voucherOk');
@@ -4355,16 +4540,15 @@ async function aplicaVoucher(){
   okEl.style.cssText='background:#FFF9C4;border:1.5px solid #F9A825;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#E65100;display:block;margin-bottom:12px';
   okEl.textContent = '⏳ Se verifică codul...';
 
-  // 1. Verifica in localStorage (vouchere adaugate din admin)
-  const locale = getVouchereLocale();
-  let gasit = locale[cod] || null;
-
-  // 2. Daca nu e local, incearca Firestore
-  if(!gasit){
-    try{
-      const snap = await db.collection('vouchere').doc(cod).get();
-      if(snap.exists) gasit = snap.data();
-    }catch(e){ /* Firestore nu e disponibil */ }
+  // Verifica in Firestore (allow read: if true - toti clientii pot citi)
+  let gasit = null;
+  try{
+    const snap = await db.collection('vouchere').doc(cod).get();
+    if(snap.exists) gasit = snap.data();
+  }catch(e){
+    okEl.style.cssText='background:#FFEBEE;border:1.5px solid #EF9A9A;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#C62828;display:block;margin-bottom:12px';
+    okEl.textContent = '❌ Eroare la verificare cod. Încearcă din nou.';
+    return;
   }
 
   if(gasit){
@@ -4431,7 +4615,7 @@ document.addEventListener('DOMContentLoaded',function(){
   verificaSesiuneAdmin();
   mergi('acasa');
   semaneazaDateDemo();
-  // Arata cookie banner daca nu a acceptat
+  populareVouchere(); // populeaza voucherele Firestore (globale pentru toti)
   if(!localStorage.getItem('cookiesAcceptate')){
     setTimeout(()=>document.getElementById('cookieBanner').classList.add('viz'), 1500);
   }
