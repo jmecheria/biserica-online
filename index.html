@@ -707,57 +707,158 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
 .termeni-body ul{padding-left:20px;margin-bottom:12px}
 .termeni-body li{margin-bottom:5px}
 
-/* ── MOBILE FIRST RESPONSIVE ─────────────── */
+/* ══════════════════════════════════════════
+   RESPONSIVE / MOBIL
+══════════════════════════════════════════ */
+
+/* Tablet mare */
+@media(max-width:1024px){
+  .footer-grid{grid-template-columns:repeat(2,1fr);gap:22px}
+  .grid-3{grid-template-columns:repeat(2,1fr)}
+}
+
+/* Tableta / telefon mare */
 @media(max-width:900px){
   nav{padding:0 14px;height:58px}
   .hamburger{display:flex}
   .nav-links{
-    display:none;position:absolute;
-    top:58px;left:0;right:0;
+    display:none;position:absolute;top:58px;left:0;right:0;
     background:var(--vd);flex-direction:column;
-    padding:8px;border-bottom:2px solid var(--g);
+    padding:8px 6px;border-bottom:2px solid var(--g);
     z-index:997;gap:2px;box-shadow:0 8px 24px rgba(0,0,0,.4);
   }
   .nav-links.deschis{display:flex}
-  .nav-links a{width:100%;padding:11px 16px;font-size:.82rem}
-  .nav-logo-text{font-size:.88rem}
+  .nav-links a{width:100%;padding:12px 16px;font-size:.85rem}
+  .nav-logo-text{font-size:.85rem}
+  .nav-logo-sub{display:none}
+  .grid-2-eq{grid-template-columns:1fr}
 }
+
+/* Telefon */
 @media(max-width:768px){
-  .sectiune{padding:32px 14px}
-  .hero{padding:40px 14px}
-  .hero h1{font-size:1.65rem}
-  .hero-sub{font-size:1rem}
-  .grid-2,.grid-3{grid-template-columns:1fr}
-  .grid-prod{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
-  .produs-img{height:170px}
-  .admin-wrap{flex-direction:column}
-  .admin-sidebar{width:100%}
-  .admin-continut{padding:14px}
-  .form-rand{grid-template-columns:1fr}
-  .item-cos{flex-wrap:wrap}
+  /* Layout general */
+  .sectiune{padding:28px 14px}
+  .hero{padding:36px 14px}
+  .hero h1{font-size:1.55rem;line-height:1.3}
+  .hero-sub{font-size:.95rem}
+  .hero-butoane{flex-direction:column;gap:10px;align-items:center}
+  .hero-butoane .btn{width:100%;max-width:280px;justify-content:center}
+  .ornament{font-size:1.8rem}
+  .titlu-sec{font-size:1.25rem}
+
+  /* Grile */
+  .grid-2,.grid-3,.grid-2-eq{grid-template-columns:1fr}
+  .grid-prod{grid-template-columns:repeat(2,1fr);gap:12px}
   .grid-detalii-comanda{grid-template-columns:1fr}
-  .cos-wrap{padding:24px 12px}
-  .modal{border-radius:10px 10px 0 0;max-height:95vh;margin-top:auto}
-  .fundal-modal{align-items:flex-end;padding:0}
-  .tabel-admin{font-size:.8rem}
-  .tabel-admin th,.tabel-admin td{padding:9px 10px}
-  .titlu-sec{font-size:1.3rem}
-  .modal-img-principal{height:220px}
-  .t-sep{display:none}
-}
-@media(max-width:500px){
-  nav{top:32px;height:52px}
-  #timer-bar{font-size:.62rem;padding:4px 8px;min-height:32px;gap:10px}
-  .t-num{font-size:1rem}
-  .t-lbl{display:none}
-  .hero h1{font-size:1.4rem}
-  .btn{padding:9px 18px;font-size:.76rem}
-  .grid-prod{grid-template-columns:repeat(2,1fr);gap:11px}
-  .produs-img{height:145px}
+
+  /* Produse */
+  .produs-img{height:160px}
   .produs-corp{padding:11px}
-  .produs-nome,.produs-pret{font-size:.82rem}
-  .admin-content{padding:12px}
+  .produs-nume{font-size:.84rem}
+  .produs-pret{font-size:.95rem}
+  .btn-cos{font-size:.7rem;padding:6px 10px}
+
+  /* Anunturi */
+  .card-anunt{padding:16px}
+  .urgent-banner{padding:14px 16px}
+
+  /* Cos */
+  .cos-wrap{padding:20px 12px}
+  .item-cos{flex-wrap:wrap;gap:10px}
+  .item-cos-img{width:60px;height:60px}
+  .sumar-cos{padding:18px}
+  .total-cos-rand{font-size:1.05rem}
+  .pasi{gap:0}
+  .pas{padding:6px 10px;font-size:.68rem}
+  .pas-linie{width:20px}
+
+  /* Modal */
+  .modal{border-radius:14px 14px 0 0;max-height:94vh;margin-top:auto;width:100%}
+  .fundal-modal{align-items:flex-end;padding:0}
+  .modal-body{padding:18px}
+  .modal-header{padding:16px 20px}
+  .modal-img-principal{height:200px}
+  .modal-galerie{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px}
+  .modal-thumb{width:60px;height:48px;flex-shrink:0}
+
+  /* Admin */
+  .admin-wrap{flex-direction:column}
+  .admin-sidebar{width:100%;flex-direction:row;flex-wrap:wrap;padding:10px;gap:4px}
+  .nav-admin{padding:8px 12px;font-size:.72rem}
+  .admin-continut{padding:14px}
+  .admin-sidebar-jos{display:none}
+  .tabel-admin{font-size:.78rem}
+  .tabel-admin th,.tabel-admin td{padding:8px 9px}
+  .butoane-tabel{flex-direction:column;gap:3px}
+  .form-rand{grid-template-columns:1fr}
+  .formular-admin{padding:16px}
+  .grid-detalii-comanda{grid-template-columns:1fr}
+  .cutie-info{padding:14px}
+
+  /* Footer */
+  .footer-grid{grid-template-columns:1fr 1fr;gap:20px}
+  .footer-col h4{font-size:.7rem}
+  .footer-col p,.footer-col a{font-size:.78rem}
+  .footer-jos{font-size:.72rem;flex-direction:column;text-align:center;gap:6px}
+  footer{padding:28px 0 16px}
+
+  /* Chip-uri filtre */
+  .rand-chips{gap:5px}
+  .chip{font-size:.7rem;padding:5px 10px}
+  .bara-cautare{gap:8px}
+
+  /* Timer bar */
+  .t-sep{display:none}
+  #timer-bar{gap:8px;padding:5px 12px;font-size:.68rem}
+
+  /* Client bar */
+  .client-bar{font-size:.68rem;padding:4px 12px}
+
+  /* Discount info */
+  .discount-info{padding:10px 12px;font-size:.84rem}
+  .voucher-row input{font-size:.88rem}
+}
+
+/* Telefon mic */
+@media(max-width:480px){
+  nav{height:52px}
+  #timer-bar{font-size:.58rem;min-height:30px;padding:3px 8px;gap:6px}
+  .t-num{font-size:.95rem}
+  .t-lbl{display:none}
+  .hero h1{font-size:1.32rem}
+  .hero-sub{font-size:.88rem}
+  .btn{padding:9px 16px;font-size:.74rem}
+
+  /* Produse 2 pe rand compact */
+  .grid-prod{grid-template-columns:repeat(2,1fr);gap:9px}
+  .produs-img{height:130px}
+  .produs-corp{padding:9px}
+  .produs-nume{font-size:.8rem;-webkit-line-clamp:2}
+  .produs-desc{display:none}
+  .produs-pret{font-size:.88rem}
+  .btn-cos{font-size:.66rem;padding:5px 8px}
+
+  /* Footer pe o coloana */
+  .footer-grid{grid-template-columns:1fr}
+  .footer-col:nth-child(2){order:4} /* ANPC la final pe mobil */
+
+  /* Lightbox */
   #lightbox-thumbs{display:none}
+  #lightbox-nav{gap:10px}
+  .lb-btn{padding:7px 14px}
+
+  /* Admin sidebar scroll orizontal */
+  .admin-sidebar{overflow-x:auto;flex-wrap:nowrap;padding:8px}
+  .nav-admin{white-space:nowrap;flex-shrink:0}
+
+  /* Modal full screen pe telefon mic */
+  .modal-client{border-radius:0;max-width:100%;height:100vh;max-height:100vh}
+  #modalClient .fundal-modal{align-items:flex-start}
+
+  /* Pasi comanda mai mici */
+  .pas{padding:5px 8px;font-size:.62rem}
+  .pas-nr{width:22px;height:22px;font-size:.62rem}
+  .pas-linie{width:14px}
 }
 
 /* ── URGENT ANUNTURI EVIDENTA ─────────────── */
@@ -1281,11 +1382,14 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
         </p>
       </div>
       <div class="footer-col">
-        <h4>Contact</h4>
-        <p>📍 Str. Sfânta Treime, nr. 1</p>
-        <p>📞 0743 609 099</p>
-        <p>✉️ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5a33283337333b742e3f353e3528746b6d1a3d373b333674393537">[email&#160;protected]</a></p>
-        <p>🕐 V-D, 07:00–12:00</p>
+        <h4>Contact & Program</h4>
+        <p>📍 Str. Sfânta Treime, nr. 1<br><span style="font-size:.78rem;color:var(--vp);padding-left:22px">Stornești</span></p>
+        <p>📞 <a href="tel:0743609099" style="color:var(--cr)">0743 609 099</a></p>
+        <p>✉️ <a href="mailto:parohia@gmail.com" style="color:var(--cr)">parohia@gmail.com</a></p>
+        <p style="margin-top:10px;font-family:'Cinzel',serif;font-size:.72rem;color:var(--gl);letter-spacing:1px">PROGRAM SLUJBE</p>
+        <p style="font-size:.79rem">🕯️ Duminică – 09:00 Sf. Liturghie</p>
+        <p style="font-size:.79rem">🙏 Sâmbătă – 18:00 Vecernie</p>
+        <p style="font-size:.79rem">📿 Miercuri – 18:00 Acatist</p>
       </div>
       <div class="footer-col">
         <h4>Navigare</h4>
@@ -2118,6 +2222,8 @@ const VERSETE_LUNARE = [
   ],
 ];
 
+
+
 /* ── FIREBASE INIT ────────────────────────── */
 firebase.initializeApp({
   apiKey:"AIzaSyDjQEkuNvLHWwBJsGWmu1LxLcOoS75pFjQ",
@@ -2741,23 +2847,33 @@ async function afiseazaAnunturi(){
   let html='';
   if(urgente.length){
     html+=`<div style="margin-bottom:22px"><p class="anunt-urgente-titlu">🔴 ANUNTURI URGENTE</p>`;
-    html+=urgente.map(a=>`
-      <div class="urgent-banner" onclick="deschideModalAnunt('${a.id}')">
+    html+=urgente.map(a=>{
+      const imgU = a.image
+        ? `<img src="${a.image}" alt="${a.title}" style="width:100%;height:160px;object-fit:cover;border-radius:8px 8px 0 0;margin:-18px -22px 14px;width:calc(100% + 44px);display:block">`
+        : '';
+      return `<div class="urgent-banner" onclick="deschideModalAnunt('${a.id}')" style="padding:18px 22px;overflow:hidden">
+        ${imgU}
         <span class="insigna ins-urgent">🔴 URGENT</span>
         <h3>${a.title}</h3>
         <p class="anunt-extras">${(a.content||'').substring(0,180)}...</p>
         <span class="anunt-data">📅 ${formateazaData(a.createdAt)}</span>
-      </div>`).join('');
+      </div>`;
+    }).join('');
     html+=`</div>`;
   }
   if(filtru==='urgent'){
-    html=lista.map(a=>`
-      <div class="urgent-banner" onclick="deschideModalAnunt('${a.id}')">
+    html=lista.map(a=>{
+      const imgU2 = a.image
+        ? `<img src="${a.image}" alt="${a.title}" style="width:calc(100% + 44px);height:160px;object-fit:cover;border-radius:8px 8px 0 0;margin:-18px -22px 14px;display:block">`
+        : '';
+      return `<div class="urgent-banner" onclick="deschideModalAnunt('${a.id}')" style="padding:18px 22px;overflow:hidden">
+        ${imgU2}
         <span class="insigna ins-urgent">🔴 URGENT</span>
         <h3>${a.title}</h3>
         <p class="anunt-extras">${(a.content||'').substring(0,180)}...</p>
         <span class="anunt-data">📅 ${formateazaData(a.createdAt)}</span>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   } else {
     html+=restul.map(a=>cardAnunt(a)).join('');
   }
@@ -4341,18 +4457,6 @@ const VOUCHERE_DEMO = {
   'BINEVENITI':  {procent:5,  descriere:'Bun venit!',         activ:true, expira:null},
 };
 
-async function semaneazaDateDemo(){
-  try{
-    const [testP,testA]=await Promise.all([
-      db.collection('produse').limit(1).get(),
-      db.collection('anunturi').limit(1).get()
-    ]);
-    if(!testP.empty&&!testA.empty) return;
-    if(testP.empty) for(const p of PRODUSE_DEMO) await fbAdauga('produse',p);
-    if(testA.empty) for(const a of ANUNTURI_DEMO) await fbAdauga('anunturi',a);
-    console.log('Date demo adaugate!');
-  }catch(e){ console.warn('Seed demo:',e.code); }
-}
 
 // Populeaza voucherele in Firestore (read:true pentru toti clientii)
 async function populareVouchere(){
@@ -4722,7 +4826,6 @@ document.addEventListener('DOMContentLoaded',function(){
   initEmailJS();
   verificaSesiuneAdmin();
   mergi('acasa');
-  semaneazaDateDemo();
   populareVouchere(); // populeaza voucherele Firestore (globale pentru toti)
   if(!localStorage.getItem('cookiesAcceptate')){
     setTimeout(()=>document.getElementById('cookieBanner').classList.add('viz'), 1500);
