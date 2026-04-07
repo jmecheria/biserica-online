@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Parohia Ortodoxă</title>
+<title>Parohia Stornești</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Lato:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -842,8 +842,8 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
   <a class="nav-logo" href="#" onclick="mergi('acasa');return false">
     <span class="nav-logo-icon">✝</span>
     <div>
-      <div class="nav-logo-text">Biserica Ortodoxă</div>
-      <div class="nav-logo-sub">Parohia Noastră</div>
+      <div class="nav-logo-text">Biserica Sfânta Treime</div>
+      <div class="nav-logo-sub">Parohia Stornești</div>
     </div>
   </a>
   <ul class="nav-links" id="navLinks">
@@ -878,7 +878,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
   <!-- Hero -->
   <div class="hero">
     <span class="hero-icon">✝</span>
-    <h1>Bine ați venit în Parohia Noastră</h1>
+    <h1>Bine ați venit în Parohia Stornești</h1>
     <p class="hero-sub">„Doamne, Tu ești lumina și mântuirea mea."</p>
     <div class="hero-linie"></div>
     <div class="hero-butoane">
@@ -1046,7 +1046,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
           </div>
           <div style="display:flex;gap:13px;flex-wrap:wrap">
             <button class="btn btn-contur" onclick="mergi('magazin')">← Continuă Cumpărăturile</button>
-            <button class="btn btn-aur" onclick="arataComanada()">Continuă spre Date →</button>
+            <button class="btn btn-aur" onclick="arataComanada()">Finalizare comandă →</button>
           </div>
         </div>
       </div>
@@ -1084,7 +1084,6 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
             <select id="oPlata">
               <option value="ramburs">💵 Ramburs la livrare</option>
               <option value="transfer">🏦 Transfer bancar</option>
-              <option value="card">💳 Card online</option>
             </select>
           </div>
         </div>
@@ -1092,7 +1091,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
         <div class="form-grup">
           <label>Tip Transport</label>
           <select id="oTransport" onchange="if(document.getElementById('rezumatComanda').innerHTML)arataComanada()">
-            <option value="standard">🚚 Curier Standard – 25 Lei (3-5 zile, ~50km Iași)</option>
+            <option value="standard">🚚 Curier Standard – 25 Lei (3-5 zile)</option>
             <option value="express">⚡ Curier Express – 45 Lei (1-2 zile)</option>
             <option value="ridicare">🏛️ Ridicare personală – 10 Lei (taxă procesare online)</option>
           </select>
@@ -1256,7 +1255,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
     <div class="footer-grid">
       <div class="footer-col">
         <div style="font-size:2rem;color:var(--g);margin-bottom:9px">✝</div>
-        <h4>Biserica Ortodoxă</h4>
+        <h4>Biserica Sfânta Treime</h4>
         <p>Comunitatea noastră vă este alături în toate momentele vieții – bucurii și necazuri, de la naștere până la trecerea la cele veșnice.</p>
       </div>
       <div class="footer-col">
@@ -1282,10 +1281,10 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
       </div>
       <div class="footer-col">
         <h4>Contact</h4>
-        <p>📍 Str. Bisericii, nr. 1</p>
-        <p>📞 0740 000 000</p>
-        <p>✉️ parohia@email.ro</p>
-        <p>🕐 L–V, 10:00–14:00</p>
+        <p>📍 Str. Sfânta Treime, nr. 1</p>
+        <p>📞 0743 609 099</p>
+        <p>✉️ irimia.teodor.17@gmail.com</p>
+        <p>🕐 V-D, 07:00–12:00</p>
       </div>
       <div class="footer-col">
         <h4>Navigare</h4>
@@ -1296,8 +1295,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
       </div>
     </div>
     <div class="footer-jos">
-      ✝ Slavă lui Dumnezeu pentru toate! ✝ &nbsp;|&nbsp; © 2025 Parohia Ortodoxă
-      &nbsp;|&nbsp;
+      ✝ Slavă lui Dumnezeu pentru toate! ✝ &nbsp;|&nbsp; © 2025 Parohia Stornești  ✝&nbsp;|&nbsp;
       <a onclick="deschideModal('modalTermeni')" style="color:var(--gl);text-decoration:underline;cursor:pointer;font-size:.82rem">📋 Termeni & Condiții / GDPR</a>
     </div>
   </div>
@@ -1322,7 +1320,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
     </div>
     <div class="termeni-body">
       <h3>1. Cine suntem</h3>
-      <p>Parohia Ortodoxă operează acest site cu scop de informare și vânzare de obiecte de cult. Contact: parohia@email.ro</p>
+      <p>Parohia Stornești operează acest site cu scop de informare și vânzare de obiecte de cult. Contact: irimia.teodor.17@gmail.com</p>
       <h3>2. Date colectate</h3>
       <ul>
         <li><strong>Cont client:</strong> Nume, email — stocate prin Firebase Authentication (Google).</li>
@@ -1334,13 +1332,13 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
       <h3>4. Drepturile tale</h3>
       <ul>
         <li>Drept de <strong>acces, rectificare, ștergere</strong> a datelor personale.</li>
-        <li>Drept de <strong>portabilitate</strong> și <strong>opoziție</strong> la prelucrare.</li>
-        <li>Contact pentru exercitarea drepturilor: parohia@email.ro</li>
+        <li>Drept de <strong>portabilitate și opoziție</strong>  la prelucrare.</li>
+        <li>Contact pentru exercitarea drepturilor: irimia.teodor.17@gmail.com</li>
       </ul>
       <h3>5. Securitate și stocare</h3>
       <p>Datele sunt stocate în Google Firebase (infrastructură securizată). Nu vindem date către terți. Comenzile se păstrează 5 ani conform legislației fiscale.</p>
       <h3>6. Retururi</h3>
-      <p>Return posibil în 14 zile de la livrare pentru produse nefolosite, cu notificare prealabilă la parohia@email.ro</p>
+      <p>Retur posibil în 14 zile de la livrare pentru produse nefolosite, cu notificare prealabilă la irimia.teodor.17@gmail.com</p>
       <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--crd);font-size:.76rem;color:var(--tl)">Ultima actualizare: Aprilie 2025</div>
     </div>
     <div style="padding:14px 26px;border-top:1px solid var(--crd);text-align:right">
@@ -1352,37 +1350,37 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
 <!-- ═══════════════════ JAVASCRIPT ═══════════════════════════════ -->
 <script>
 const CAL = {
-  '0101':{t:'Tăierea Împrejur a Domnului; Sf. Vasile cel Mare',d:'Praznic împărătesc. Pruncul Iisus primește numele Său sfânt. Ziua marelui ierarh Vasile.',praznic:true},
-  '0102':{t:'Sf. Silvestru, ep. Romei; Sf. Serafim de Sarov',d:'Sfântul Silvestru a condus Biserica Romei 21 de ani. Sfântul Serafim, stâlpul rugăciunii ortodoxe ruse.'},
-  '0103':{t:'Sf. Proroc Maleahi; Sf. Mc. Gordiu',d:'Ultimul proroc al Vechiului Testament. Sfântul Gordiu, soldat roman martirizat pentru credință.'},
-  '0104':{t:'Sf. 70 de Apostoli; Sf. Cuv. Teoctist',d:'Pomenirea celor 70 de ucenici trimiși de Mântuitorul. Sfântul Teoctist, sihastrul din Palestina.'},
-  '0105':{t:'Sf. Mc. Teopempt și Teonas; Sf. Cuv. Sinclitichia',d:'Mucenicii Teopempt și Teonas. Cuvioasa Sinclitichia, mama duhovnicească a multor monahii.'},
-  '0106':{t:'Botezul Domnului – Boboteaza; Sfințirea Apelor',d:'Arătarea Sfintei Treimi la Iordan. Apele lumii se sfințesc prin coborârea Duhului Sfânt.',praznic:true,dezlegare:'Dezlegare la toate'},
-  '0107':{t:'Soborul Sf. Ioan Botezătorul',d:'A doua zi după Bobotează cinstim pe Înaintemergătorul Domnului care L-a botezat pe Iisus.',dezlegare:'Dezlegare la pește'},
-  '0108':{t:'Sf. Cuv. Gheorghe Hozevitul; Sf. Mc. Domnica',d:'Sfântul Gheorghe, sihastrul Mânăstirii Hozeva din Palestina. Cuvioasa Domnica.'},
-  '0109':{t:'Sf. Mc. Polieuct; Sf. Ier. Filip, mitrop. Moscovei',d:'Sfântul Polieuct, ofițer roman martir. Sfântul Filip, mitropolitul Moscovei.'},
-  '0110':{t:'Sf. Grigorie, ep. Nissei; Sf. Dometian, ep. Melitinei',d:'Sfântul Grigorie de Nyssa, frate al lui Vasile cel Mare, mare teolog capadocian.'},
-  '0111':{t:'Sf. Cuv. Teodosie cel Mare; Sf. Mc. Vitalie',d:'Sfântul Teodosie, întemeietorul vieții de obște în monahism, trăitor în Palestina.'},
-  '0112':{t:'Sf. Mc. Tatiana; Sf. Ier. Savin, ep. Katanskii',d:'Sfânta Tatiana, diaconiță martirizată la Roma. Patrona studenților în tradiția rusă.'},
-  '0113':{t:'Sf. Mc. Ermil și Stratonic; Sf. Cuv. Iacob de Nisibe',d:'Mucenicii Ermil și Stratonic, martirizați pe malul Dunării.'},
-  '0114':{t:'Sf. Cuv. Mc. din Sinai și Rait; Sf. Ier. Sava, arhiep.',d:'Pomenirea monahilor uciși de barbari la Muntele Sinai și Rait.'},
-  '0115':{t:'Sf. Cuv. Pavel Tebeul; Sf. Ioan Colibașul',d:'Sfântul Pavel din Teba, primul sihastru creștin, trăitor 113 ani în pustie.'},
-  '0116':{t:'Sf. Cuv. Mc. Romil, Rașka; Pomenirea lanțurilor Sf. Ap. Petru',d:'Pomenirea lanțurilor Sfântului Apostol Petru, păstrate la Roma.'},
-  '0117':{t:'Sf. Antonie cel Mare',d:'Părintele monahismului creștin, rugătorul neobosit al deșertului egiptean, trăitor 105 ani.'},
-  '0118':{t:'Sf. Ier. Atanasie și Chiril, patr. Alexandriei',d:'Cei doi mari apărători ai Ortodoxiei împotriva arianismului.'},
-  '0119':{t:'Sf. Cuv. Macarie Egipteanul și Macarie Alexandrinul',d:'Cei doi mari Macarie, contemporani și prieteni, coloane ale vieții monahale din Egipt.'},
-  '0120':{t:'Sf. Eutimie cel Mare; Sf. Cuv. Teoctist',d:'Cuviosul Eutimie, luminătorul monahilor din Palestina, trăitor în pustnicie 90 de ani.'},
-  '0121':{t:'Sf. Cuv. Maxim Mărturisitorul; Sf. Mc. Neofitu',d:'Sfântul Maxim, mare teolog, apărătorul dreptei credințe, torturat și exilat.'},
-  '0122':{t:'Sf. Ap. Timotei; Sf. Cuv. Mc. Anastasie Persul',d:'Sfântul Timotei, ucenic al Apostolului Pavel, primul episcop al Efesului.'},
-  '0123':{t:'Sf. Sfințit Mc. Clement al Ancirei; Sf. Mc. Agatanghel',d:'Sfântul Clement, episcop martir din Ancira, a suferit mulți ani de temniță.'},
-  '0124':{t:'Sf. Xenia din Petersburg; Sf. Cuv. Pahomie',d:'Nebuna pentru Hristos, ocrotitoarea celor în suferință și a celor singuri din Petersburg.'},
-  '0125':{t:'Sf. Grigorie Teologul, arhiep. Constantinopolului',d:'Unul din cei Trei Ierarhi, poet și teolog, autorul multor imne și tratate.'},
-  '0126':{t:'Sf. Cuv. Xenofont și Maria; Sf. Ier. Iosif Studitul',d:'Sfântul Xenofont, familia sa și ucenicii lui, monahi la Ierusalim.'},
-  '0127':{t:'Aducerea moaștelor Sf. Ioan Gură de Aur',d:'Readucerea sfintelor moaște ale Sfântului Ioan de la Comana la Constantinopol.'},
-  '0128':{t:'Sf. Cuv. Efrem Sirul; Sf. Ier. Isac, ep. Ninivei',d:'Sfântul Efrem, diaconul Soarelui, autorul unor rugăciuni folosite și astăzi în post.'},
-  '0129':{t:'Aducerea moaștelor Sf. Sfințit Mc. Ignatie Teoforul',d:'Sfântul Ignatie, episcopul Antiohiei, ucis de fiare în arena Romei.'},
-  '0130':{t:'Cei Trei Ierarhi: Vasile, Grigorie, Ioan',d:'Vasile cel Mare, Grigorie Teologul și Ioan Gură de Aur – patronii școlilor și ai culturii creștine.',praznic:true,dezlegare:'Dezlegare la pește'},
-  '0131':{t:'Sf. Cuv. Mc. Chir și Ioan; Sf. Mc. Tryphena și Tryphosa',d:'Sfinții Chir și Ioan, medici fără de arginți, martirizați în Egipt.'},
+  '0101':{t:'Tăierea-împrejur cea după trup a Domnului;Sf. Ier. Vasile cel Mare, arhiep. Cezareei Capadociei și mama sa Sf. Emilia (Tedeum - Anul Nou)',Praznic Împărătesc:true},
+  '0102':{t:'Înainte-prăznuirea Botezului Domnului; Sf. Ier. Silvestru, ep. Romei; Sf. Cuv. Serafim de Sarov; (Harți)'},
+  '0103':{t:'Sf. Prooroc Maleahi; Sf. Mc. Gordie (Sâmbăta dinaintea Botezului Domnului)'},
+  '0104':{t:'Soborul Sf. 70 de Apostoli; Sf. Cuv. Teoctist din Siciliei; Sf. Cuv. Apolinaria; Sf. Cuv. Nichifor cel Lepros Duminica dinaintea Botezului Domnului (Predica Sf. Ioan Botezătorul); Ap. II Timotei IV, 5-8; Ev. Marcu I, 1-8; glas 5, voscr. 8'},
+  '0105':{t:'Sf. Mc. Teopempt și Teonas; Sf. Cuv. Sinclitichia (Ajunul Botezului Domnului) (Post negru)'},
+  '0106':{t:'Botezul Domnului (Boboteaza - Dumnezeiasca Arătare)'},
+  '0107':{t:'Soborul Sf. Prooroc Ioan Botezătorul și Înaintemergătorul Domnului (Dezlegare la pește)'},
+  '0108':{t:'Sf. Cuv. Gheorghe Hozevitul; Sf. Cuv. Domnica'},
+  '0109':{t:'Sf. Mc. Polieuct; Sf. Ier. Petru, ep. Sevastiei (Post)'},
+  '0110':{t:'Sf. Ier. Grigorie, ep. Nyssei; †) Sf. Cuv. Antipa de la Calapodești; Sf. Ier. Dometian, ep. Melitenei; (Sâmbăta după Botezul Domnului)'},
+  '0111':{t:'Sf. Cuv. Teodosie, începătorul vieții călugărești de obște din Palestina; Sf. Cuv. Vitalie Duminica după Botezul Domnului (Începutul propovăduirii Domnului); Ap. Efeseni IV, 7-13; Ev. Matei IV, 12-17; glas 6, voscr. 9'},
+  '0112':{t:'Sf. Mc. Tatiana diaconița și Eutasia'},
+  '0113':{t:'Sf. Mc. Ermil și Stratonic; Sf. Ier. Iacob, ep. din Nisibe;'},
+  '0114':{t:'Odovania praznicului Botezului Domnului; Sf. Cuv. Mc. din Sinai și Rait; Sf. Nina, luminătoarea Georgiei; (Post)'},
+  '0115':{t:'Sf. Cuv. Pavel Tebeul și Ioan Colibașul'},
+  '0116':{t:'	Cinstirea lanțului Sf. Ap. Petru; Sf. Mc. Danact citețul (Post)'},
+  '0117':{t:'Sf. Cuv. Antonie cel Mare; Sf. Cuv. Antonie cel nou de la Veria'},
+  '0118':{t:'Sf. Ier. Atanasie și Chiril, arhiep. Alexandriei Duminica a XXIX-a după Rusalii (a celor 10 leproși); Ap. Coloseni I, 12-18; Ev. Luca XVII, 12-19; glas 7, voscr. 10'},
+  '0119':{t:'Sf. Cuv. Macarie cel Mare și Macarie Alexandrinul;Sf. Ier. Marcu, mitr. Efesului; Sf. Mc. Eufrasia'},
+  '0120':{t:'Sf. Cuv. Eftimie cel Mare; Sf. Mc. Eusebiu; † Sf. Mc. In, Pin și Rim;'},
+  '0121':{t:'Sf. Cuv. Maxim Mărt.; Sf. Mc. Neofit; Sf. Mc. Agnia din Roma (Post)'},
+  '0122':{t:'Sf. Ap. Timotei; Sf. Cuv. Mc. Anastasie Persul'},
+  '0123':{t:'Sf. Sfințit Mc. Clement, ep. Ancirei; Sf. Mc. Agatanghel; Sf. Părinți de la Sinodul al VI-lea Ecumenic (Post)'},
+  '0124':{t:'Sf. Cuv. Xenia din Roma; Sf. Xenia din Sankt Petersburg (Tedeum - Ziua Unirii Principatelor Române)'},
+  '0125':{t:'Sf. Ier. Grigorie Teologul, arhiep. Constantinopolului; †) Sf. Ier. Bretanion, ep. Tomisului Duminica a XXXII-a după Rusalii (a lui Zaheu); Ap. I Timotei IV, 9-15; Ev. Luca XIX, 1-10; glas 8, voscr. 11'},
+  '0126':{t:'Sf. Ier. Iosif cel Milostiv, mitr. Moldovei; Sf. Cuv. Xenofont, Maria, Arcadie și Ioan'},
+  '0127':{t:'Aducerea moaștelor Sf. Ier. Ioan Gură de Aur; Sf. Marciana, împ.'},
+  '0128':{t:'Sf. Cuv. Efrem Sirul, Isaac Sirul, Paladie și Iacob Sihastrul (Post)'},
+  '0129':{t:'Aducerea moaștelor Sf. Sfințit Mc. Ignatie Teoforul; Sf. Mc. Filotei'},
+  '0130':{t:'Sf. Trei Ierarhi: Vasile cel Mare, Grigorie Teologul și Ioan Gură de Aur; Sf. Sfințit Mc. Ipolit, ep. Romei (Dezlegare la ulei și vin)'},
+  '0131':{t:'Sf. Doctori fără de arginți Chir și Ioan'},
   '0201':{t:'Sf. Sfințit Mc. Trifon; Întâmpinarea Domnului (vecernia)',d:'Sfântul Trifon din Frigia, ocrotitorul viei și al livezilor.'},
   '0202':{t:'Întâmpinarea Domnului; Sf. Simeon și Ana Proroceasa',d:'Praznic împărătesc – aducerea pruncului Iisus la Templu și primirea Sa de Simeon.',praznic:true,dezlegare:'Dezlegare la pește'},
   '0203':{t:'Sf. Sfințit Mc. Vlasie, ep. Sevastiei; Sf. Cuv. Simeon',d:'Sfântul Vlasie, ocrotitorul bolilor de gât. Sfântul Simeon, Stâlpnicul cel Tânăr.'},
@@ -1443,36 +1441,36 @@ const CAL = {
   '0329':{t:'Sf. Mc. Marc, ep. Aretuselor; Sf. Mc. Ionas',d:'Sfântul Marc, episcop martir din Arabia.'},
   '0330':{t:'Sf. Ap. Sopatru, Tertiu, Erast; Sf. Mc. Acachie',d:'Sfinții Apostoli din cei 70, colaboratori ai Apostolului Pavel.'},
   '0331':{t:'Sf. Sfințit Mc. Ipatie, ep. Gangrei; Sf. Ap. Ermei',d:'Sfântul Ipatie, episcop martir în Gangra Paflagoniei.'},
-  '0401':{t:'Sf. Cuv. Maria Egipteanca; Sf. Mc. Gherontie',d:'Sfânta Maria Egipteanca, modelul suprem al pocăinței, 17 ani de desfrâu și 47 de pustnicie.'},
-  '0402':{t:'Sf. Cuv. Tit Taumaturghul; Sf. Mc. Amfian și Edesie',d:'Sfântul Tit, tămăduitorul de minuni. Sfinții Amfian și Edesie, martiri la Cezareea.'},
-  '0403':{t:'Sf. Cuv. Nichita Mărturisitorul; Sf. Mc. Elpidofor',d:'Sfântul Nichita, apărătorul sfintelor icoane, torturat și exilat.'},
-  '0404':{t:'Sf. Cuv. Iosif cel Nou de la Partos; Sf. Mc. Terentie',d:'Sfântul Iosif de la Partos, mitropolitul Timișoarei, făcător de minuni și vindecător.'},
-  '0405':{t:'Sf. Mc. Teodul și Agathopod; Sf. Cuv. Marcu',d:'Sfântul Teodul, citeț martir în Tesalonic, și diaconul Agathopod.'},
-  '0406':{t:'Sf. Sfințit Mc. Eutihie, patr. Constantinopolului; Sf. Mc. Platoni',d:'Sfântul Eutihie, patriarh exilat de împăratul Iustinian.'},
-  '0407':{t:'Sf. Sfințit Mc. Calliopodiu; Sf. Cuv. Gheorghe',d:'Pomenirea sfinților martiri ai lui Hristos.'},
-  '0408':{t:'Sf. Ap. Irodion, Agav, Ruf, Flegon, Asincrit, Ermis',d:'Sfinți Apostoli din cei 70, menționați de Apostolul Pavel în Epistola către Romani.'},
-  '0409':{t:'Sf. Sfințit Mc. Eupsihie din Cezareea; Sf. Cuv. Vadim',d:'Sfântul Eupsihie, ofițer creștin care a dărâmat un templu păgân și a fost martirizat.'},
-  '0410':{t:'Sf. Mc. Terentie, Pompei, African, Maxim, Zotoc și Dima',d:'Șase soldați creștini martiri la Cartagina în Africa.'},
-  '0411':{t:'Sf. Sfințit Mc. Antipa, ep. Pergamului; Sf. Ier. Calinic de la Cernica',d:'Sfântul Antipa, ucenicul Apostolului Ioan, episcop martir la Pergam. Sfântul Calinic de la Cernica.'},
-  '0412':{t:'Sf. Cuv. Vasile Mărturisitorul; Sf. Mc. Menas',d:'Sfântul Vasile, apărătorul icoanelor.'},
-  '0413':{t:'Sf. Sfințit Mc. Arteamon, ep. Seleuciei; Sf. Cuv. Martinos',d:'Sfântul Arteamon, episcop martir, binecuvântat de Apostolul Pavel.'},
-  '0414':{t:'Sf. Sfințit Mc. Maxim, ep. Prusei; Sf. Cuv. Mc. Agathaghel',d:'Pomenirea sfinților martiri ai lui Hristos din Anatolia.'},
-  '0415':{t:'Sf. Ap. Aristarh, Pud și Trofim; Sf. Cuv. Mc. Anastasia din Cipru',d:'Sfinții Apostoli din cei 70, tovarăși ai Apostolului Pavel în călătoriile sale.'},
-  '0416':{t:'Sf. Mc. Agavia, Irina și Hionia; Sf. Cuv. Niceta',d:'Trei surori martire din Macedonia, ucise sub Dioclețian pentru refuzul de a arunca Scripturile.'},
-  '0417':{t:'Sf. Sfințit Mc. Simeon, ep. Persiei; Sf. Mc. Agatopod',d:'Sfântul Simeon, episcop persan martir, împreună cu mulți credincioși.'},
-  '0418':{t:'Sf. Cuv. Ioan, ucenicul Sf. Grigorie Decapolitul; Sf. Mc. Victor',d:'Pomenirea sfinților cuvioși din școala duhovnicească a Sfântului Grigorie.'},
-  '0419':{t:'Sf. Cuv. Ioan de la Poceaev; Sf. Mc. Hristofor și Dada',d:'Sfântul Ioan de la Poceaev, ocrotitorul Ucrainei.'},
-  '0420':{t:'Sf. Cuv. Teodor Trihina; Sf. Mc. Anastasie',d:'Sfântul Teodor Trihina, purtătorul hainei de păr, trăitor în mare asceză.'},
-  '0421':{t:'Sf. Mc. Ianuarie, ep. Beneventului; Sf. Cuv. Maxim din Sinai',d:'Sfântul Ianuarie, episcop martir, patronul orașului Napoli.'},
-  '0422':{t:'Sf. Sfințit Mc. Teodor de la Perge; Sf. Cuv. Natanael',d:'Sfântul Teodor, preot martir din Pamfilia.'},
-  '0423':{t:'Sf. Mare Mc. Gheorghe Purtătorul de Biruință',d:'Marele Mucenic Gheorghe, ofițer roman, martir sub Dioclețian. Apărătorul celor nedreptățiți. Hramul multor biserici.',praznic:true,dezlegare:'Dezlegare la pește'},
-  '0424':{t:'Sf. Mc. Sava Stratilat; Sf. Cuv. Elisabeta',d:'Sfântul Sava, general roman, botezat din minune și martirizat.'},
-  '0425':{t:'Sf. Ap. și Ev. Marcu',d:'Sfântul Marcu, autorul celei de-a doua Evanghelii, ucenic al Apostolului Petru.',dezlegare:'Dezlegare la pește'},
-  '0426':{t:'Sf. Sfințit Mc. Vasile, ep. Amasiei; Sf. Cuv. Isidor',d:'Sfântul Vasile, episcopul Amasiei, martir pentru credință.'},
-  '0427':{t:'Sf. Sfințit Mc. Simeon Rudstvennicu; Sf. Mc. Isihie',d:'Pomenirea sfinților martiri ai lui Hristos.'},
-  '0428':{t:'Sf. Ap. și Ev. Iacob al lui Zevedeu',d:'Sfântul Iacob, fratele Sfântului Ioan Teologul, primul martir dintre Apostoli.',dezlegare:'Dezlegare la pește'},
-  '0429':{t:'Sf. 9 Mc. din Cizic; Sf. Cuv. Memnon',d:'Nouă creștini martiri în Cizic, sub diverse împărați romani.'},
-  '0430':{t:'Sf. Ap. Iacob al lui Alfeu; Sf. Cuv. Donat',d:'Sfântul Iacob al lui Alfeu, unul din cei Doisprezece Apostoli.'},
+  '0401':{t:'Sf. Cuv. Maria Egipteanca; Sf. Cuv. Macarie Mărt.; Sf. Mc. Gherontie; Sf. Varsanufie de la Optina (Post)'},
+  '0402':{t:'Sf. Cuv. Tit, făcătorul de minuni; Sf. Mc. Amfian și Edesie (Post)'},
+  '0403':{t:'Sf. Cuv. Nichita Mărt. și Ilirie (Post)'},
+  '0404':{t:'Sf. Cuv. Iosif Imnograful, Gheorghe din Maleon și Zosima (Sâmbăta lui Lazăr - Pomenirea morților) (Dezlegare la ulei și vin)'},
+  '0405':{t:'(Denia Sf. și Marii Luni) (Dezlegare la pește) Intrarea Domnului în Ierusalim (Duminica a VI-a din Post - a Floriilor); Ap. Filipeni IV, 4-9; Ev. Ioan XII, 1-18'},
+  '0406':{t:'Sf. și Marea Luni; † Sf. Sfințit Mc. Irineu, ep. de Sirmium; Sf. Ier. Eutihie, patr. Constantinopolului; Sf. Cuv. Grigorie Sinaitul și Platonida (Denia Sf. și Marii Marți) (Numai seara, pâine și apă)'},
+  '0407':{t:'Sf. și Marea Marți; Sf. Mc. Caliopie; Sf. Ier. Gheorghe Mărt., ep. Mitilenei (Denia Sf. și Marii Miercuri) (Numai seara, pâine și apă)'},
+  '0408':{t:'Sf. și Marea Miercuri; Sf. Ap. Irodion, Agav, Ruf, Flegon, Asincrit și Ermis; Sf. Ier. Celestin, ep. Romei (Denia Sf. și Marii Joi) (Numai seara, pâine și apă)'},
+  '0409':{t:'Sf. și Marea Joi; Sf. Mc. Eupsihie din Cezareea Capadociei; Sf. Cuv. Vadim (Pomenirea morților - Denia celor 12 Evanghelii, a Sf. și Marii Vineri) (Dezlegare la ulei și vin)'},
+  '0410':{t:'Sf. și Marea Vineri - Scoaterea Sf. Aer; Sf. Mc. Terentie, Pompei, African, Maxim și Dima (Denia Prohodului Domnului, a Sf. și Marii Sâmbete) (Zi aliturgică) (Post negru)'},
+  '0411':{t:'Sf. și Marea Sâmbătă;Sf. Ier. Calinic de la Cernica, ep. Râmnicului; Sf. Sfințit Mc. Antipa, ep. Pergamului Asiei (Dezlegare la ulei și vin)'},
+  '0412':{t:'Învierea Domnului (Sfintele Paști); Ap. Fapte I, 1-8; Ev. Ioan I, 1-17'},
+  '0413':{t:'A doua zi de Paști (Mărturia lui Ioan Botezătorul); †) Cinstirea Sf. Ic. a M. D. „Axion Estin” de la M. Protaton - Athos; Sf. Sfințit Mc. Artemon; Sf. Mc. Elefterie Persul. In aceasta zi se savarsesc si Slujbele Sfintilor romani din 11 si 12 aprilie: †) Sf. Ier. Calinic de la Cernica, ep. Râmnicului si mama sa Sf. Cuv. Filoteia de la Pasarea, si Sf. Mc. Sava de la Buzău'},
+  '0414':{t:'A treia zi de Paști (Drumul spre Emaus); †) Sf. Ier. Pahomie de la Gledin, ep. Romanului; Sf. Ier. Martin Mărt., ep. Romei; Sf. Mc. Tomaida'},
+  '0415':{t:'Sf. Ap. Aristarh, Pud și Trofim; Sf. Mc. Crescent (Harți)'},
+  '0416':{t:'Sf. Mc. fecioare Agapia, Irina și Hionia'},
+  '0417':{t:'Izvorul Tămăduirii; †) Cinstirea Sf. Ic. a M. D. „Siriaca” de la M. Ghighiu; Sf. Sfințit Mc. Simeon, ep. Persiei (Harți)'},
+  '0418':{t:'Sf. Cuv. Ioan, ucenicul Sf. Grigorie Decapolitul'},
+  '0419':{t:'Sf. Cuv. Ioan de la Lavra Veche; Sf. Sfințit Mc. Pafnutie Duminica a II-a după Paști (a Sf. Ap. Toma); Ap. Fapte V, 12-20; Ev. Ioan XX, 19-31; glas 1, voscr. 1'},
+  '0420':{t:'Sf. Ier. Teotim, ep. Tomisului; Sf. Cuv. Teodor Trihina'},
+  '0421':{t:'Sf. Sfințit Mc. Ianuarie, ep. de Benevent; Sf. Mc. Teodor din Perga; Sf. Mc. Alexandra, împ.'},
+  '0422':{t:'Sf. Ier. Teodor Sicheotul, ep. Anastasiopolei (Dezlegare la pește)'},
+  '0423':{t:'Sf. M. Mc. Gheorghe, Purtătorul de biruință; Sf. Mc. Valerie'},
+  '0424':{t:'Sf. Ier. Mărt. Ilie Iorest, Sava Brancovici și Simion Ștefan, mitr. Transilvaniei; Sf. Ier. Iosif Mărt. din Maramureș; Sf. Mc. Pasicrat și Valentin; Sf. Cuv. Elisabeta (Dezlegare la pește)'},
+  '0425':{t:'Sf. Ap. și Ev. Marcu; †) Sf. Cuv. Vasile de la Poiana Mărului'},
+  '0426':{t:'Sf. Sfințit Mc. Vasilevs, ep. Amasiei; Sf. Cuv. Glafira; † Soborul Sfintelor Femei Românce; † Sf. Mc. Chiril, Chindeu și Tasie din Axiopolis (Cernavodă) Duminica a III-a după Paști (a Mironosițelor); Ap. Fapte VI, 1-7; Ev. Marcu XV, 43-47; XVI, 1-8; glas 2, voscr. 4'},
+  '0427':{t:'Sf. Sfințit Mc. Simeon, ruda Domnului, ep. Ierusalimului'},
+  '0428':{t:'Sf. Ap. Iason și Sosipatru; † Sf. Mc. Maxim, Cvintilian și Dadas din Ozovia'},
+  '0429':{t:'Sf. 9 Mc. din Cizic; Sf. Cuv. Memnon, făcătorul de minuni (Dezlegare la pește)'},
+  '0430':{t:'Sf. Ap. Iacob al lui Zevedeu, fratele Sf. Ap. și Ev. Ioan; Sf. Ier. Donat, ep. Evriei'},
   '0501':{t:'Sf. Proroc Ieremia; Sf. Cuv. Pahomie cel Mare',d:'Sfântul Ieremia, prorocul cel plângăreț, autorul Cărții Plângerilor Ierusalimului.'},
   '0502':{t:'Sf. Mc. Boris și Gleb; Sf. Atanasie cel Mare',d:'Sfinții Boris și Gleb, principi ruși martiri. Sfântul Atanasie, apărătorul Ortodoxiei.'},
   '0503':{t:'Sf. Mc. Timotei și Mavra; Sf. Cuv. Petru',d:'Sfinții Timotei și Mavra, soți creștini martiri în Egipt.'},
