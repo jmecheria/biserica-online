@@ -861,6 +861,73 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
   .pas-linie{width:14px}
 }
 
+/* ── FAVORITE ───────────────────────────────── */
+.btn-fav{
+  background:none;border:none;font-size:1.3rem;cursor:pointer;
+  line-height:1;padding:4px;transition:.2s;flex-shrink:0;
+}
+.btn-fav:hover{transform:scale(1.2)}
+.btn-fav.activ{color:#E74C3C}
+.fav-count{
+  position:absolute;top:8px;right:8px;
+  background:rgba(231,76,60,.9);color:#fff;
+  border-radius:50%;width:20px;height:20px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.65rem;font-weight:700;font-family:'Lato',sans-serif;
+}
+
+/* ── RECENZII ───────────────────────────────── */
+.stele-display{
+  display:inline-flex;gap:2px;font-size:1rem;line-height:1;
+}
+.stele-input{
+  display:flex;gap:4px;margin-bottom:12px;
+}
+.stea-input{
+  font-size:1.8rem;cursor:pointer;transition:.15s;line-height:1;
+  color:#ddd;
+}
+.stea-input.activa,.stea-input:hover{color:#F39C12}
+.card-recenzie{
+  background:var(--w);border-radius:9px;padding:16px;
+  border:1px solid var(--crd);margin-bottom:12px;
+}
+.card-recenzie-header{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:8px;gap:10px;flex-wrap:wrap;
+}
+.recenzie-autor{
+  font-family:'Cinzel',serif;font-size:.82rem;color:var(--v);font-weight:700;
+}
+.recenzie-data{
+  font-size:.72rem;color:var(--tl);font-family:'Lato',sans-serif;
+}
+.recenzie-text{
+  font-size:.9rem;color:var(--tm);line-height:1.6;margin-bottom:8px;
+}
+.raspuns-admin{
+  background:linear-gradient(135deg,rgba(107,26,42,.06),rgba(107,26,42,.03));
+  border-left:3px solid var(--v);border-radius:0 6px 6px 0;
+  padding:10px 14px;margin-top:10px;font-size:.86rem;
+}
+.raspuns-admin-label{
+  font-family:'Cinzel',serif;font-size:.72rem;color:var(--v);
+  font-weight:700;margin-bottom:4px;
+}
+.rating-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(243,156,18,.12);border:1px solid rgba(243,156,18,.3);
+  border-radius:12px;padding:2px 8px;font-size:.72rem;
+  font-family:'Lato',sans-serif;font-weight:700;color:#E67E22;
+  white-space:nowrap;
+}
+.form-recenzie{
+  background:var(--cr);border-radius:9px;padding:16px;margin-top:16px;
+}
+.form-recenzie h4{
+  font-family:'Cinzel',serif;color:var(--v);font-size:.9rem;margin-bottom:12px;
+}
+
 /* ── URGENT ANUNTURI EVIDENTA ─────────────── */
 .urgent-banner{
   background:linear-gradient(135deg,#8B0000,#C0392B);
@@ -1249,6 +1316,8 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
       <button class="nav-admin" id="nav-produse" onclick="incarcaSectiuena('produse')">🕯️ Produse</button>
       <button class="nav-admin" id="nav-anunturi" onclick="incarcaSectiuena('anunturi')">📋 Anunțuri</button>
       <button class="nav-admin" id="nav-vouchere" onclick="incarcaSectiuena('vouchere')">🏷️ Vouchere</button>
+      <button class="nav-admin" id="nav-recenzii" onclick="incarcaSectiuena('recenzii')">⭐ Recenzii</button>
+      <button class="nav-admin" id="nav-notificari" onclick="incarcaSectiuena('notificari')">📢 Notificări</button>
       <button class="nav-admin" id="nav-email" onclick="incarcaSectiuena('email')">✉️ Email Config</button>
       <div class="admin-sidebar-jos">
         <button class="btn btn-pericol btn-mic" style="width:100%;justify-content:center" onclick="faLogout()">🚪 Deconectare</button>
@@ -1283,9 +1352,15 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
           <button class="btn-cantitate" onclick="schimbaCantMP(1)">+</button>
         </div>
       </div>
-      <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
         <button class="btn btn-primar" onclick="adaugadinModal()">🛒 Adaugă în Coș</button>
+        <button class="btn-fav" id="btnFavModal" onclick="toggleFavModal()" style="font-size:1.4rem;border:2px solid var(--crd);border-radius:7px;padding:7px 12px;transition:.2s" title="Favorite">🤍</button>
         <button class="btn btn-contur" onclick="inchideModal('modalProdus')">Închide</button>
+      </div>
+      <!-- Recenzii in modal produs -->
+      <div style="margin-top:24px;border-top:2px solid var(--crd);padding-top:18px">
+        <h3 style="font-family:'Cinzel',serif;color:var(--v);font-size:.95rem;margin-bottom:14px">⭐ Recenzii Clienți</h3>
+        <div id="recenziiContainer"></div>
       </div>
     </div>
   </div>
@@ -1387,9 +1462,9 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
         <p>📞 <a href="tel:0743609099" style="color:var(--cr)">0743 609 099</a></p>
         <p>✉️ <a href="mailto:parohia@gmail.com" style="color:var(--cr)">parohia@gmail.com</a></p>
         <p style="margin-top:10px;font-family:'Cinzel',serif;font-size:.72rem;color:var(--gl);letter-spacing:1px">PROGRAM SLUJBE</p>
-        <p style="font-size:.79rem">🕯️ Duminică – 09:00 Sf. Liturghie</p>
-        <p style="font-size:.79rem">🙏 Sâmbătă – 07:00 Sfânta Liturghie+Parastas</p>
-        <p style="font-size:.79rem">📿 Vineri – 07:00 Spovedanie</p>
+        <p style="font-size:.79rem">⛪ Vineri – 07:00 Spovedanie</p>
+        <p style="font-size:.79rem">🕯️ Sâmbătă – 07:00 Sf. Liturghie + Parastas</p>
+        <p style="font-size:.79rem">✝ Duminică – Sf. Liturghie</p>
       </div>
       <div class="footer-col">
         <h4>Navigare</h4>
@@ -2247,9 +2322,10 @@ const auth = firebase.auth();
 const EJS = {
   publicKey:   'p2O-tLOxlx3BmOLQf',
   serviceId:   'service_j3uce4r',
-  tplClient:   'template_a3n714t',   // confirmare comanda client
+  tplClient:   'template_a3n714t',   // confirmare comanda + status update
   tplAdmin:    'template_viznvfb',   // notificare comanda noua admin
-  tplStatus:   'template_a3n714t',   // update status catre client (acelasi template, alt status)
+  tplStatus:   'template_a3n714t',   // update status catre client
+  tplNotif:    'template_a3n714t',   // notificare anunt nou / stoc nou (acelasi template)
   adminEmail:  'irimia.teodor.17@gmail.com',
   ejsReady:    false,
 };
@@ -2379,6 +2455,7 @@ async function trimiteEmailStatusUpdate(orderData, statusNou){
 
 /* ── STATE ───────────────────────────────── */
 let cos          = JSON.parse(localStorage.getItem('bCos')||'[]');
+let favorite     = JSON.parse(localStorage.getItem('bFav')||'[]');
 let produseCach  = [];
 let anunturiCach = [];
 let comenziCach  = [];
@@ -2686,7 +2763,7 @@ async function incarcaAcasa(){
   }
 
   // Ultim anunt
-  const ua=anunturiCach.find(a=>a.type==='urgent')||anunturiCach[0];
+  const ua=anunturiCach[0]; // cel mai recent anunt (indiferent de tip)
   const elUa=document.getElementById('acasa-ultim-anunt');
   if(ua){
     const urgCls=ua.type==='urgent'?'urgent':'';
@@ -2718,8 +2795,32 @@ async function incarcaMagazin(){
   if(!produseCach.length){
     document.getElementById('gridProduse').innerHTML=`<div class="incarcare" style="grid-column:1/-1"><div class="rotitor"></div> Se incarca...</div>`;
     produseCach=await fbLista('produse');
+    // Incarca rating-uri pentru toate produsele (batch)
+    incarcaRatinguriProduse();
   }
   filtreazaProduse();
+}
+
+async function incarcaRatinguriProduse(){
+  // Citeste toate recenziile o data si calculeaza mediile
+  try{
+    const snap = await db.collection('recenzii').get();
+    const grupate={};
+    snap.docs.forEach(d=>{
+      const r=d.data();
+      if(!grupate[r.produsId]) grupate[r.produsId]={sum:0,count:0};
+      grupate[r.produsId].sum  += r.rating||0;
+      grupate[r.produsId].count++;
+    });
+    produseCach.forEach(p=>{
+      if(grupate[p.id]){
+        p._rating      = Math.round(grupate[p.id].sum/grupate[p.id].count*10)/10;
+        p._ratingCount = grupate[p.id].count;
+      }
+    });
+    // Re-randeaza gridul cu rating-urile
+    filtreazaProduse();
+  }catch(e){ console.warn('Rating err:',e); }
 }
 
 function comutaFiltre(){
@@ -2762,17 +2863,22 @@ function redeazaGridProduse(lista){
     const stocCls=p.stock>0?'in-stoc':'epuizat';
     const stocTxt=p.stock>0?`${p.stock} buc.`:'Epuizat';
     const disabledAttr=p.stock<=0?'disabled':'';
-    return `<div class="card-produs" onclick="deschideModalProdus('${p.id}')">
+    const favIcon=esteInFav(p.id)?'❤️':'🤍';
+    const favCls=esteInFav(p.id)?'activ':'';
+    const ratingDisp=p._rating ? `<span class="rating-badge">${steleHTML(p._rating,true)} ${p._rating} (${p._ratingCount||0})</span>` : '';
+    return `<div class="card-produs" onclick="deschideModalProdus('${p.id}')" style="position:relative">
+      <button class="btn-fav ${favCls}" data-id="${p.id}" onclick="toggleFavorit('${p.id}',event)" title="Favorite" style="position:absolute;top:8px;right:8px;z-index:2">${favIcon}</button>
       <div class="produs-img">${imgHtml}</div>
       <div class="produs-corp">
         <div class="produs-nume">${p.name}</div>
+        ${ratingDisp}
         <div class="produs-desc">${p.description||''}</div>
         <div class="produs-footer">
           <div>
             <div class="produs-pret">${p.price} Lei</div>
             <span class="stoc-badge ${stocCls}">${stocTxt}</span>
           </div>
-          <button class="btn-cos" onclick="event.stopPropagation();adaugaRapid('${p.id}')" ${disabledAttr}>🛒 Adauga</button>
+          <button class="btn-cos" onclick="event.stopPropagation();adaugaRapid('${p.id}')" ${disabledAttr}>🛒 Adaugă</button>
         </div>
       </div>
     </div>`;
@@ -2812,7 +2918,27 @@ function deschideModalProdus(id){
     mi.style.display='none';
     galerie.innerHTML=`<div style="font-size:3rem;color:var(--vp);padding:20px;text-align:center">✝</div>`;
   }
+  // Buton favorit in modal
+  const btnFav = document.getElementById('btnFavModal');
+  if(btnFav){
+    btnFav.textContent = esteInFav(p.id)?'❤️':'🤍';
+    btnFav.classList.toggle('activ', esteInFav(p.id));
+    btnFav.style.background = esteInFav(p.id)?'rgba(231,76,60,.08)':'';
+  }
   deschideModal('modalProdus');
+  // Incarca recenzii async
+  randeazaRecenziiModal(p.id);
+}
+
+function toggleFavModal(){
+  if(!prodModalCurent) return;
+  toggleFavorit(prodModalCurent.id, null);
+  const btn = document.getElementById('btnFavModal');
+  if(btn){
+    btn.textContent = esteInFav(prodModalCurent.id)?'❤️':'🤍';
+    btn.classList.toggle('activ', esteInFav(prodModalCurent.id));
+    btn.style.background = esteInFav(prodModalCurent.id)?'rgba(231,76,60,.08)':'';
+  }
 }
 function setImgPrinc(el,src,idx){
   const mi=document.getElementById('mpImgPrinc');
@@ -3260,8 +3386,10 @@ async function incarcaSectiuena(sec){
   if(sec==='comenzi')   await secComenzi(el);
   if(sec==='produse')   await secProduse(el);
   if(sec==='anunturi')  await secAnunturi(el);
-  if(sec==='vouchere')  await secVouchere(el);
-  if(sec==='email')     await secEmail(el);
+  if(sec==='vouchere')    await secVouchere(el);
+  if(sec==='recenzii')   await secRecenzii(el);
+  if(sec==='notificari') await secNotificari(el);
+  if(sec==='email')      await secEmail(el);
 }
 
 function statCard(num,lbl,ico){
@@ -4057,9 +4185,11 @@ service cloud.firestore {
     match /produse/{id}  { allow read: if true; allow write: if request.auth != null; }
     match /anunturi/{id} { allow read: if true; allow write: if request.auth != null; }
     match /comenzi/{id}  { allow create: if true; allow read,update,delete: if request.auth != null; }
-    match /vouchere/{id} { allow read: if true; allow write: if request.auth != null; }
-    match /clienti/{id}  { allow read,write: if request.auth != null && request.auth.uid == id; }
-    match /admini/{id}   { allow read: if request.auth != null; }
+    match /vouchere/{id}  { allow read: if true; allow write: if request.auth != null; }
+    match /clienti/{id}   { allow read,write: if request.auth != null && request.auth.uid == id; }
+    match /admini/{id}    { allow read: if request.auth != null; }
+    match /recenzii/{id}  { allow read: if true; allow create: if true; allow update,delete: if request.auth != null; }
+    match /abonati/{id}   { allow read,write: if request.auth != null; allow create: if true; }
   }
 }</pre>
       </div>
@@ -4158,9 +4288,11 @@ service cloud.firestore {
     match /produse/{id}  { allow read: if true; allow write: if request.auth != null; }
     match /anunturi/{id} { allow read: if true; allow write: if request.auth != null; }
     match /comenzi/{id}  { allow create: if true; allow read,update,delete: if request.auth != null; }
-    match /vouchere/{id} { allow read: if true; allow write: if request.auth != null; }
-    match /clienti/{id}  { allow read,write: if request.auth != null && request.auth.uid == id; }
-    match /admini/{id}   { allow read: if request.auth != null; }
+    match /vouchere/{id}  { allow read: if true; allow write: if request.auth != null; }
+    match /clienti/{id}   { allow read,write: if request.auth != null && request.auth.uid == id; }
+    match /admini/{id}    { allow read: if request.auth != null; }
+    match /recenzii/{id}  { allow read: if true; allow create: if true; allow update,delete: if request.auth != null; }
+    match /abonati/{id}   { allow read,write: if request.auth != null; allow create: if true; }
   }
 }</pre>
         <button class="btn btn-primar btn-mic" style="margin-top:14px" onclick="initVouchere().then(()=>incarcaSectiuena('vouchere'))">🔄 Incearcă din nou</button>
@@ -4251,6 +4383,163 @@ service cloud.firestore {
     </div>`;
 }
 
+
+/* ══════════════════════════════════════════
+   ADMIN - RECENZII
+══════════════════════════════════════════ */
+async function secRecenzii(el){
+  el.innerHTML='<div class="incarcare"><div class="rotitor"></div></div>';
+  let recenzii=[];
+  try{
+    const snap = await db.collection('recenzii').orderBy('creatLa','desc').get();
+    recenzii = snap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){
+    try{
+      const snap2 = await db.collection('recenzii').get();
+      recenzii = snap2.docs.map(d=>({id:d.id,...d.data()}))
+        .sort((a,b)=>(b.creatLa?.seconds||0)-(a.creatLa?.seconds||0));
+    }catch(e2){ el.innerHTML='<p style="color:#C0392B">Eroare: '+e2.message+'</p>'; return; }
+  }
+
+  el.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:13px">
+      <h2 style="font-family:'Cinzel',serif;color:var(--v);font-size:1.35rem">⭐ Recenzii Clienți (${recenzii.length})</h2>
+    </div>
+    ${!recenzii.length
+      ? '<div class="gol"><div class="icon-gol">⭐</div><h3>Nicio recenzie</h3><p>Recenziile clienților vor apărea aici.</p></div>'
+      : recenzii.map(r=>{
+          const prod = produseCach.find(p=>p.id===r.produsId);
+          const prodNume = prod?.name || r.produsId?.substring(0,12)+'…';
+          return `<div class="card-recenzie" style="margin-bottom:16px">
+            <div class="card-recenzie-header">
+              <div>
+                ${steleHTML(r.rating||0)}
+                <div class="recenzie-autor">${r.autor||'Anonim'}</div>
+                <div style="font-size:.76rem;color:var(--tl);margin-top:2px">Produs: <strong>${prodNume}</strong></div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+                <div class="recenzie-data">${formateazaData(r.creatLa)}</div>
+                <button class="btn btn-pericol btn-xs" onclick="stergeRecenzie('${r.id}')">🗑️</button>
+              </div>
+            </div>
+            <p class="recenzie-text">"${r.text}"</p>
+            ${r.raspuns
+              ? `<div class="raspuns-admin">
+                  <div class="raspuns-admin-label">✝ Răspunsul tău:</div>
+                  <p style="font-size:.88rem;color:var(--tm);margin:0 0 8px">${r.raspuns}</p>
+                  <button class="btn btn-contur btn-xs" onclick="editRaspuns('${r.id}','${r.raspuns.replace(/'/g,'\'')}')">✏️ Editează</button>
+                </div>`
+              : `<div style="margin-top:10px">
+                  <textarea id="rasp_${r.id}" rows="2" placeholder="Scrie un răspuns parohiei..." style="width:100%;padding:8px;border:1.5px solid var(--crd);border-radius:6px;font-size:.86rem;resize:none;background:var(--w)"></textarea>
+                  <button class="btn btn-primar btn-xs" style="margin-top:6px" onclick="trimiteRaspuns('${r.id}')">✝ Răspunde</button>
+                </div>`
+            }
+          </div>`;
+        }).join('')
+    }`;
+}
+
+async function trimiteRaspuns(recenzieId){
+  const txt = document.getElementById('rasp_'+recenzieId)?.value?.trim();
+  if(!txt){ afiseazaToast('Scrie un răspuns!'); return; }
+  await fbActualizeaza('recenzii', recenzieId, {raspuns: txt});
+  afiseazaToast('✅ Răspuns publicat!');
+  incarcaSectiuena('recenzii');
+}
+
+async function editRaspuns(recenzieId, raspunsVechi){
+  const nou = prompt('Editează răspunsul:', raspunsVechi);
+  if(nou===null) return;
+  await fbActualizeaza('recenzii', recenzieId, {raspuns: nou||null});
+  afiseazaToast('✅ Răspuns actualizat!');
+  incarcaSectiuena('recenzii');
+}
+
+async function stergeRecenzie(id){
+  if(!confirm('Stergi această recenzie?')) return;
+  await fbSterge('recenzii', id);
+  afiseazaToast('🗑️ Recenzie ștearsă!');
+  incarcaSectiuena('recenzii');
+}
+
+/* ══════════════════════════════════════════
+   ADMIN - NOTIFICARI
+══════════════════════════════════════════ */
+async function secNotificari(el){
+  let abonati = [];
+  try{
+    const snap = await db.collection('abonati').where('activ','==',true).get();
+    abonati = snap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){}
+
+  el.innerHTML=`
+    <h2 style="font-family:'Cinzel',serif;color:var(--v);margin-bottom:22px;font-size:1.35rem">📢 Notificări & Abonați</h2>
+
+    <div class="formular-admin" style="margin-bottom:22px">
+      <p style="font-family:'Cinzel',serif;color:var(--v);margin-bottom:14px;font-size:.9rem">Trimite notificare către toți abonații (${abonati.length})</p>
+      <div class="form-grup"><label>Subiect</label><input id="notifSubiect" placeholder="ex: Stoc nou de lumânări!"></div>
+      <div class="form-grup"><label>Mesaj</label><textarea id="notifMesaj" rows="5" placeholder="Detalii despre noutate..."></textarea></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-primar" onclick="trimitNotificareToti()">📧 Trimite la Toți</button>
+        <button class="btn btn-contur" onclick="testNotificare()">📧 Test (doar admin)</button>
+      </div>
+      <div id="notifResult" style="margin-top:12px"></div>
+    </div>
+
+    <h3 style="font-family:'Cinzel',serif;color:var(--v);margin-bottom:13px;font-size:1rem">Lista Abonați (${abonati.length})</h3>
+    ${!abonati.length
+      ? '<div class="gol"><div class="icon-gol">📧</div><h3>Niciun abonat</h3><p>Abonații se înregistrează din site.</p></div>'
+      : `<table class="tabel-admin">
+          <thead><tr><th>Email</th><th>Data</th><th>Actiuni</th></tr></thead>
+          <tbody>${abonati.map(a=>`<tr>
+            <td>${a.email}</td>
+            <td>${formateazaData(a.creatLa)}</td>
+            <td><button class="btn btn-pericol btn-xs" onclick="dezaboneaza('${a.id}')">🗑️</button></td>
+          </tr>`).join('')}</tbody>
+        </table>`
+    }
+
+    <div class="email-setup-box" style="margin-top:20px">
+      <h4>📋 Cum functioneaza abonarea</h4>
+      <p>Clienții se pot abona la notificări direct din site (va fi disponibil în curând).<br>
+      Poți adăuga manual un email abonat mai jos:</p>
+      <div style="display:flex;gap:9px;margin-top:10px">
+        <input id="addAbonatEmail" type="email" placeholder="email@exemplu.ro" style="flex:1;padding:9px 12px;border:1.5px solid var(--crd);border-radius:6px">
+        <button class="btn btn-primar btn-mic" onclick="adaugaAbonat()">+ Adaugă</button>
+      </div>
+    </div>`;
+}
+
+async function trimitNotificareToti(){
+  const subiect = document.getElementById('notifSubiect')?.value?.trim();
+  const mesaj   = document.getElementById('notifMesaj')?.value?.trim();
+  const rez     = document.getElementById('notifResult');
+  if(!subiect||!mesaj){ afiseazaToast('Completează subiect și mesaj!'); return; }
+  if(!EJS.ejsReady){ rez.innerHTML='<div class="import-result err" style="display:block">❌ EmailJS nu e configurati!</div>'; return; }
+  rez.innerHTML='<div class="import-result ok" style="display:block">⏳ Se trimit emailuri...</div>';
+  const n = await trimiteNotificareAbonatii(subiect, mesaj);
+  rez.innerHTML=`<div class="import-result ok" style="display:block">✅ Trimis către ${n} abonați!</div>`;
+}
+
+async function testNotificare(){
+  const subiect = document.getElementById('notifSubiect')?.value?.trim()||'Test notificare';
+  const mesaj   = document.getElementById('notifMesaj')?.value?.trim()||'Acesta este un email de test.';
+  await trimiteEmailNotificare('test', subiect, mesaj, '');
+  afiseazaToast('📧 Email test trimis la admin!');
+}
+
+async function adaugaAbonat(){
+  const email = document.getElementById('addAbonatEmail')?.value?.trim();
+  if(!email||!email.includes('@')){ afiseazaToast('Email invalid!'); return; }
+  const ok = await abonaLaNotificari(email);
+  if(ok){ afiseazaToast('✅ '+email+' adăugat!'); incarcaSectiuena('notificari'); }
+  else   { afiseazaToast('❌ Eroare la adăugare (verifică Firestore Rules)'); }
+}
+
+async function dezaboneaza(id){
+  await db.collection('abonati').doc(id).update({activ:false});
+  afiseazaToast('Dezabonat!'); incarcaSectiuena('notificari');
+}
 
 /* ── VOUCHERE localStorage helpers ── */
 function getVouchereLocale(){
@@ -4783,6 +5072,244 @@ async function aplicaVoucher(){
 }
 
 /* ── AUTH LISTENER ───────────────────────── */
+/* ══════════════════════════════════════════
+   FAVORITE
+══════════════════════════════════════════ */
+function salveazaFav(){ localStorage.setItem('bFav',JSON.stringify(favorite)); }
+function esteInFav(id){ return favorite.includes(id); }
+
+function toggleFavorit(id, event){
+  if(event){ event.stopPropagation(); }
+  const idx = favorite.indexOf(id);
+  if(idx>=0){
+    favorite.splice(idx,1);
+    afiseazaToast('Scos din favorite');
+  } else {
+    favorite.push(id);
+    afiseazaToast('❤️ Adăugat la favorite!');
+    // Daca clientul e logat, salveaza si in Firestore
+    if(clientCurent){
+      db.collection('clienti').doc(clientCurent.uid)
+        .set({favorite}, {merge:true})
+        .catch(e=>console.warn('Fav Firestore:',e));
+    }
+  }
+  salveazaFav();
+  // Actualizeaza toate butoanele de favorite pentru acest produs
+  document.querySelectorAll(`.btn-fav[data-id="${id}"]`).forEach(btn=>{
+    btn.textContent = esteInFav(id) ? '❤️' : '🤍';
+    btn.classList.toggle('activ', esteInFav(id));
+  });
+}
+
+async function sincronizeazaFavDinCont(){
+  if(!clientCurent) return;
+  try{
+    const doc = await db.collection('clienti').doc(clientCurent.uid).get();
+    if(doc.exists && doc.data().favorite){
+      const favCloud = doc.data().favorite;
+      // Combina localul cu cloud-ul
+      favCloud.forEach(id=>{ if(!favorite.includes(id)) favorite.push(id); });
+      salveazaFav();
+    }
+  }catch(e){}
+}
+
+/* ══════════════════════════════════════════
+   NOTIFICARI EMAIL (anunturi noi + stoc nou)
+══════════════════════════════════════════ */
+async function trimiteEmailNotificare(tip, titlu, continut, link){
+  // Trimite email catre toti utilizatorii cu favorite sau abonamente
+  // Deocamdata trimite catre admin care poate redistribui
+  if(!EJS.ejsReady) return;
+  try{
+    await emailjs.send(EJS.serviceId, EJS.tplNotif, {
+      email_client:   EJS.adminEmail,
+      nume_client:    'Panou Admin',
+      numar_comanda:  tip==='anunt' ? '📋 ANUNT NOU' : '📦 STOC NOU',
+      status_comanda: titlu,
+      lista_produse:  continut,
+      total:          link||'',
+    });
+    console.log('Email notificare trimis');
+  }catch(e){ console.warn('Notificare email err:', e.text||e.message); }
+}
+
+// Salveaza emailuri abonati la notificari (colectie separata Firestore)
+async function abonaLaNotificari(email){
+  try{
+    await db.collection('abonati').doc(email.replace('@','_').replace('.','_')).set({
+      email, creatLa: TS(), activ: true
+    });
+    return true;
+  }catch(e){ return false; }
+}
+
+async function trimiteNotificareAbonatii(subiect, mesaj){
+  // Citeste toti abbonatii activi si trimite email
+  if(!EJS.ejsReady) return 0;
+  try{
+    const snap = await db.collection('abonati').where('activ','==',true).get();
+    let trimise = 0;
+    for(const doc of snap.docs){
+      const email = doc.data().email;
+      try{
+        await emailjs.send(EJS.serviceId, EJS.tplNotif, {
+          email_client:   email,
+          nume_client:    'Drag enoriaș',
+          numar_comanda:  '📢 Noutăți Parohia Stornești',
+          status_comanda: subiect,
+          lista_produse:  mesaj,
+          total:          'Vizitați site-ul parohiei pentru detalii.',
+        });
+        trimise++;
+        // Pauza mica intre emailuri sa nu depasim limita
+        await new Promise(r=>setTimeout(r,200));
+      }catch(e){ console.warn('Email catre',email,'err:',e.text); }
+    }
+    return trimise;
+  }catch(e){ console.warn('Abonati err:',e); return 0; }
+}
+
+/* ══════════════════════════════════════════
+   RECENZII
+══════════════════════════════════════════ */
+let steaSelectata = 0;
+
+function seteazaStea(n){
+  steaSelectata = n;
+  document.querySelectorAll('.stea-input').forEach((s,i)=>{
+    s.classList.toggle('activa', i<n);
+  });
+}
+
+async function incarcaRecenzii(produsId){
+  try{
+    const snap = await db.collection('recenzii')
+      .where('produsId','==',produsId)
+      .orderBy('creatLa','desc')
+      .get();
+    return snap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){
+    // Daca nu exista index, fallback fara orderBy
+    try{
+      const snap2 = await db.collection('recenzii').where('produsId','==',produsId).get();
+      return snap2.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>{
+        const ta = a.creatLa?.toDate?.()||new Date(0);
+        const tb = b.creatLa?.toDate?.()||new Date(0);
+        return tb-ta;
+      });
+    }catch(e2){ return []; }
+  }
+}
+
+async function getRatingMediu(produsId){
+  const recenzii = await incarcaRecenzii(produsId);
+  if(!recenzii.length) return {medie:0, total:0};
+  const medie = recenzii.reduce((s,r)=>s+(r.rating||0),0)/recenzii.length;
+  return {medie: Math.round(medie*10)/10, total: recenzii.length};
+}
+
+function steleHTML(rating, small){
+  const sz = small ? '0.85rem' : '1rem';
+  let h = `<span class="stele-display" style="font-size:${sz}">`;
+  for(let i=1;i<=5;i++){
+    h += i<=Math.round(rating) ? '⭐' : '☆';
+  }
+  h += '</span>';
+  return h;
+}
+
+async function trimitRecenzie(produsId){
+  const txt   = document.getElementById('recenzieText')?.value?.trim();
+  const numeR = document.getElementById('recenzieNume')?.value?.trim();
+  if(!steaSelectata){ afiseazaToast('Selectează un număr de stele!'); return; }
+  if(!txt){ afiseazaToast('Scrie ceva despre produs!'); return; }
+  if(!numeR){ afiseazaToast('Introdu numele tău!'); return; }
+
+  const btn = document.getElementById('btnTrimiteRecenzie');
+  if(btn){ btn.disabled=true; btn.textContent='Se trimite...'; }
+
+  try{
+    await db.collection('recenzii').add({
+      produsId,
+      rating:    steaSelectata,
+      text:      txt,
+      autor:     numeR,
+      userId:    clientCurent?.uid||null,
+      creatLa:   TS(),
+      raspuns:   null,
+    });
+    // Actualizeaza rating-ul produs in cache
+    const prod = produseCach.find(p=>p.id===produsId);
+    if(prod){ prod._ratingDirty=true; }
+    afiseazaToast('✅ Recenzie trimisă! Mulțumim!');
+    // Reincarcare recenzii in modal
+    await randeazaRecenziiModal(produsId);
+    steaSelectata=0;
+  }catch(e){
+    afiseazaToast('❌ Eroare: '+e.message);
+    if(btn){ btn.disabled=false; btn.textContent='Trimite Recenzia'; }
+  }
+}
+
+async function randeazaRecenziiModal(produsId){
+  const el = document.getElementById('recenziiContainer');
+  if(!el) return;
+  el.innerHTML='<div style="text-align:center;padding:16px;color:var(--tl)">⏳ Se incarca...</div>';
+  const recenzii = await incarcaRecenzii(produsId);
+  steaSelectata=0;
+
+  const autorNume = clientCurent?.displayName||'';
+  const formHTML = `
+    <div class="form-recenzie" id="formRecenzie">
+      <h4>✍️ Lasă o recenzie</h4>
+      <div class="stele-input" id="steInput">
+        ${[1,2,3,4,5].map(i=>`<span class="stea-input" onclick="seteazaStea(${i})">☆</span>`).join('')}
+        <span style="font-size:.8rem;color:var(--tl);margin-left:8px;align-self:center">Click pentru rating</span>
+      </div>
+      <div class="form-grup" style="margin-bottom:10px">
+        <input id="recenzieNume" placeholder="Numele tău *" value="${autorNume}" style="width:100%;padding:9px 12px;border:1.5px solid var(--crd);border-radius:6px;font-size:.9rem;background:var(--w)">
+      </div>
+      <div class="form-grup" style="margin-bottom:12px">
+        <textarea id="recenzieText" rows="3" placeholder="Spune-ne ce crezi despre acest produs..." style="width:100%;padding:9px 12px;border:1.5px solid var(--crd);border-radius:6px;font-size:.9rem;resize:none;background:var(--w)"></textarea>
+      </div>
+      <button class="btn btn-primar btn-mic" id="btnTrimiteRecenzie" onclick="trimitRecenzie('${produsId}')">Trimite Recenzia</button>
+    </div>`;
+
+  if(!recenzii.length){
+    el.innerHTML=`<p style="color:var(--tl);font-size:.88rem;margin-bottom:16px">Fii primul care lasă o recenzie!</p>${formHTML}`;
+    return;
+  }
+
+  const listaHTML = recenzii.map(r=>`
+    <div class="card-recenzie">
+      <div class="card-recenzie-header">
+        <div>
+          ${steleHTML(r.rating)}
+          <div class="recenzie-autor" style="margin-top:4px">${r.autor||'Anonim'}</div>
+        </div>
+        <div class="recenzie-data">${formateazaData(r.creatLa)}</div>
+      </div>
+      <p class="recenzie-text">${r.text}</p>
+      ${r.raspuns?`<div class="raspuns-admin">
+        <div class="raspuns-admin-label">✝ Răspuns parohie:</div>
+        <p style="font-size:.88rem;color:var(--tm);margin:0">${r.raspuns}</p>
+      </div>`:''}
+    </div>`).join('');
+
+  const medie = recenzii.reduce((s,r)=>s+(r.rating||0),0)/recenzii.length;
+  const medieRnd = Math.round(medie*10)/10;
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;padding:12px;background:rgba(243,156,18,.08);border-radius:8px;border:1px solid rgba(243,156,18,.2)">
+      <span style="font-size:2rem;font-weight:700;color:#E67E22">${medieRnd}</span>
+      ${steleHTML(medie)}
+      <span style="font-size:.82rem;color:var(--tl)">(${recenzii.length} recenz${recenzii.length===1?'ie':'ii'})</span>
+    </div>
+    ${listaHTML}
+    ${formHTML}`;
+}
+
 // Firebase Auth - separa admin de client
 auth.onAuthStateChanged(async user=>{
   if(!user){
@@ -4811,6 +5338,7 @@ auth.onAuthStateChanged(async user=>{
     inchideModal('modalClient');
     afiseazaToast('Bine ai venit, '+(user.displayName||user.email)+'! 🎁 5% discount activ!', 4000);
     randeazaModalClient();
+    sincronizeazaFavDinCont(); // sincronizeaza favoritele
   }
 });
 
