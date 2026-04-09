@@ -707,57 +707,291 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
 .termeni-body ul{padding-left:20px;margin-bottom:12px}
 .termeni-body li{margin-bottom:5px}
 
-/* ── MOBILE FIRST RESPONSIVE ─────────────── */
+/* ══════════════════════════════════════════
+   RESPONSIVE / MOBIL
+══════════════════════════════════════════ */
+
+/* Tablet mare */
+@media(max-width:1024px){
+  .footer-grid{grid-template-columns:repeat(2,1fr);gap:22px}
+  .grid-3{grid-template-columns:repeat(2,1fr)}
+}
+
+/* Tableta / telefon mare */
 @media(max-width:900px){
   nav{padding:0 14px;height:58px}
   .hamburger{display:flex}
   .nav-links{
-    display:none;position:absolute;
-    top:58px;left:0;right:0;
+    display:none;position:absolute;top:58px;left:0;right:0;
     background:var(--vd);flex-direction:column;
-    padding:8px;border-bottom:2px solid var(--g);
+    padding:8px 6px;border-bottom:2px solid var(--g);
     z-index:997;gap:2px;box-shadow:0 8px 24px rgba(0,0,0,.4);
   }
   .nav-links.deschis{display:flex}
-  .nav-links a{width:100%;padding:11px 16px;font-size:.82rem}
-  .nav-logo-text{font-size:.88rem}
+  .nav-links a{width:100%;padding:12px 16px;font-size:.85rem}
+  .nav-logo-text{font-size:.85rem}
+  .nav-logo-sub{display:none}
+  .grid-2-eq{grid-template-columns:1fr}
 }
+
+/* Telefon */
 @media(max-width:768px){
-  .sectiune{padding:32px 14px}
-  .hero{padding:40px 14px}
-  .hero h1{font-size:1.65rem}
-  .hero-sub{font-size:1rem}
-  .grid-2,.grid-3{grid-template-columns:1fr}
-  .grid-prod{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
-  .produs-img{height:170px}
-  .admin-wrap{flex-direction:column}
-  .admin-sidebar{width:100%}
-  .admin-continut{padding:14px}
-  .form-rand{grid-template-columns:1fr}
-  .item-cos{flex-wrap:wrap}
+  /* Layout general */
+  .sectiune{padding:28px 14px}
+  .hero{padding:36px 14px}
+  .hero h1{font-size:1.55rem;line-height:1.3}
+  .hero-sub{font-size:.95rem}
+  .hero-butoane{flex-direction:column;gap:10px;align-items:center}
+  .hero-butoane .btn{width:100%;max-width:280px;justify-content:center}
+  .ornament{font-size:1.8rem}
+  .titlu-sec{font-size:1.25rem}
+
+  /* Grile */
+  .grid-2,.grid-3,.grid-2-eq{grid-template-columns:1fr}
+  .grid-prod{grid-template-columns:repeat(2,1fr);gap:12px}
   .grid-detalii-comanda{grid-template-columns:1fr}
-  .cos-wrap{padding:24px 12px}
-  .modal{border-radius:10px 10px 0 0;max-height:95vh;margin-top:auto}
-  .fundal-modal{align-items:flex-end;padding:0}
-  .tabel-admin{font-size:.8rem}
-  .tabel-admin th,.tabel-admin td{padding:9px 10px}
-  .titlu-sec{font-size:1.3rem}
-  .modal-img-principal{height:220px}
-  .t-sep{display:none}
-}
-@media(max-width:500px){
-  nav{top:32px;height:52px}
-  #timer-bar{font-size:.62rem;padding:4px 8px;min-height:32px;gap:10px}
-  .t-num{font-size:1rem}
-  .t-lbl{display:none}
-  .hero h1{font-size:1.4rem}
-  .btn{padding:9px 18px;font-size:.76rem}
-  .grid-prod{grid-template-columns:repeat(2,1fr);gap:11px}
-  .produs-img{height:145px}
+
+  /* Produse */
+  .produs-img{height:160px}
   .produs-corp{padding:11px}
-  .produs-nome,.produs-pret{font-size:.82rem}
-  .admin-content{padding:12px}
+  .produs-nume{font-size:.84rem}
+  .produs-pret{font-size:.95rem}
+  .btn-cos{font-size:.7rem;padding:6px 10px}
+
+  /* Anunturi */
+  .card-anunt{padding:16px}
+  .urgent-banner{padding:14px 16px}
+
+  /* Cos */
+  .cos-wrap{padding:20px 12px}
+  .item-cos{flex-wrap:wrap;gap:10px}
+  .item-cos-img{width:60px;height:60px}
+  .sumar-cos{padding:18px}
+  .total-cos-rand{font-size:1.05rem}
+  .pasi{gap:0}
+  .pas{padding:6px 10px;font-size:.68rem}
+  .pas-linie{width:20px}
+
+  /* Modal */
+  .modal{border-radius:14px 14px 0 0;max-height:94vh;margin-top:auto;width:100%}
+  .fundal-modal{align-items:flex-end;padding:0}
+  .modal-body{padding:18px}
+  .modal-header{padding:16px 20px}
+  .modal-img-principal{height:200px}
+  .modal-galerie{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px}
+  .modal-thumb{width:60px;height:48px;flex-shrink:0}
+
+  /* Admin */
+  .admin-wrap{flex-direction:column}
+  .admin-sidebar{width:100%;flex-direction:row;flex-wrap:wrap;padding:10px;gap:4px}
+  .nav-admin{padding:8px 12px;font-size:.72rem}
+  .admin-continut{padding:14px}
+  .admin-sidebar-jos{display:none}
+  .tabel-admin{font-size:.78rem}
+  .tabel-admin th,.tabel-admin td{padding:8px 9px}
+  .butoane-tabel{flex-direction:column;gap:3px}
+  .form-rand{grid-template-columns:1fr}
+  .formular-admin{padding:16px}
+  .grid-detalii-comanda{grid-template-columns:1fr}
+  .cutie-info{padding:14px}
+
+  /* Footer */
+  .footer-grid{grid-template-columns:1fr 1fr;gap:20px}
+  .footer-col h4{font-size:.7rem}
+  .footer-col p,.footer-col a{font-size:.78rem}
+  .footer-jos{font-size:.72rem;flex-direction:column;text-align:center;gap:6px}
+  footer{padding:28px 0 16px}
+
+  /* Chip-uri filtre */
+  .rand-chips{gap:5px}
+  .chip{font-size:.7rem;padding:5px 10px}
+  .bara-cautare{gap:8px}
+
+  /* Timer bar */
+  .t-sep{display:none}
+  #timer-bar{gap:8px;padding:5px 12px;font-size:.68rem}
+
+  /* Client bar */
+  .client-bar{font-size:.68rem;padding:4px 12px}
+
+  /* Discount info */
+  .discount-info{padding:10px 12px;font-size:.84rem}
+  .voucher-row input{font-size:.88rem}
+}
+
+/* Telefon mic */
+@media(max-width:480px){
+  nav{height:52px}
+  #timer-bar{font-size:.58rem;min-height:30px;padding:3px 8px;gap:6px}
+  .t-num{font-size:.95rem}
+  .t-lbl{display:none}
+  .hero h1{font-size:1.32rem}
+  .hero-sub{font-size:.88rem}
+  .btn{padding:9px 16px;font-size:.74rem}
+
+  /* Produse 2 pe rand compact */
+  .grid-prod{grid-template-columns:repeat(2,1fr);gap:9px}
+  .produs-img{height:130px}
+  .produs-corp{padding:9px}
+  .produs-nume{font-size:.8rem;-webkit-line-clamp:2}
+  .produs-desc{display:none}
+  .produs-pret{font-size:.88rem}
+  .btn-cos{font-size:.66rem;padding:5px 8px}
+
+  /* Footer pe o coloana */
+  .footer-grid{grid-template-columns:1fr}
+  .footer-col:nth-child(2){order:4} /* ANPC la final pe mobil */
+
+  /* Lightbox */
   #lightbox-thumbs{display:none}
+  #lightbox-nav{gap:10px}
+  .lb-btn{padding:7px 14px}
+
+  /* Admin sidebar scroll orizontal */
+  .admin-sidebar{overflow-x:auto;flex-wrap:nowrap;padding:8px}
+  .nav-admin{white-space:nowrap;flex-shrink:0}
+
+  /* Modal full screen pe telefon mic */
+  .modal-client{border-radius:0;max-width:100%;height:100vh;max-height:100vh}
+  #modalClient .fundal-modal{align-items:flex-start}
+
+  /* Pasi comanda mai mici */
+  .pas{padding:5px 8px;font-size:.62rem}
+  .pas-nr{width:22px;height:22px;font-size:.62rem}
+  .pas-linie{width:14px}
+}
+
+/* ── ABONAMENT BADGE ────────────────────────── */
+.abon-badge{
+  display:inline-block;padding:2px 9px;border-radius:10px;
+  background:linear-gradient(135deg,#1a5c2e,#27AE60);color:#fff;
+  font-size:.68rem;font-weight:700;margin-left:7px;
+  font-family:'Lato',sans-serif;letter-spacing:.3px;
+}
+.check-abon{
+  display:flex;align-items:flex-start;gap:9px;
+  background:linear-gradient(135deg,rgba(39,174,96,.08),rgba(39,174,96,.04));
+  border:1.5px solid rgba(39,174,96,.25);border-radius:8px;
+  padding:12px;margin-bottom:12px;font-size:.84rem;
+  cursor:pointer;transition:.2s;
+}
+.check-abon:hover{background:rgba(39,174,96,.12)}
+.check-abon input{width:16px;height:16px;flex-shrink:0;margin-top:1px;accent-color:#27AE60}
+
+/* ── FAVORITE TAB ───────────────────────────── */
+.btn-fav-tab{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 16px;border:2px solid var(--vp);
+  background:transparent;color:var(--v);border-radius:7px;
+  font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.5px;
+  transition:.22s;cursor:pointer;
+}
+.btn-fav-tab:hover,.btn-fav-tab.activ{background:var(--v);color:#fff;border-color:var(--v)}
+.btn-fav-tab .fav-nr{
+  background:var(--vp);color:#fff;border-radius:50%;
+  width:18px;height:18px;display:flex;align-items:center;justify-content:center;
+  font-size:.65rem;font-weight:700;
+}
+.btn-fav-tab.activ .fav-nr{background:rgba(255,255,255,.3)}
+
+/* ── CHIP FAVORITE ACTIV ──────────────────────── */
+#chipFavorite.selectat{
+  background:linear-gradient(135deg,#E74C3C,#C0392B)!important;
+  color:#fff!important;border-color:#E74C3C!important;
+}
+#chipFavorite{border-width:2px}
+
+/* ── NOTIFICARE STOC BADGE ─────────────────────── */
+.stoc-notif{
+  display:inline-flex;align-items:center;gap:5px;
+  background:#E8F5E9;color:#2E7D32;
+  border:1px solid #81C784;border-radius:8px;
+  padding:5px 11px;font-size:.76rem;font-weight:700;
+  font-family:'Lato',sans-serif;margin-top:7px;
+}
+
+/* ── ABONARE NOTIFICARI CHECK ──────────────────── */
+.check-abon{
+  display:flex;align-items:flex-start;gap:10px;
+  background:linear-gradient(135deg,rgba(30,100,50,.06),rgba(30,100,50,.02));
+  border:1.5px solid rgba(30,100,50,.25);border-radius:9px;
+  padding:12px 14px;margin-bottom:12px;cursor:pointer;
+}
+.check-abon input[type=checkbox]{
+  width:18px;height:18px;flex-shrink:0;margin-top:2px;
+  accent-color:#1a5c2e;cursor:pointer;
+}
+.abon-badge{
+  display:inline-block;background:#1a5c2e;color:#fff;
+  font-size:.65rem;padding:1px 7px;border-radius:9px;
+  margin-left:6px;font-family:'Lato',sans-serif;font-weight:700;
+}
+
+/* ── FAVORITE ───────────────────────────────── */
+.btn-fav{
+  background:none;border:none;font-size:1.3rem;cursor:pointer;
+  line-height:1;padding:4px;transition:.2s;flex-shrink:0;
+}
+.btn-fav:hover{transform:scale(1.2)}
+.btn-fav.activ{color:#E74C3C}
+.fav-count{
+  position:absolute;top:8px;right:8px;
+  background:rgba(231,76,60,.9);color:#fff;
+  border-radius:50%;width:20px;height:20px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.65rem;font-weight:700;font-family:'Lato',sans-serif;
+}
+
+/* ── RECENZII ───────────────────────────────── */
+.stele-display{
+  display:inline-flex;gap:2px;font-size:1rem;line-height:1;
+}
+.stele-input{
+  display:flex;gap:4px;margin-bottom:12px;
+}
+.stea-input{
+  font-size:1.8rem;cursor:pointer;transition:.15s;line-height:1;
+  color:#ddd;
+}
+.stea-input.activa,.stea-input:hover{color:#F39C12}
+.card-recenzie{
+  background:var(--w);border-radius:9px;padding:16px;
+  border:1px solid var(--crd);margin-bottom:12px;
+}
+.card-recenzie-header{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:8px;gap:10px;flex-wrap:wrap;
+}
+.recenzie-autor{
+  font-family:'Cinzel',serif;font-size:.82rem;color:var(--v);font-weight:700;
+}
+.recenzie-data{
+  font-size:.72rem;color:var(--tl);font-family:'Lato',sans-serif;
+}
+.recenzie-text{
+  font-size:.9rem;color:var(--tm);line-height:1.6;margin-bottom:8px;
+}
+.raspuns-admin{
+  background:linear-gradient(135deg,rgba(107,26,42,.06),rgba(107,26,42,.03));
+  border-left:3px solid var(--v);border-radius:0 6px 6px 0;
+  padding:10px 14px;margin-top:10px;font-size:.86rem;
+}
+.raspuns-admin-label{
+  font-family:'Cinzel',serif;font-size:.72rem;color:var(--v);
+  font-weight:700;margin-bottom:4px;
+}
+.rating-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(243,156,18,.12);border:1px solid rgba(243,156,18,.3);
+  border-radius:12px;padding:2px 8px;font-size:.72rem;
+  font-family:'Lato',sans-serif;font-weight:700;color:#E67E22;
+  white-space:nowrap;
+}
+.form-recenzie{
+  background:var(--cr);border-radius:9px;padding:16px;margin-top:16px;
+}
+.form-recenzie h4{
+  font-family:'Cinzel',serif;color:var(--v);font-size:.9rem;margin-bottom:12px;
 }
 
 /* ── URGENT ANUNTURI EVIDENTA ─────────────── */
@@ -949,12 +1183,16 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
           <span class="icon-cautare">🔍</span>
           <input type="text" id="cautareProduse" placeholder="Caută produse…" oninput="filtreazaProduse()">
         </div>
+        <button class="btn-fav-tab" id="btnFavTab" onclick="filtreazaDupeFav(this)">
+          ❤️ Favorite <span class="fav-nr" id="favNr">0</span>
+        </button>
         <button class="btn-filtre" id="btnFiltre" onclick="comutaFiltre()">⚙️ Filtre</button>
       </div>
       <div id="panouFiltre" class="panou-filtre">
         <p class="eticheta-grup">Categorie:</p>
         <div class="rand-chips" id="chipsCategorie">
           <button class="chip selectat" onclick="seteazaCategorie('toate',this)">Toate</button>
+          <button class="chip" onclick="seteazaCategorie('favorite',this)" id="chipFavorite" style="border-color:#E74C3C;color:#E74C3C">❤️ Favorite</button>
           <button class="chip" onclick="seteazaCategorie('Lumânări',this)">🕯️ Lumânări</button>
           <button class="chip" onclick="seteazaCategorie('Icoane',this)">🖼️ Icoane</button>
           <button class="chip" onclick="seteazaCategorie('Cărți',this)">📚 Cărți</button>
@@ -1046,7 +1284,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
           </div>
           <div style="display:flex;gap:13px;flex-wrap:wrap">
             <button class="btn btn-contur" onclick="mergi('magazin')">← Continuă Cumpărăturile</button>
-            <button class="btn btn-aur" onclick="arataComanada()">Continuă spre Date →</button>
+            <button class="btn btn-aur" onclick="verifica_si_mergi_la_cos()">Continuă spre Date →</button>
           </div>
         </div>
       </div>
@@ -1148,6 +1386,8 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
       <button class="nav-admin" id="nav-produse" onclick="incarcaSectiuena('produse')">🕯️ Produse</button>
       <button class="nav-admin" id="nav-anunturi" onclick="incarcaSectiuena('anunturi')">📋 Anunțuri</button>
       <button class="nav-admin" id="nav-vouchere" onclick="incarcaSectiuena('vouchere')">🏷️ Vouchere</button>
+      <button class="nav-admin" id="nav-recenzii" onclick="incarcaSectiuena('recenzii')">⭐ Recenzii</button>
+      <button class="nav-admin" id="nav-notificari" onclick="incarcaSectiuena('notificari')">📢 Notificări</button>
       <button class="nav-admin" id="nav-email" onclick="incarcaSectiuena('email')">✉️ Email Config</button>
       <div class="admin-sidebar-jos">
         <button class="btn btn-pericol btn-mic" style="width:100%;justify-content:center" onclick="faLogout()">🚪 Deconectare</button>
@@ -1182,9 +1422,15 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
           <button class="btn-cantitate" onclick="schimbaCantMP(1)">+</button>
         </div>
       </div>
-      <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
         <button class="btn btn-primar" onclick="adaugadinModal()">🛒 Adaugă în Coș</button>
+        <button class="btn-fav" id="btnFavModal" onclick="toggleFavModal()" style="font-size:1.4rem;border:2px solid var(--crd);border-radius:7px;padding:7px 12px;transition:.2s" title="Favorite">🤍</button>
         <button class="btn btn-contur" onclick="inchideModal('modalProdus')">Închide</button>
+      </div>
+      <!-- Recenzii in modal produs -->
+      <div style="margin-top:24px;border-top:2px solid var(--crd);padding-top:18px">
+        <h3 style="font-family:'Cinzel',serif;color:var(--v);font-size:.95rem;margin-bottom:14px">⭐ Recenzii Clienți</h3>
+        <div id="recenziiContainer"></div>
       </div>
     </div>
   </div>
@@ -1281,11 +1527,14 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
         </p>
       </div>
       <div class="footer-col">
-        <h4>Contact</h4>
-        <p>📍 Str. Sfânta Treime, nr. 1</p>
-        <p>📞 0743 609 099</p>
-        <p>✉️ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5a33283337333b742e3f353e3528746b6d1a3d373b333674393537">[email&#160;protected]</a></p>
-        <p>🕐 V-D, 07:00–12:00</p>
+        <h4>Contact & Program</h4>
+        <p>📍 Str. Sfânta Treime, nr. 1<br><span style="font-size:.78rem;color:var(--vp);padding-left:22px">Stornești</span></p>
+        <p>📞 <a href="tel:0743609099" style="color:var(--cr)">0743 609 099</a></p>
+        <p>✉️ <a href="mailto:parohia@gmail.com" style="color:var(--cr)">parohia@gmail.com</a></p>
+        <p style="margin-top:10px;font-family:'Cinzel',serif;font-size:.72rem;color:var(--gl);letter-spacing:1px">PROGRAM SLUJBE</p>
+        <p style="font-size:.79rem">⛪ Vineri – 07:00 Spovedanie</p>
+        <p style="font-size:.79rem">🕯️ Sâmbătă – 07:00 Sf. Liturghie + Parastas</p>
+        <p style="font-size:.79rem">✝ Duminică – Sf. Liturghie</p>
       </div>
       <div class="footer-col">
         <h4>Navigare</h4>
@@ -1321,7 +1570,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
     </div>
     <div class="termeni-body">
       <h3>1. Cine suntem</h3>
-      <p>Parohia Ortodoxă operează acest site cu scop de informare și vânzare de obiecte de cult. Contact: parohia@email.ro</p>
+      <p>Parohia Stornești — Biserica Sfânta Treime operează acest site. Str. Sfânta Treime, nr. 1, Stornești, Jud. Iași. Contact: parohia@gmail.com</p>
       <h3>2. Date colectate</h3>
       <ul>
         <li><strong>Cont client:</strong> Nume, email — stocate prin Firebase Authentication (Google).</li>
@@ -2118,35 +2367,7 @@ const VERSETE_LUNARE = [
   ],
 ];
 
-const PRODUSE_DEMO=[
-  {name:'Lumânare pascală aurită',price:18,category:'Lumânări',stock:120,description:'Lumânare specială pentru slujba de Paști, decorată cu modele aurite. Înălțime 40cm, arde 6 ore. Potrivită pentru orice vârstă.',images:[],bestSeller:true},
-  {name:'Lumânare de botez',price:45,category:'Lumânări',stock:30,description:'Lumânare albă ornamentată cu floricele și panglică albastră sau roz. Include suport de prins. Înălțime 60cm.',images:[],bestSeller:false},
-  {name:'Lumânări de nuntă – set 2 buc.',price:55,category:'Lumânări',stock:20,description:'Set de două lumânări identice pentru cununie, decorate cu flori albe din ceară și panglică albă. Înălțime 70cm.',images:[],bestSeller:false},
-  {name:'Icoană Sf. Nicolae pe lemn',price:95,category:'Icoane',stock:8,description:'Icoană pictată manual pe lemn de tei, 20×30cm. Fond aurit, cu lacuire de protecție. Potrivită ca dar sau pentru casa credinciosului.',images:[],bestSeller:true},
-  {name:'Icoană Maica Domnului cu Pruncul',price:110,category:'Icoane',stock:5,description:'Icoană tipărită pe lemn cu rama sculptată, 25×35cm. Reproducere fidelă după icoana tradițională ortodoxă.',images:[],bestSeller:false},
-  {name:'Icoană Sf. Parascheva (Iași)',price:75,category:'Icoane',stock:12,description:'Icoană Sfânta Parascheva, Ocrotitoarea Moldovei. Lemn și print de calitate, 18×25cm.',images:[],bestSeller:false},
-  {name:'Acatistier complet',price:38,category:'Cărți',stock:25,description:'Acatistier ortodox complet, cuprinzând acatistele celor mai cunoscuți sfinți, paraclis și rugăciuni de seară și dimineață. 480 pagini.',images:[],bestSeller:false},
-  {name:'Ceaslov (Cartea de rugăciuni)',price:32,category:'Cărți',stock:18,description:'Ceaslovul mic pentru uzul credincioșilor, cu Miezonoptica, Utrenia, Ceasurile și Vecernia. Ediție nouă, tipar clar.',images:[],bestSeller:false},
-  {name:'Psaltirea lui David',price:28,category:'Cărți',stock:22,description:'Psaltirea completă, cu împărțire pe catisme, pentru citit la parastas și la canonul personal. Format mic, ușor de ținut în mână.',images:[],bestSeller:false},
-  {name:'Cruce de lemn sculptată',price:35,category:'Cruci',stock:40,description:'Cruce din lemn de stejar, sculptată manual, înălțime 20cm. Potrivită pentru perete sau birou. Lemn tratat, rezistent.',images:[],bestSeller:false},
-  {name:'Cruciuliță argintată cu lanț',price:65,category:'Cruci',stock:15,description:'Cruciuliță ortodoxă argintată, cu corp de 3cm. Lanț din argint 925, lungime 45cm. Cutie cadou inclusă.',images:[],bestSeller:false},
-  {name:'Tămâie Athos – 500g',price:48,category:'Tămâie',stock:35,description:'Tămâie autentică de la Muntele Athos, parfum de trandafir și smirnă. Ambalaj sigilat de 500g. Ideală pentru cădelniță.',images:[],bestSeller:false},
-  {name:'Tămâie românească – mix floral',price:22,category:'Tămâie',stock:60,description:'Tămâie naturală românească, amestec de flori și rășini. Pachet 200g. Fără adaosuri chimice.',images:[],bestSeller:false},
-  {name:'Mir sfințit – sticluță 20ml',price:15,category:'Mir',stock:50,description:'Mir sfințit în cadrul slujbei de Sfântul Maslu, ambalat în sticluță de sticlă cu dop. Potrivit pentru ungere și binecuvântare.',images:[],bestSeller:false},
-  {name:'Metanier ortodox (mătănii) – lemn',price:20,category:'Alte obiecte',stock:45,description:'Metanier din lemn de chiparos, 33 noduri, cu cruce la capăt. Parfum natural de chiparos. Tradițional ortodox.',images:[],bestSeller:false},
-  {name:'Cădelniță de birou – alamă',price:85,category:'Alte obiecte',stock:10,description:'Cădelniță mică din alamă, pentru acasă sau birou. Înălțime 12cm, diametru 8cm. Include 20g tămâie cadou.',images:[],bestSeller:false},
-];
 
-const ANUNTURI_DEMO=[
-  {title:'IMPORTANT – Program Paști 2025',type:'urgent',content:'Vă informăm că programul slujbelor de Paști este următorul:\n\nSâmbătă, 19 aprilie:\n- Ora 22:00 – Slujba Învierii (Denia de Paști)\n- Ora 23:00 – Sf. Liturghie pascală\n\nDuminică, 20 aprilie:\n- Ora 09:00 – Sf. Liturghie de dimineață\n\nVă așteptăm cu lumânări și veselie!\n\nHristos a Înviat!',image:''},
-  {title:'Colectă pentru renovarea acoperișului',type:'urgent',content:'Dragi enoriași,\n\nBiserica are nevoie urgentă de renovarea acoperișului. Costul estimat este de 85.000 Lei.\n\nPuteți contribui:\n- Prin virament bancar: RO12 RNCB 0000 1234 5678 0001\n- La secretariat (L-V, 10:00-14:00)\n- Prin site, la secțiunea Magazin\n\nOrice sumă contează! Dumnezeu să vă răsplătească!',image:''},
-  {title:'Pelerinaj la Mânăstirea Văratec – 15 Mai',type:'eveniment',content:'Parohia organizează un pelerinaj la Mânăstirea Văratec și Agapia, pe data de 15 mai 2025.\n\nProgram:\n- Ora 06:00 – Plecare din fața bisericii\n- Ora 10:00 – Sf. Liturghie la Văratec\n- Vizitarea mânăstirilor Văratec, Agapia și Neamț\n- Ora 20:00 – Întoarcere\n\nCost: 80 Lei/persoană (transport + prânz).\nÎnscrieri la secretariat până pe 10 mai.',image:''},
-  {title:'Cateheze pentru adulți – fiecare joi',type:'activitate',content:'Începând cu 3 aprilie, în fiecare joi de la ora 18:00, preotul paroh va ține cateheze pentru adulți.\n\nTemele abordate:\n- Credința ortodoxă pe înțelesul tuturor\n- Cum ne rugăm acasă\n- Postul – sens și practică\n- Tainele Bisericii\n\nToți credincioșii sunt bineveniți! Intrarea este liberă.',image:''},
-  {title:'Slujbă de sfințire a mașinilor',type:'slujba',content:'Duminică, 27 aprilie, după Sfânta Liturghie, se va oficia slujba de sfințire a mașinilor în parcarea din fața bisericii.\n\nAdresăm invitație tuturor credincioșilor care doresc sfințirea autovehiculelor.\n\nVă așteptăm!',image:''},
-  {title:'Ajutor pentru familii nevoiașe',type:'activitate',content:'Parohia colectează alimente neperisabile, haine și articole de uz casnic pentru familiile nevoiașe din parohie.\n\nPuteți aduce donații la secretariatul bisericii, luni-vineri între 10:00-14:00.\n\nAlimente acceptate: conserve, paste, ulei, zahăr, făină, orez.\n\nDumnezeu să vă binecuvânteze generozitatea!',image:''},
-  {title:'Parastasul general – 3 mai',type:'slujba',content:'Sâmbătă, 3 mai 2025, va fi parastasul general pentru toți credincioșii adormiți din parohia noastră.\n\nProgram:\n- Ora 09:00 – Slujba parastasului\n- Colivă și prescuri vor fi sfințite la altar\n\nRudele celor adormiți sunt invitate să aducă colive și să înscrie numele celor pentru care doresc să se facă rugăciune.',image:''},
-  {title:'Curs de pictură de icoane',type:'activitate',content:'Parohia organizează un curs de inițiere în pictura de icoane, tehnica tradițională (ou și tempera).\n\nCursul va fi susținut de iconarul Mihai Ionescu, absolvent al Institutului Teologic.\n\nDetalii:\n- Durata: 8 ședințe, câte 2 ore fiecare\n- Zi: sâmbăta, 10:00-12:00\n- Loc: sala parohială\n- Cost: 200 Lei (materiale incluse)\n\nÎnscrieri la secretariat. Locuri limitate!',image:''},
-];
 
 /* ── FIREBASE INIT ────────────────────────── */
 firebase.initializeApp({
@@ -2171,26 +2392,45 @@ const auth = firebase.auth();
 const EJS = {
   publicKey:   'p2O-tLOxlx3BmOLQf',
   serviceId:   'service_j3uce4r',
-  tplClient:   'template_a3n714t',   // confirmare comanda client
+  tplClient:   'template_a3n714t',   // confirmare comanda + status update
   tplAdmin:    'template_viznvfb',   // notificare comanda noua admin
-  tplStatus:   'template_a3n714t',   // update status catre client (acelasi template, alt status)
+  tplStatus:   'template_a3n714t',   // update status catre client
+  tplNotif:    'template_a3n714t',   // notificare anunt nou / stoc nou (acelasi template)
   adminEmail:  'irimia.teodor.17@gmail.com',
   ejsReady:    false,
 };
 
 /* ═══════════════════════════════════════════════
-   TEMPLATE CLIENT (template_a3n714t) - setari EmailJS:
-     To Email:       {{email_client}}
-     Variabile body: {{nume_client}}, {{numar_comanda}},
-                     {{status_comanda}}, {{lista_produse}}, {{total}}
+   TEMPLATE CLIENT (template_a3n714t) — folosit pentru TOATE emailurile catre clienti:
+   ┌─────────────────────────────────────────────────┐
+   │  To Email: {{email_client}}                     │
+   │                                                 │
+   │  SUBIECT sugerat:                               │
+   │  {{numar_comanda}} — {{status_comanda}}          │
+   │                                                 │
+   │  BODY sugerat:                                  │
+   │  Salut {{nume_client}},                         │
+   │  {{status_comanda}}                             │
+   │                                                 │
+   │  {{lista_produse}}                              │
+   │                                                 │
+   │  Total: {{total}}                               │
+   │                                                 │
+   │  Cu respect, Parohia Stornești                  │
+   └─────────────────────────────────────────────────┘
 
-   TEMPLATE ADMIN (template_viznvfb) - setari EmailJS:
-     To Email:       {{email_client}}  (trimite la admin)
-     Variabile body: {{numar_comanda}}, {{status_comanda}},
-                     {{total}}, {{lista_produse}}
+   Scenarii de utilizare (acelasi template):
+   • Confirmare comanda    → status_comanda = "Comanda ta a fost inregistrata!"
+   • Update status         → status_comanda = "IN PROCESARE" / "LIVRATA" / "ANULATA"
+   • Notificare stoc nou   → numar_comanda = "📦 Stoc Nou", status = produsul
+   • Notificare anunt nou  → numar_comanda = "📢 Anunt Nou", status = titlul
 
-   IMPORTANT: In EmailJS Dashboard, la fiecare template,
-   seteaza campul "To Email" la: {{email_client}}
+   TEMPLATE ADMIN (template_viznvfb):
+   ┌─────────────────────────────────────────────────┐
+   │  To Email: {{email_client}}  (→ adresa admin)  │
+   │  numar_comanda, status_comanda, total,           │
+   │  lista_produse (include si datele clientului)   │
+   └─────────────────────────────────────────────────┘
 ════════════════════════════════════════════════ */
 
 function initEmailJS(){
@@ -2303,6 +2543,8 @@ async function trimiteEmailStatusUpdate(orderData, statusNou){
 
 /* ── STATE ───────────────────────────────── */
 let cos          = JSON.parse(localStorage.getItem('bCos')||'[]');
+let favorite       = JSON.parse(localStorage.getItem('bFav')||'[]');
+let esteAbonat     = false;   // true daca a bifat abonare la notificari
 let produseCach  = [];
 let anunturiCach = [];
 let comenziCach  = [];
@@ -2375,12 +2617,30 @@ function actualizeazaBadge(){
 }
 
 function adaugaInCos(p,cant){
+  if(!clientCurent){
+    // Salvam produsul si deschidem login
+    window._prodPending = {p, cant: cant||1};
+    deschideModal('modalClient');
+    setTimeout(()=>{
+      const t=document.getElementById('modalClientTitlu');
+      if(t) t.textContent='Cont necesar pentru cumpărare';
+      // Adauga mesaj in modal daca nu exista deja
+      const body=document.getElementById('modalClientBody');
+      if(body && !document.getElementById('msgCartPending')){
+        const div=document.createElement('div');
+        div.id='msgCartPending';
+        div.innerHTML='<div style="background:rgba(107,26,42,.08);border-left:3px solid var(--v);border-radius:0 7px 7px 0;padding:10px 14px;margin-bottom:14px;font-size:.84rem;color:var(--v)">🛒 <strong>'+(p.name||p.nume)+'</strong> va fi adăugat în coș după conectare.</div>';
+        body.insertBefore(div, body.firstChild);
+      }
+    },60);
+    return;
+  }
   cant=cant||1;
   const ex=cos.find(i=>i.id===p.id);
   if(ex) ex.cantitate+=cant;
   else cos.push({id:p.id,nume:p.name||p.nume,pret:p.price||p.pret,imagine:(p.images||[])[0]||'',cantitate:cant});
   salveazaCos(); actualizeazaBadge();
-  afiseazaToast(`✝ "${p.name||p.nume}" adăugat în coș!`);
+  afiseazaToast('✝ '+(p.name||p.nume)+' adăugat în coș!');
 }
 
 function scoateDinCos(id){
@@ -2610,7 +2870,7 @@ async function incarcaAcasa(){
   }
 
   // Ultim anunt
-  const ua=anunturiCach.find(a=>a.type==='urgent')||anunturiCach[0];
+  const ua=anunturiCach[0]; // cel mai recent anunt (indiferent de tip)
   const elUa=document.getElementById('acasa-ultim-anunt');
   if(ua){
     const urgCls=ua.type==='urgent'?'urgent':'';
@@ -2642,8 +2902,33 @@ async function incarcaMagazin(){
   if(!produseCach.length){
     document.getElementById('gridProduse').innerHTML=`<div class="incarcare" style="grid-column:1/-1"><div class="rotitor"></div> Se incarca...</div>`;
     produseCach=await fbLista('produse');
+    // Incarca rating-uri pentru toate produsele (batch)
+    incarcaRatinguriProduse();
   }
   filtreazaProduse();
+}
+
+async function incarcaRatinguriProduse(){
+  // Citeste toate recenziile o data si calculeaza mediile
+  try{
+    const snap = await db.collection('recenzii').get();
+    const grupate={};
+    snap.docs.forEach(d=>{
+      const r=d.data();
+      if(!r.aprobata) return;
+      if(!grupate[r.produsId]) grupate[r.produsId]={sum:0,count:0};
+      grupate[r.produsId].sum  += r.rating||0;
+      grupate[r.produsId].count++;
+    });
+    produseCach.forEach(p=>{
+      if(grupate[p.id]){
+        p._rating      = Math.round(grupate[p.id].sum/grupate[p.id].count*10)/10;
+        p._ratingCount = grupate[p.id].count;
+      }
+    });
+    // Re-randeaza gridul cu rating-urile
+    filtreazaProduse();
+  }catch(e){ console.warn('Rating err:',e); }
 }
 
 function comutaFiltre(){
@@ -2655,6 +2940,9 @@ function seteazaCategorie(val,el){
   catCurenta=val;
   document.querySelectorAll('#chipsCategorie .chip').forEach(c=>c.classList.remove('selectat'));
   el.classList.add('selectat');
+  // Stil special pentru chip favorite
+  if(val==='favorite') el.style.cssText='background:linear-gradient(135deg,#E74C3C,#C0392B);color:#fff;border-color:#E74C3C';
+  else el.style.cssText='';
   filtreazaProduse();
 }
 function seteazaSortare(val,el){
@@ -2663,10 +2951,42 @@ function seteazaSortare(val,el){
   el.classList.add('selectat');
   filtreazaProduse();
 }
+let filtruFavActiv = false;
+
+function filtreazaDupeFav(btn){
+  filtruFavActiv = !filtruFavActiv;
+  if(btn){
+    btn.classList.toggle('activ', filtruFavActiv);
+    btn.innerHTML = filtruFavActiv
+      ? '❤️ Favorite <span class="fav-nr" id="favNr">'+favorite.length+'</span>'
+      : '🤍 Favorite <span class="fav-nr" id="favNr">'+favorite.length+'</span>';
+  }
+  if(filtruFavActiv && !clientCurent && favorite.length===0){
+    afiseazaToast('Nu ai produse favorite! Apasă ❤️ pe un produs pentru a-l adăuga.');
+    filtruFavActiv = false;
+    if(btn) btn.classList.remove('activ');
+    return;
+  }
+  filtreazaProduse();
+}
+
+function actualizeazaNrFav(){
+  const el = document.getElementById('favNr');
+  if(el) el.textContent = favorite.length;
+}
+
 function filtreazaProduse(){
   cautareCur=document.getElementById('cautareProduse').value.toLowerCase();
   let lista=[...produseCach];
-  if(catCurenta!=='toate') lista=lista.filter(p=>p.category===catCurenta);
+  if(catCurenta==='favorite'){
+    lista=lista.filter(p=>favorite.includes(p.id));
+    if(!lista.length){
+      document.getElementById('gridProduse').innerHTML='<div class="gol" style="grid-column:1/-1"><div class="icon-gol">❤️</div><h3>Niciun produs favorit</h3><p>Apasă ❤️ pe un produs pentru a-l adăuga la favorite.</p></div>';
+      return;
+    }
+  } else if(catCurenta!=='toate'){
+    lista=lista.filter(p=>p.category===catCurenta);
+  }
   if(cautareCur) lista=lista.filter(p=>p.name.toLowerCase().includes(cautareCur)||(p.description||'').toLowerCase().includes(cautareCur));
   if(sortCurenta==='pretcrescator') lista.sort((a,b)=>a.price-b.price);
   if(sortCurenta==='pretdescrescator') lista.sort((a,b)=>b.price-a.price);
@@ -2686,23 +3006,38 @@ function redeazaGridProduse(lista){
     const stocCls=p.stock>0?'in-stoc':'epuizat';
     const stocTxt=p.stock>0?`${p.stock} buc.`:'Epuizat';
     const disabledAttr=p.stock<=0?'disabled':'';
-    return `<div class="card-produs" onclick="deschideModalProdus('${p.id}')">
+    const favIcon=esteInFav(p.id)?'❤️':'🤍';
+    const favCls=esteInFav(p.id)?'activ':'';
+    const ratingDisp=p._rating ? `<span class="rating-badge">${steleHTML(p._rating,true)} ${p._rating} (${p._ratingCount||0})</span>` : '';
+    return `<div class="card-produs" onclick="deschideModalProdus('${p.id}')" style="position:relative">
+      <button class="btn-fav ${favCls}" data-id="${p.id}" onclick="toggleFavorit('${p.id}',event)" title="Favorite" style="position:absolute;top:8px;right:8px;z-index:2">${favIcon}</button>
       <div class="produs-img">${imgHtml}</div>
       <div class="produs-corp">
         <div class="produs-nume">${p.name}</div>
+        ${ratingDisp}
         <div class="produs-desc">${p.description||''}</div>
         <div class="produs-footer">
           <div>
             <div class="produs-pret">${p.price} Lei</div>
             <span class="stoc-badge ${stocCls}">${stocTxt}</span>
           </div>
-          <button class="btn-cos" onclick="event.stopPropagation();adaugaRapid('${p.id}')" ${disabledAttr}>🛒 Adauga</button>
+          <button class="btn-cos" onclick="event.stopPropagation();adaugaRapid('${p.id}')" ${disabledAttr}>🛒 Adaugă</button>
         </div>
       </div>
     </div>`;
   }).join('');
 }
 function adaugaRapid(id){
+  if(!clientCurent){
+    // Deschide modal login cu mesaj
+    afiseazaToast('Creează un cont gratuit pentru a cumpăra! 🛒');
+    setTimeout(()=>{
+      deschideModal('modalClient');
+      // Trecem la tab register
+      setTimeout(()=>{ if(typeof switchTab==='function') switchTab('reg'); },100);
+    }, 400);
+    return;
+  }
   const p=produseCach.find(x=>x.id===id);
   if(p) adaugaInCos(p,1);
 }
@@ -2736,7 +3071,27 @@ function deschideModalProdus(id){
     mi.style.display='none';
     galerie.innerHTML=`<div style="font-size:3rem;color:var(--vp);padding:20px;text-align:center">✝</div>`;
   }
+  // Buton favorit in modal
+  const btnFav = document.getElementById('btnFavModal');
+  if(btnFav){
+    btnFav.textContent = esteInFav(p.id)?'❤️':'🤍';
+    btnFav.classList.toggle('activ', esteInFav(p.id));
+    btnFav.style.background = esteInFav(p.id)?'rgba(231,76,60,.08)':'';
+  }
   deschideModal('modalProdus');
+  // Incarca recenzii async
+  randeazaRecenziiModal(p.id);
+}
+
+function toggleFavModal(){
+  if(!prodModalCurent) return;
+  toggleFavorit(prodModalCurent.id, null);
+  const btn = document.getElementById('btnFavModal');
+  if(btn){
+    btn.textContent = esteInFav(prodModalCurent.id)?'❤️':'🤍';
+    btn.classList.toggle('activ', esteInFav(prodModalCurent.id));
+    btn.style.background = esteInFav(prodModalCurent.id)?'rgba(231,76,60,.08)':'';
+  }
 }
 function setImgPrinc(el,src,idx){
   const mi=document.getElementById('mpImgPrinc');
@@ -2771,23 +3126,33 @@ async function afiseazaAnunturi(){
   let html='';
   if(urgente.length){
     html+=`<div style="margin-bottom:22px"><p class="anunt-urgente-titlu">🔴 ANUNTURI URGENTE</p>`;
-    html+=urgente.map(a=>`
-      <div class="urgent-banner" onclick="deschideModalAnunt('${a.id}')">
+    html+=urgente.map(a=>{
+      const imgU = a.image
+        ? `<img src="${a.image}" alt="${a.title}" style="width:100%;height:160px;object-fit:cover;border-radius:8px 8px 0 0;margin:-18px -22px 14px;width:calc(100% + 44px);display:block">`
+        : '';
+      return `<div class="urgent-banner" onclick="deschideModalAnunt('${a.id}')" style="padding:18px 22px;overflow:hidden">
+        ${imgU}
         <span class="insigna ins-urgent">🔴 URGENT</span>
         <h3>${a.title}</h3>
         <p class="anunt-extras">${(a.content||'').substring(0,180)}...</p>
         <span class="anunt-data">📅 ${formateazaData(a.createdAt)}</span>
-      </div>`).join('');
+      </div>`;
+    }).join('');
     html+=`</div>`;
   }
   if(filtru==='urgent'){
-    html=lista.map(a=>`
-      <div class="urgent-banner" onclick="deschideModalAnunt('${a.id}')">
+    html=lista.map(a=>{
+      const imgU2 = a.image
+        ? `<img src="${a.image}" alt="${a.title}" style="width:calc(100% + 44px);height:160px;object-fit:cover;border-radius:8px 8px 0 0;margin:-18px -22px 14px;display:block">`
+        : '';
+      return `<div class="urgent-banner" onclick="deschideModalAnunt('${a.id}')" style="padding:18px 22px;overflow:hidden">
+        ${imgU2}
         <span class="insigna ins-urgent">🔴 URGENT</span>
         <h3>${a.title}</h3>
         <p class="anunt-extras">${(a.content||'').substring(0,180)}...</p>
         <span class="anunt-data">📅 ${formateazaData(a.createdAt)}</span>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   } else {
     html+=restul.map(a=>cardAnunt(a)).join('');
   }
@@ -2917,7 +3282,58 @@ function toggleAltAdresa(altaAdresa){
   }
 }
 
+function verifica_si_mergi_la_cos(){
+  if(!clientCurent){
+    afiseazaToast('Trebuie să ai un cont pentru a finaliza comanda!');
+    setTimeout(()=>{
+      deschideModal('modalClient');
+      setTimeout(()=>{ if(typeof switchTab==='function') switchTab('reg'); },100);
+    }, 400);
+    return;
+  }
+  arataComanada();
+}
+
 function arataComanada(){
+  // Cont obligatoriu pentru a finaliza comanda
+  if(!clientCurent){
+    // Arata modal de login cu mesaj clar
+    deschideModal('modalClient');
+    const body = document.getElementById('modalClientBody');
+    if(body){
+      // Pune titlu special
+      document.getElementById('modalClientTitlu').textContent='Cont necesar pentru comandă';
+      body.innerHTML=`
+        <div style="text-align:center;margin-bottom:18px">
+          <div style="font-size:2.5rem;margin-bottom:10px">🛒</div>
+          <p style="color:var(--v);font-family:'Cinzel',serif;font-size:.95rem;margin-bottom:6px">Creați un cont pentru a plasa comanda</p>
+          <p style="font-size:.84rem;color:var(--tl)">Contul vă permite să urmăriți comenzile, să salvați adresa și să primiți <strong style="color:var(--v)">5% discount</strong>.</p>
+        </div>
+        <div class="client-tabs">
+          <button class="client-tab activ" id="tabLogin" onclick="switchTab('login')">Am cont deja</button>
+          <button class="client-tab" id="tabReg" onclick="switchTab('reg')">Creează cont</button>
+        </div>
+        <div id="formLogin">
+          <div class="form-grup"><label>Email</label><input id="cEmail" type="email" placeholder="email@exemplu.ro" onkeydown="if(event.key==='Enter')logheazaClient()"></div>
+          <div class="form-grup"><label>Parolă</label><input id="cParola" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')logheazaClient()"></div>
+          <div id="errClient" style="display:none;color:#C0392B;background:#FFEBEE;padding:9px;border-radius:5px;font-size:.8rem;margin-bottom:12px"></div>
+          <button class="btn btn-primar" style="width:100%;justify-content:center" onclick="logheazaClientSiComanda()">Conectare și continuare</button>
+        </div>
+        <div id="formReg" style="display:none">
+          <div class="form-grup"><label>Nume și Prenume *</label><input id="cNume" placeholder="Ion Ionescu"></div>
+          <div class="form-grup"><label>Email *</label><input id="cEmailReg" type="email" placeholder="email@exemplu.ro"></div>
+          <div class="form-grup"><label>Parolă *</label><input id="cParolaReg" type="password" placeholder="Minim 6 caractere"></div>
+          <div id="errReg" style="display:none;color:#C0392B;background:#FFEBEE;padding:9px;border-radius:5px;font-size:.8rem;margin-bottom:12px"></div>
+          <div class="gdpr-check" style="margin-bottom:8px">
+            <input type="checkbox" id="gdprReg">
+            <label for="gdprReg">Sunt de acord cu <a onclick="deschideModal('modalTermeni')" style="color:var(--v)">Termenii și Condițiile</a>. *</label>
+          </div>
+          <div class="gdpr-err" id="gdprRegErr">Acceptă termenii pentru a crea cont.</div>
+          <button class="btn btn-primar" style="width:100%;justify-content:center" onclick="inregistreazaClientRapid()">Creează Cont și continuă</button>
+        </div>`;
+    }
+    return; // Nu continua spre formular - se va apela din onAuthStateChanged
+  }
   document.getElementById('vedereaCos').style.display='none';
   document.getElementById('vedereComanda').style.display='block';
   // Pre-fill form din cont (async)
@@ -3174,8 +3590,10 @@ async function incarcaSectiuena(sec){
   if(sec==='comenzi')   await secComenzi(el);
   if(sec==='produse')   await secProduse(el);
   if(sec==='anunturi')  await secAnunturi(el);
-  if(sec==='vouchere')  await secVouchere(el);
-  if(sec==='email')     await secEmail(el);
+  if(sec==='vouchere')    await secVouchere(el);
+  if(sec==='recenzii')   await secRecenzii(el);
+  if(sec==='notificari') await secNotificari(el);
+  if(sec==='email')      await secEmail(el);
 }
 
 function statCard(num,lbl,ico){
@@ -3472,8 +3890,8 @@ async function genereazaFactura(id){
     <div class="firma">
       <h1>✝ Biserica Sfânta Treime</h1>
       <p style="margin:4px 0;color:#555">Parohia Stornești</p>
-      <p style="margin:4px 0;color:#555">Str. Bisericii, nr. 1 | Tel: 0740 000 000</p>
-      <p style="margin:4px 0;color:#555">Email: parohia@email.ro</p>
+      <p style="margin:4px 0;color:#555">Str. Sfânta Treime, nr. 1, Stornești, Iași</p>
+      <p style="margin:4px 0;color:#555">Tel: 0743 609 099 | parohia@gmail.com</p>
     </div>
     <div class="nr-factura">
       <h2>FACTURĂ</h2>
@@ -3538,7 +3956,7 @@ async function genereazaFactura(id){
 
   <div class="footer-doc">
     <p>Acest document este generat electronic și este valabil fără semnătură și ștampilă conform Legii nr. 227/2015 privind Codul Fiscal.</p>
-    <p>✝ Dumnezeu să vă binecuvânteze! ✝ | Biserica Sfânta Treime — Parohia Stornești</p>
+    <p>✝ Dumnezeu să vă binecuvânteze! ✝<br>Str. Sfânta Treime, nr. 1 · Stornești · Jud. Iași · Tel: 0743 609 099</p>
   </div>
 
   <div style="text-align:center;margin-top:24px">
@@ -3714,10 +4132,32 @@ async function salveazaProdus(){
       bestSeller:document.getElementById('pBestSeller').checked,
       images:imgFinal
     };
-    if(editProdId) await fbActualizeaza('produse',editProdId,data);
-    else await fbAdauga('produse',data);
+    if(editProdId){
+      // Verifica daca stocul a revenit (era 0, acum > 0)
+      const prodVechi = produseCach.find(p=>p.id===editProdId);
+      const eraEpuizat = prodVechi && (prodVechi.stock===0 || prodVechi.stock===undefined);
+      const acumAreStoc = data.stock > 0;
+      await fbActualizeaza('produse',editProdId,data);
+      if(eraEpuizat && acumAreStoc){
+        // Trimite notificare la abonati cu produsul in favorite
+        notificaStocNou(editProdId, data.name, data.price);
+      }
+    }else{
+      await fbAdauga('produse',data);
+    }
     produseCach=[];
     afiseazaToast(editProdId?'✅ Produs actualizat!':'✅ Produs adaugat!');
+    // Intreaba daca vrea sa notifice abonati cu favorite
+    if(parseInt(document.getElementById('pStoc').value)>0){
+      const notif = confirm(`Notifici abonații că "${name}" este disponibil?\nSe va trimite email celor care au produse la favorite.`);
+      if(notif){
+        const n = await trimiteNotificareAbonatii(
+          `✝ ${name} — disponibil în magazin`,
+          `Un produs pe care l-ați urmărit este acum disponibil!\n\n${name}\nPreț: ${price} Lei\nStoc: ${parseInt(document.getElementById('pStoc').value)} buc.\n\nComandați acum de pe site-ul parohiei Stornești.`
+        );
+        if(n>0) afiseazaToast(`📧 Notificați ${n} abonați!`, 4000);
+      }
+    }
     incarcaSectiuena('produse');
   }catch(e){
     console.error(e);
@@ -3802,10 +4242,21 @@ async function salveazaAnunt(){
       imgUrl=typeof imgSelectataAnn==='string'?imgSelectataAnn:await proceseazaImagine(imgSelectataAnn);
     }
     const data={title:titlu,type:document.getElementById('aTip').value,content:continut,image:imgUrl};
-    if(editAnnId) await fbActualizeaza('anunturi',editAnnId,data);
-    else await fbAdauga('anunturi',data);
+    if(editAnnId){
+      await fbActualizeaza('anunturi',editAnnId,data);
+      afiseazaToast('✅ Anunt actualizat!');
+    }else{
+      await fbAdauga('anunturi',data);
+      afiseazaToast('✅ Anunt publicat!');
+      // Ofera optiunea de a notifica abonatii
+      setTimeout(()=>{
+        if(confirm(`Anunțul "${data.title}" a fost publicat.\nVrei să trimiți o notificare prin email abonații site-ului?`)){
+          notificaAnuntNou(data.title, data.type, (data.content||'').substring(0,200)+'...')
+            .then(n=>{ if(n>0) afiseazaToast('📧 Notificări trimise la '+n+' abonați!'); });
+        }
+      }, 500);
+    }
     anunturiCach=[];
-    afiseazaToast(editAnnId?'✅ Anunt actualizat!':'✅ Anunt publicat!');
     incarcaSectiuena('anunturi');
   }catch(e){
     console.error(e);
@@ -3971,9 +4422,11 @@ service cloud.firestore {
     match /produse/{id}  { allow read: if true; allow write: if request.auth != null; }
     match /anunturi/{id} { allow read: if true; allow write: if request.auth != null; }
     match /comenzi/{id}  { allow create: if true; allow read,update,delete: if request.auth != null; }
-    match /vouchere/{id} { allow read: if true; allow write: if request.auth != null; }
-    match /clienti/{id}  { allow read,write: if request.auth != null && request.auth.uid == id; }
-    match /admini/{id}   { allow read: if request.auth != null; }
+    match /vouchere/{id}  { allow read: if true; allow write: if request.auth != null; }
+    match /clienti/{id}   { allow read,write: if request.auth != null && request.auth.uid == id; }
+    match /admini/{id}    { allow read: if request.auth != null; }
+    match /recenzii/{id}  { allow read: if true; allow create: if true; allow update,delete: if request.auth != null; }
+    match /abonati/{id}   { allow read,write: if request.auth != null; allow create: if true; }
   }
 }</pre>
       </div>
@@ -4072,9 +4525,11 @@ service cloud.firestore {
     match /produse/{id}  { allow read: if true; allow write: if request.auth != null; }
     match /anunturi/{id} { allow read: if true; allow write: if request.auth != null; }
     match /comenzi/{id}  { allow create: if true; allow read,update,delete: if request.auth != null; }
-    match /vouchere/{id} { allow read: if true; allow write: if request.auth != null; }
-    match /clienti/{id}  { allow read,write: if request.auth != null && request.auth.uid == id; }
-    match /admini/{id}   { allow read: if request.auth != null; }
+    match /vouchere/{id}  { allow read: if true; allow write: if request.auth != null; }
+    match /clienti/{id}   { allow read,write: if request.auth != null && request.auth.uid == id; }
+    match /admini/{id}    { allow read: if request.auth != null; }
+    match /recenzii/{id}  { allow read: if true; allow create: if true; allow update,delete: if request.auth != null; }
+    match /abonati/{id}   { allow read,write: if request.auth != null; allow create: if true; }
   }
 }</pre>
         <button class="btn btn-primar btn-mic" style="margin-top:14px" onclick="initVouchere().then(()=>incarcaSectiuena('vouchere'))">🔄 Incearcă din nou</button>
@@ -4165,6 +4620,176 @@ service cloud.firestore {
     </div>`;
 }
 
+
+/* ══════════════════════════════════════════
+   ADMIN - RECENZII
+══════════════════════════════════════════ */
+async function secRecenzii(el){
+  el.innerHTML='<div class="incarcare"><div class="rotitor"></div></div>';
+  let recenzii=[];
+  try{
+    const snap = await db.collection('recenzii').orderBy('creatLa','desc').get();
+    recenzii = snap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){
+    try{
+      const snap2 = await db.collection('recenzii').get();
+      recenzii = snap2.docs.map(d=>({id:d.id,...d.data()}))
+        .sort((a,b)=>(b.creatLa?.seconds||0)-(a.creatLa?.seconds||0));
+    }catch(e2){ el.innerHTML='<p style="color:#C0392B">Eroare: '+e2.message+'</p>'; return; }
+  }
+  const neaprobate = recenzii.filter(r=>!r.aprobata).length;
+
+  el.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:13px">
+      <h2 style="font-family:'Cinzel',serif;color:var(--v);font-size:1.35rem">
+      ⭐ Recenzii Clienți (${recenzii.length})
+      ${neaprobate>0?'<span style="background:#E74C3C;color:#fff;font-size:.7rem;padding:2px 9px;border-radius:10px;margin-left:9px;font-family:Lato,sans-serif">'+neaprobate+' de aprobat</span>':''}
+    </h2>
+    </div>
+    ${!recenzii.length
+      ? '<div class="gol"><div class="icon-gol">⭐</div><h3>Nicio recenzie</h3><p>Recenziile clienților vor apărea aici.</p></div>'
+      : recenzii.map(r=>{
+          const prod = produseCach.find(p=>p.id===r.produsId);
+          const prodNume = prod?.name || r.produsId?.substring(0,12)+'…';
+          return `<div class="card-recenzie" style="margin-bottom:16px">
+            <div class="card-recenzie-header">
+              <div>
+                ${steleHTML(r.rating||0)}
+                <div class="recenzie-autor">${r.autor||'Anonim'}</div>
+                <div style="font-size:.76rem;color:var(--tl);margin-top:2px">Produs: <strong>${prodNume}</strong></div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+                <div class="recenzie-data">${formateazaData(r.creatLa)}</div>
+                ${!r.aprobata
+                  ? '<button class="btn btn-success btn-xs" onclick="aprobaRecenzie(''+r.id+'')">✓ Aprobă</button>'
+                  : '<span style="font-size:.72rem;color:#2E7D32;font-weight:700">✓ Aprobată</span>'}
+                <button class="btn btn-pericol btn-xs" onclick="stergeRecenzie('${r.id}')">🗑️</button>
+              </div>
+            </div>
+            <p class="recenzie-text">"${r.text}"</p>
+            ${r.raspuns
+              ? `<div class="raspuns-admin">
+                  <div class="raspuns-admin-label">✝ Răspunsul tău:</div>
+                  <p style="font-size:.88rem;color:var(--tm);margin:0 0 8px">${r.raspuns}</p>
+                  <button class="btn btn-contur btn-xs" onclick="editRaspuns('${r.id}','${r.raspuns.replace(/'/g,'\'')}')">✏️ Editează</button>
+                </div>`
+              : `<div style="margin-top:10px">
+                  <textarea id="rasp_${r.id}" rows="2" placeholder="Scrie un răspuns parohiei..." style="width:100%;padding:8px;border:1.5px solid var(--crd);border-radius:6px;font-size:.86rem;resize:none;background:var(--w)"></textarea>
+                  <button class="btn btn-primar btn-xs" style="margin-top:6px" onclick="trimiteRaspuns('${r.id}')">✝ Răspunde</button>
+                </div>`
+            }
+          </div>`;
+        }).join('')
+    }`;
+}
+
+async function aprobaRecenzie(id){
+  await fbActualizeaza('recenzii', id, {aprobata:true});
+  afiseazaToast('✅ Recenzie aprobată și publicată!');
+  incarcaSectiuena('recenzii');
+}
+
+async function trimiteRaspuns(recenzieId){
+  const txt = document.getElementById('rasp_'+recenzieId)?.value?.trim();
+  if(!txt){ afiseazaToast('Scrie un răspuns!'); return; }
+  await fbActualizeaza('recenzii', recenzieId, {raspuns: txt});
+  afiseazaToast('✅ Răspuns publicat!');
+  incarcaSectiuena('recenzii');
+}
+
+async function editRaspuns(recenzieId, raspunsVechi){
+  const nou = prompt('Editează răspunsul:', raspunsVechi);
+  if(nou===null) return;
+  await fbActualizeaza('recenzii', recenzieId, {raspuns: nou||null});
+  afiseazaToast('✅ Răspuns actualizat!');
+  incarcaSectiuena('recenzii');
+}
+
+async function stergeRecenzie(id){
+  if(!confirm('Stergi această recenzie?')) return;
+  await fbSterge('recenzii', id);
+  afiseazaToast('🗑️ Recenzie ștearsă!');
+  incarcaSectiuena('recenzii');
+}
+
+/* ══════════════════════════════════════════
+   ADMIN - NOTIFICARI
+══════════════════════════════════════════ */
+async function secNotificari(el){
+  let abonati = [];
+  try{
+    const snap = await db.collection('abonati').where('activ','==',true).get();
+    abonati = snap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){}
+
+  el.innerHTML=`
+    <h2 style="font-family:'Cinzel',serif;color:var(--v);margin-bottom:22px;font-size:1.35rem">📢 Notificări & Abonați</h2>
+
+    <div class="formular-admin" style="margin-bottom:22px">
+      <p style="font-family:'Cinzel',serif;color:var(--v);margin-bottom:14px;font-size:.9rem">Trimite notificare către toți abonații (${abonati.length})</p>
+      <div class="form-grup"><label>Subiect</label><input id="notifSubiect" placeholder="ex: Stoc nou de lumânări!"></div>
+      <div class="form-grup"><label>Mesaj</label><textarea id="notifMesaj" rows="5" placeholder="Detalii despre noutate..."></textarea></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-primar" onclick="trimitNotificareToti()">📧 Trimite la Toți</button>
+        <button class="btn btn-contur" onclick="testNotificare()">📧 Test (doar admin)</button>
+      </div>
+      <div id="notifResult" style="margin-top:12px"></div>
+    </div>
+
+    <h3 style="font-family:'Cinzel',serif;color:var(--v);margin-bottom:13px;font-size:1rem">Lista Abonați (${abonati.length})</h3>
+    ${!abonati.length
+      ? '<div class="gol"><div class="icon-gol">📧</div><h3>Niciun abonat</h3><p>Abonații se înregistrează din site.</p></div>'
+      : `<table class="tabel-admin">
+          <thead><tr><th>Email</th><th>Data</th><th>Actiuni</th></tr></thead>
+          <tbody>${abonati.map(a=>`<tr>
+            <td>${a.email}</td>
+            <td>${formateazaData(a.creatLa)}</td>
+            <td><button class="btn btn-pericol btn-xs" onclick="dezaboneaza('${a.id}')">🗑️</button></td>
+          </tr>`).join('')}</tbody>
+        </table>`
+    }
+
+    <div class="email-setup-box" style="margin-top:20px">
+      <h4>📋 Cum functioneaza abonarea</h4>
+      <p>Clienții se pot abona la notificări direct din site (va fi disponibil în curând).<br>
+      Poți adăuga manual un email abonat mai jos:</p>
+      <div style="display:flex;gap:9px;margin-top:10px">
+        <input id="addAbonatEmail" type="email" placeholder="email@exemplu.ro" style="flex:1;padding:9px 12px;border:1.5px solid var(--crd);border-radius:6px">
+        <button class="btn btn-primar btn-mic" onclick="adaugaAbonat()">+ Adaugă</button>
+      </div>
+    </div>`;
+}
+
+async function trimitNotificareToti(){
+  const subiect = document.getElementById('notifSubiect')?.value?.trim();
+  const mesaj   = document.getElementById('notifMesaj')?.value?.trim();
+  const rez     = document.getElementById('notifResult');
+  if(!subiect||!mesaj){ afiseazaToast('Completează subiect și mesaj!'); return; }
+  if(!EJS.ejsReady){ rez.innerHTML='<div class="import-result err" style="display:block">❌ EmailJS nu e configurati!</div>'; return; }
+  rez.innerHTML='<div class="import-result ok" style="display:block">⏳ Se trimit emailuri...</div>';
+  const n = await trimiteNotificareAbonatii(subiect, mesaj);
+  rez.innerHTML=`<div class="import-result ok" style="display:block">✅ Trimis către ${n} abonați!</div>`;
+}
+
+async function testNotificare(){
+  const subiect = document.getElementById('notifSubiect')?.value?.trim()||'Test notificare';
+  const mesaj   = document.getElementById('notifMesaj')?.value?.trim()||'Acesta este un email de test.';
+  await trimiteEmailNotificare('test', subiect, mesaj, '');
+  afiseazaToast('📧 Email test trimis la admin!');
+}
+
+async function adaugaAbonat(){
+  const email = document.getElementById('addAbonatEmail')?.value?.trim();
+  if(!email||!email.includes('@')){ afiseazaToast('Email invalid!'); return; }
+  const ok = await abonaLaNotificari(email);
+  if(ok){ afiseazaToast('✅ '+email+' adăugat!'); incarcaSectiuena('notificari'); }
+  else   { afiseazaToast('❌ Eroare la adăugare (verifică Firestore Rules)'); }
+}
+
+async function dezaboneaza(id){
+  await db.collection('abonati').doc(id).update({activ:false});
+  afiseazaToast('Dezabonat!'); incarcaSectiuena('notificari');
+}
 
 /* ── VOUCHERE localStorage helpers ── */
 function getVouchereLocale(){
@@ -4371,18 +4996,6 @@ const VOUCHERE_DEMO = {
   'BINEVENITI':  {procent:5,  descriere:'Bun venit!',         activ:true, expira:null},
 };
 
-async function semaneazaDateDemo(){
-  try{
-    const [testP,testA]=await Promise.all([
-      db.collection('produse').limit(1).get(),
-      db.collection('anunturi').limit(1).get()
-    ]);
-    if(!testP.empty&&!testA.empty) return;
-    if(testP.empty) for(const p of PRODUSE_DEMO) await fbAdauga('produse',p);
-    if(testA.empty) for(const a of ANUNTURI_DEMO) await fbAdauga('anunturi',a);
-    console.log('Date demo adaugate!');
-  }catch(e){ console.warn('Seed demo:',e.code); }
-}
 
 // Populeaza voucherele in Firestore (read:true pentru toti clientii)
 async function populareVouchere(){
@@ -4456,8 +5069,8 @@ let voucherAplicat  = '';     // codul aplicat
 const VOUCHERE = {};  // gol - toate voucherele se gestioneaza din Admin
 
 function totalReductie(){
-  // Reducerile se aduna: discount cont (10%) + voucher (X%)
-  // Dar nu poate depasi 50% total
+  // Discount cont (5%) + bonus abonat (5% extra) + voucher
+  // Abonatii primesc 10% total, restul 5%
   return Math.min(50, discountActiv + discountVoucher);
 }
 
@@ -4507,11 +5120,15 @@ function randeazaModalClient(){
         <div style="font-size:3rem;margin-bottom:12px">👤</div>
         <p class="cinzel" style="color:var(--v);font-size:1.1rem;margin-bottom:4px">${clientCurent.displayName||'Client'}</p>
         <p style="color:var(--tl);font-size:.88rem;margin-bottom:18px">${clientCurent.email}</p>
-        <div class="discount-info" style="justify-content:center">
+        <div class="discount-info" style="justify-content:center;margin-bottom:10px">
           <span style="font-size:1.3rem">🎁</span>
-          <span>Beneficiezi de <strong>5% discount</strong> la toate produsele!</span>
+          <span>Discount activ: <strong>${esteAbonat?'10% (abonat)':'5% (cont)'}</strong></span>
         </div>
-        <button class="btn btn-pericol btn-mic" style="margin-top:16px;width:100%;justify-content:center" onclick="delogheazaClient()">Deconectare</button>
+        ${esteAbonat
+          ? '<div style="background:rgba(39,174,96,.1);border:1.5px solid rgba(39,174,96,.3);border-radius:8px;padding:10px;margin-bottom:12px;font-size:.82rem;color:#1a5c2e;text-align:center">📧 Abonat la notificări — primești email la stoc nou și anunțuri importante</div>'
+          : '<div onclick="aboneazaClientLogat()" style="background:rgba(39,174,96,.06);border:1.5px solid rgba(39,174,96,.2);border-radius:8px;padding:10px;margin-bottom:12px;font-size:.82rem;color:#1a5c2e;cursor:pointer;text-align:center">📧 Abonează-te la notificări → +5% discount extra!</div>'
+        }
+        <button class="btn btn-pericol btn-mic" style="width:100%;justify-content:center" onclick="delogheazaClient()">Deconectare</button>
       </div>`;
   } else {
     // Nelogat - afiseaza login/register
@@ -4539,17 +5156,31 @@ function randeazaModalClient(){
           <div class="form-grup"><label>Telefon *</label><input id="cTelefon" type="tel" placeholder="07XX XXX XXX"></div>
         </div>
         <div class="form-grup"><label>Email *</label><input id="cEmailReg" type="email" placeholder="email@exemplu.ro"></div>
-        <div class="form-grup"><label>Adresă Completă *</label><input id="cAdresa" placeholder="Strada, nr., bloc, ap." required></div>
-        <div class="form-grup"><label>Localitate / Județ *</label><input id="cLocalitate" placeholder="Cluj-Napoca, Cluj" required></div>
+        <div class="form-grup"><label>Adresă Completă *</label><input id="cAdresa" placeholder="Strada, nr., bloc, ap."></div>
+        <div class="form-grup"><label>Localitate / Județ *</label><input id="cLocalitate" placeholder="ex: Stornești, Dâmbovița"></div>
         <div class="form-grup"><label>Parolă *</label><input id="cParolaReg" type="password" placeholder="Minim 6 caractere"></div>
         <div id="errReg" style="display:none;color:#C0392B;background:#FFEBEE;padding:9px;border-radius:5px;font-size:.8rem;margin-bottom:12px"></div>
-        <div class="gdpr-check">
+
+        <!-- Consimtamant GDPR obligatoriu -->
+        <div class="gdpr-check" style="margin-bottom:8px">
           <input type="checkbox" id="gdprReg">
-          <label for="gdprReg">Sunt de acord cu <a onclick="inchideModal('modalClient');deschideModal('modalTermeni')">Termenii și Condițiile</a> și Politica GDPR. *</label>
+          <label for="gdprReg">Sunt de acord cu <a onclick="inchideModal('modalClient');deschideModal('modalTermeni')" style="color:var(--v)">Termenii și Condițiile</a> și Politica GDPR. *</label>
         </div>
         <div class="gdpr-err" id="gdprRegErr">Trebuie să accepți termenii pentru a crea un cont.</div>
-        <button class="btn btn-primar" style="width:100%;justify-content:center" onclick="inregistreazaClient()">Creează Cont + 5% Discount</button>
-      </div>`;
+
+        <!-- Consimtamant notificari - OPTIONAL -->
+        <label class="check-abon">
+          <input type="checkbox" id="cbAbonat">
+          <div>
+            <strong style="color:#1a5c2e">📧 Vreau să primesc notificări pe email</strong> <span class="abon-badge">🎁 5% DISCOUNT</span>
+            <p style="margin:4px 0 0;color:var(--tl);font-size:.8rem">Stoc nou la produsele favorite, anunțuri parohiale importante. Te poți dezabona oricând.</p>
+          </div>
+        </label>
+
+        <button class="btn btn-primar" style="width:100%;justify-content:center;margin-top:4px" onclick="inregistreazaClient()">
+          Creează Cont
+        </button>
+      </div>\`;
   }
 }
 
@@ -4558,6 +5189,54 @@ function switchTab(tab){
   document.getElementById('tabReg').classList.toggle('activ',   tab==='reg');
   document.getElementById('formLogin').style.display = tab==='login'?'block':'none';
   document.getElementById('formReg').style.display   = tab==='reg'  ?'block':'none';
+}
+
+// Login rapid din modal checkout - dupa login continua automat spre formular
+async function logheazaClientSiComanda(){
+  const email  = document.getElementById('cEmail').value.trim();
+  const parola = document.getElementById('cParola').value;
+  const err    = document.getElementById('errClient');
+  err.style.display='none';
+  if(!email||!parola){ err.textContent='Completează email și parola!'; err.style.display='block'; return; }
+  try{
+    await auth.signInWithEmailAndPassword(email, parola);
+    // onAuthStateChanged va seta clientCurent, iar dupa vom apela arataComanada
+    inchideModal('modalClient');
+    setTimeout(()=>arataComanada(), 500); // mic delay pt auth state
+  }catch(e){
+    err.textContent = e.code==='auth/wrong-password'||e.code==='auth/user-not-found'
+      ? 'Email sau parolă incorectă.' : 'Eroare: '+e.message;
+    err.style.display='block';
+  }
+}
+
+// Inregistrare rapida din modal checkout (fara telefon si adresa - se completeaza la comanda)
+async function inregistreazaClientRapid(){
+  const email  = document.getElementById('cEmailReg').value.trim();
+  const parola = document.getElementById('cParolaReg').value;
+  const gdprEl = document.getElementById('gdprReg');
+  const gdprErr= document.getElementById('gdprRegErr');
+  const err    = document.getElementById('errReg');
+  const numeEl = document.getElementById('cNume');
+  err.style.display='none';
+  if(gdprErr) gdprErr.style.display='none';
+  if(gdprEl && !gdprEl.checked){ if(gdprErr) gdprErr.style.display='block'; return; }
+  const nume = numeEl?.value?.trim()||email.split('@')[0];
+  if(!email||!parola){ err.textContent='Email și parolă obligatorii!'; err.style.display='block'; return; }
+  if(parola.length<6){ err.textContent='Parola trebuie să aibă minim 6 caractere!'; err.style.display='block'; return; }
+  try{
+    const cred = await auth.createUserWithEmailAndPassword(email, parola);
+    await cred.user.updateProfile({displayName: nume});
+    await db.collection('clienti').doc(cred.user.uid).set({
+      name:nume, email, createdAt:TS(), discount:5, gdprAcceptat:true, abonatNotificari:false
+    });
+    inchideModal('modalClient');
+    setTimeout(()=>arataComanada(), 500);
+  }catch(e){
+    err.textContent = e.code==='auth/email-already-in-use'
+      ? 'Email deja folosit. Conectați-vă.' : 'Eroare: '+e.message;
+    err.style.display='block';
+  }
 }
 
 async function logheazaClient(){
@@ -4598,18 +5277,46 @@ async function inregistreazaClient(){
   try{
     const cred = await auth.createUserWithEmailAndPassword(email, parola);
     await cred.user.updateProfile({displayName: nume});
+    const abonat = document.getElementById('cbAbonat')?.checked||false;
     await db.collection('clienti').doc(cred.user.uid).set({
       name: nume, email, phone: telefon,
       address: adresa, county: localit,
-      createdAt: TS(), discount: 5,
+      createdAt: TS(),
+      discount: abonat ? 5 : 0,  // 5% doar daca s-a abonat la notificari
       gdprAcceptat: true,
+      abonatNotificari: abonat,
+      abonatData: abonat ? TS() : null,
     });
+    // Daca s-a abonat, adauga si in colectia abonati
+    if(abonat){
+      await db.collection('abonati').doc(email.replace(/[@.]/g,'_')).set({
+        email, userId: cred.user.uid, creatLa: TS(), activ: true
+      });
+    }
   }catch(e){
     err.textContent = e.code==='auth/email-already-in-use'
       ? 'Există deja un cont cu acest email. Folosește tab-ul Conectare.'
       : 'Eroare: '+e.message;
     err.style.display='block';
   }
+}
+
+async function aboneazaClientLogat(){
+  if(!clientCurent) return;
+  try{
+    await db.collection('clienti').doc(clientCurent.uid).update({
+      abonatNotificari: true,
+      discount: 10,
+    });
+    await db.collection('abonati').doc(clientCurent.email.replace(/[@.]/g,'_')).set({
+      email: clientCurent.email, userId: clientCurent.uid, creatLa: TS(), activ: true
+    });
+    esteAbonat = true;
+    discountActiv = 10;
+    actualizeazaUIClient();
+    randeazaModalClient();
+    afiseazaToast('✅ Abonat! Ai acum 10% discount! 🎉', 4000);
+  }catch(e){ afiseazaToast('❌ Eroare: '+e.message); }
 }
 
 async function delogheazaClient(){
@@ -4633,11 +5340,16 @@ function actualizeazaUIClient(){
   const lbl  = document.getElementById('btnContClientLabel');
   if(clientCurent){
     bar.style.display = 'flex';
-    document.getElementById('clientBarNume').textContent = clientCurent.displayName||clientCurent.email;
-    discountActiv = 5;
+    const numeAfisat = clientCurent.displayName||clientCurent.email;
+    const abonBadge  = esteAbonat ? ' <span class="abon-badge">📧 10%</span>' : '';
+    document.getElementById('clientBarNume').innerHTML = numeAfisat + abonBadge;
     if(ico) ico.textContent = '👤✓';
-    if(lbl){ lbl.textContent = '5% OFF'; lbl.style.color = '#E8C97A'; }
+    if(lbl){
+      lbl.textContent = esteAbonat ? '10% OFF' : '5% OFF';
+      lbl.style.color = '#E8C97A';
+    }
     actualizeazaBadge();
+    actualizeazaNrFav();
   } else {
     bar.style.display = 'none';
     discountActiv = 0;
@@ -4693,14 +5405,14 @@ async function aplicaVoucher(){
     const expirat = gasit.expira && new Date(gasit.expira) < new Date();
     if(gasit.activ===false || expirat){
       okEl.style.cssText='background:#FFEBEE;border:1.5px solid #EF9A9A;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#C62828;display:block;margin-bottom:12px';
-      okEl.textContent = expirat ? `❌ Codul "${cod}" a expirat.` : `❌ Codul "${cod}" este inactiv.`;
+      okEl.textContent = expirat ? ('❌ Codul '+cod+' a expirat.') : ('❌ Codul '+cod+' este inactiv.');
       return;
     }
     discountVoucher = gasit.procent || 0;
     voucherAplicat  = cod;
     okEl.style.cssText='background:#E8F5E9;border:1.5px solid #81C784;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#2E7D32;display:block;margin-bottom:12px';
-    okEl.textContent = `✅ Cod "${cod}" aplicat! -${discountVoucher}% reducere.`;
-    afiseazaToast(`🎉 Voucher aplicat! -${discountVoucher}%`);
+    okEl.textContent = '✅ Cod "'+cod+'" aplicat! -'+discountVoucher+'% reducere.';
+    afiseazaToast('🎉 Voucher aplicat! -'+discountVoucher+'%');
     redeazaCos();
   } else {
     okEl.style.cssText='background:#FFEBEE;border:1.5px solid #EF9A9A;border-radius:7px;padding:9px 14px;font-size:.84rem;color:#C62828;display:block;margin-bottom:12px';
@@ -4709,6 +5421,298 @@ async function aplicaVoucher(){
 }
 
 /* ── AUTH LISTENER ───────────────────────── */
+/* ══════════════════════════════════════════
+   FAVORITE
+══════════════════════════════════════════ */
+function salveazaFav(){ localStorage.setItem('bFav',JSON.stringify(favorite)); }
+function esteInFav(id){ return favorite.includes(id); }
+
+function toggleFavorit(id, event){
+  if(event){ event.stopPropagation(); }
+  const idx = favorite.indexOf(id);
+  if(idx>=0){
+    favorite.splice(idx,1);
+    afiseazaToast('Scos din favorite');
+  } else {
+    favorite.push(id);
+    afiseazaToast('❤️ Adăugat la favorite!');
+    // Daca clientul e logat, salveaza si in Firestore
+    if(clientCurent){
+      db.collection('clienti').doc(clientCurent.uid)
+        .set({favorite}, {merge:true})
+        .catch(e=>console.warn('Fav Firestore:',e));
+    }
+  }
+  salveazaFav();
+  actualizeazaNrFav();
+  // Actualizeaza toate butoanele de favorite pentru acest produs
+  document.querySelectorAll('.btn-fav[data-id="'+id+'"]').forEach(btn=>{
+    btn.textContent = esteInFav(id) ? '❤️' : '🤍';
+    btn.classList.toggle('activ', esteInFav(id));
+  });
+  // Daca filtrul fav e activ si am scos din fav, re-filtreaza
+  if(filtruFavActiv) filtreazaProduse();
+}
+
+async function notificaStocNou(produsId, produsNume, pret){
+  if(!EJS.ejsReady) return;
+  try{
+    // Gaseste toti clientii care au acest produs la favorite
+    const snap = await db.collection('clienti')
+      .where('abonatNotificari','==',true)
+      .get();
+    let trimise=0;
+    for(const doc of snap.docs){
+      const client = doc.data();
+      const favClient = client.favorite||[];
+      if(!favClient.includes(produsId)) continue;
+      if(!client.email) continue;
+      try{
+        await emailjs.send(EJS.serviceId, EJS.tplNotif, {
+          email_client:   client.email,
+          nume_client:    client.name||'Drag enoriaș',
+          numar_comanda:  '📦 Produs din Favorite — Stoc Nou!',
+          status_comanda: produsNume+' — disponibil acum!',
+          lista_produse:  'Produsul "'+produsNume+'" pe care l-ai adăugat la favorite este din nou în stoc la pretul de '+pret+' Lei.',
+          total:          'Intră pe site pentru a comanda!',
+        });
+        trimise++;
+        await new Promise(r=>setTimeout(r,300));
+      }catch(e){ console.warn('Notif stoc err:',client.email,e.text); }
+    }
+    if(trimise>0) afiseazaToast('📧 Notificări stoc trimise la '+trimise+' abonați!');
+  }catch(e){ console.warn('notificaStocNou:', e); }
+}
+
+// Notificare anunt nou catre abonati (se poate apela din admin dupa publicare anunt)
+async function notificaAnuntNou(titlu, tip, extras){
+  if(!EJS.ejsReady) return;
+  try{
+    const snap = await db.collection('abonati').where('activ','==',true).get();
+    let trimise=0;
+    for(const doc of snap.docs){
+      const email = doc.data().email;
+      if(!email) continue;
+      try{
+        await emailjs.send(EJS.serviceId, EJS.tplNotif, {
+          email_client:   email,
+          nume_client:    'Drag enoriaș',
+          numar_comanda:  tip==='urgent'?'🔴 Anunț Important Parohia Stornești':'📋 Anunț Nou Parohia Stornești',
+          status_comanda: titlu,
+          lista_produse:  extras||'',
+          total:          'Vizitați site-ul parohiei pentru detalii complete.',
+        });
+        trimise++;
+        await new Promise(r=>setTimeout(r,250));
+      }catch(e){ console.warn('Notif anunt:',email); }
+    }
+    return trimise;
+  }catch(e){ return 0; }
+}
+
+async function sincronizeazaFavDinCont(){
+  if(!clientCurent) return;
+  try{
+    const doc = await db.collection('clienti').doc(clientCurent.uid).get();
+    if(doc.exists && doc.data().favorite){
+      const favCloud = doc.data().favorite;
+      // Combina localul cu cloud-ul
+      favCloud.forEach(id=>{ if(!favorite.includes(id)) favorite.push(id); });
+      salveazaFav();
+    }
+  }catch(e){}
+}
+
+/* ══════════════════════════════════════════
+   NOTIFICARI EMAIL (anunturi noi + stoc nou)
+══════════════════════════════════════════ */
+async function trimiteEmailNotificare(tip, titlu, continut, link){
+  // Trimite email catre toti utilizatorii cu favorite sau abonamente
+  // Deocamdata trimite catre admin care poate redistribui
+  if(!EJS.ejsReady) return;
+  try{
+    await emailjs.send(EJS.serviceId, EJS.tplNotif, {
+      email_client:   EJS.adminEmail,
+      nume_client:    'Panou Admin',
+      numar_comanda:  tip==='anunt' ? '📋 ANUNT NOU' : '📦 STOC NOU',
+      status_comanda: titlu,
+      lista_produse:  continut,
+      total:          link||'',
+    });
+    console.log('Email notificare trimis');
+  }catch(e){ console.warn('Notificare email err:', e.text||e.message); }
+}
+
+// Salveaza emailuri abonati la notificari (colectie separata Firestore)
+async function abonaLaNotificari(email){
+  try{
+    await db.collection('abonati').doc(email.replace('@','_').replace('.','_')).set({
+      email, creatLa: TS(), activ: true
+    });
+    return true;
+  }catch(e){ return false; }
+}
+
+async function trimiteNotificareAbonatii(subiect, mesaj){
+  // Citeste toti abbonatii activi si trimite email
+  if(!EJS.ejsReady) return 0;
+  try{
+    const snap = await db.collection('abonati').where('activ','==',true).get();
+    let trimise = 0;
+    for(const doc of snap.docs){
+      const email = doc.data().email;
+      try{
+        await emailjs.send(EJS.serviceId, EJS.tplNotif, {
+          email_client:   email,
+          nume_client:    'Drag enoriaș',
+          numar_comanda:  '📢 Noutăți Parohia Stornești',
+          status_comanda: subiect,
+          lista_produse:  mesaj,
+          total:          'Vizitați site-ul parohiei pentru detalii.',
+        });
+        trimise++;
+        // Pauza mica intre emailuri sa nu depasim limita
+        await new Promise(r=>setTimeout(r,200));
+      }catch(e){ console.warn('Email catre',email,'err:',e.text); }
+    }
+    return trimise;
+  }catch(e){ console.warn('Abonati err:',e); return 0; }
+}
+
+/* ══════════════════════════════════════════
+   RECENZII
+══════════════════════════════════════════ */
+let steaSelectata = 0;
+
+function seteazaStea(n){
+  steaSelectata = n;
+  document.querySelectorAll('.stea-input').forEach((s,i)=>{
+    s.classList.toggle('activa', i<n);
+  });
+}
+
+async function incarcaRecenzii(produsId, includeNeaprobate){
+  // includeNeaprobate=true doar pentru admin
+  try{
+    let q=db.collection('recenzii').where('produsId','==',produsId);
+    if(!includeNeaprobate) q=q.where('aprobata','==',true);
+    const snap=await q.orderBy('creatLa','desc').get();
+    return snap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){
+    try{
+      const snap2=await db.collection('recenzii').where('produsId','==',produsId).get();
+      let lista=snap2.docs.map(d=>({id:d.id,...d.data()}));
+      if(!includeNeaprobate) lista=lista.filter(r=>r.aprobata===true);
+      return lista.sort((a,b)=>(b.creatLa?.toDate?.()-a.creatLa?.toDate?.())||0);
+    }catch(e2){ return []; }
+  }
+}
+
+async function getRatingMediu(produsId){
+  const recenzii = await incarcaRecenzii(produsId);
+  if(!recenzii.length) return {medie:0, total:0};
+  const medie = recenzii.reduce((s,r)=>s+(r.rating||0),0)/recenzii.length;
+  return {medie: Math.round(medie*10)/10, total: recenzii.length};
+}
+
+function steleHTML(rating, small){
+  const sz = small ? '0.85rem' : '1rem';
+  const cls = 'stele-display';
+  let h = '<span class="' + cls + '" style="font-size:' + sz + '">';
+  for(let i=1;i<=5;i++){
+    h += i<=Math.round(rating) ? '⭐' : '☆';
+  }
+  h += '</span>';
+  return h;
+}
+
+async function trimitRecenzie(produsId){
+  const txt   = document.getElementById('recenzieText')?.value?.trim();
+  const numeR = document.getElementById('recenzieNume')?.value?.trim();
+  if(!steaSelectata){ afiseazaToast('Selectează un număr de stele!'); return; }
+  if(!txt){ afiseazaToast('Scrie ceva despre produs!'); return; }
+  if(!numeR){ afiseazaToast('Introdu numele tău!'); return; }
+
+  const btn = document.getElementById('btnTrimiteRecenzie');
+  if(btn){ btn.disabled=true; btn.textContent='Se trimite...'; }
+
+  try{
+    await db.collection('recenzii').add({
+      produsId,
+      rating:    steaSelectata,
+      text:      txt,
+      autor:     numeR,
+      userId:    clientCurent?.uid||null,
+      creatLa:   TS(),
+      raspuns:   null,
+      aprobata:  false,
+    });
+    // Actualizeaza rating-ul produs in cache
+    const prod = produseCach.find(p=>p.id===produsId);
+    if(prod){ prod._ratingDirty=true; }
+    afiseazaToast('✅ Recenzie trimisă! Mulțumim!');
+    // Reincarcare recenzii in modal
+    await randeazaRecenziiModal(produsId);
+    steaSelectata=0;
+  }catch(e){
+    afiseazaToast('❌ Eroare: '+e.message);
+    if(btn){ btn.disabled=false; btn.textContent='Trimite Recenzia'; }
+  }
+}
+
+async function randeazaRecenziiModal(produsId){
+  const el = document.getElementById('recenziiContainer');
+  if(!el) return;
+  el.innerHTML='<div style="text-align:center;padding:16px;color:var(--tl)">⏳ Se incarca...</div>';
+  const recenzii = await incarcaRecenzii(produsId);
+  steaSelectata=0;
+
+  const autorNume = clientCurent?.displayName||'';
+  const steHtmlStr = [1,2,3,4,5].map(i=>'<span class="stea-input" onclick="seteazaStea('+i+')">☆</span>').join('');
+  const formHTML = '<div class="form-recenzie" id="formRecenzie">'
+    + '<h4>✍️ Lasă o recenzie</h4>'
+    + '<div class="stele-input" id="steInput">' + steHtmlStr
+    + '<span style="font-size:.8rem;color:var(--tl);margin-left:8px;align-self:center">Click pentru rating</span></div>'
+    + '<div class="form-grup" style="margin-bottom:10px">'
+    + '<input id="recenzieNume" placeholder="Numele tău *" value="' + autorNume + '" style="width:100%;padding:9px 12px;border:1.5px solid var(--crd);border-radius:6px;font-size:.9rem;background:var(--w)"></div>'
+    + '<div class="form-grup" style="margin-bottom:12px">'
+    + '<textarea id="recenzieText" rows="3" placeholder="Spune-ne ce crezi despre acest produs..." style="width:100%;padding:9px 12px;border:1.5px solid var(--crd);border-radius:6px;font-size:.9rem;resize:none;background:var(--w)"></textarea></div>'
+    + '<button class="btn btn-primar btn-mic" id="btnTrimiteRecenzie" onclick="trimitRecenzie('' + produsId + '')">Trimite Recenzia</button>'
+    + '</div>';
+
+  if(!recenzii.length){
+    el.innerHTML=`<p style="color:var(--tl);font-size:.88rem;margin-bottom:16px">Fii primul care lasă o recenzie!</p>${formHTML}`;
+    return;
+  }
+
+  const listaHTML = recenzii.map(r=>`
+    <div class="card-recenzie">
+      <div class="card-recenzie-header">
+        <div>
+          ${steleHTML(r.rating)}
+          <div class="recenzie-autor" style="margin-top:4px">${r.autor||'Anonim'}</div>
+        </div>
+        <div class="recenzie-data">${formateazaData(r.creatLa)}</div>
+      </div>
+      <p class="recenzie-text">${r.text}</p>
+      ${r.raspuns?`<div class="raspuns-admin">
+        <div class="raspuns-admin-label">✝ Răspuns parohie:</div>
+        <p style="font-size:.88rem;color:var(--tm);margin:0">${r.raspuns}</p>
+      </div>`:''}
+    </div>`).join('');
+
+  const medie = recenzii.reduce((s,r)=>s+(r.rating||0),0)/recenzii.length;
+  const medieRnd = Math.round(medie*10)/10;
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;padding:12px;background:rgba(243,156,18,.08);border-radius:8px;border:1px solid rgba(243,156,18,.2)">
+      <span style="font-size:2rem;font-weight:700;color:#E67E22">${medieRnd}</span>
+      ${steleHTML(medie)}
+      <span style="font-size:.82rem;color:var(--tl)">(${recenzii.length} recenz${recenzii.length===1?'ie':'ii'})</span>
+    </div>
+    ${listaHTML}
+    ${formHTML}`;
+}
+
 // Firebase Auth - separa admin de client
 auth.onAuthStateChanged(async user=>{
   if(!user){
@@ -4732,11 +5736,30 @@ auth.onAuthStateChanged(async user=>{
   } else {
     // E client normal
     clientCurent  = user;
-    discountActiv = 5;
+    // Verifica daca e abonat la notificari
+    try{
+      const prof = await db.collection('clienti').doc(user.uid).get();
+      esteAbonat = prof.exists && prof.data().abonatNotificari===true;
+    }catch(e){ esteAbonat=false; }
+    discountActiv = esteAbonat ? 5 : 0;
     actualizeazaUIClient();
     inchideModal('modalClient');
-    afiseazaToast('Bine ai venit, '+(user.displayName||user.email)+'! 🎁 5% discount activ!', 4000);
+    const discMsg = esteAbonat ? '🎁 5% discount abonat activ!' : '';
+    afiseazaToast('Bine ai venit, '+(user.displayName||user.email)+'! '+discMsg, 4000);
     randeazaModalClient();
+    sincronizeazaFavDinCont();
+    if(window._prodPending){
+      const {p, cant} = window._prodPending;
+      window._prodPending = null;
+      inchideModal('modalClient');
+      setTimeout(()=>{
+        const ex=cos.find(i=>i.id===p.id);
+        if(ex) ex.cantitate+=cant;
+        else cos.push({id:p.id,nume:p.name||p.nume,pret:p.price||p.pret,imagine:(p.images||[])[0]||'',cantitate:cant});
+        salveazaCos(); actualizeazaBadge();
+        afiseazaToast('✝ '+(p.name||p.nume)+' adăugat în coș!');
+      },300);
+    }
   }
 });
 
@@ -4752,7 +5775,6 @@ document.addEventListener('DOMContentLoaded',function(){
   initEmailJS();
   verificaSesiuneAdmin();
   mergi('acasa');
-  semaneazaDateDemo();
   populareVouchere(); // populeaza voucherele Firestore (globale pentru toti)
   if(!localStorage.getItem('cookiesAcceptate')){
     setTimeout(()=>document.getElementById('cookieBanner').classList.add('viz'), 1500);
