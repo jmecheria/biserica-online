@@ -4661,7 +4661,7 @@ async function secRecenzii(el){
               <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
                 <div class="recenzie-data">${formateazaData(r.creatLa)}</div>
                 ${!r.aprobata
-                  ? '<button class="btn btn-success btn-xs" onclick="aprobaRecenzie(''+r.id+'')">✓ Aprobă</button>'
+                  ? '<button class="btn btn-success btn-xs" data-rid="'+r.id+'" onclick="aprobaRecenzie(this.dataset.rid)">&#10003; Aprob&#259;</button>'
                   : '<span style="font-size:.72rem;color:#2E7D32;font-weight:700">✓ Aprobată</span>'}
                 <button class="btn btn-pericol btn-xs" onclick="stergeRecenzie('${r.id}')">🗑️</button>
               </div>
@@ -5663,107 +5663,69 @@ async function trimitRecenzie(produsId){
 async function randeazaRecenziiModal(produsId){
   const el = document.getElementById('recenziiContainer');
   if(!el) return;
-  el.innerHTML='<div style="text-align:center;padding:16px;color:var(--tl)">⏳ Se incarca...</div>';
-  const recenzii = await incarcaRecenzii(produsId);
-  steaSelectata=0;
+  el.innerHTML = '<div style="text-align:center;padding:16px;color:var(--tl)">Se incarca recenziile...</div>';
+  const recenzii = await incarcaRecenzii(produsId, false);
+  steaSelectata = 0;
 
-  const autorNume = clientCurent?.displayName||'';
-  const steHtmlStr = [1,2,3,4,5].map(i=>'<span class="stea-input" onclick="seteazaStea('+i+')">☆</span>').join('');
+  const autorNume = (clientCurent && clientCurent.displayName) ? clientCurent.displayName : '';
+  const steHtml = [1,2,3,4,5].map(function(i){
+    return '<span class="stea-input" onclick="seteazaStea('+i+')">&#9734;</span>';
+  }).join('');
+
   const formHTML = '<div class="form-recenzie" id="formRecenzie">'
-    + '<h4>✍️ Lasă o recenzie</h4>'
-    + '<div class="stele-input" id="steInput">' + steHtmlStr
-    + '<span style="font-size:.8rem;color:var(--tl);margin-left:8px;align-self:center">Click pentru rating</span></div>'
+    + '<h4>&#9997; Lasa o recenzie</h4>'
+    + '<div class="stele-input" id="steInput">' + steHtml
+    + '<span style="font-size:.8rem;color:var(--tl);margin-left:8px;align-self:center">Click pentru rating</span>'
+    + '</div>'
     + '<div class="form-grup" style="margin-bottom:10px">'
-    + '<input id="recenzieNume" placeholder="Numele tău *" value="' + autorNume + '" style="width:100%;padding:9px 12px;border:1.5px solid var(--crd);border-radius:6px;font-size:.9rem;background:var(--w)"></div>'
+    + '<input id="recenzieNume" placeholder="Numele tau *" value="' + autorNume + '"'
+    + ' style="width:100%;padding:9px 12px;border:1.5px solid var(--crd);border-radius:6px;font-size:.9rem;background:var(--w)">'
+    + '</div>'
     + '<div class="form-grup" style="margin-bottom:12px">'
-    + '<textarea id="recenzieText" rows="3" placeholder="Spune-ne ce crezi despre acest produs..." style="width:100%;padding:9px 12px;border:1.5px solid var(--crd);border-radius:6px;font-size:.9rem;resize:none;background:var(--w)"></textarea></div>'
-    + '<button class="btn btn-primar btn-mic" id="btnTrimiteRecenzie" onclick="trimitRecenzie('' + produsId + '')">Trimite Recenzia</button>'
+    + '<textarea id="recenzieText" rows="3" placeholder="Spune-ne ce crezi despre acest produs..."'
+    + ' style="width:100%;padding:9px 12px;border:1.5px solid var(--crd);border-radius:6px;font-size:.9rem;resize:none;background:var(--w)"></textarea>'
+    + '</div>'
+    + '<button class="btn btn-primar btn-mic" id="btnTrimiteRecenzie" onclick="trimitRecenzie(\'' + produsId + '\')">Trimite Recenzia</button>'
     + '</div>';
 
   if(!recenzii.length){
-    el.innerHTML=`<p style="color:var(--tl);font-size:.88rem;margin-bottom:16px">Fii primul care lasă o recenzie!</p>${formHTML}`;
+    el.innerHTML = '<p style="color:var(--tl);font-size:.88rem;margin-bottom:16px">Fii primul care lasa o recenzie!</p>' + formHTML;
     return;
   }
 
-  const listaHTML = recenzii.map(r=>`
-    <div class="card-recenzie">
-      <div class="card-recenzie-header">
-        <div>
-          ${steleHTML(r.rating)}
-          <div class="recenzie-autor" style="margin-top:4px">${r.autor||'Anonim'}</div>
-        </div>
-        <div class="recenzie-data">${formateazaData(r.creatLa)}</div>
-      </div>
-      <p class="recenzie-text">${r.text}</p>
-      ${r.raspuns?`<div class="raspuns-admin">
-        <div class="raspuns-admin-label">✝ Răspuns parohie:</div>
-        <p style="font-size:.88rem;color:var(--tm);margin:0">${r.raspuns}</p>
-      </div>`:''}
-    </div>`).join('');
+  var listaHTML = '';
+  recenzii.forEach(function(r){
+    const raspunsHTML = r.raspuns
+      ? '<div class="raspuns-admin"><div class="raspuns-admin-label">&#10013; Raspuns parohie:</div>'
+        + '<p style="font-size:.88rem;color:var(--tm);margin:0">' + r.raspuns + '</p></div>'
+      : '';
+    listaHTML += '<div class="card-recenzie">'
+      + '<div class="card-recenzie-header">'
+      + '<div>' + steleHTML(r.rating||0)
+      + '<div class="recenzie-autor" style="margin-top:4px">' + (r.autor||'Anonim') + '</div></div>'
+      + '<div class="recenzie-data">' + formateazaData(r.creatLa) + '</div>'
+      + '</div>'
+      + '<p class="recenzie-text">' + (r.text||'') + '</p>'
+      + raspunsHTML
+      + '</div>';
+  });
 
-  const medie = recenzii.reduce((s,r)=>s+(r.rating||0),0)/recenzii.length;
+  const medie    = recenzii.reduce(function(s,r){return s+(r.rating||0);}, 0) / recenzii.length;
   const medieRnd = Math.round(medie*10)/10;
-  el.innerHTML=`
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;padding:12px;background:rgba(243,156,18,.08);border-radius:8px;border:1px solid rgba(243,156,18,.2)">
-      <span style="font-size:2rem;font-weight:700;color:#E67E22">${medieRnd}</span>
-      ${steleHTML(medie)}
-      <span style="font-size:.82rem;color:var(--tl)">(${recenzii.length} recenz${recenzii.length===1?'ie':'ii'})</span>
-    </div>
-    ${listaHTML}
-    ${formHTML}`;
+
+  el.innerHTML = '<div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;'
+    + 'padding:12px;background:rgba(243,156,18,.08);border-radius:8px;border:1px solid rgba(243,156,18,.2)">'
+    + '<span style="font-size:2rem;font-weight:700;color:#E67E22">' + medieRnd + '</span>'
+    + steleHTML(medie)
+    + '<span style="font-size:.82rem;color:var(--tl)">(' + recenzii.length + ' recenzi'
+    + (recenzii.length===1?'e':'i') + ')</span>'
+    + '</div>'
+    + listaHTML
+    + formHTML;
 }
 
-// Firebase Auth - separa admin de client
-auth.onAuthStateChanged(async user=>{
-  if(!user){
-    // Delogat total
-    if(!adminCurent){ // nu reseta admin daca adminul tocmai s-a logat
-      clientCurent  = null;
-      discountActiv = 0;
-      actualizeazaUIClient();
-    }
-    return;
-  }
-  // Verifica daca e admin
-  const eAdmin = await verificaRolAdmin(user);
-  if(eAdmin){
-    // E admin - nu il tratam ca si client
-    adminCurent = user;
-    // Daca pagina admin e activa, arata panoul
-    if(document.getElementById('pagina-admin').classList.contains('activa')){
-      arataPanou(); incarcaSectiuena('dashboard');
-    }
-  } else {
-    // E client normal
-    clientCurent  = user;
-    // Verifica daca e abonat la notificari
-    try{
-      const prof = await db.collection('clienti').doc(user.uid).get();
-      esteAbonat = prof.exists && prof.data().abonatNotificari===true;
-    }catch(e){ esteAbonat=false; }
-    discountActiv = esteAbonat ? 5 : 0;
-    actualizeazaUIClient();
-    inchideModal('modalClient');
-    const discMsg = esteAbonat ? '🎁 5% discount abonat activ!' : '';
-    afiseazaToast('Bine ai venit, '+(user.displayName||user.email)+'! '+discMsg, 4000);
-    randeazaModalClient();
-    sincronizeazaFavDinCont();
-    if(window._prodPending){
-      const {p, cant} = window._prodPending;
-      window._prodPending = null;
-      inchideModal('modalClient');
-      setTimeout(()=>{
-        const ex=cos.find(i=>i.id===p.id);
-        if(ex) ex.cantitate+=cant;
-        else cos.push({id:p.id,nume:p.name||p.nume,pret:p.price||p.pret,imagine:(p.images||[])[0]||'',cantitate:cant});
-        salveazaCos(); actualizeazaBadge();
-        afiseazaToast('✝ '+(p.name||p.nume)+' adăugat în coș!');
-      },300);
-    }
-  }
-});
 
-/* ── INIT ────────────────────────────────── */
+
 function acceptaCookies(){
   localStorage.setItem('cookiesAcceptate', '1');
   document.getElementById('cookieBanner').classList.remove('viz');
@@ -5775,7 +5737,7 @@ document.addEventListener('DOMContentLoaded',function(){
   initEmailJS();
   verificaSesiuneAdmin();
   mergi('acasa');
-  populareVouchere(); // populeaza voucherele Firestore (globale pentru toti)
+  populareVouchere();
   if(!localStorage.getItem('cookiesAcceptate')){
     setTimeout(()=>document.getElementById('cookieBanner').classList.add('viz'), 1500);
   }
