@@ -1192,7 +1192,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
         <p class="eticheta-grup">Categorie:</p>
         <div class="rand-chips" id="chipsCategorie">
           <button class="chip selectat" onclick="seteazaCategorie('toate',this)">Toate</button>
-          <button class="chip" onclick="seteazaCategorie('favorite',this)" id="chipFavorite" style="border-color:#E74C3C;color:#E74C3C">❤️ Favorite</button>
+          <button class="chip" onclick="seteazaCategorie('favorite',this)" id="chipFavorite" style="border-color:#E74C3C;color:#E74C3C">❤️ Favorite <span id="favCount"></span></button>
           <button class="chip" onclick="seteazaCategorie('Lumânări',this)">🕯️ Lumânări</button>
           <button class="chip" onclick="seteazaCategorie('Icoane',this)">🖼️ Icoane</button>
           <button class="chip" onclick="seteazaCategorie('Cărți',this)">📚 Cărți</button>
@@ -1412,6 +1412,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
       <img id="mpImgPrinc" class="modal-img-principal" src="" alt="">
       <div id="mpGalerie" class="modal-galerie"></div>
       <div id="mpPret" class="modal-pret"></div>
+      <div id="mpRating" style="display:none;align-items:center;gap:7px;margin-bottom:8px;flex-wrap:wrap"></div>
       <div id="mpStoc" style="margin-bottom:9px"></div>
       <p id="mpCategorie" style="font-family:'Cinzel',serif;font-size:.75rem;color:var(--tl);margin-bottom:11px"></p>
       <div id="mpDescriere" style="color:var(--tm);line-height:1.78;margin-bottom:18px;font-size:.98rem"></div>
@@ -3009,7 +3010,10 @@ function redeazaGridProduse(lista){
     const disabledAttr=p.stock<=0?'disabled':'';
     const favIcon=esteInFav(p.id)?'❤️':'🤍';
     const favCls=esteInFav(p.id)?'activ':'';
-    const ratingDisp=p._rating ? `<span class="rating-badge">${steleHTML(p._rating,true)} ${p._rating} (${p._ratingCount||0})</span>` : '';
+    const starsNum = p._rating||0;
+    const ratingDisp = starsNum>0
+      ? '<span class="rating-badge">'+steleHTML(starsNum,true)+' '+starsNum.toFixed(1)+' <span style="color:var(--tl);font-weight:400">('+( p._ratingCount||0)+')</span></span>'
+      : '';
     return `<div class="card-produs" onclick="deschideModalProdus('${p.id}')" style="position:relative">
       <button class="btn-fav ${favCls}" data-id="${p.id}" onclick="toggleFavorit('${p.id}',event)" title="Favorite" style="position:absolute;top:8px;right:8px;z-index:2">${favIcon}</button>
       <div class="produs-img">${imgHtml}</div>
@@ -3049,7 +3053,34 @@ function deschideModalProdus(id){
   if(!p) return;
   prodModalCurent=p; cantModalProd=1;
   document.getElementById('mpTitlu').textContent=p.name;
-  document.getElementById('mpPret').textContent=`${p.price} Lei`;
+  const mpPretEl = document.getElementById('mpPret');
+  if(mpPretEl) mpPretEl.textContent = p.price+' Lei';
+  // Rating in modal
+  const __mpRatingEl22 = document.getElementById('mpRating');
+  if(_mpRatingEl2){
+    if(p._rating){
+      _mpRatingEl2.innerHTML = steleHTML(p._rating,false)
+        +' <strong>'+p._rating.toFixed(1)+'</strong>'
+        +' <span style="color:var(--tl);font-size:.82rem">('+( p._ratingCount||0)+' '+(p._ratingCount===1?'recenzie':'recenzii')+')</span>';
+      _mpRatingEl2.style.display='flex';
+    }else{
+      _mpRatingEl2.innerHTML='<span style="color:var(--tl);font-size:.82rem">Nicio recenzie încă</span>';
+      _mpRatingEl2.style.display='flex';
+    }
+  }
+  // Rating in modal - afiseaza imediat daca exista in cache
+  const mpRatingEl = document.getElementById('mpRating');
+  if(mpRatingEl){
+    if(p._rating){
+      mpRatingEl.innerHTML = steleHTML(p._rating,false)
+        +' <strong>'+p._rating.toFixed(1)+'</strong>'
+        +' <span style="color:var(--tl);font-size:.82rem">('+( p._ratingCount||0)+' '+(p._ratingCount===1?'recenzie':'recenzii')+')</span>';
+      mpRatingEl.style.display='flex';
+    }else{
+      mpRatingEl.innerHTML='<span style="color:var(--tl);font-size:.82rem">Nicio recenzie încă</span>';
+      mpRatingEl.style.display='flex';
+    }
+  }
   document.getElementById('mpStoc').innerHTML=p.stock>0
     ?`<span class="stoc-badge in-stoc">✓ Disponibil (${p.stock} buc.)</span>`
     :`<span class="stoc-badge epuizat">✗ Epuizat</span>`;
@@ -3102,8 +3133,14 @@ function setImgPrinc(el,src,idx){
   lightboxIdx=idx;
 }
 function schimbaCantMP(d){
-  cantModalProd=Math.max(1,cantModalProd+d);
-  document.getElementById('mpCantitate').textContent=cantModalProd;
+  const maxStoc = prodModalCurent?.stock || 999;
+  cantModalProd = Math.min(maxStoc, Math.max(1, cantModalProd+d));
+  const el = document.getElementById('mpCantitate');
+  if(el) el.textContent = cantModalProd;
+  // Dezactiveaza butonul + daca am atins stocul
+  const btnPlus = document.querySelector('.btn-cantitate:last-child');
+  if(btnPlus) btnPlus.disabled = cantModalProd >= maxStoc;
+  if(btnPlus) btnPlus.style.opacity = cantModalProd >= maxStoc ? '.4' : '1';
 }
 function adaugadinModal(){
   if(prodModalCurent){ adaugaInCos(prodModalCurent,cantModalProd); inchideModal('modalProdus'); }
@@ -5079,7 +5116,7 @@ async function initVouchere(){
    CLIENT AUTH (login optional cu discount 10%)
 ══════════════════════════════════════════ */
 let clientCurent    = null;   // userul logat (Firebase Auth)
-let discountActiv   = 0;      // 0 sau 10 (procent)
+let discountActiv   = 0;      // 0 sau 5 (procent)
 let discountVoucher = 0;      // 0 sau X din voucher
 let voucherAplicat  = '';     // codul aplicat
 
@@ -5296,64 +5333,91 @@ async function inregistreazaClientRapid(){
 }
 
 async function logheazaClient(){
-  const email  = document.getElementById('cEmail').value.trim();
-  const parola = document.getElementById('cParola').value;
-  const err    = document.getElementById('errClient');
+  const emailEl = document.getElementById('cEmail');
+  const parolaEl= document.getElementById('cParola');
+  const err     = document.getElementById('errClient');
+  if(!emailEl||!parolaEl||!err){ console.warn('logheazaClient: elemente lipsă'); return; }
+  const email  = emailEl.value.trim();
+  const parola = parolaEl.value;
   err.style.display='none';
-  if(!email||!parola){ err.textContent='Completeaza email si parola!'; err.style.display='block'; return; }
+  if(!email||!parola){ err.textContent='Completează email și parola!'; err.style.display='block'; return; }
+  const btn = document.querySelector('#formLogin .btn-primar');
+  if(btn){ btn.disabled=true; btn.textContent='Se conectează...'; }
   try{
     await auth.signInWithEmailAndPassword(email, parola);
-    // onAuthStateChanged va actualiza UI
+    // onAuthStateChanged va actualiza UI si va inchide modalul
   }catch(e){
-    err.textContent = e.code==='auth/wrong-password'||e.code==='auth/user-not-found'
-      ? 'Email sau parola incorecta.'
-      : 'Eroare: '+e.message;
+    const mesaje={
+      'auth/wrong-password':       'Parolă incorectă.',
+      'auth/user-not-found':       'Nu există cont cu acest email.',
+      'auth/invalid-email':        'Email invalid.',
+      'auth/user-disabled':        'Contul a fost dezactivat.',
+      'auth/invalid-credential':   'Email sau parolă incorectă.',
+      'auth/too-many-requests':    'Prea multe încercări. Încearcă mai târziu.',
+      'auth/network-request-failed':'Eroare de rețea. Verifică conexiunea.',
+    };
+    err.textContent = mesaje[e.code] || ('Eroare: '+e.message);
     err.style.display='block';
+  }finally{
+    if(btn){ btn.disabled=false; btn.textContent='Conectare'; }
   }
 }
 
 async function inregistreazaClient(){
-  const nume    = document.getElementById('cNume').value.trim();
-  const telefon = document.getElementById('cTelefon')?.value.trim()||'';
-  const email   = document.getElementById('cEmailReg').value.trim();
-  const parola  = document.getElementById('cParolaReg').value;
+  const numeEl   = document.getElementById('cNume');
+  const telefonEl= document.getElementById('cTelefon');
+  const emailEl  = document.getElementById('cEmailReg');
+  const parolaEl = document.getElementById('cParolaReg');
+  const adresaEl = document.getElementById('cAdresa');
+  const locEl    = document.getElementById('cLocalitate');
   const err      = document.getElementById('errReg');
   const gdprEl   = document.getElementById('gdprReg');
   const gdprErr  = document.getElementById('gdprRegErr');
+  if(!err){ console.warn('inregistreazaClient: err element lipsă'); return; }
   err.style.display='none';
   if(gdprErr) gdprErr.style.display='none';
   if(gdprEl && !gdprEl.checked){ if(gdprErr) gdprErr.style.display='block'; return; }
-  const adresa  = document.getElementById('cAdresa')?.value.trim()||'';
-  const localit = document.getElementById('cLocalitate')?.value.trim()||'';
-  if(!nume||!email||!parola||!telefon||!adresa||!localit){
-    err.textContent='Completează toate câmpurile obligatorii: Nume, Telefon, Email, Adresă, Localitate și Parolă!';
-    err.style.display='block'; return;
-  }
-  if(parola.length<6){ err.textContent='Parola trebuie să aibă minim 6 caractere!'; err.style.display='block'; return; }
+  const nume    = numeEl?.value.trim()||'';
+  const telefon = telefonEl?.value.trim()||'';
+  const email   = emailEl?.value.trim()||'';
+  const parola  = parolaEl?.value||'';
+  const adresa  = adresaEl?.value.trim()||'';
+  const localit = locEl?.value.trim()||'';
+  if(!nume){ err.textContent='Introdu numele și prenumele!'; err.style.display='block'; return; }
+  if(!email){ err.textContent='Introdu adresa de email!'; err.style.display='block'; return; }
+  if(!parola||parola.length<6){ err.textContent='Parola trebuie să aibă minim 6 caractere!'; err.style.display='block'; return; }
+  if(!telefon){ err.textContent='Introdu numărul de telefon!'; err.style.display='block'; return; }
+  if(!adresa){ err.textContent='Introdu adresa de livrare!'; err.style.display='block'; return; }
+  if(!localit){ err.textContent='Introdu localitatea și județul!'; err.style.display='block'; return; }
+  const btn = document.querySelector('#formReg .btn-primar');
+  if(btn){ btn.disabled=true; btn.textContent='Se creează contul...'; }
   try{
     const cred = await auth.createUserWithEmailAndPassword(email, parola);
     await cred.user.updateProfile({displayName: nume});
     const abonat = document.getElementById('cbAbonat')?.checked||false;
     await db.collection('clienti').doc(cred.user.uid).set({
-      name: nume, email, phone: telefon,
-      address: adresa, county: localit,
-      createdAt: TS(),
-      discount: abonat ? 5 : 0,  // 5% doar daca s-a abonat la notificari
-      gdprAcceptat: true,
-      abonatNotificari: abonat,
-      abonatData: abonat ? TS() : null,
+      name:nume, email, phone:telefon, address:adresa, county:localit,
+      createdAt:TS(), discount:abonat?5:0,
+      gdprAcceptat:true, abonatNotificari:abonat, abonatData:abonat?TS():null,
     });
-    // Daca s-a abonat, adauga si in colectia abonati
     if(abonat){
       await db.collection('abonati').doc(email.replace(/[@.]/g,'_')).set({
-        email, userId: cred.user.uid, creatLa: TS(), activ: true
+        email, userId:cred.user.uid, creatLa:TS(), activ:true
       });
     }
+    // onAuthStateChanged va inchide modalul si va actualiza UI
   }catch(e){
-    err.textContent = e.code==='auth/email-already-in-use'
-      ? 'Există deja un cont cu acest email. Folosește tab-ul Conectare.'
-      : 'Eroare: '+e.message;
+    const mesaje={
+      'auth/email-already-in-use': 'Există deja un cont cu acest email. Folosește tab-ul Conectare.',
+      'auth/invalid-email':        'Adresa de email este invalidă.',
+      'auth/weak-password':        'Parola este prea slabă. Folosește minim 6 caractere.',
+      'auth/network-request-failed':'Eroare de rețea. Verifică conexiunea.',
+      'auth/operation-not-allowed':'Înregistrarea nu este activată. Contactați administratorul.',
+    };
+    err.textContent = mesaje[e.code] || ('Eroare: '+e.message);
     err.style.display='block';
+  }finally{
+    if(btn){ btn.disabled=false; btn.textContent='Creează Cont'; }
   }
 }
 
@@ -5480,7 +5544,11 @@ async function aplicaVoucher(){
 /* ══════════════════════════════════════════
    FAVORITE
 ══════════════════════════════════════════ */
-function salveazaFav(){ localStorage.setItem('bFav',JSON.stringify(favorite)); }
+function salveazaFav(){
+  localStorage.setItem('bFav',JSON.stringify(favorite));
+  const el=document.getElementById('favCount');
+  if(el) el.textContent = favorite.length>0?'('+favorite.length+')':'';
+}
 function esteInFav(id){ return favorite.includes(id); }
 
 function toggleFavorit(id, event){
@@ -5794,6 +5862,9 @@ document.addEventListener('DOMContentLoaded',function(){
   verificaSesiuneAdmin();
   mergi('acasa');
   populareVouchere();
+  // Initializeaza counter favorite
+  const favEl=document.getElementById('favCount');
+  if(favEl && favorite.length>0) favEl.textContent='('+favorite.length+')';
   if(!localStorage.getItem('cookiesAcceptate')){
     setTimeout(()=>document.getElementById('cookieBanner').classList.add('viz'), 1500);
   }
