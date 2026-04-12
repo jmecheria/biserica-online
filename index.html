@@ -1141,6 +1141,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
     <li><a href="#" onclick="mergi('admin');return false" data-p="admin">⚙️ Admin</a></li>
   </ul>
   <div class="nav-right">
+    <button class="cart-btn" id="btnRefresh" onclick="refreshManual()" title="Actualizează datele" style="font-size:1rem">🔄</button>
     <button class="cart-btn" id="btnDarkMode" onclick="toggleDarkMode()" title="Mod întunecat" style="font-size:1.1rem">🌙</button>
     <button class="cart-btn" onclick="mergi('cos')" title="Coș">
       🛒<span class="cart-badge" id="cosBadge">0</span>
@@ -1477,18 +1478,19 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
       <div id="mpStoc" style="margin-bottom:9px"></div>
       <p id="mpCategorie" style="font-family:'Cinzel',serif;font-size:.75rem;color:var(--tl);margin-bottom:11px"></p>
       <div id="mpDescriere" style="color:var(--tm);line-height:1.78;margin-bottom:18px;font-size:.98rem"></div>
-      <div style="display:flex;align-items:center;gap:11px;margin-bottom:18px">
-        <span style="font-family:'Cinzel',serif;font-size:.78rem;color:var(--v)">Cantitate:</span>
-        <div class="ctrl-cantitate">
-          <button class="btn-cantitate" onclick="schimbaCantMP(-1)">−</button>
-          <input type="number" id="mpCantitate" value="1" min="1" 
-            style="width:52px;text-align:center;border:2px solid var(--crd);border-radius:6px;
-                   padding:4px;font-family:'Cinzel',serif;font-size:.92rem;background:var(--w);color:var(--td)"
-            oninput="cantModalProd=Math.min(prodModalCurent?.stock||999,Math.max(1,parseInt(this.value)||1));this.value=cantModalProd"
-            onchange="cantModalProd=Math.min(prodModalCurent?.stock||999,Math.max(1,parseInt(this.value)||1));this.value=cantModalProd">
-          <button class="btn-cantitate" onclick="schimbaCantMP(1)">+</button>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+        <span style="font-family:Cinzel,serif;font-size:.78rem;color:var(--v)">Cantitate:</span>
+        <div class="ctrl-cantitate" style="display:flex;align-items:center;gap:0">
+          <button class="btn-cantitate" onclick="schimbaCantMP(-1)" style="border-radius:6px 0 0 6px;border-right:none">−</button>
+          <input type="number" id="mpCantitate" value="1" min="1"
+            style="width:54px;text-align:center;border:2px solid var(--crd);border-left:none;border-right:none;
+                   padding:5px 4px;font-family:Cinzel,serif;font-size:.92rem;background:var(--w);color:var(--td);
+                   -moz-appearance:textfield;outline:none"
+            oninput="schimbaCantDirect(this.value)"
+            onkeydown="if(event.key==='ArrowUp')schimbaCantMP(1);if(event.key==='ArrowDown')schimbaCantMP(-1)">
+          <button class="btn-cantitate" onclick="schimbaCantMP(1)" id="btnPlusCant" style="border-radius:0 6px 6px 0;border-left:none">+</button>
         </div>
-        <span id="mpStocInfo" style="font-size:.74rem;color:var(--tl)"></span>
+        <span id="mpStocInfo" style="font-size:.75rem;color:var(--tl)"></span>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
         <button class="btn btn-primar" onclick="adaugadinModal()">🛒 Adaugă în Coș</button>
@@ -2747,6 +2749,12 @@ function adaugaInCos(p,cant){
     return;
   }
   cant=cant||1;
+  // Verifica stoc disponibil
+  const stocDisp = (p.stock||0) - (cos.find(i=>i.id===p.id)?.cantitate||0);
+  if(p.stock>0 && cant>stocDisp){
+    afiseazaToast('⚠️ Stoc insuficient! Disponibil: '+stocDisp+' buc.');
+    return;
+  }
   const ex=cos.find(i=>i.id===p.id);
   if(ex) ex.cantitate+=cant;
   else cos.push({id:p.id,nume:p.name||p.nume,pret:p.price||p.pret,imagine:(p.images||[])[0]||'',cantitate:cant});
@@ -3159,10 +3167,8 @@ function deschideModalProdus(id){
   const p=produseCach.find(x=>x.id===id);
   if(!p) return;
   prodModalCurent=p; cantModalProd=1;
-  const mpCantEl=document.getElementById('mpCantitate');
-  if(mpCantEl) mpCantEl.value=1;
-  const mpInfoEl=document.getElementById('mpStocInfo');
-  if(mpInfoEl) mpInfoEl.textContent='din '+(p.stock||0)+' disponibile';
+  cantModalProd=1;
+  actualizeazaCantUI(1, p.stock||0);
   document.getElementById('mpTitlu').textContent=p.name;
   const mpPretEl = document.getElementById('mpPret');
   if(mpPretEl) mpPretEl.textContent = p.price+' Lei';
@@ -3243,16 +3249,26 @@ function setImgPrinc(el,src,idx){
   el.classList.add('activ');
   lightboxIdx=idx;
 }
+function actualizeazaCantUI(val, max){
+  const el = document.getElementById('mpCantitate');
+  if(el) el.value = val;
+  const info = document.getElementById('mpStocInfo');
+  if(info) info.textContent = max>0 ? 'max: '+max+' buc.' : '';
+  const btn = document.getElementById('btnPlusCant');
+  if(btn){ btn.disabled=(val>=max&&max>0); btn.style.opacity=(val>=max&&max>0)?'.4':'1'; }
+}
+
+function schimbaCantDirect(valStr){
+  const max = prodModalCurent?.stock || 999;
+  const val = Math.min(max, Math.max(1, parseInt(valStr)||1));
+  cantModalProd = val;
+  actualizeazaCantUI(val, max);
+}
+
 function schimbaCantMP(d){
   const maxStoc = prodModalCurent?.stock || 999;
   cantModalProd = Math.min(maxStoc, Math.max(1, cantModalProd+d));
-  const el = document.getElementById('mpCantitate');
-  if(el) el.value = cantModalProd;
-  const info = document.getElementById('mpStocInfo');
-  if(info) info.textContent = 'din '+maxStoc+' disponibile';
-  // Dezactiveaza butonul + la max stoc
-  const btns = document.querySelectorAll('.ctrl-cantitate .btn-cantitate');
-  if(btns[1]){ btns[1].disabled = cantModalProd >= maxStoc; btns[1].style.opacity = cantModalProd >= maxStoc?'.4':'1'; }
+  actualizeazaCantUI(cantModalProd, maxStoc);
 }
 function adaugadinModal(){
   if(prodModalCurent){ adaugaInCos(prodModalCurent,cantModalProd); inchideModal('modalProdus'); }
@@ -3507,8 +3523,8 @@ function arataComanada(){
   }
   document.getElementById('vedereaCos').style.display='none';
   document.getElementById('vedereComanda').style.display='block';
-  // Pre-fill form din cont (async)
-  preCompleteazaFormular(); // async - se executa in background
+  preCompleteazaFormular();
+  actualizaTransportUI();
   const red        = totalReductie();
   const subTotal   = totalCos();
   const transport  = calcTransport();
@@ -5437,23 +5453,56 @@ function randeazaModalClient(){
     // Logat - afiseaza profil
     document.getElementById('modalClientTitlu').textContent = 'Contul Meu';
     body.innerHTML = `
-      <div style="text-align:center;padding:10px 0 20px">
-        <div style="font-size:3rem;margin-bottom:12px">👤</div>
-        <p class="cinzel" style="color:var(--v);font-size:1.1rem;margin-bottom:4px">${clientCurent.displayName||'Client'}</p>
-        <p style="color:var(--tl);font-size:.88rem;margin-bottom:18px">${clientCurent.email}</p>
-        <div class="discount-info" style="justify-content:center;margin-bottom:10px">
-          <span style="font-size:1.3rem">🎁</span>
-          <span>Discount activ: <strong>${esteAbonat?'5% (abonat)':'0%'}</strong></span>
+      <div class="client-tabs">
+        <button class="client-tab activ" id="tabContProfil" onclick="switchTabCont('profil')">👤 Profil</button>
+        <button class="client-tab" id="tabContComenzi" onclick="switchTabCont('comenzi')">📦 Comenzi</button>
+      </div>
+
+      <div id="sectContProfil">
+        <div style="text-align:center;margin-bottom:14px">
+          <div style="font-size:2.5rem;margin-bottom:6px">👤</div>
+          <p style="font-family:Cinzel,serif;color:var(--v);font-size:1rem;font-weight:700">${clientCurent.displayName||'Client'}</p>
+          <p style="color:var(--tl);font-size:.83rem">${clientCurent.email}</p>
         </div>
-        ${esteAbonat
-          ? '<div style="background:rgba(39,174,96,.1);border:1.5px solid rgba(39,174,96,.3);border-radius:8px;padding:10px;margin-bottom:8px;font-size:.82rem;color:#1a5c2e;text-align:center">📧 Abonat la notificări email ✓</div>'
-          : '<div onclick="aboneazaClientLogat()" style="background:rgba(39,174,96,.06);border:1.5px solid rgba(39,174,96,.2);border-radius:8px;padding:10px;margin-bottom:8px;font-size:.82rem;color:#1a5c2e;cursor:pointer;text-align:center">📧 Abonează-te la notificări email (+5% discount)</div>'
-        }
-        <div onclick="cerePermisiuneNotificari()" style="background:rgba(201,168,76,.08);border:1.5px solid rgba(201,168,76,.3);border-radius:8px;padding:10px;margin-bottom:12px;font-size:.82rem;color:var(--v);cursor:pointer;text-align:center">🔔 Activează notificări push în browser</div>
-        <button class="btn btn-contur btn-mic" style="width:100%;justify-content:center;margin-bottom:10px" onclick="incarcaComenziClient()">📦 Comenzile mele</button>
+
+        <div id="cardDateCont" style="background:var(--cr);border-radius:9px;padding:14px;margin-bottom:12px;border:1px solid var(--crd)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="font-family:Cinzel,serif;font-size:.72rem;color:var(--v);letter-spacing:.5px">DATE PERSONALE</span>
+            <button class="btn btn-contur btn-xs" onclick="toggleEditProfilCont()">✏️ Editează</button>
+          </div>
+          <div id="viewDateCont">
+            <p style="font-size:.85rem;margin-bottom:5px">📞 <span id="vTel">–</span></p>
+            <p style="font-size:.85rem;margin-bottom:5px">📍 <span id="vAdresa">–</span></p>
+            <p style="font-size:.85rem;margin-bottom:5px">🏘️ <span id="vLocalit">–</span></p>
+            <p style="font-size:.8rem;color:var(--tl)">📅 Cont creat: <span id="vData">–</span></p>
+          </div>
+          <div id="editDateCont" style="display:none">
+            <div class="form-grup" style="margin-bottom:8px"><label>Telefon</label><input id="eTel" type="tel" placeholder="07XX XXX XXX" style="width:100%;padding:8px 10px;border:1.5px solid var(--crd);border-radius:6px;font-size:.9rem;background:var(--w)"></div>
+            <div class="form-grup" style="margin-bottom:8px"><label>Adresă</label><input id="eAdresa" placeholder="Strada, nr., bl." style="width:100%;padding:8px 10px;border:1.5px solid var(--crd);border-radius:6px;font-size:.9rem;background:var(--w)"></div>
+            <div class="form-grup" style="margin-bottom:10px"><label>Localitate / Județ</label><input id="eLocalit" placeholder="ex: Stornești, Iași" style="width:100%;padding:8px 10px;border:1.5px solid var(--crd);border-radius:6px;font-size:.9rem;background:var(--w)"></div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-primar btn-mic" onclick="salveazaProfilCont()">💾 Salvează</button>
+              <button class="btn btn-contur btn-mic" onclick="toggleEditProfilCont()">Anulează</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:8px">
+          ${esteAbonat
+            ? '<div style="background:rgba(39,174,96,.1);border:1.5px solid rgba(39,174,96,.3);border-radius:8px;padding:10px;font-size:.82rem;color:#1a5c2e;text-align:center">📧 Abonat la notificări ✓ · 5% discount</div>'
+            : '<div onclick="aboneazaClientLogat()" style="background:rgba(39,174,96,.06);border:1.5px solid rgba(39,174,96,.2);border-radius:8px;padding:10px;font-size:.82rem;color:#1a5c2e;cursor:pointer;text-align:center">📧 Abonează-te → +5% discount</div>'
+          }
+        </div>
+        <div onclick="cerePermisiuneNotificari()" style="background:rgba(201,168,76,.08);border:1.5px solid rgba(201,168,76,.3);border-radius:8px;padding:9px;margin-bottom:12px;font-size:.82rem;color:var(--v);cursor:pointer;text-align:center">🔔 Notificări push browser</div>
         <button class="btn btn-pericol btn-mic" style="width:100%;justify-content:center" onclick="delogheazaClient()">Deconectare</button>
       </div>
-      <div id="comenziClientContainer" style="display:none;margin-top:16px;border-top:1px solid var(--crd);padding-top:16px"></div>`;
+
+      <div id="sectContComenzi" style="display:none">
+        <div id="listaComenziiCont"><div class="incarcare"><div class="rotitor"></div> Se încarcă comenzile...</div></div>
+      </div>`;
+
+    // Incarca datele profilului din Firestore
+    incarcaProfilCont();
   } else {
     // Nelogat - afiseaza login/register
     document.getElementById('modalClientTitlu').textContent = 'Cont Client';
@@ -5797,6 +5846,119 @@ async function anularezaComandaClient(orderId){
       trimiteEmailClient({...o,id:orderId}, 'ANULATĂ DE CLIENT').catch(()=>{});
     }
     incarcaIstoric();
+  }catch(e){ afiseazaToast('❌ Eroare: '+e.message); }
+}
+
+/* ══════════════════════════════════════════
+   CONT CLIENT - PROFIL & COMENZI
+══════════════════════════════════════════ */
+function switchTabCont(tab){
+  document.getElementById('tabContProfil')?.classList.toggle('activ', tab==='profil');
+  document.getElementById('tabContComenzi')?.classList.toggle('activ', tab==='comenzi');
+  const sp = document.getElementById('sectContProfil');
+  const sc = document.getElementById('sectContComenzi');
+  if(sp) sp.style.display = tab==='profil'  ? 'block':'none';
+  if(sc) sc.style.display = tab==='comenzi' ? 'block':'none';
+  if(tab==='comenzi') incarcaComenziiCont();
+}
+
+function toggleEditProfilCont(){
+  const view = document.getElementById('viewDateCont');
+  const edit = document.getElementById('editDateCont');
+  if(!view||!edit) return;
+  const editing = edit.style.display!=='none';
+  view.style.display = editing ? 'block':'none';
+  edit.style.display = editing ? 'none':'block';
+}
+
+async function incarcaProfilCont(){
+  if(!clientCurent) return;
+  try{
+    const doc = await db.collection('clienti').doc(clientCurent.uid).get();
+    if(!doc.exists) return;
+    const d = doc.data();
+    const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v||'–'; };
+    const setInput = (id,v) => { const el=document.getElementById(id); if(el) el.value=v||''; };
+    set('vTel', d.phone); set('vAdresa', d.address);
+    set('vLocalit', d.county); set('vData', formateazaData(d.createdAt));
+    setInput('eTel', d.phone); setInput('eAdresa', d.address); setInput('eLocalit', d.county);
+  }catch(e){ console.warn('profil:', e); }
+}
+
+async function salveazaProfilCont(){
+  if(!clientCurent) return;
+  const phone   = document.getElementById('eTel')?.value.trim()||'';
+  const address = document.getElementById('eAdresa')?.value.trim()||'';
+  const county  = document.getElementById('eLocalit')?.value.trim()||'';
+  try{
+    await db.collection('clienti').doc(clientCurent.uid).update({phone,address,county});
+    afiseazaToast('✅ Date salvate!');
+    toggleEditProfilCont();
+    incarcaProfilCont();
+  }catch(e){ afiseazaToast('❌ '+e.message); }
+}
+
+async function incarcaComenziiCont(){
+  if(!clientCurent) return;
+  const el = document.getElementById('listaComenziiCont');
+  if(!el) return;
+  el.innerHTML='<div class="incarcare"><div class="rotitor"></div> Se încarcă...</div>';
+  try{
+    let comenzi=[];
+    try{
+      const snap = await db.collection('comenzi')
+        .where('email','==',clientCurent.email)
+        .orderBy('createdAt','desc').limit(20).get();
+      comenzi = snap.docs.map(d=>({id:d.id,...d.data()}));
+    }catch{
+      const snap2 = await db.collection('comenzi').where('email','==',clientCurent.email).get();
+      comenzi = snap2.docs.map(d=>({id:d.id,...d.data()}))
+        .sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)).slice(0,20);
+    }
+    if(!comenzi.length){
+      el.innerHTML='<div class="gol"><div class="icon-gol">📦</div><h3>Nicio comandă</h3><p>Nu ai plassat nicio comandă încă.</p></div>';
+      return;
+    }
+    const stariCol={'noua':'#E67E22','procesata':'#2980B9','livrata':'#27AE60','anulata':'#C0392B'};
+    el.innerHTML = comenzi.map(o=>{
+      const col = stariCol[o.status]||'#888';
+      const creatMs = (o.createdAt?.seconds||0)*1000;
+      const poate24h = o.status==='noua' && (Date.now()-creatMs)<86400000;
+      const produse = (o.items||[]).map(i=>`<div style="font-size:.8rem;color:var(--tl);padding-left:8px">• ${i.nume||i.name} × ${i.cantitate||1} — ${parseFloat(i.pret||i.price||0).toFixed(2)} Lei</div>`).join('');
+      return `<div style="background:var(--cr);border-radius:9px;padding:13px 15px;margin-bottom:10px;border:1px solid var(--crd)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-family:monospace;font-size:.72rem;color:var(--tl)">#${o.id.substring(0,8).toUpperCase()}</span>
+          <span style="background:${col};color:#fff;font-size:.64rem;padding:2px 8px;border-radius:9px;font-weight:700">${(o.status||'noua').toUpperCase()}</span>
+        </div>
+        ${produse}
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;flex-wrap:wrap;gap:6px">
+          <span style="font-size:.76rem;color:var(--tl)">${formateazaData(o.createdAt)}</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <strong style="color:var(--v)">${o.total} Lei</strong>
+            ${poate24h?`<button data-oid="${o.id}" onclick="anularezaComandaClient(this.dataset.oid)" style="background:#C0392B;color:#fff;border:none;border-radius:5px;padding:3px 9px;font-size:.71rem;cursor:pointer">✕ Anulează</button>`:''}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){
+    el.innerHTML=`<p style="color:#C0392B;font-size:.84rem">Eroare: ${e.message}</p>`;
+  }
+}
+
+async function anularezaComandaClient(orderId){
+  if(!confirm('Ești sigur că vrei să anulezi această comandă?')) return;
+  try{
+    const doc = await db.collection('comenzi').doc(orderId).get();
+    if(!doc.exists){ afiseazaToast('Comanda nu a fost găsită.'); return; }
+    const o = doc.data();
+    const creatMs = (o.createdAt?.seconds||0)*1000;
+    if(o.status!=='noua'||(Date.now()-creatMs)>=86400000){
+      afiseazaToast('❌ Nu mai poți anula după 24h sau dacă e în procesare.'); return;
+    }
+    await db.collection('comenzi').doc(orderId).update({status:'anulata'});
+    if(EJS.ejsReady&&o.email) trimiteEmailClient({...o,id:orderId},'ANULATĂ DE CLIENT').catch(()=>{});
+    afiseazaToast('✅ Comanda anulată!');
+    incarcaComenziiCont();
   }catch(e){ afiseazaToast('❌ Eroare: '+e.message); }
 }
 
@@ -6574,26 +6736,38 @@ function acceptaCookies(){
   document.getElementById('cookieBanner').classList.remove('viz');
 }
 
+/* ── REFRESH MANUAL + AUTO ──────────────── */
+function refreshManual(){
+  const btn=document.getElementById('btnRefresh');
+  if(btn){ btn.style.transform='rotate(360deg)'; btn.style.transition='transform .5s'; 
+    setTimeout(()=>{btn.style.transform='';btn.style.transition='';},600); }
+  produseCach=[]; anunturiCach=[]; comenziCach=[];
+  const pag=document.querySelector('.pagina.activa');
+  if(pag){
+    const id=pag.id.replace('pagina-','');
+    if(id==='acasa')   incarcaAcasa();
+    if(id==='magazin') incarcaMagazin();
+    if(id==='anunturi')afiseazaAnunturi();
+  }
+  afiseazaToast('🔄 Date actualizate!', 2000);
+}
+
 /* ── AUTO REFRESH ────────────────────────── */
 let _autoRefreshInterval = null;
 function pornAutoRefresh(minutes){
   if(_autoRefreshInterval) clearInterval(_autoRefreshInterval);
   if(!minutes || minutes < 1) return;
   _autoRefreshInterval = setInterval(()=>{
-    // Refresh DOAR datele (produse, anunturi), NU sesiunea/autentificarea
-    const userCurent = auth.currentUser; // pastreaza sesiunea
-    produseCach  = [];
-    anunturiCach = [];
-    comenziCach  = [];
-    const paginaActiva = document.querySelector('.pagina.activa');
-    if(paginaActiva){
-      const id = paginaActiva.id.replace('pagina-','');
-      if(id === 'acasa')    incarcaAcasa();
-      if(id === 'magazin')  incarcaMagazin();
-      if(id === 'anunturi') afiseazaAnunturi();
+    // Refresh DOAR cache-ul de date, nu sesiunea Firebase
+    produseCach=[]; anunturiCach=[];
+    const pag=document.querySelector('.pagina.activa');
+    if(pag){
+      const id=pag.id.replace('pagina-','');
+      if(id==='acasa')   incarcaAcasa();
+      if(id==='magazin') incarcaMagazin();
+      if(id==='anunturi')afiseazaAnunturi();
     }
-    // Nu afecteaza auth state - utilizatorul ramane logat
-    console.log('Auto-refresh date la',new Date().toLocaleTimeString(),'- user:',userCurent?.email||'nelogat');
+    console.log('Auto-refresh la',new Date().toLocaleTimeString());
   }, minutes * 60 * 1000);
 }
 
