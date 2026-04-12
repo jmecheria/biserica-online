@@ -34,6 +34,21 @@
 [data-tema="intunecat"] input,[data-tema="intunecat"] select,[data-tema="intunecat"] textarea{background:var(--cr)!important;color:var(--td)!important;border-color:var(--crd)!important}
 [data-tema="intunecat"] .tabel-admin thead{background:var(--vd)}
 [data-tema="intunecat"] .panou-filtre{background:var(--w)!important}
+[data-tema="intunecat"] .hero h1,[data-tema="intunecat"] .hero p{color:#fff!important}
+[data-tema="intunecat"] .hero-sub{color:rgba(255,255,255,.85)!important}
+[data-tema="intunecat"] .titlu-sec{color:var(--v)!important}
+[data-tema="intunecat"] .hero{background:linear-gradient(160deg,var(--vd) 0%,#3D1A08 100%)!important}
+[data-tema="intunecat"] .modal-header h2{color:#fff!important}
+[data-tema="intunecat"] label{color:var(--td)!important}
+[data-tema="intunecat"] p,[data-tema="intunecat"] li,[data-tema="intunecat"] span:not(.insigna):not(.stoc-badge):not(.abon-badge){color:inherit}
+[data-tema="intunecat"] .nav-links a{color:var(--gl)!important}
+[data-tema="intunecat"] .nav-links a:hover{color:#fff!important}
+[data-tema="intunecat"] .client-bar{background:var(--vd)!important;color:var(--gl)!important}
+[data-tema="intunecat"] .sumar-cos,[data-tema="intunecat"] .card-formular{background:var(--cr)!important;border-color:var(--crd)!important}
+[data-tema="intunecat"] .chip{background:var(--cr)!important;border-color:var(--crd)!important;color:var(--td)!important}
+[data-tema="intunecat"] .chip.selectat{background:var(--v)!important;color:#fff!important}
+[data-tema="intunecat"] .btn-contur{border-color:var(--v)!important;color:var(--v)!important}
+[data-tema="intunecat"] .email-setup-box{background:var(--cr)!important;border-color:var(--crd)!important}
 /* ── RESET ─────────────────────────────────── */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -1273,19 +1288,11 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
           <input type="text" id="cautareAnunturi" placeholder="Cauta in anunturi..." oninput="filtreazaAnunturi()">
         </div>
         <select id="sortareAnunturi" onchange="filtreazaAnunturi()" style="padding:9px 13px;border:2px solid var(--crd);border-radius:7px;font-family:'Cinzel',serif;font-size:.72rem;background:var(--w);color:var(--v);outline:none">
-          <option value="data-desc">Cele mai recente</option>
-          <option value="data-asc">Cele mai vechi</option>
-          <option value="tip">Dupa tip</option>
+          <option value="data-desc">↓ Cele mai recente</option>
+          <option value="data-asc">↑ Cele mai vechi</option>
         </select>
       </div>
-      <div class="rand-chips" style="margin-bottom:20px">
-        <button class="chip selectat" id="chipAnn-toate" onclick="filtreazaAnunturi('toate',this)">Toate</button>
-        <button class="chip" id="chipAnn-urgent" onclick="filtreazaAnunturi('urgent',this)" style="border-color:#C0392B;color:#C0392B">Urgente</button>
-        <button class="chip" id="chipAnn-slujba" onclick="filtreazaAnunturi('slujba',this)">Slujbe</button>
-        <button class="chip" id="chipAnn-eveniment" onclick="filtreazaAnunturi('eveniment',this)">Evenimente</button>
-        <button class="chip" id="chipAnn-activitate" onclick="filtreazaAnunturi('activitate',this)">Activitati</button>
-        <button class="chip" id="chipAnn-general" onclick="filtreazaAnunturi('general',this)">General</button>
-      </div>
+      <!-- Tipul se selecteaza din sortare, nu chips -->
       <div id="listaAnunturi">
         <div class="incarcare"><div class="rotitor"></div> Se încarcă anunțurile…</div>
       </div>
@@ -1379,11 +1386,14 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
         <div class="form-grup"><label>Observații</label><textarea id="oObservatii" rows="3" placeholder="Mesaj pentru preot, instrucțiuni speciale…"></textarea></div>
         <div class="form-grup">
           <label>Tip Transport</label>
-          <select id="oTransport" onchange="if(document.getElementById('rezumatComanda').innerHTML)arataComanada()">
+          <select id="oTransport" onchange="actualizaTransportUI()">
             <option value="standard">🚚 Curier Standard – 25 Lei (3-5 zile, ~50km Iași)</option>
             <option value="express">⚡ Curier Express – 45 Lei (1-2 zile)</option>
             <option value="ridicare">🏛️ Ridicare personală – 10 Lei (taxă procesare online)</option>
           </select>
+          <div id="warningFaraLivrare" style="display:none;background:#FFF9C4;border:1px solid #F9A825;border-radius:6px;padding:8px 12px;margin-top:8px;font-size:.8rem;color:#E65100">
+            ⚠️ Un produs din coș nu se poate livra prin curier. <strong>Ridicarea personală</strong> este obligatorie.
+          </div>
           <p style="font-size:.78rem;color:var(--tl);margin-top:5px">🎁 Transport curier GRATUIT la comenzi peste 200 Lei · Ridicare personală: 10 Lei taxă procesare online</p>
           <div id="infoTransportSpecial" style="display:none;background:#FFF9C4;border:1px solid #F9A825;border-radius:6px;padding:8px 12px;margin-top:6px;font-size:.8rem;color:#E65100"></div>
         </div>
@@ -1471,9 +1481,14 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
         <span style="font-family:'Cinzel',serif;font-size:.78rem;color:var(--v)">Cantitate:</span>
         <div class="ctrl-cantitate">
           <button class="btn-cantitate" onclick="schimbaCantMP(-1)">−</button>
-          <span class="val-cantitate" id="mpCantitate">1</span>
+          <input type="number" id="mpCantitate" value="1" min="1" 
+            style="width:52px;text-align:center;border:2px solid var(--crd);border-radius:6px;
+                   padding:4px;font-family:'Cinzel',serif;font-size:.92rem;background:var(--w);color:var(--td)"
+            oninput="cantModalProd=Math.min(prodModalCurent?.stock||999,Math.max(1,parseInt(this.value)||1));this.value=cantModalProd"
+            onchange="cantModalProd=Math.min(prodModalCurent?.stock||999,Math.max(1,parseInt(this.value)||1));this.value=cantModalProd">
           <button class="btn-cantitate" onclick="schimbaCantMP(1)">+</button>
         </div>
+        <span id="mpStocInfo" style="font-size:.74rem;color:var(--tl)"></span>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
         <button class="btn btn-primar" onclick="adaugadinModal()">🛒 Adaugă în Coș</button>
@@ -1550,6 +1565,48 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
 <div id="toast"></div>
 
 <!-- ═══════════════════════════ FOOTER ══════════════════════════ -->
+<!-- ═══════════════ PAGINA AUDIO ════════════════════════ -->
+<div id="pagina-audio" class="pagina">
+  <div class="hero hero-mica">
+    <span class="hero-icon" style="font-size:3rem">🎵</span>
+    <h1 style="font-size:1.9rem">Predici & Cântări</h1>
+    <p class="hero-sub">Hrană duhovnicească pentru suflet</p>
+  </div>
+  <div class="sectiune">
+    <div class="container">
+      <!-- Player curent -->
+      <div id="playerAudio" style="display:none;background:var(--v);border-radius:14px;padding:20px 24px;margin-bottom:24px;color:#fff">
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <div style="font-size:2.2rem" id="audioIco">🎵</div>
+          <div style="flex:1;min-width:0">
+            <div id="audioTitluPlayer" style="font-family:'Cinzel',serif;font-size:1rem;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">–</div>
+            <div id="audioAutorPlayer" style="font-size:.78rem;opacity:.8">–</div>
+          </div>
+        </div>
+        <audio id="audioElement" controls style="width:100%;margin-top:14px;accent-color:var(--g);border-radius:6px" onended="audioTerminat()"></audio>
+      </div>
+
+      <!-- Filtre audio -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="filtreAudio">
+        <button class="chip selectat" onclick="filtreazaAudio('toate',this)">🎵 Toate</button>
+        <button class="chip" onclick="filtreazaAudio('predica',this)">📖 Predici</button>
+        <button class="chip" onclick="filtreazaAudio('cantare',this)">🎶 Cântări</button>
+        <button class="chip" onclick="filtreazaAudio('acatist',this)">📿 Acatiste</button>
+        <button class="chip" onclick="filtreazaAudio('colind',this)">⛪ Colinde</button>
+      </div>
+
+      <!-- Lista audio -->
+      <div id="listaAudio" class="grid-2">
+        <div class="gol" style="grid-column:1/-1">
+          <div class="icon-gol">🎵</div>
+          <h3>Se încarcă...</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <footer>
   <div class="container">
     <div class="footer-grid">
@@ -1604,46 +1661,6 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
   </div>
 </footer>
 
-<!-- ═══════════════ PAGINA AUDIO ════════════════════════ -->
-<div id="pagina-audio" class="pagina">
-  <div class="hero hero-mica">
-    <span class="hero-icon" style="font-size:3rem">🎵</span>
-    <h1 style="font-size:1.9rem">Predici & Cântări</h1>
-    <p class="hero-sub">Hrană duhovnicească pentru suflet</p>
-  </div>
-  <div class="sectiune">
-    <div class="container">
-      <!-- Player curent -->
-      <div id="playerAudio" style="display:none;background:var(--v);border-radius:14px;padding:20px 24px;margin-bottom:24px;color:#fff">
-        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-          <div style="font-size:2.2rem" id="audioIco">🎵</div>
-          <div style="flex:1;min-width:0">
-            <div id="audioTitluPlayer" style="font-family:'Cinzel',serif;font-size:1rem;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">–</div>
-            <div id="audioAutorPlayer" style="font-size:.78rem;opacity:.8">–</div>
-          </div>
-        </div>
-        <audio id="audioElement" controls style="width:100%;margin-top:14px;accent-color:var(--g);border-radius:6px" onended="audioTerminat()"></audio>
-      </div>
-
-      <!-- Filtre audio -->
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="filtreAudio">
-        <button class="chip selectat" onclick="filtreazaAudio('toate',this)">🎵 Toate</button>
-        <button class="chip" onclick="filtreazaAudio('predica',this)">📖 Predici</button>
-        <button class="chip" onclick="filtreazaAudio('cantare',this)">🎶 Cântări</button>
-        <button class="chip" onclick="filtreazaAudio('acatist',this)">📿 Acatiste</button>
-        <button class="chip" onclick="filtreazaAudio('colind',this)">⛪ Colinde</button>
-      </div>
-
-      <!-- Lista audio -->
-      <div id="listaAudio" class="grid-2">
-        <div class="gol" style="grid-column:1/-1">
-          <div class="icon-gol">🎵</div>
-          <h3>Se încarcă...</h3>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- ═══ COOKIE BANNER ═══ -->
 <div id="cookieBanner">
@@ -2995,12 +3012,12 @@ async function incarcaAcasa(){
 ══════════════════════════════════════════ */
 async function incarcaMagazin(){
   if(!produseCach.length){
-    document.getElementById('gridProduse').innerHTML=`<div class="incarcare" style="grid-column:1/-1"><div class="rotitor"></div> Se incarca...</div>`;
+    document.getElementById('gridProduse').innerHTML='<div class="incarcare" style="grid-column:1/-1"><div class="rotitor"></div> Se incarca...</div>';
     produseCach=await fbLista('produse');
-    // Incarca rating-uri pentru toate produsele (batch)
-    incarcaRatinguriProduse();
   }
   filtreazaProduse();
+  // Incarca ratinguri in background (nu blocheaza afisarea)
+  incarcaRatinguriProduse().then(()=>filtreazaProduse()).catch(()=>{});
 }
 
 async function incarcaRatinguriProduse(){
@@ -3142,6 +3159,10 @@ function deschideModalProdus(id){
   const p=produseCach.find(x=>x.id===id);
   if(!p) return;
   prodModalCurent=p; cantModalProd=1;
+  const mpCantEl=document.getElementById('mpCantitate');
+  if(mpCantEl) mpCantEl.value=1;
+  const mpInfoEl=document.getElementById('mpStocInfo');
+  if(mpInfoEl) mpInfoEl.textContent='din '+(p.stock||0)+' disponibile';
   document.getElementById('mpTitlu').textContent=p.name;
   const mpPretEl = document.getElementById('mpPret');
   if(mpPretEl) mpPretEl.textContent = p.price+' Lei';
@@ -3226,11 +3247,12 @@ function schimbaCantMP(d){
   const maxStoc = prodModalCurent?.stock || 999;
   cantModalProd = Math.min(maxStoc, Math.max(1, cantModalProd+d));
   const el = document.getElementById('mpCantitate');
-  if(el) el.textContent = cantModalProd;
-  // Dezactiveaza butonul + daca am atins stocul
-  const btnPlus = document.querySelector('.btn-cantitate:last-child');
-  if(btnPlus) btnPlus.disabled = cantModalProd >= maxStoc;
-  if(btnPlus) btnPlus.style.opacity = cantModalProd >= maxStoc ? '.4' : '1';
+  if(el) el.value = cantModalProd;
+  const info = document.getElementById('mpStocInfo');
+  if(info) info.textContent = 'din '+maxStoc+' disponibile';
+  // Dezactiveaza butonul + la max stoc
+  const btns = document.querySelectorAll('.ctrl-cantitate .btn-cantitate');
+  if(btns[1]){ btns[1].disabled = cantModalProd >= maxStoc; btns[1].style.opacity = cantModalProd >= maxStoc?'.4':'1'; }
 }
 function adaugadinModal(){
   if(prodModalCurent){ adaugaInCos(prodModalCurent,cantModalProd); inchideModal('modalProdus'); }
@@ -3258,57 +3280,36 @@ async function afiseazaAnunturi(){
   const el=document.getElementById('listaAnunturi');
   el.innerHTML='<div class="incarcare"><div class="rotitor"></div> Se incarca...</div>';
   if(!anunturiCach.length) anunturiCach=await fbLista('anunturi');
-  const filtru=document.getElementById('filtruAnunturi')?.value||'toate';
   const cautare=(document.getElementById('cautareAnunturi')?.value||'').toLowerCase().trim();
-  const sortare=document.getElementById('sortareAnunturi')?.value||'nou';
-  let lista=filtru==='toate'?[...anunturiCach]:anunturiCach.filter(a=>a.type===filtru);
+  const sortare=document.getElementById('sortareAnunturi')?.value||'data-desc';
+  let lista=[...anunturiCach];
   // Aplica cautare
   if(cautare) lista=lista.filter(a=>(a.title||'').toLowerCase().includes(cautare)||(a.content||'').toLowerCase().includes(cautare));
-  // Aplica sortare
-  if(sortare==='data-desc'||sortare==='nou') lista.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-  else if(sortare==='data-asc'||sortare==='vechi') lista.sort((a,b)=>(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0));
-  else if(sortare==='tip') lista.sort((a,b)=>(a.type||'').localeCompare(b.type||''));
+  // Urgentele mereu primele, restul dupa sortare
+  const urgente=lista.filter(a=>a.type==='urgent').sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+  let restul=lista.filter(a=>a.type!=='urgent');
+  if(sortare==='data-desc') restul.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+  else if(sortare==='data-asc') restul.sort((a,b)=>(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0));
+  else if(sortare==='tip') restul.sort((a,b)=>(a.type||'').localeCompare(b.type||''));
+  lista=[...urgente,...restul];
   if(!lista.length){
     el.innerHTML=`<div class="gol"><div class="icon-gol">📋</div><h3>Niciun anunt</h3><p>Nu exista anunturi in aceasta categorie.</p></div>`;
     return;
   }
-  const urgente=filtru==='toate'?lista.filter(a=>a.type==='urgent'):[];
-  const restul=filtru==='toate'?lista.filter(a=>a.type!=='urgent'):lista;
+  // Randeaza lista (urgente sunt deja primele)
+  function cardUrgent(a){
+    const img=a.image?`<img src="${a.image}" style="width:calc(100% + 44px);height:160px;object-fit:cover;border-radius:8px 8px 0 0;margin:-18px -22px 14px;display:block">`:'';
+    return `<div class="urgent-banner" onclick="deschideModalAnunt('${a.id}')" style="padding:18px 22px;overflow:hidden">${img}<span class="insigna ins-urgent">🔴 URGENT</span><h3>${a.title}</h3><p class="anunt-extras">${(a.content||'').substring(0,180)}...</p><span class="anunt-data">📅 ${formateazaData(a.createdAt)}</span></div>`;
+  }
+  function cardAnuntNormal(a){
+    const ico={slujba:'⛪',eveniment:'📅',activitate:'🌿',general:'📋'}[a.type]||'📋';
+    const img=a.image?`<img src="${a.image}" style="width:calc(100% + 44px);height:130px;object-fit:cover;border-radius:9px 9px 0 0;margin:-18px -22px 14px;display:block">`:`<div style="background:linear-gradient(135deg,var(--vd),var(--v));border-radius:9px 9px 0 0;margin:-18px -22px 14px;padding:14px;text-align:center;font-size:1.5rem;color:var(--g)">${ico}</div>`;
+    return `<div class="card-anunt" onclick="deschideModalAnunt('${a.id}')" style="padding:18px 22px;overflow:hidden">${img}<span class="insigna ${clasaInsigna(a.type)}">${textInsigna(a.type)}</span><h3>${a.title}</h3><p class="anunt-extras">${(a.content||'').substring(0,180)}${(a.content||'').length>180?'...':''}</p><span class="anunt-data">📅 ${formateazaData(a.createdAt)}</span></div>`;
+  }
   let html='';
-  if(urgente.length){
-    html+=`<div style="margin-bottom:22px"><p class="anunt-urgente-titlu">🔴 ANUNTURI URGENTE</p>`;
-    html+=urgente.map(a=>{
-      const imgU = a.image
-        ? `<img src="${a.image}" alt="${a.title}" style="width:100%;height:160px;object-fit:cover;border-radius:8px 8px 0 0;margin:-18px -22px 14px;width:calc(100% + 44px);display:block">`
-        : '';
-      return `<div class="urgent-banner" onclick="deschideModalAnunt('${a.id}')" style="padding:18px 22px;overflow:hidden">
-        ${imgU}
-        <span class="insigna ins-urgent">🔴 URGENT</span>
-        <h3>${a.title}</h3>
-        <p class="anunt-extras">${(a.content||'').substring(0,180)}...</p>
-        <span class="anunt-data">📅 ${formateazaData(a.createdAt)}</span>
-      </div>`;
-    }).join('');
-    html+=`</div>`;
-  }
-  if(filtru==='urgent'){
-    html=lista.map(a=>{
-      const imgU2 = a.image
-        ? `<img src="${a.image}" alt="${a.title}" style="width:calc(100% + 44px);height:160px;object-fit:cover;border-radius:8px 8px 0 0;margin:-18px -22px 14px;display:block">`
-        : '';
-      return `<div class="urgent-banner" onclick="deschideModalAnunt('${a.id}')" style="padding:18px 22px;overflow:hidden">
-        ${imgU2}
-        <span class="insigna ins-urgent">🔴 URGENT</span>
-        <h3>${a.title}</h3>
-        <p class="anunt-extras">${(a.content||'').substring(0,180)}...</p>
-        <span class="anunt-data">📅 ${formateazaData(a.createdAt)}</span>
-      </div>`;
-    }).join('');
-  } else {
-    html+=restul.map(a=>cardAnunt(a)).join('');
-  }
-  el.innerHTML=html;
-}
+  if(urgente.length) html+=`<div style="margin-bottom:22px"><p class="anunt-urgente-titlu">🔴 ANUNȚURI URGENTE</p>${urgente.map(cardUrgent).join('')}</div>`;
+  html+=`<div class="grid-2">${restul.map(cardAnuntNormal).join('')}</div>`;
+  el.innerHTML=html;}
 function cardAnunt(a){
   const imgH=a.image?`<img src="${a.image}" class="ann-cover" alt="${a.title}" loading="lazy">`:'' ;
   const extras=(a.content||'').substring(0,200);
@@ -3399,6 +3400,25 @@ function redeazaCos(){
   }
   totEl.innerHTML = html;
 }
+function actualizaTransportUI(){
+  // Verifica daca exista produse fara livrare in cos
+  const areFaraLivrare = cos.some(item=>{
+    const prod=produseCach.find(p=>p.id===item.id);
+    return prod && prod.faraLivrare;
+  });
+  const selectT  = document.getElementById('oTransport');
+  const warningEl= document.getElementById('warningFaraLivrare');
+  if(areFaraLivrare){
+    if(selectT){ selectT.value='ridicare'; selectT.disabled=true; }
+    if(warningEl) warningEl.style.display='block';
+  } else {
+    if(selectT) selectT.disabled=false;
+    if(warningEl) warningEl.style.display='none';
+  }
+  // Actualizeaza rezumatul
+  if(document.getElementById('rezumatComanda')?.innerHTML) arataComanada();
+}
+
 async function preCompleteazaFormular(){
   if(!clientCurent) return;
   const nEl = document.getElementById('oNume');
@@ -5701,6 +5721,85 @@ async function aboneazaClientLogat(){
   }catch(e){ afiseazaToast('❌ Eroare: '+e.message); }
 }
 
+/* ══════════════════════════════════════════
+   CONT CLIENT - PROFIL & COMENZI
+══════════════════════════════════════════ */
+function switchTabCont(tab){
+  document.getElementById('tabProfil').classList.toggle('activ', tab==='profil');
+  document.getElementById('tabComenzi').classList.toggle('activ', tab==='comenzi');
+  document.getElementById('sectProfil').style.display  = tab==='profil'  ? 'block' : 'none';
+  document.getElementById('sectComenzi').style.display = tab==='comenzi' ? 'block' : 'none';
+  if(tab==='comenzi') incarcaIstoric();
+}
+
+function toggleEditProfil(){
+  const view = document.getElementById('profilView');
+  const edit = document.getElementById('profilEdit');
+  if(!view||!edit) return;
+  const isEditing = edit.style.display!=='none';
+  view.style.display = isEditing ? 'block' : 'none';
+  edit.style.display = isEditing ? 'none'  : 'block';
+}
+
+async function incarcaDateProfil(){
+  if(!clientCurent) return;
+  try{
+    const doc = await db.collection('clienti').doc(clientCurent.uid).get();
+    if(doc.exists){
+      const d = doc.data();
+      const telEl     = document.getElementById('dispTel');
+      const adresaEl  = document.getElementById('dispAdresa');
+      const dataEl    = document.getElementById('dispData');
+      const editTel   = document.getElementById('editTel');
+      const editAdresa= document.getElementById('editAdresa');
+      const editLoc   = document.getElementById('editLocalit');
+      if(telEl)      telEl.textContent    = d.phone||'–';
+      if(adresaEl)   adresaEl.textContent = (d.address?d.address+', ':'')+( d.county||'');
+      if(dataEl)     dataEl.textContent   = formateazaData(d.createdAt)||'–';
+      if(editTel)    editTel.value        = d.phone||'';
+      if(editAdresa) editAdresa.value     = d.address||'';
+      if(editLoc)    editLoc.value        = d.county||'';
+    }
+  }catch(e){ console.warn('profil err:',e); }
+}
+
+async function salveazaProfilClient(){
+  if(!clientCurent) return;
+  const tel    = document.getElementById('editTel')?.value.trim()||'';
+  const adresa = document.getElementById('editAdresa')?.value.trim()||'';
+  const localit= document.getElementById('editLocalit')?.value.trim()||'';
+  try{
+    await db.collection('clienti').doc(clientCurent.uid).update({
+      phone:tel, address:adresa, county:localit
+    });
+    afiseazaToast('✅ Date actualizate!');
+    toggleEditProfil();
+    incarcaDateProfil();
+  }catch(e){ afiseazaToast('❌ Eroare: '+e.message); }
+}
+
+async function anularezaComandaClient(orderId){
+  if(!confirm('Ești sigur că vrei să anulezi această comandă?')) return;
+  try{
+    const doc = await db.collection('comenzi').doc(orderId).get();
+    if(!doc.exists){ afiseazaToast('Comanda nu a fost găsită.'); return; }
+    const o = doc.data();
+    // Verifica din nou 24h + status
+    const creatTs = o.createdAt?.seconds ? o.createdAt.seconds*1000 : 0;
+    if(o.status!=='noua' || (Date.now()-creatTs)>=24*3600*1000){
+      afiseazaToast('❌ Anularea nu mai este posibilă după 24h sau dacă comanda e în procesare.');
+      return;
+    }
+    await db.collection('comenzi').doc(orderId).update({status:'anulata'});
+    afiseazaToast('✅ Comanda a fost anulată. Vei fi contactat pentru confirmare.');
+    // Trimite email notificare
+    if(EJS.ejsReady && o.email){
+      trimiteEmailClient({...o,id:orderId}, 'ANULATĂ DE CLIENT').catch(()=>{});
+    }
+    incarcaIstoric();
+  }catch(e){ afiseazaToast('❌ Eroare: '+e.message); }
+}
+
 async function toggleIstoric(){
   const el = document.getElementById('istoricComenzi');
   if(!el) return;
@@ -5758,16 +5857,21 @@ async function incarcaIstoric(){
       el.innerHTML=comenzi.map(o=>{
         const stare=o.status||'noua';
         const col=stariColor[stare]||'#888';
-        return '<div style="background:var(--cr);border-radius:8px;padding:12px 14px;margin-bottom:9px;border:1px solid var(--crd)">'
+        // Verifica daca poate anula (24h si status noua)
+      const creatTs = o.createdAt?.seconds ? o.createdAt.seconds*1000 : 0;
+      const poate24h = stare==='noua' && (Date.now()-creatTs) < 24*3600*1000;
+      return '<div style="background:var(--cr);border-radius:8px;padding:12px 14px;margin-bottom:9px;border:1px solid var(--crd)">'
           +'<div style="display:flex;justify-content:space-between;margin-bottom:5px">'
           +'<span style="font-family:monospace;font-size:.72rem;color:var(--tl)">#'+o.id.substring(0,8).toUpperCase()+'</span>'
           +'<span style="background:'+col+';color:#fff;font-size:.65rem;padding:2px 8px;border-radius:9px;font-weight:700">'+stare.toUpperCase()+'</span>'
           +'</div>'
-          +'<div style="font-size:.84rem;color:var(--td);margin-bottom:4px">'+(o.items||[]).map(i=>i.nume+' x'+i.cantitate).join(', ')+'</div>'
-          +'<div style="display:flex;justify-content:space-between">'
+          +'<div style="font-size:.84rem;color:var(--td);margin-bottom:6px">'+(o.items||[]).map(i=>'<div>'+i.nume+' x'+i.cantitate+' — '+parseFloat(i.pret||0).toFixed(2)+' Lei</div>').join('')+'</div>'
+          +'<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">'
           +'<span style="font-size:.78rem;color:var(--tl)">'+formateazaData(o.createdAt)+'</span>'
+          +'<div style="display:flex;align-items:center;gap:8px">'
           +'<span style="font-weight:700;color:var(--v)">'+o.total+' Lei</span>'
-          +'</div></div>';
+          +(poate24h?'<button data-oid="'+o.id+'" onclick="anularezaComandaClient(this.dataset.oid)" style="background:#C0392B;color:#fff;border:none;border-radius:5px;padding:3px 9px;font-size:.72rem;cursor:pointer">✕ Anulează</button>':'')
+          +'</div></div></div>';
       }).join('');
     }catch(e2){
       el.innerHTML='<p style="color:#C0392B;font-size:.82rem">Eroare la încărcare: '+e2.message+'</p>';
@@ -5801,7 +5905,7 @@ function actualizeazaUIClient(){
     document.getElementById('clientBarNume').innerHTML = numeAfisat + abonBadge;
     if(ico) ico.textContent = '👤✓';
     if(lbl){
-      lbl.textContent = esteAbonat ? '10% OFF' : '5% OFF';
+      lbl.textContent = esteAbonat ? '5% OFF' : '5% OFF';
       lbl.style.color = '#E8C97A';
     }
     actualizeazaBadge();
@@ -6476,7 +6580,8 @@ function pornAutoRefresh(minutes){
   if(_autoRefreshInterval) clearInterval(_autoRefreshInterval);
   if(!minutes || minutes < 1) return;
   _autoRefreshInterval = setInterval(()=>{
-    // Refresh doar datele, nu pagina intreaga
+    // Refresh DOAR datele (produse, anunturi), NU sesiunea/autentificarea
+    const userCurent = auth.currentUser; // pastreaza sesiunea
     produseCach  = [];
     anunturiCach = [];
     comenziCach  = [];
@@ -6487,7 +6592,8 @@ function pornAutoRefresh(minutes){
       if(id === 'magazin')  incarcaMagazin();
       if(id === 'anunturi') afiseazaAnunturi();
     }
-    console.log('Auto-refresh la',new Date().toLocaleTimeString());
+    // Nu afecteaza auth state - utilizatorul ramane logat
+    console.log('Auto-refresh date la',new Date().toLocaleTimeString(),'- user:',userCurent?.email||'nelogat');
   }, minutes * 60 * 1000);
 }
 
@@ -6500,7 +6606,7 @@ document.addEventListener('DOMContentLoaded',function(){
   mergi('acasa');
   populareVouchere();
   incarcaWishlistDinURL();
-  pornAutoRefresh(15); // refresh date la fiecare 15 minute
+  pornAutoRefresh(30); // refresh date la fiecare 30 minute
   // Initializeaza counter favorite
   const favEl=document.getElementById('favCount');
   if(favEl && favorite.length>0) favEl.textContent='('+favorite.length+')';
