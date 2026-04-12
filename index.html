@@ -947,7 +947,142 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
 .btn-play:hover{background:var(--g);color:var(--vd)}
 .btn-play.redare{background:var(--g);color:var(--vd)}
 
-/* ── CHIP FAVORITE ACTIV ──────────────────────── */
+/* ══════════════════════════════════════════
+   UX ANIMATIONS & FEATURES
+══════════════════════════════════════════ */
+
+/* Skeleton Loading */
+.skeleton{
+  background:linear-gradient(90deg,var(--crd) 25%,var(--cr) 50%,var(--crd) 75%);
+  background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px;
+}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.card-skeleton{height:280px;border-radius:11px;overflow:hidden}
+
+/* Badge Nou + Stoc mic */
+.badge-nou{
+  position:absolute;top:10px;left:10px;z-index:2;
+  background:var(--v);color:var(--g);
+  font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:10px;
+  font-family:'Lato',sans-serif;letter-spacing:.5px;
+}
+.badge-stoc-mic{
+  position:absolute;top:10px;left:10px;z-index:2;
+  background:#E74C3C;color:#fff;
+  font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:10px;
+  animation:pulse-badge 1.5s infinite;
+}
+@keyframes pulse-badge{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* Animatie adaugare cos */
+@keyframes fly-to-cart{
+  0%{transform:scale(1);opacity:1}
+  50%{transform:scale(1.3) translateY(-20px);opacity:.8}
+  100%{transform:scale(.3) translateY(-80px) translateX(200px);opacity:0}
+}
+.fly-anim{animation:fly-to-cart .6s ease-in forwards;pointer-events:none;}
+
+/* Sticky cos flotant */
+#cosFlotant{
+  position:fixed;bottom:24px;right:24px;z-index:1500;
+  background:var(--v);color:var(--g);
+  width:56px;height:56px;border-radius:50%;
+  display:none;align-items:center;justify-content:center;
+  font-size:1.4rem;cursor:pointer;
+  box-shadow:0 6px 24px rgba(107,26,42,.45);
+  transition:transform .2s,box-shadow .2s;border:none;
+}
+#cosFlotant:hover{transform:scale(1.1);box-shadow:0 10px 30px rgba(107,26,42,.6)}
+#cosFlotant .cos-fl-badge{
+  position:absolute;top:-4px;right:-4px;
+  background:var(--g);color:var(--vd);
+  border-radius:50%;width:20px;height:20px;
+  font-size:.68rem;font-weight:700;display:flex;align-items:center;justify-content:center;
+}
+
+/* Progres bara comanda */
+.progres-comanda{
+  display:flex;align-items:center;justify-content:center;
+  gap:0;margin:16px 0;flex-wrap:nowrap;
+}
+.progres-pas{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  position:relative;flex:1;
+}
+.progres-pas::after{
+  content:'';position:absolute;top:12px;left:50%;
+  width:100%;height:3px;background:var(--crd);z-index:0;
+}
+.progres-pas:last-child::after{display:none}
+.progres-cerc{
+  width:26px;height:26px;border-radius:50%;
+  background:var(--crd);border:2px solid var(--crd);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;z-index:1;transition:all .4s;
+}
+.progres-pas.activ .progres-cerc{background:var(--v);border-color:var(--v);color:#fff}
+.progres-pas.gata  .progres-cerc{background:var(--g);border-color:var(--g);color:var(--vd)}
+.progres-pas.activ::after,.progres-pas.gata::after{background:var(--v)}
+.progres-lbl{font-size:.62rem;color:var(--tl);font-family:'Cinzel',serif;white-space:nowrap}
+
+/* Confetti */
+.confetti-piece{
+  position:fixed;width:8px;height:12px;
+  animation:confetti-fall 3s ease-in forwards;
+  z-index:9999;pointer-events:none;border-radius:2px;
+}
+@keyframes confetti-fall{
+  0%{transform:translateY(-100vh) rotate(0deg);opacity:1}
+  100%{transform:translateY(100vh) rotate(720deg);opacity:0}
+}
+
+/* Toast cu undo */
+#toastUndo{
+  position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--vd);color:var(--cr);
+  padding:10px 20px;border-radius:10px;font-size:.85rem;
+  display:none;gap:14px;align-items:center;z-index:8000;
+  box-shadow:0 8px 24px rgba(0,0,0,.35);transition:.3s;
+}
+#toastUndo.viz{display:flex;transform:translateX(-50%) translateY(0)}
+#toastUndo button{background:var(--g);color:var(--vd);border:none;border-radius:5px;padding:4px 12px;font-weight:700;cursor:pointer;font-size:.82rem}
+
+/* Pull to refresh indicator */
+#pullIndicator{
+  position:fixed;top:0;left:50%;transform:translateX(-50%) translateY(-60px);
+  background:var(--v);color:var(--g);
+  padding:8px 20px;border-radius:0 0 20px 20px;
+  font-size:.8rem;z-index:9000;transition:.3s;
+  display:flex;align-items:center;gap:8px;
+}
+#pullIndicator.viz{transform:translateX(-50%) translateY(0)}
+
+/* Hover preview imagine */
+.produs-preview-hover{
+  position:absolute;z-index:500;
+  width:220px;height:220px;object-fit:cover;
+  border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.4);
+  pointer-events:none;display:none;
+  border:2px solid var(--g);
+}
+
+/* Shortcut hint */
+.shortcut-hint{
+  display:inline-block;background:var(--crd);color:var(--tl);
+  font-size:.65rem;padding:1px 5px;border-radius:3px;font-family:monospace;
+  border:1px solid var(--tl);margin-left:5px;vertical-align:middle;
+}
+
+/* Swipe feedback */
+.swipe-delete-hint{
+  position:absolute;right:0;top:0;bottom:0;
+  background:#E74C3C;color:#fff;
+  display:flex;align-items:center;padding:0 20px;
+  font-size:.8rem;border-radius:0 9px 9px 0;
+  pointer-events:none;opacity:0;transition:.2s;
+}
+
+/* Chip FAVORITE ACTIV ──────────────────────── */
 #chipFavorite.selectat{
   background:linear-gradient(135deg,#E74C3C,#C0392B)!important;
   color:#fff!important;border-color:#E74C3C!important;
@@ -1120,7 +1255,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
 <div id="clientBar" class="client-bar" style="display:none">
   <span id="clientBarText">👤 Salut, <strong id="clientBarNume"></strong></span>
   <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-    <span class="disc-badge-bar">🎁 5% discount activ</span>
+
     <button onclick="delogheazaClient()">Deconectare</button>
   </div>
 </div>
@@ -1141,7 +1276,7 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
     <li><a href="#" onclick="mergi('admin');return false" data-p="admin">⚙️ Admin</a></li>
   </ul>
   <div class="nav-right">
-    <button class="cart-btn" id="btnRefresh" onclick="refreshManual()" title="Actualizează datele" style="font-size:1rem">🔄</button>
+    <button class="cart-btn" id="btnRefresh" onclick="refreshManual()" title="Actualizează datele" style="font-size:1rem;display:none">🔄</button>
     <button class="cart-btn" id="btnDarkMode" onclick="toggleDarkMode()" title="Mod întunecat" style="font-size:1.1rem">🌙</button>
     <button class="cart-btn" onclick="mergi('cos')" title="Coș">
       🛒<span class="cart-badge" id="cosBadge">0</span>
@@ -1663,6 +1798,23 @@ footer{background:var(--vd);color:var(--cr);padding:44px 36px 22px;border-top:3p
   </div>
 </footer>
 
+
+<!-- Cos flotant -->
+<button id="cosFlotant" onclick="mergi('cos')" title="Coș cumparaturi">
+  🛒<span class="cos-fl-badge" id="cosFlBadge">0</span>
+</button>
+
+<!-- Pull to refresh indicator -->
+<div id="pullIndicator">⬇️ Trage pentru actualizare</div>
+
+<!-- Toast undo stergere cos -->
+<div id="toastUndo">
+  <span id="toastUndoText">Produs șters din coș</span>
+  <button onclick="undoStergere()">↩ Undo</button>
+</div>
+
+<!-- Preview imagine hover -->
+<img id="previzHover" class="produs-preview-hover" src="" alt="">
 
 <!-- ═══ COOKIE BANNER ═══ -->
 <div id="cookieBanner">
@@ -3020,7 +3172,7 @@ async function incarcaAcasa(){
 ══════════════════════════════════════════ */
 async function incarcaMagazin(){
   if(!produseCach.length){
-    document.getElementById('gridProduse').innerHTML='<div class="incarcare" style="grid-column:1/-1"><div class="rotitor"></div> Se incarca...</div>';
+    afiseazaSkeleton('gridProduse', 8);
     produseCach=await fbLista('produse');
   }
   filtreazaProduse();
@@ -3137,7 +3289,11 @@ function redeazaGridProduse(lista){
     const ratingDisp = starsNum>0
       ? '<span class="rating-badge">'+steleHTML(starsNum,true)+' '+starsNum.toFixed(1)+' <span style="color:var(--tl);font-weight:400">('+( p._ratingCount||0)+')</span></span>'
       : '';
-    return `<div class="card-produs" onclick="deschideModalProdus('${p.id}')" style="position:relative">
+    const badgeProd = getBadgeProdus(p);
+    const imgSrc = (p.images&&p.images[0])||'';
+        const hoverAttr = imgSrc ? 'data-preview="'+imgSrc+'"' : '';
+    return `<div class="card-produs" onclick="deschideModalProdus('${p.id}')" style="position:relative" ${hoverAttr} onmouseenter="if(this.dataset.preview)showPreview(event,this.dataset.preview)" onmouseleave="hidePreview()">
+      ${badgeProd}
       <button class="btn-fav ${favCls}" data-id="${p.id}" onclick="toggleFavorit('${p.id}',event)" title="Favorite" style="position:absolute;top:8px;right:8px;z-index:2">${favIcon}</button>
       <div class="produs-img">${imgHtml}</div>
       <div class="produs-corp">
@@ -3692,6 +3848,7 @@ function aratLogin(){
 function arataPanou(){
   document.getElementById('adminLogin').style.display='none';
   document.getElementById('adminPanel').style.display='flex';
+  const br=document.getElementById('btnRefresh'); if(br) br.style.display='flex';
   initVouchere(); // initializeaza voucherele demo daca nu exista
 }
 // ── ADMIN AUTH prin Firebase + rol în Firestore ─────────────────
@@ -3746,6 +3903,7 @@ async function faLogout(){
   adminCurent = null;
   localStorage.removeItem('adminSesiune');
   await auth.signOut();
+  const br=document.getElementById('btnRefresh'); if(br) br.style.display='none';
   aratLogin();
 }
 
@@ -3914,7 +4072,18 @@ async function veziComanda(id){
       <div class="cutie-info"><h4>Livrare</h4>
         <div class="rand-info"><span class="eticheta">Adresa</span><span class="valoare">${o.address}</span></div>
         <div class="rand-info"><span class="eticheta">Localitate</span><span class="valoare">${o.county||'–'}</span></div>
-        <div class="rand-info"><span class="eticheta">Transport</span><span class="valoare">${o.transport||'standard'}</span></div>
+        <div class="rand-info" style="align-items:flex-start;flex-direction:column;gap:4px">
+          <span class="eticheta">Transport & Cost</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="valoare">${o.transport||'standard'}</span>
+            <span style="color:var(--tl);font-size:.78rem">→ Cost curent: ${o.transport_cost||'25'} Lei</span>
+            <div style="display:flex;align-items:center;gap:5px">
+              <input type="number" id="editTransportCost" value="${parseFloat(o.transport_cost||25).toFixed(2)}" min="0" step="0.50"
+                style="width:70px;padding:4px 7px;border:1.5px solid var(--crd);border-radius:5px;font-size:.82rem;background:var(--w)">
+              <button class="btn btn-contur btn-xs" onclick="salveazaTransportComanda('${o.id}')">✓ Setează</button>
+            </div>
+          </div>
+        </div>
         <div class="rand-info"><span class="eticheta">Plata</span><span class="valoare">${o.payment||'ramburs'}</span></div>
         ${o.discount&&o.discount!=='0%'?`<div class="rand-info"><span class="eticheta">Reducere</span><span class="valoare" style="color:#2E7D32">${o.discount}</span></div>`:''}
       </div>
@@ -4172,6 +4341,20 @@ async function genereazaFactura(id){
   afiseazaToast('🧾 Factura generata! Apasa Ctrl+P pentru PDF.', 4000);
 }
 
+async function salveazaTransportComanda(id){
+  const newCost = parseFloat(document.getElementById('editTransportCost')?.value||'0');
+  if(isNaN(newCost)||newCost<0){ afiseazaToast('Valoare invalidă!'); return; }
+  // Recalculeaza totalul
+  const o = await fbGetUnul('comenzi', id);
+  if(!o){ afiseazaToast('Comanda nu a fost găsită!'); return; }
+  const oldCost = parseFloat(o.transport_cost||25);
+  const oldTotal = parseFloat(o.total||0);
+  const newTotal = (oldTotal - oldCost + newCost).toFixed(2);
+  await fbActualizeaza('comenzi', id, {transport_cost: newCost.toFixed(2), total: newTotal});
+  afiseazaToast(`✅ Transport setat la ${newCost} Lei · Total nou: ${newTotal} Lei`);
+  veziComanda(id);
+}
+
 async function trimitEmailManual(id){
   try{
     const o = await fbGetUnul('comenzi', id);
@@ -4259,7 +4442,7 @@ function formularProdus(id){
   const p=id?(produseCach.find(x=>x.id===id)||{}):{};
   if(p.images) imgSelectateProd=[...p.images];
   const el=document.getElementById('adminContinut');
-  const catOpts=['','Lumanari','Icoane','Carti','Cruci','Tamaie','Mir','Alte obiecte']
+  const catOpts=['','Lumânări','Icoane','Cărți','Cruci','Tămâie','Mir','Alte obiecte']
     .map(c=>`<option value="${c}"${p.category===c?' selected':''}>${c||'– Selecteaza –'}</option>`).join('');
   el.innerHTML=`
     <div style="display:flex;gap:13px;margin-bottom:22px;flex-wrap:wrap;align-items:center">
@@ -6062,14 +6245,9 @@ function actualizeazaUIClient(){
   const lbl  = document.getElementById('btnContClientLabel');
   if(clientCurent){
     bar.style.display = 'flex';
-    const numeAfisat = clientCurent.displayName||clientCurent.email;
-    const abonBadge  = esteAbonat ? ' <span class="abon-badge">📧 10%</span>' : '';
-    document.getElementById('clientBarNume').innerHTML = numeAfisat + abonBadge;
+    document.getElementById('clientBarNume').textContent = clientCurent.displayName||clientCurent.email;
     if(ico) ico.textContent = '👤✓';
-    if(lbl){
-      lbl.textContent = esteAbonat ? '5% OFF' : '5% OFF';
-      lbl.style.color = '#E8C97A';
-    }
+    if(lbl){ lbl.textContent = discountActiv>0 ? discountActiv+'% OFF' : 'CONT'; lbl.style.color = discountActiv>0?'#E8C97A':'var(--gl)'; }
     actualizeazaBadge();
     actualizeazaNrFav();
   } else {
@@ -6683,6 +6861,211 @@ function audioTerminat(){
   });
 }
 
+/* ══════════════════════════════════════════
+   UX FEATURES - ANIMATII & INTERACTIVITATE
+══════════════════════════════════════════ */
+
+// ─── Skeleton Loading ─────────────────────
+function afiseazaSkeleton(containerId, nr){
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  el.innerHTML = Array(nr||4).fill(0).map(()=>'<div class="skeleton card-skeleton"></div>').join('');
+}
+
+// ─── Badge Nou + Stoc Mic ─────────────────
+function getBadgeProdus(p){
+  const zileSaptamana = 7*24*3600*1000;
+  const creatMs = (p.createdAt?.seconds||0)*1000;
+  const eNou = creatMs && (Date.now()-creatMs) < zileSaptamana;
+  if(p.stock>0 && p.stock<=5) return '<span class="badge-stoc-mic">⚠️ Stoc mic</span>';
+  if(eNou) return '<span class="badge-nou">✨ Nou</span>';
+  return '';
+}
+
+// ─── Animatie adaugare cos ────────────────
+function animeazaAdaugareCos(sourceEl){
+  if(!sourceEl) return;
+  const rect = sourceEl.getBoundingClientRect();
+  const clone = document.createElement('div');
+  clone.textContent = '🛒';
+  clone.style.cssText = 'position:fixed;top:'+rect.top+'px;left:'+rect.left+'px;font-size:1.5rem;z-index:9999;pointer-events:none';
+  clone.classList.add('fly-anim');
+  document.body.appendChild(clone);
+  setTimeout(()=>clone.remove(), 700);
+}
+
+// ─── Cos flotant ──────────────────────────
+function actualizeazaCosFlotant(){
+  const n = cos.reduce((s,i)=>s+i.cantitate,0);
+  const btn = document.getElementById('cosFlotant');
+  const badge = document.getElementById('cosFlBadge');
+  if(badge) badge.textContent = n;
+  if(btn) btn.style.display = n>0 ? 'flex' : 'none';
+}
+
+// ─── Toast cu Undo (stergere cos) ─────────
+let _undoItem = null; let _undoTimer = null;
+function scoateDinCosUndo(id){
+  const item = cos.find(i=>i.id===id);
+  if(!item) return;
+  _undoItem = {...item};
+  scoateDinCos(id);
+  const el = document.getElementById('toastUndo');
+  const txt = document.getElementById('toastUndoText');
+  if(txt) txt.textContent = item.nume+' șters din coș';
+  if(el){ el.classList.add('viz'); clearTimeout(_undoTimer); _undoTimer=setTimeout(()=>{el.classList.remove('viz');_undoItem=null;},5000); }
+}
+function undoStergere(){
+  if(!_undoItem) return;
+  cos.push(_undoItem); _undoItem=null;
+  salveazaCos(); actualizeazaBadge(); actualizeazaCosFlotant(); redeazaCos();
+  clearTimeout(_undoTimer);
+  const el=document.getElementById('toastUndo'); if(el) el.classList.remove('viz');
+  afiseazaToast('↩ Produs readăugat în coș!');
+}
+
+// ─── Cautare live + istoric ───────────────
+let _cautareTimeout=null;
+const _istoricCautari=JSON.parse(localStorage.getItem('cautIstoric')||'[]');
+function cautareLive(val){
+  clearTimeout(_cautareTimeout);
+  _cautareTimeout=setTimeout(()=>{
+    document.getElementById('cautareProduse').value=val;
+    filtreazaProduse();
+    if(val.length>2){
+      // Salveaza in istoric
+      const idx=_istoricCautari.indexOf(val);
+      if(idx>=0) _istoricCautari.splice(idx,1);
+      _istoricCautari.unshift(val);
+      if(_istoricCautari.length>5) _istoricCautari.pop();
+      localStorage.setItem('cautIstoric',JSON.stringify(_istoricCautari));
+    }
+  }, 300);
+}
+function arataSuggestii(){
+  if(!_istoricCautari.length) return;
+  const input=document.getElementById('cautareProduse');
+  if(!input) return;
+  let drop=document.getElementById('suggestiiDrop');
+  if(!drop){
+    drop=document.createElement('div');
+    drop.id='suggestiiDrop';
+    drop.style.cssText='position:absolute;top:100%;left:0;right:0;background:var(--w);border:1px solid var(--crd);border-radius:0 0 7px 7px;z-index:200;box-shadow:0 4px 12px var(--sh)';
+    input.parentElement.style.position='relative';
+    input.parentElement.appendChild(drop);
+  }
+  _istoricCautari.forEach(function(c){var div=document.createElement('div');div.style.cssText='padding:8px 14px;cursor:pointer;font-size:.85rem;color:var(--td)';div.textContent='🕐 '+c;div.addEventListener('click',function(){input.value=c;filtreazaProduse();ascundeSuggestii();});drop.appendChild(div);});
+  drop.style.display='block';
+}
+function ascundeSuggestii(){
+  const d=document.getElementById('suggestiiDrop'); if(d) d.style.display='none';
+}
+
+// ─── Shortcut tastatura ────────────────────
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){
+    e.preventDefault();
+    mergi('magazin');
+    setTimeout(()=>{const c=document.getElementById('cautareProduse');if(c)c.focus();},200);
+  }
+  if(e.key==='Escape'){
+    document.querySelectorAll('.fundal-modal.vizibil').forEach(m=>m.classList.remove('vizibil'));
+    const mc=document.getElementById('modalCalendar'); if(mc) mc.style.display='none';
+    ascundeSuggestii();
+  }
+});
+
+// ─── Hover preview imagine produs ─────────
+function showPreview(e, src){
+  if(!src||window.innerWidth<768) return;
+  const img=document.getElementById('previzHover');
+  if(!img) return;
+  img.src=src; img.style.display='block';
+  img.style.left=(e.clientX+20)+'px'; img.style.top=Math.max(10,e.clientY-110)+'px';
+  img.style.position='fixed';
+}
+function hidePreview(){ const img=document.getElementById('previzHover'); if(img) img.style.display='none'; }
+
+// ─── Pull to Refresh (mobil) ──────────────
+let _pullStart=0;
+document.addEventListener('touchstart',e=>{ _pullStart=e.touches[0].clientY; },{passive:true});
+document.addEventListener('touchmove',e=>{
+  if(window.scrollY===0&&e.touches[0].clientY-_pullStart>80){
+    const ind=document.getElementById('pullIndicator');
+    if(ind) ind.classList.add('viz');
+  }
+},{passive:true});
+document.addEventListener('touchend',e=>{
+  const ind=document.getElementById('pullIndicator');
+  if(ind&&ind.classList.contains('viz')){
+    ind.classList.remove('viz');
+    refreshManual();
+  }
+});
+
+// ─── Swipe stergere cos (mobil) ───────────
+function initSwipeCos(){
+  document.querySelectorAll('.item-cos').forEach(item=>{
+    let startX=0;
+    item.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;},{passive:true});
+    item.addEventListener('touchend',e=>{
+      const dx=startX-e.changedTouches[0].clientX;
+      if(dx>80){
+        const id=item.dataset.id;
+        if(id) scoateDinCosUndo(id);
+      }
+    },{passive:true});
+  });
+}
+
+// ─── Confetti la comanda ──────────────────
+function lanseazaConfetti(){
+  const culori=['#C9A84C','#6B1A2A','#E8C97A','#fff','#C0392B','#27AE60'];
+  for(let i=0;i<60;i++){
+    setTimeout(()=>{
+      const p=document.createElement('div');
+      p.className='confetti-piece';
+      p.style.left=Math.random()*100+'vw';
+      p.style.background=culori[Math.floor(Math.random()*culori.length)];
+      p.style.animationDuration=(2+Math.random()*2)+'s';
+      p.style.animationDelay=Math.random()*.5+'s';
+      document.body.appendChild(p);
+      setTimeout(()=>p.remove(),4000);
+    },i*30);
+  }
+}
+
+// ─── Progres bara comanda ─────────────────
+function genereazaProgresComanda(status){
+  const pasi=[
+    {key:'noua',lbl:'Comandă primită'},
+    {key:'procesata',lbl:'În procesare'},
+    {key:'livrata',lbl:'Livrată'},
+  ];
+  const idx=pasi.findIndex(p=>p.key===status);
+  return '<div class="progres-comanda">'
+    +pasi.map((p,i)=>'<div class="progres-pas '+(i<idx?'gata':i===idx?'activ':'')+'">'
+      +'<div class="progres-cerc">'+(i<idx?'✓':i+1)+'</div>'
+      +'<div class="progres-lbl">'+p.lbl+'</div>'
+      +'</div>').join('')
+    +'</div>';
+}
+
+// ─── Animatie numere dashboard ─────────────
+function animeazaNumar(elId, final){
+  const el=document.getElementById(elId); if(!el) return;
+  const start=0; const dur=800; const startTime=Date.now();
+  const tick=()=>{
+    const elapsed=Date.now()-startTime;
+    const progress=Math.min(elapsed/dur,1);
+    const ease=1-Math.pow(1-progress,3);
+    el.textContent=Math.round(start+(final-start)*ease);
+    if(progress<1) requestAnimationFrame(tick);
+    else el.textContent=final;
+  };
+  requestAnimationFrame(tick);
+}
+
 /* ── DARK MODE ────────────────────────────── */
 function toggleDarkMode(){
   const isDark = document.documentElement.getAttribute('data-tema')==='intunecat';
@@ -6787,6 +7170,16 @@ document.addEventListener('DOMContentLoaded',function(){
   if(!localStorage.getItem('cookiesAcceptate')){
     setTimeout(()=>document.getElementById('cookieBanner').classList.add('viz'), 1500);
   }
+  // Adauga hint shortcut / la cautare
+  const cautEl=document.getElementById('cautareProduse');
+  if(cautEl){
+    cautEl.setAttribute('placeholder','Caută produse... (apasă / pentru acces rapid)');
+    cautEl.addEventListener('focus', arataSuggestii);
+    cautEl.addEventListener('input', e=>cautareLive(e.target.value));
+    cautEl.addEventListener('blur', ()=>setTimeout(ascundeSuggestii,200));
+  }
+  // Init cos flotant
+  actualizeazaCosFlotant();
 });
 
 </script>
