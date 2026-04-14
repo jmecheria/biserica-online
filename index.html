@@ -30,7 +30,10 @@
 /* ═══ RESET ═══════════════════════════════ */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:'Lato',sans-serif;background:var(--cr);color:var(--td);line-height:1.6;min-height:100vh;transition:background .35s,color .3s}
+body{font-family:'Lato',sans-serif;background:var(--cr);color:var(--td);line-height:1.65;min-height:100vh;transition:background .35s,color .3s;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+p{margin-bottom:.5em;line-height:1.7}
+strong{font-weight:700}
+h1,h2,h3,h4{line-height:1.25}
 a{text-decoration:none;color:inherit}
 button{cursor:pointer;font-family:inherit}
 img{max-width:100%;display:block}
@@ -86,13 +89,14 @@ nav{
 
 /* Bara client logat */
 #clientBar{
-  background:var(--g);color:var(--vd);
+  background:rgba(74,15,28,.92);color:rgba(255,255,255,.9);
   display:none;align-items:center;justify-content:space-between;
-  padding:5px 20px;font-size:.78rem;font-family:'Cinzel',serif;
-  letter-spacing:.4px;
+  padding:5px 20px;font-size:.75rem;font-family:'Lato',sans-serif;
+  letter-spacing:.3px;border-bottom:1px solid rgba(201,168,76,.2);
 }
-#clientBar button{background:none;border:none;color:var(--vd);font-size:.72rem;cursor:pointer;font-family:'Cinzel',serif;opacity:.8}
-#clientBar button:hover{opacity:1}
+#clientBar button{background:none;border:none;color:rgba(255,255,255,.65);font-size:.72rem;cursor:pointer;font-family:'Lato',sans-serif;transition:.2s}
+#clientBar button:hover{color:#fff}
+#clientBar strong{color:rgba(255,255,255,.95)}
 
 /* Ticker anunturi urgente */
 #ticker{
@@ -240,7 +244,8 @@ h3.an-titlu{font-family:'Cinzel',serif;font-size:1rem;color:var(--v);margin-bott
 
 /* ═══ COS ═══════════════════════════════════ */
 .cos-wrap{max-width:900px;margin:0 auto;padding:28px 16px}
-.item-cos{background:var(--w);border:1px solid var(--crd);border-radius:9px;padding:13px;display:flex;align-items:center;gap:12px;margin-bottom:10px;transition:var(--trans)}
+.item-cos{background:var(--w);border:1px solid var(--crd);border-radius:9px;padding:12px;display:flex;align-items:center;gap:10px;margin-bottom:9px;transition:var(--trans)}
+@media(max-width:480px){.item-cos{flex-wrap:wrap;}.item-cos-img{width:50px;height:50px}}
 .item-cos-img{width:64px;height:64px;border-radius:7px;object-fit:cover;flex-shrink:0;background:var(--cr)}
 .item-cos-info{flex:1;min-width:0}
 .item-cos-nume{font-family:'Cinzel',serif;font-size:.88rem;color:var(--v);margin-bottom:3px}
@@ -281,7 +286,8 @@ input.cant-input::-webkit-inner-spin-button{display:none}
 .gdpr-check{display:flex;align-items:flex-start;gap:8px;margin-bottom:9px;font-size:.82rem;color:var(--tl);line-height:1.4}
 .gdpr-check input{width:15px;height:15px;flex-shrink:0;margin-top:2px;accent-color:var(--v);cursor:pointer}
 .gdpr-check a{color:var(--v);text-decoration:underline;cursor:pointer}
-.gdpr-err{display:none;color:#C0392B;font-size:.76rem;margin-bottom:7px}
+.gdpr-err{display:none;color:#C0392B;font-size:.76rem;margin-bottom:7px;padding:5px 9px;background:#FFEBEE;border-radius:5px;border-left:3px solid #C0392B}
+.form-error-inline{color:#C0392B;font-size:.76rem;margin-top:4px;display:none}
 .check-abon{display:flex;align-items:flex-start;gap:9px;background:rgba(39,174,96,.06);border:1.5px solid rgba(39,174,96,.25);border-radius:8px;padding:11px 13px;margin-bottom:11px;cursor:pointer}
 .check-abon input{width:17px;height:17px;flex-shrink:0;margin-top:2px;accent-color:#1a5c2e;cursor:pointer}
 .abon-badge{display:inline-block;background:#1a5c2e;color:#fff;font-size:.62rem;padding:1px 7px;border-radius:9px;margin-left:5px;font-family:'Lato',sans-serif;font-weight:700}
@@ -320,6 +326,7 @@ input.cant-input::-webkit-inner-spin-button{display:none}
 /* ═══ MODAL PRODUS ═══════════════════════ */
 #modalProdus .modal{max-width:780px}
 .mp-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:680px){.mp-grid{grid-template-columns:1fr}}
 .mp-stele{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .mp-descriere{font-size:.95rem;color:var(--tm);line-height:1.75;margin-bottom:16px}
 .mp-meta{font-family:'Cinzel',serif;font-size:.72rem;color:var(--tl);margin-bottom:13px;letter-spacing:.4px}
@@ -516,8 +523,15 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:44px 20px 24px}
 
 <!-- ═══ BARA CLIENT ══════════════════════════════════════ -->
 <div id="clientBar">
-  <span>👤 Salut, <strong id="clientBarNume"></strong></span>
-  <button onclick="delogheazaClient()">Deconectare</button>
+  <span style="display:flex;align-items:center;gap:7px">
+    <span style="font-size:.85rem">👤</span>
+    <span>Bine ai venit, <strong id="clientBarNume"></strong></span>
+    <span id="clientBarDiscount" style="display:none;font-size:.68rem;background:rgba(201,168,76,.2);border:1px solid rgba(201,168,76,.4);border-radius:8px;padding:1px 7px;color:var(--gl)"></span>
+  </span>
+  <div style="display:flex;align-items:center;gap:12px">
+    <button onclick="deschideModal('modalClient')" style="background:none;border:none;color:rgba(255,255,255,.75);font-size:.72rem;cursor:pointer;font-family:Lato,sans-serif;transition:.2s;padding:3px 8px;border-radius:4px;border:1px solid rgba(255,255,255,.2)">Contul meu</button>
+    <button onclick="delogheazaClient()" style="background:none;border:none;color:rgba(255,255,255,.55);font-size:.72rem;cursor:pointer;font-family:Lato,sans-serif;transition:.2s">Deconectare</button>
+  </div>
 </div>
 
 <!-- ═══ TICKER URGENT ══════════════════════════════════ -->
@@ -1036,6 +1050,13 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:44px 20px 24px}
 <button id="cosFlotant" onclick="mergi('cos')" title="Coș" style="display:none">
   🛒<span class="cos-fl-badge" id="cosFlBadge">0</span>
 </button>
+
+<!-- Scroll to top -->
+<button id="btnSus" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Sus"
+  style="position:fixed;bottom:90px;right:24px;z-index:1499;background:var(--crd);color:var(--v);
+  border:none;width:38px;height:38px;border-radius:50%;font-size:1.1rem;display:none;
+  align-items:center;justify-content:center;cursor:pointer;box-shadow:0 3px 12px var(--sh);
+  transition:.2s">↑</button>
 
 <!-- Toast -->
 <div id="toast"></div>
@@ -1834,6 +1855,25 @@ const db   = firebase.firestore();
 const auth = firebase.auth();
 
 /* ══════════════════════════════════════════
+   FIRESTORE SECURITY RULES NECESARE:
+   
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       match /produse/{id}   { allow read: if true; allow write: if request.auth != null; }
+       match /anunturi/{id}  { allow read: if true; allow write: if request.auth != null; }
+       match /comenzi/{id}   { allow create: if true; allow read,update,delete: if request.auth != null; }
+       match /vouchere/{id}  { allow read: if true; allow write: if request.auth != null; }
+       match /clienti/{id}   { allow read,write: if request.auth != null && request.auth.uid == id; }
+       match /admini/{id}    { allow read: if request.auth != null; }
+       match /recenzii/{id}  { allow read: if true; allow create: if true; allow update,delete: if request.auth != null; }
+       match /abonati/{id}   { allow read,write: if request.auth != null; allow create: if true; }
+       match /audio/{id}     { allow read: if true; allow write: if request.auth != null; }
+     }
+   }
+══════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════
    CONSTANTE & STARE GLOBALA
 ══════════════════════════════════════════ */
 const ADMIN_EMAIL   = 'irimia.teodor.17@gmail.com';
@@ -1872,7 +1912,7 @@ let lbImgArray    = [];
 let lbIndex       = 0;
 let _undoItem     = null;
 let _undoTimer    = null;
-let _istoricCaут  = JSON.parse(localStorage.getItem('cautIst')||'[]');
+let _istoricCaut = JSON.parse(localStorage.getItem('cautIst')||'[]');
 let _autoRefInt   = null;
 
 /* ══════════════════════════════════════════
@@ -1911,8 +1951,18 @@ async function fbSterge(col, id) {
 
 function formateazaData(ts) {
   if(!ts) return '–';
-  const d = ts.toDate ? ts.toDate() : new Date(ts.seconds*1000);
-  return d.toLocaleDateString('ro-RO',{day:'2-digit',month:'2-digit',year:'numeric'});
+  try {
+    const d = ts.toDate ? ts.toDate() : (ts.seconds ? new Date(ts.seconds*1000) : new Date(ts));
+    return d.toLocaleDateString('ro-RO',{day:'2-digit',month:'long',year:'numeric'});
+  } catch(e) { return '–'; }
+}
+
+function formateazaDataScurta(ts) {
+  if(!ts) return '–';
+  try {
+    const d = ts.toDate ? ts.toDate() : (ts.seconds ? new Date(ts.seconds*1000) : new Date(ts));
+    return d.toLocaleDateString('ro-RO',{day:'2-digit',month:'2-digit',year:'numeric'});
+  } catch(e) { return '–'; }
 }
 
 /* ══════════════════════════════════════════
@@ -1924,6 +1974,9 @@ function mergi(pag) {
   const pg = document.getElementById('pagina-'+pag);
   if(pg) { pg.classList.add('activa'); window.scrollTo({top:0,behavior:'smooth'}); }
   document.getElementById('navLinks').classList.remove('deschis');
+  window.scrollTo({top:0,behavior:'auto'});
+  // Salveaza pagina curenta pentru restore la refresh (nu salva admin)
+  if(pag!=='admin') localStorage.setItem('paginaCurenta', pag);
   if(pag==='acasa')    incarcaAcasa();
   if(pag==='magazin')  incarcaMagazin();
   if(pag==='anunturi') afiseazaAnunturi();
@@ -2247,10 +2300,12 @@ function setCategorie(val, el) {
   document.querySelectorAll('#chipsCategorie .chip').forEach(c=>{
     c.classList.remove('selectat'); c.style.cssText='';
   });
-  el.classList.add('selectat');
-  if(val==='favorite') {
-    el.style.background='linear-gradient(135deg,#E74C3C,#C0392B)';
-    el.style.color='#fff'; el.style.borderColor='#E74C3C';
+  if(el) {
+    el.classList.add('selectat');
+    if(val==='favorite') {
+      el.style.background='linear-gradient(135deg,#E74C3C,#C0392B)';
+      el.style.color='#fff'; el.style.borderColor='#E74C3C';
+    }
   }
   filtreazaProduse();
 }
@@ -2290,12 +2345,17 @@ function redeazaGridProduse(lista) {
   const el = document.getElementById('gridProduse');
   if(!el) return;
   if(!lista.length) {
-    el.innerHTML='<div class="gol" style="grid-column:1/-1"><div class="icon-gol">🕯️</div><h3>Niciun produs găsit</h3><p>Încearcă alte filtre sau căutare.</p></div>';
+    el.innerHTML='<div class="gol" style="grid-column:1/-1"><div class="icon-gol">🕯️</div><h3>Niciun produs găsit</h3><p>Încearcă să modifici filtrele sau șterge termenul de căutare.</p><button class="btn btn-contur btn-mic" onclick="setCategorie('toate',document.querySelector('#chipsCategorie .chip'));document.getElementById('cautareProduse').value=''">↩ Resetează filtrele</button></div>';
     return;
   }
   el.innerHTML = lista.map(p => {
-    const img  = (p.images&&p.images[0])||'';
-    const imgH = img ? `<img src="${img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover">` : '<div class="produs-ph">✝</div>';
+    // Suport pentru images array, image string, sau imageBase64
+    const imgSrc = (p.images&&p.images[0]) || p.image || p.imageBase64 || p.imageUrl || '';
+    const imgH = imgSrc
+      ? `<img src="${imgSrc}" alt="${p.name||''}" style="width:100%;height:100%;object-fit:cover" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+        + '<div class="produs-ph" style="display:none">✝</div>'
+      : '<div class="produs-ph">✝</div>';
+    const img = imgSrc;
     const inStoc = p.stock>0;
     const rating = p._rating ? `<span class="rating-badge">${steleHTML(p._rating,true)} ${p._rating.toFixed(1)} (${p._ratingCount||0})</span>` : '';
     const favIco = favorite.includes(p.id) ? '❤️' : '🤍';
@@ -2371,16 +2431,21 @@ function deschideModalProdus(id) {
   actualizaCantUI(1, p.stock||0);
 
   // Imagine
-  const imgs = p.images||[];
+  // Suport imagini in toate formatele Firestore
+  const imgsList = p.images && p.images.length ? p.images
+    : p.image ? [p.image]
+    : p.imageBase64 ? [p.imageBase64]
+    : p.imageUrl ? [p.imageUrl]
+    : [];
   const mpImg = document.getElementById('mpImg');
   const galEl = document.getElementById('mpGalerie');
   const galPh = document.getElementById('mpGaleriePh');
-  if(imgs.length) {
-    mpImg.src = imgs[0]; mpImg.style.display='block';
+  if(imgsList.length) {
+    mpImg.src=imgsList[0]; mpImg.style.display='block';
     if(galPh) galPh.style.display='none';
     if(galEl) {
-      galEl.innerHTML = imgs.map((src,i)=>
-        `<img class="modal-thumb ${i===0?'activ':''}" src="${src}" onclick="schimbaImagineMP('${src}',this)">`
+      galEl.innerHTML = imgsList.map((src,i)=>
+        `<img class="modal-thumb ${i===0?'activ':''}" src="${src}" onclick="schimbaImagineMP('${src}',this)" loading="lazy">`
       ).join('');
     }
   } else {
@@ -2553,46 +2618,32 @@ async function afiseazaAnunturi() {
   let lista = [...anunturiCach];
   if(cautare) lista = lista.filter(a=>(a.title||'').toLowerCase().includes(cautare)||(a.content||'').toLowerCase().includes(cautare));
 
-  // Urgente mereu primele, sortate dupa data
-  const urgente = lista.filter(a=>a.type==='urgent').sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-  let restul    = lista.filter(a=>a.type!=='urgent');
-  restul.sort((a,b)=> sortare==='asc' ? (a.createdAt?.seconds||0)-(b.createdAt?.seconds||0) : (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-  lista = [...urgente,...restul];
+  // Sortare simpla cronologica (urgentele sunt deja in ticker sus)
+  lista.sort((a,b)=> sortare==='asc' ? (a.createdAt?.seconds||0)-(b.createdAt?.seconds||0) : (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
 
   if(!lista.length) {
     el.innerHTML='<div class="gol"><div class="icon-gol">📋</div><h3>Niciun anunț</h3><p>Momentan nu există anunțuri disponibile.</p></div>';
     return;
   }
 
-  let html='';
-  if(urgente.length) {
-    html+='<p class="anunt-urgente-titlu">🔴 ANUNȚURI URGENTE</p>';
-    html+=urgente.map(a=>{
-      const img=a.image?`<img src="${a.image}" style="width:100%;height:150px;object-fit:cover;border-radius:var(--rad) var(--rad) 0 0;display:block">`:
-        `<div style="height:80px;background:linear-gradient(135deg,#7B0000,#C0392B);border-radius:var(--rad) var(--rad) 0 0;display:flex;align-items:center;justify-content:center;font-size:2rem">🔴</div>`;
-      return `<div class="urgent-banner" style="margin-bottom:14px" onclick="deschideModalAnunt('${a.id}')">
-        ${img}<div class="urgent-banner-body">
-          <h3 class="an-titlu">${a.title}</h3>
-          <p class="anunt-extras">${(a.content||'').substring(0,160)}${(a.content||'').length>160?'...':''}</p>
-          <p class="anunt-data">📅 ${formateazaData(a.createdAt)}</p>
-        </div></div>`;
-    }).join('');
-  }
-
-  html+='<div class="grid-2">'+restul.map(a=>{
-    const img=a.image?`<img src="${a.image}" style="width:100%;height:130px;object-fit:cover;border-radius:var(--rad) var(--rad) 0 0;display:block">`:
-      `<div style="height:70px;background:linear-gradient(135deg,var(--vd),var(--v));border-radius:var(--rad) var(--rad) 0 0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:var(--g)">
-        ${{slujba:'⛪',eveniment:'📅',activitate:'🌿',general:'📋'}[a.type]||'📋'}</div>`;
-    return `<div class="card-anunt" onclick="deschideModalAnunt('${a.id}')">
-      ${img}<div class="card-anunt-body">
+  // Randeaza toate uniform - urgent badge vizibil pe card
+  el.innerHTML='<div class="grid-2">'+lista.map(a=>{
+    const isUrg = a.type==='urgent';
+    const ico = {slujba:'⛪',eveniment:'📅',activitate:'🌿',general:'📋',urgent:'🔴'}[a.type]||'📋';
+    const imgSrc = a.image||'';
+    const imgH = imgSrc
+      ? `<img src="${imgSrc}" style="width:100%;height:140px;object-fit:cover;border-radius:var(--rad) var(--rad) 0 0;display:block">`
+      : `<div style="height:70px;background:linear-gradient(135deg,${isUrg?'#7B0000,#C0392B':'var(--vd),var(--v))'};border-radius:var(--rad) var(--rad) 0 0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:var(--g)">${ico}</div>`;
+    return `<div class="${isUrg?'urgent-banner':'card-anunt'}" onclick="deschideModalAnunt('${a.id}')">
+      ${imgH}
+      <div class="${isUrg?'urgent-banner-body':'card-anunt-body'}">
         <span class="insigna ${clasaInsigna(a.type)}">${textInsigna(a.type)}</span>
         <h3 class="an-titlu">${a.title}</h3>
-        <p class="anunt-extras">${(a.content||'').substring(0,130)}${(a.content||'').length>130?'...':''}</p>
+        <p class="anunt-extras">${(a.content||'').substring(0,140)}${(a.content||'').length>140?'...':''}</p>
         <p class="anunt-data">📅 ${formateazaData(a.createdAt)}</p>
-      </div></div>`;
+      </div>
+    </div>`;
   }).join('')+'</div>';
-
-  el.innerHTML=html;
 }
 
 function deschideModalAnunt(id) {
@@ -2669,7 +2720,8 @@ function redeazaCos() {
       <div class="item-cos-info">
         <div class="item-cos-nume">${item.nume}</div>
         <div class="item-cos-pret">${(item.pret*item.cantitate).toFixed(2)} Lei</div>
-        <div style="font-size:.76rem;color:var(--tl)">${item.pret} Lei/buc.</div>
+        <div style="font-size:.74rem;color:var(--tl)">${item.pret.toFixed(2)} Lei/buc. · ${timpRelativ(null)||''}
+        </div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
         <div style="display:flex;align-items:center">
@@ -2677,6 +2729,7 @@ function redeazaCos() {
           <input type="number" class="cant-input" value="${item.cantitate}" min="1"
             onchange="setCantitateDirectCos('${item.id}',this.value)"
             oninput="setCantitateDirectCos('${item.id}',this.value)"
+            max="${(produseCach.find(x=>x.id===item.id)?.stock)||999}"
             style="width:46px;height:28px;border:2px solid var(--crd);border-left:none;border-right:none;text-align:center;font-family:Cinzel,serif;font-size:.88rem;background:var(--w);color:var(--td)">
           <button class="btn-cantitate" onclick="schimbaCantCos('${item.id}',1)" style="border-radius:0 5px 5px 0;border-left:none">+</button>
         </div>
@@ -2692,8 +2745,13 @@ function schimbaCantCos(id, d) {
   const item = cos.find(i=>i.id===id);
   if(!item) return;
   const prod = produseCach.find(p=>p.id===id);
-  const maxStoc = prod?.stock||999;
-  item.cantitate = Math.max(1, Math.min(maxStoc, item.cantitate+d));
+  const maxStoc = prod?.stock || 999;
+  const noua = Math.max(1, Math.min(maxStoc, item.cantitate+d));
+  if(noua===item.cantitate && d>0) {
+    afiseazaToast('⚠️ Stoc maxim atins! Disponibil: '+maxStoc+' buc.');
+    return;
+  }
+  item.cantitate = noua;
   salveazaCos(); redeazaCos(); actualizeazaBadge();
 }
 
@@ -2831,15 +2889,29 @@ function arataComanada() {
 
 async function preCompleteazaFormular() {
   if(!clientCurent) return;
+  const set=(id,v)=>{const el=document.getElementById(id);if(el&&!el.value)el.value=v||'';};
+  // Foloseste cache-ul daca exista
+  if(window._profilCache) {
+    set('oNume', clientCurent.displayName||'');
+    set('oEmail', clientCurent.email||'');
+    set('oTel', window._profilCache.phone);
+    set('oAdresa', window._profilCache.address);
+    set('oLocalit', window._profilCache.county);
+    const aw=document.getElementById('altAdresaWrap');
+    if(aw) aw.style.display='block';
+    return;
+  }
   try {
     const doc=await db.collection('clienti').doc(clientCurent.uid).get();
     if(!doc.exists) return;
     const d=doc.data();
-    const set=(id,v)=>{const el=document.getElementById(id);if(el&&!el.value)el.value=v||'';};
-    set('oNume', clientCurent.displayName); set('oEmail', clientCurent.email);
+    window._profilCache={phone:d.phone||'',address:d.address||'',county:d.county||''};
+    set('oNume', clientCurent.displayName||'');
+    set('oEmail', clientCurent.email||'');
     set('oTel', d.phone); set('oAdresa', d.address); set('oLocalit', d.county);
-    document.getElementById('altAdresaWrap').style.display='block';
-  } catch(e){}
+    const aw=document.getElementById('altAdresaWrap');
+    if(aw) aw.style.display='block';
+  } catch(e){ console.warn('preCompleta:', e); }
 }
 
 function toggleAltAdresa(checked) {
@@ -2867,7 +2939,13 @@ async function trimiteComanda() {
   const transp = document.getElementById('oTransport')?.value||'standard';
   const note   = document.getElementById('oNote')?.value.trim()||'';
 
-  if(!name||!phone||!email||!adresa||!localit) { afiseazaToast('❌ Completează toate câmpurile obligatorii!'); return; }
+  // Validari specifice
+  if(!name) { afiseazaToast('❌ Introdu numele și prenumele!'); document.getElementById('oNume')?.focus(); return; }
+  if(!phone||phone.length<10) { afiseazaToast('❌ Număr de telefon invalid!'); document.getElementById('oTel')?.focus(); return; }
+  if(!email||!/^[^@]+@[^@]+\.[^@]+$/.test(email)) { afiseazaToast('❌ Adresă de email invalidă!'); document.getElementById('oEmail')?.focus(); return; }
+  if(!adresa) { afiseazaToast('❌ Introdu adresa de livrare!'); document.getElementById('oAdresa')?.focus(); return; }
+  if(!localit) { afiseazaToast('❌ Introdu localitatea!'); document.getElementById('oLocalit')?.focus(); return; }
+  if(!cos.length) { afiseazaToast('❌ Coșul este gol!'); return; }
 
   const {subtotal,transp:costTransp,discTotal,discSuma,total}=calculeazaTotal();
   const btn=document.getElementById('btnFinalizeaza');
@@ -2882,6 +2960,20 @@ async function trimiteComanda() {
       total:total.toFixed(2), status:'noua', voucher:voucherAplicat||null,
       userId:clientCurent?.uid||null, gdprAcceptat:true,
     });
+    // Scade stocul din Firestore pentru fiecare produs comandat
+    for(const item of cos) {
+      try {
+        const prodRef = db.collection('produse').doc(item.id);
+        const prodDoc = await prodRef.get();
+        if(prodDoc.exists) {
+          const stocNou = Math.max(0, (prodDoc.data().stock||0) - (item.cantitate||1));
+          await prodRef.update({stock: stocNou});
+          // Actualizeaza si in cache local
+          const pCach = produseCach.find(p=>p.id===item.id);
+          if(pCach) pCach.stock = stocNou;
+        }
+      } catch(e){ console.warn('Stoc update err:', e); }
+    }
     // Trimite emailuri
     trimiteEmailuriComanda({orderId,name,email,phone,items:cos,total:total.toFixed(2),transp,note});
     // Goleste cosul
@@ -3017,8 +3109,15 @@ auth.onAuthStateChanged(async user => {
       const d=doc.data();
       esteAbonat    = d.abonatNotificari||false;
       discountActiv = esteAbonat ? 5 : 0;
+      // Cache date profil pentru checkout rapid
+      window._profilCache = {
+        phone:d.phone||'', address:d.address||'', county:d.county||''
+      };
+    } else {
+      // Cont nou - creeaza document profil daca nu exista
+      esteAbonat = false; discountActiv = 0;
     }
-  } catch(e){}
+  } catch(e){ console.warn('Auth state client:', e); }
   actualizeazaUIClient(true);
   // Adauga produs pending daca exista
   if(window._prodPending) {
@@ -3035,9 +3134,15 @@ function actualizeazaUIClient(logat) {
   const numEl=document.getElementById('clientBarNume');
   if(logat && clientCurent) {
     if(bar) bar.style.display='flex';
-    if(numEl) numEl.textContent=clientCurent.displayName||clientCurent.email;
+    if(numEl) numEl.textContent=(clientCurent.displayName||clientCurent.email).split(' ')[0];
     if(ico) ico.textContent='👤✓';
     if(lbl) { lbl.textContent=discountActiv>0?discountActiv+'% OFF':'CONT'; lbl.style.color='#E8C97A'; }
+    // Discount badge in client bar
+    const discBadge=document.getElementById('clientBarDiscount');
+    if(discBadge) {
+      if(discountActiv>0) { discBadge.textContent=discountActiv+'% discount'; discBadge.style.display='inline'; }
+      else discBadge.style.display='none';
+    }
     actualizeazaNrFav();
   } else {
     if(bar) bar.style.display='none';
@@ -3233,11 +3338,13 @@ async function incarcaDateProfil() {
 
 async function salveazaProfil() {
   if(!clientCurent) return;
-  const phone=document.getElementById('ePTel')?.value.trim()||'';
+  const phone  =document.getElementById('ePTel')?.value.trim()||'';
   const address=document.getElementById('ePAdresa')?.value.trim()||'';
-  const county=document.getElementById('ePLocalit')?.value.trim()||'';
+  const county =document.getElementById('ePLocalit')?.value.trim()||'';
   try {
     await db.collection('clienti').doc(clientCurent.uid).update({phone,address,county});
+    // Actualizeaza cache-ul
+    window._profilCache={phone,address,county};
     afiseazaToast('✅ Date salvate!');
     toggleEditProfil(); incarcaDateProfil();
   } catch(e) { afiseazaToast('❌ '+e.message); }
@@ -3924,7 +4031,7 @@ async function secAudio(el) {
         </select></div>
         <div class="form-grup"><label>Durată (ex: 24:15)</label><input id="audDurata" placeholder="MM:SS"></div>
       </div>
-      <div class="form-grup"><label>URL Fișier Audio (MP3) *</label><input id="audUrl" type="url" placeholder="https://...audio.mp3"></div>
+      <div class="form-grup"><label>URL Audio (MP3, YouTube, SoundCloud) *</label><input id="audUrl" type="url" placeholder="https://...mp3 sau https://youtube.com/watch?v=..."></div>
       <button class="btn btn-primar btn-mic" onclick="adaugaAudio()">+ Adaugă</button>
     </div>
     ${!audioCach.length?'<div class="gol"><div class="icon-gol">🎵</div><h3>Nicio înregistrare</h3><p>Adaugă prima predică sau cântare.</p></div>':
@@ -4081,29 +4188,72 @@ function filtreazaAudio(tip,chipEl,lista) {
   }).join('');
 }
 
+function getYouTubeId(url) {
+  const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+function isYouTube(url) { return !!(url && (url.includes('youtube.com') || url.includes('youtu.be'))); }
+
 function redaAudioCard(cardEl) {
-  const id=cardEl.dataset.aid;
-  const url=decodeURIComponent(cardEl.dataset.url||'');
-  const titlu=decodeURIComponent(cardEl.dataset.titlu||'');
-  const autor=decodeURIComponent(cardEl.dataset.autor||'');
-  const ico=decodeURIComponent(cardEl.dataset.ico||'🎵');
+  const id    = cardEl.dataset.aid;
+  const url   = decodeURIComponent(cardEl.dataset.url||'');
+  const titlu = decodeURIComponent(cardEl.dataset.titlu||'');
+  const autor = decodeURIComponent(cardEl.dataset.autor||'');
+  const ico   = decodeURIComponent(cardEl.dataset.ico||'🎵');
+  const player= document.getElementById('playerAudio');
   const audioEl=document.getElementById('audioEl');
-  const player=document.getElementById('playerAudio');
-  if(audioPlayingId===id) { audioEl.paused?audioEl.play():audioEl.pause(); return; }
+
+  if(audioPlayingId===id) {
+    if(isYouTube(url)) return; // YouTube iframe gestioneaza singur
+    audioEl.paused ? audioEl.play() : audioEl.pause();
+    return;
+  }
   audioPlayingId=id;
   player.style.display='block';
   document.getElementById('audioTitluPlayer').textContent=titlu;
   document.getElementById('audioAutorPlayer').textContent=autor;
   document.getElementById('audioIco').textContent=ico;
-  audioEl.src=url; audioEl.play().catch(e=>console.warn(e));
-  document.querySelectorAll('.card-audio').forEach(c=>{c.classList.remove('redare');const b=c.querySelector('.btn-play');if(b){b.classList.remove('redare');b.textContent='▶';}});
+
+  if(isYouTube(url)) {
+    // Embed YouTube iframe
+    const ytId = getYouTubeId(url);
+    audioEl.style.display='none';
+    let iframeEl=document.getElementById('ytIframe');
+    if(!iframeEl) {
+      iframeEl=document.createElement('iframe');
+      iframeEl.id='ytIframe';
+      iframeEl.style.cssText='width:100%;height:200px;border:none;border-radius:8px;margin-top:12px';
+      iframeEl.allow='accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture';
+      iframeEl.allowFullscreen=true;
+      player.appendChild(iframeEl);
+    }
+    iframeEl.src=`https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0`;
+    iframeEl.style.display='block';
+  } else {
+    // Audio MP3 normal
+    const iframeEl=document.getElementById('ytIframe');
+    if(iframeEl) { iframeEl.src=''; iframeEl.style.display='none'; }
+    audioEl.style.display='block';
+    audioEl.src=url;
+    audioEl.play().catch(e=>console.warn(e));
+  }
+
+  document.querySelectorAll('.card-audio').forEach(c=>{
+    c.classList.remove('redare');
+    const b=c.querySelector('.btn-play');
+    if(b){b.classList.remove('redare');b.textContent='▶';}
+  });
   cardEl.classList.add('redare');
-  const btn=cardEl.querySelector('.btn-play');if(btn){btn.classList.add('redare');btn.textContent='⏸';}
+  const btn=cardEl.querySelector('.btn-play');
+  if(btn){btn.classList.add('redare');btn.textContent=isYouTube(url)?'▶':'⏸';}
   player.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 function audioTerminat() {
   audioPlayingId=null;
+  const yt=document.getElementById('ytIframe');
+  if(yt){yt.src='';yt.style.display='none';}
   document.querySelectorAll('.card-audio').forEach(c=>{c.classList.remove('redare');const b=c.querySelector('.btn-play');if(b){b.classList.remove('redare');b.textContent='▶';}});
 }
 
@@ -4111,6 +4261,102 @@ console.log('JS Part 7 loaded');
 </script>
 
 <script>
+/* ══════════════════════════════════════════
+   MICRO-FEATURES (UX îmbunătățit)
+══════════════════════════════════════════ */
+
+// Scroll to top button
+window.addEventListener('scroll',()=>{
+  const btn=document.getElementById('btnSus');
+  if(btn) btn.style.display=window.scrollY>400?'flex':'none';
+});
+
+// Tooltip simplu pe hover
+function showTooltip(el,text){
+  const tt=document.createElement('div');
+  tt.className='tooltip-tmp';
+  tt.textContent=text;
+  tt.style.cssText='position:fixed;background:rgba(0,0,0,.8);color:#fff;padding:5px 10px;border-radius:5px;font-size:.75rem;z-index:9999;pointer-events:none;transform:translate(-50%,-110%);white-space:nowrap';
+  const rect=el.getBoundingClientRect();
+  tt.style.left=(rect.left+rect.width/2)+'px';
+  tt.style.top=rect.top+'px';
+  document.body.appendChild(tt);
+  setTimeout(()=>tt.remove(),2000);
+}
+
+// Format pret cu separator mii
+function formatPret(n){
+  return parseFloat(n||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,'.')+' Lei';
+}
+
+// Validare email simpla
+function esteEmailValid(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+// Truncate text cu ellipsis
+function truncate(str,max){ return str&&str.length>max ? str.substring(0,max)+'…' : (str||''); }
+
+// Debounce helper
+function debounce(fn,delay){
+  let t; return function(...args){ clearTimeout(t); t=setTimeout(()=>fn.apply(this,args),delay); };
+}
+
+// Verifica daca e mobil
+const esteMobil = ()=>window.innerWidth<=768;
+
+// Timp relativ (acum 5 min, ieri etc.)
+function timpRelativ(ts){
+  if(!ts) return '';
+  const d=ts.toDate?ts.toDate():(ts.seconds?new Date(ts.seconds*1000):new Date(ts));
+  const diff=Date.now()-d.getTime();
+  if(diff<60000) return 'chiar acum';
+  if(diff<3600000) return Math.floor(diff/60000)+' min';
+  if(diff<86400000) return Math.floor(diff/3600000)+'h';
+  if(diff<7*86400000) return Math.floor(diff/86400000)+'z';
+  return formateazaData(ts);
+}
+
+// Copiaza text in clipboard
+function copiazaText(text,mesaj){
+  navigator.clipboard?.writeText(text).then(()=>afiseazaToast(mesaj||'✅ Copiat!'))
+    .catch(()=>{ try{const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();afiseazaToast(mesaj||'✅ Copiat!');}catch(e){} });
+}
+
+// Badge count pe icon cont cand ai comenzi noi (logat)
+async function actualizeazaBadgeCont(){
+  if(!clientCurent) return;
+  try {
+    const snap=await db.collection('comenzi').where('email','==',clientCurent.email).where('status','==','procesata').get();
+    const lbl=document.getElementById('btnContLbl');
+    if(lbl && snap.size>0) lbl.textContent=snap.size+' noi';
+  } catch{}
+}
+
+// Preloader imagine - fade in la incarcare
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('img[loading="lazy"]').forEach(img=>{
+    img.style.opacity='0'; img.style.transition='opacity .4s';
+    img.addEventListener('load',()=>{img.style.opacity='1';});
+    if(img.complete) img.style.opacity='1';
+  });
+});
+
+// Afiseaza eroare firebase mai friendly
+function mesajFirebase(code){
+  const map={
+    'permission-denied':'Acces refuzat. Verifică regulile Firestore.',
+    'not-found':'Documentul nu a fost găsit.',
+    'unavailable':'Serviciu indisponibil. Verifică conexiunea.',
+    'cancelled':'Operațiunea a fost anulată.',
+    'deadline-exceeded':'Timeout. Încearcă din nou.',
+    'unauthenticated':'Autentificare necesară.',
+  };
+  return map[code]||'Eroare necunoscută.';
+}
+
+// Verifica conexiunea la internet
+window.addEventListener('offline',()=>afiseazaToast('⚠️ Ești offline. Unele funcții nu sunt disponibile.', 5000));
+window.addEventListener('online',()=>afiseazaToast('✅ Conexiune restabilită!', 3000));
+
 /* ══════════════════════════════════════════
    DARK MODE
 ══════════════════════════════════════════ */
@@ -4250,8 +4496,13 @@ document.addEventListener('DOMContentLoaded',()=>{
     cautEl.placeholder='Caută produse... (apasă / )';
   }
 
-  // Navigare initiala
-  mergi('acasa');
+  // Preincarca vouchere
+  incarcaVouchere().catch(()=>{});
+  // Restaureaza pagina la refresh
+  const paginaSalvata = localStorage.getItem('paginaCurenta')||'acasa';
+  // Paginile valide pentru restore (nu admin, nu cos gol)
+  const paginiValide = ['acasa','magazin','anunturi','audio'];
+  mergi(paginiValide.includes(paginaSalvata) ? paginaSalvata : 'acasa');
 });
 
 /* ══════════════════════════════════════════
