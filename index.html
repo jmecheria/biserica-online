@@ -21,12 +21,78 @@
   --trans:.25s ease;
 }
 [data-tema="intunecat"]{
-  --v:#C9A84C; --vd:#120A04; --vl:#E8C97A; --vp:#9A7030;
-  --g:#C9A84C; --gl:#E8C97A; --gd:#A07830;
-  --w:#1A0E06; --cr:#221408; --crd:#3A2412;
-  --td:#F5EDE0; --tm:#D4C0A8; --tl:#B09070;
-  --sh:rgba(0,0,0,.45); --shs:rgba(0,0,0,.65);
+  /* In dark mode, rosu devine auriu pentru accent */
+  --v:#C9A84C;     /* accent = auriu */
+  --vd:#120A04;    /* fundal foarte inchis */
+  --vl:#E8C97A;    /* accent deschis */
+  --vp:#9A7030;    /* accent mediu */
+  --g:#E8C97A;     /* aur deschis - diferit de --v pentru contrast */
+  --gl:#FFF0C0;    /* aur foarte deschis */
+  --gd:#C9A84C;    /* aur mediu */
+  --w:#1C1108;     /* fundal card = maro foarte inchis */
+  --cr:#140D05;    /* fundal pagina = aproape negru */
+  --crd:#3D2514;   /* border */
+  --td:#F5EDE0;    /* text principal = crem */
+  --tm:#D4C0A8;    /* text mediu */
+  --tl:#B09070;    /* text subtil */
+  --sh:rgba(0,0,0,.5); --shs:rgba(0,0,0,.7);
 }
+/* Dark mode - fix navbar (bg devine auriu, iconite trebuie vazute) */
+[data-tema="intunecat"] nav{
+  background:linear-gradient(135deg,#1C0F05,#2A1A08)!important;
+}
+[data-tema="intunecat"] .nav-logo-icon{color:#E8C97A!important}
+[data-tema="intunecat"] .nav-logo-text{color:#F5EDE0!important}
+[data-tema="intunecat"] .nav-logo-sub{color:#B09070!important}
+[data-tema="intunecat"] .cart-btn{color:rgba(255,255,255,.8)!important}
+[data-tema="intunecat"] .nav-links a{color:rgba(245,237,224,.75)!important}
+[data-tema="intunecat"] .nav-links a:hover,[data-tema="intunecat"] .nav-links a.activ{
+  background:rgba(201,168,76,.2)!important;color:#E8C97A!important;
+}
+/* Dark mode - hero ramane inchis */
+[data-tema="intunecat"] .hero{
+  background:linear-gradient(155deg,#0E0804 0%,#1C1108 50%,#2A1A08 100%)!important;
+}
+/* Dark mode - timerBar */
+[data-tema="intunecat"] #timerBar{background:#0E0804!important}
+/* Dark mode - client bar */
+[data-tema="intunecat"] #clientBar{background:#0E0804!important;border-bottom:1px solid #3D2514!important}
+/* Dark mode - chips */
+[data-tema="intunecat"] .chip{background:#1C1108!important;border-color:#3D2514!important;color:#D4C0A8!important}
+[data-tema="intunecat"] .chip:hover,[data-tema="intunecat"] .chip.selectat{
+  background:#C9A84C!important;color:#0E0804!important;border-color:#C9A84C!important;
+}
+/* Dark mode - modal */
+[data-tema="intunecat"] .modal{background:#1C1108!important;color:#F5EDE0!important}
+[data-tema="intunecat"] .modal-body label,[data-tema="intunecat"] .modal-body p{color:#D4C0A8!important}
+[data-tema="intunecat"] .form-grup input,[data-tema="intunecat"] .form-grup select,[data-tema="intunecat"] .form-grup textarea{
+  background:#140D05!important;color:#F5EDE0!important;border-color:#3D2514!important;
+}
+/* Dark mode - card produs */
+[data-tema="intunecat"] .card-produs{background:#1C1108!important;border-color:#3D2514!important}
+[data-tema="intunecat"] .produs-desc{color:#B09070!important}
+/* Dark mode - sumar cos */
+[data-tema="intunecat"] .sumar-cos,[data-tema="intunecat"] .card-formular{
+  background:#1C1108!important;border-color:#3D2514!important;
+}
+/* Dark mode - admin */
+[data-tema="intunecat"] .admin-sidebar{background:#0E0804!important}
+[data-tema="intunecat"] .admin-continut{background:#140D05!important}
+[data-tema="intunecat"] .tabel-admin{background:#1C1108!important}
+[data-tema="intunecat"] .tabel-admin th{background:#0E0804!important;color:#C9A84C!important}
+[data-tema="intunecat"] .tabel-admin td{border-color:#3D2514!important}
+[data-tema="intunecat"] .formular-admin,[data-tema="intunecat"] .cutie-info{background:#1C1108!important;border-color:#3D2514!important}
+/* Dark mode - card anunt */
+[data-tema="intunecat"] .card-anunt{background:#1C1108!important;border-color:#3D2514!important}
+[data-tema="intunecat"] .an-titlu{color:#E8C97A!important}
+/* Dark mode - footer */
+[data-tema="intunecat"] footer{background:#0E0804!important}
+/* Dark mode - btn-contur */
+[data-tema="intunecat"] .btn-contur{border-color:#C9A84C!important;color:#C9A84C!important}
+[data-tema="intunecat"] .btn-contur:hover{background:#C9A84C!important;color:#0E0804!important}
+/* Dark mode - titlu sectiune */
+[data-tema="intunecat"] .titlu-sec{color:#E8C97A!important}
+[data-tema="intunecat"] .titlu-sec::before,[data-tema="intunecat"] .titlu-sec::after{background:#C9A84C!important}
 /* ═══ RESET ═══════════════════════════════ */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -936,8 +1002,16 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:44px 20px 24px}
 <div id="modalCalendar" onclick="if(event.target===this)inchideCalendar()">
   <div class="cal-inner">
     <div class="cal-header">
-      <h2>📅 Calendar Ortodox 2026 — toate lunile</h2>
+      <h2>📅 Calendar Ortodox 2026</h2>
       <button onclick="inchideCalendar()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:1.5rem;cursor:pointer;padding:0;line-height:1">✕</button>
+    </div>
+    <!-- Modal detalii zi -->
+    <div id="calZiModal" style="display:none;position:sticky;top:70px;z-index:10;background:var(--w);border:2px solid var(--g);border-radius:var(--rad);padding:16px 20px;margin:10px 20px 0">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div id="calZiContent" style="flex:1"></div>
+        <button onclick="document.getElementById('calZiModal').style.display='none'" 
+          style="background:none;border:none;color:var(--tl);font-size:1.2rem;cursor:pointer;padding:0;margin-left:10px">✕</button>
+      </div>
     </div>
     <div class="cal-body" id="calBody">
       <div style="text-align:center;padding:40px;color:var(--tl)">⏳ Se construiește calendarul...</div>
@@ -2085,18 +2159,29 @@ function getSfantZilei() {
   return CAL[key]||{t:'Sfânta Treime',c:'',r:'',f:false,p:false};
 }
 
-function getVersetLunar() {
-  const luna=new Date().getMonth(); // 0-11
-  const zi=new Date().getDate();
-  const arr=VERSETE_LUNARE[luna]||[];
-  return arr[(zi-1)%arr.length]||'';
+function getVersetZilnic() {
+  // Verset diferit in fiecare zi a anului
+  const azi = new Date();
+  const ziAnului = Math.floor((azi - new Date(azi.getFullYear(),0,0))/86400000);
+  const luna = azi.getMonth(); // 0-11
+  const arr = VERSETE_LUNARE[luna]||[];
+  if(!arr.length) return '';
+  return arr[(ziAnului-1)%arr.length]||arr[0]||'';
 }
+// Pastreaza si alias pentru compatibilitate
+function getVersetLunar() { return getVersetZilnic(); }
 
 /* ══════════════════════════════════════════
    TICKER ANUNTURI URGENTE
 ══════════════════════════════════════════ */
 async function initTicker() {
-  if(!anunturiCach.length) anunturiCach = await fbLista('anunturi');
+  if(!anunturiCach.length) {
+    try { anunturiCach = await fbLista('anunturi'); }
+    catch(e) {
+      el.innerHTML='<div class="gol"><div class="icon-gol">⚠️</div><h3>Nu s-au putut încărca anunțurile</h3><p>Verificați conexiunea și reîncercați. <button class="btn btn-contur btn-mic" onclick="anunturiCach=[];afiseazaAnunturi()">Reîncearcă</button></p></div>';
+      return;
+    }
+  }
   const urgente = anunturiCach.filter(a=>a.type==='urgent');
   const ticker = document.getElementById('ticker');
   const inner  = document.getElementById('tickerInner');
@@ -2112,7 +2197,7 @@ async function initTicker() {
 ══════════════════════════════════════════ */
 async function incarcaAcasa() {
   const sfant = getSfantZilei();
-  const verset= getVersetLunar();
+  const verset= getVersetZilnic();
 
   // Sfant zilei
   const sfantEl = document.getElementById('acasa-sfant');
@@ -2133,7 +2218,7 @@ async function incarcaAcasa() {
   if(versetEl && verset) {
     versetEl.innerHTML = `
       <div>
-        <p style="font-family:Cinzel,serif;font-size:.72rem;color:var(--gl);letter-spacing:1.5px;margin-bottom:10px">VERSETUL LUNII</p>
+        <p style="font-family:Cinzel,serif;font-size:.72rem;color:var(--gl);letter-spacing:1.5px;margin-bottom:10px">VERSETUL ZILEI</p>
         <p style="font-family:'EB Garamond',serif;font-size:1.05rem;font-style:italic;line-height:1.75;color:rgba(255,255,255,.92)">"${verset}"</p>
       </div>`;
   }
@@ -2200,6 +2285,41 @@ function inchideCalendar() {
   if(mc) mc.classList.remove('viz');
   document.body.style.overflow='';
 }
+
+function arataSfantZiua(cheie) {
+  const sf = CAL[cheie]||{};
+  const modal = document.getElementById('calZiModal');
+  const content = document.getElementById('calZiContent');
+  if(!modal||!content) return;
+
+  const luna = parseInt(cheie.substring(0,2))-1;
+  const zi   = parseInt(cheie.substring(2,4));
+  const luni = ['Ianuarie','Februarie','Martie','Aprilie','Mai','Iunie','Iulie','August','Septembrie','Octombrie','Noiembrie','Decembrie'];
+  const azi = new Date(); const eAzi = (azi.getFullYear()===2026&&azi.getMonth()===luna&&azi.getDate()===zi);
+  
+  const sfinti = (sf.t||'Zi fără sfânt înscris').split(';').map(s=>s.trim()).filter(Boolean);
+  const versetZi = getVersetZilnic();
+  
+  content.innerHTML = `
+    <div>
+      <p style="font-family:Cinzel,serif;font-size:.7rem;color:var(--g);letter-spacing:1px;margin-bottom:5px">
+        ${zi} ${luni[luna]} 2026 ${eAzi?'<span style="background:var(--v);color:#fff;padding:1px 7px;border-radius:8px;font-size:.65rem;margin-left:5px">AZI</span>':''}
+      </p>
+      <div style="margin-bottom:10px">
+        ${sfinti.map((s,i)=>`<div style="font-family:Cinzel,serif;font-size:${i===0?'.95':'0.78'}rem;color:var(--v);margin-bottom:${i===0?'4':'2'}px${i===0?';font-weight:600':''}">✝ ${s}</div>`).join('')}
+      </div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px">
+        ${sf.f?'<span class="insigna ins-slujba">✨ Praznic</span>':''}
+        ${sf.p?'<span class="insigna ins-urgent">🙏 Post</span>':''}
+        ${sf.r?`<span class="insigna ins-activitate">${sf.r}</span>`:''}
+        ${sf.c?`<span class="insigna ins-general">🎨 ${sf.c}</span>`:''}
+      </div>
+      ${eAzi&&versetZi?`<div style="font-family:'EB Garamond',serif;font-style:italic;font-size:.88rem;color:var(--tl);border-left:3px solid var(--g);padding-left:9px;margin-top:6px">"${versetZi}"</div>`:''}
+    </div>`;
+
+  modal.style.display='block';
+  modal.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
 function construiesteCalendar2026() {
   const calEl=document.getElementById('calBody');
   if(!calEl||calEl.dataset.built==='1') return;
@@ -2246,10 +2366,16 @@ console.log('JS Part 1 loaded');
 async function incarcaMagazin() {
   if(!produseCach.length) {
     afiseazaSkeleton('gridProduse', 8);
-    produseCach = await fbLista('produse');
+    try {
+      produseCach = await fbLista('produse');
+    } catch(e) {
+      const el=document.getElementById('gridProduse');
+      if(el) el.innerHTML='<div class="gol" style="grid-column:1/-1"><div class="icon-gol">⚠️</div><h3>Nu s-au putut încărca produsele</h3><p>Verificați conexiunea la internet și reîncercați.</p><button class="btn btn-contur btn-mic" onclick="produseCach=[];incarcaMagazin()" style="margin-top:12px">↩ Reîncearcă</button></div>';
+      console.error('Magazin load error:', e, mesajFirebase(e.code));
+      return;
+    }
   }
   filtreazaProduse();
-  // Rating in background
   incarcaRatinguri().then(()=>filtreazaProduse()).catch(()=>{});
 }
 
@@ -2350,13 +2476,19 @@ function redeazaGridProduse(lista) {
   }
   el.innerHTML = lista.map(p => {
     // Suport pentru images array, image string, sau imageBase64
+    // Normalizeaza campuri Firestore (name/nume, price/pret, etc)
+    const pName  = p.name||p.nume||p.titlu||'Produs';
+    const pPrice = parseFloat(p.price||p.pret||0);
+    const pStock = parseInt(p.stock||p.stoc||0);
+    const pDesc  = p.description||p.descriere||p.desc||'';
+    const pCat   = p.category||p.categorie||'';
     const imgSrc = (p.images&&p.images[0]) || p.image || p.imageBase64 || p.imageUrl || '';
     const imgH = imgSrc
       ? `<img src="${imgSrc}" alt="${p.name||''}" style="width:100%;height:100%;object-fit:cover" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
         + '<div class="produs-ph" style="display:none">✝</div>'
       : '<div class="produs-ph">✝</div>';
     const img = imgSrc;
-    const inStoc = p.stock>0;
+    const inStoc = pStock>0;
     const rating = p._rating ? `<span class="rating-badge">${steleHTML(p._rating,true)} ${p._rating.toFixed(1)} (${p._ratingCount||0})</span>` : '';
     const favIco = favorite.includes(p.id) ? '❤️' : '🤍';
     const badge  = getBadge(p);
@@ -2365,12 +2497,12 @@ function redeazaGridProduse(lista) {
       <button class="btn-fav" style="position:absolute;top:8px;right:8px;z-index:2" data-id="${p.id}" onclick="toggleFavorit('${p.id}',event)" title="Favorite">${favIco}</button>
       <div class="produs-img">${imgH}</div>
       <div class="produs-corp">
-        <div class="produs-nume">${p.name}</div>
+        <div class="produs-nume">${pName}</div>
         ${rating}
-        <div class="produs-desc">${p.description||''}</div>
+        <div class="produs-desc">${pDesc}</div>
         <div class="produs-footer">
-          <span class="produs-pret">${p.price} Lei</span>
-          <span class="stoc-badge ${inStoc?'in-stoc':'epuizat'}">${inStoc?p.stock+' buc.':'Epuizat'}</span>
+          <span class="produs-pret">${pPrice.toFixed(2)} Lei</span>
+          <span class="stoc-badge ${inStoc?'in-stoc':'epuizat'}">${inStoc?pStock+' buc.':'Epuizat'}</span>
           <button class="btn-cos" ${!inStoc?'disabled':''} onclick="event.stopPropagation();adaugaRapid('${p.id}')">${inStoc?'🛒 Adaugă':'×'}</button>
         </div>
       </div>
@@ -2391,11 +2523,15 @@ function deschideModalProdus(id) {
   if(!p) return;
   prodModalCur = p; cantModalCur = 1;
 
-  // Titlu
-  document.getElementById('mpTitlu').textContent = p.name||'Produs';
+  // Normalizeaza campuri
+  const mpName  = p.name||p.nume||p.titlu||'Produs';
+  const mpPrice = parseFloat(p.price||p.pret||0);
+  const mpStock = parseInt(p.stock||p.stoc||0);
+  const mpDesc  = p.description||p.descriere||p.desc||'';
+  const mpCat   = p.category||p.categorie||'';
 
-  // Pret
-  document.getElementById('mpPret').textContent  = (p.price||0)+' Lei';
+  document.getElementById('mpTitlu').textContent = mpName;
+  document.getElementById('mpPret').textContent  = mpPrice.toFixed(2)+' Lei';
 
   // Rating
   const mpR = document.getElementById('mpRating');
@@ -2411,24 +2547,24 @@ function deschideModalProdus(id) {
   // Stoc
   const mpS = document.getElementById('mpStoc');
   if(mpS) {
-    if(p.stock>0) {
-      mpS.innerHTML = `<span class="stoc-badge in-stoc">✓ În stoc — ${p.stock} buc. disponibile</span>`;
+    if(mpStock>0) {
+      mpS.innerHTML = `<span class="stoc-badge in-stoc">✓ În stoc — ${mpStock} buc. disponibile</span>`;
     } else {
       mpS.innerHTML = '<span class="stoc-badge epuizat">✗ Epuizat</span>';
     }
   }
 
   // Categorie
-  document.getElementById('mpCateg').textContent = p.category||'';
+  document.getElementById('mpCateg').textContent = mpCat;
 
   // Descriere
-  document.getElementById('mpDescr').textContent = p.description||'';
+  document.getElementById('mpDescr').textContent = mpDesc;
 
   // Cantitate
   const cantEl = document.getElementById('mpCant');
   const btnPlus= document.getElementById('btnPlusCant');
   if(cantEl) cantEl.value = 1;
-  actualizaCantUI(1, p.stock||0);
+  actualizaCantUI(1, mpStock);
 
   // Imagine
   // Suport imagini in toate formatele Firestore
@@ -2611,7 +2747,13 @@ async function afiseazaAnunturi() {
   const el = document.getElementById('listaAnunturi');
   if(!el) return;
   el.innerHTML='<div style="text-align:center;padding:28px;color:var(--tl)"><div style="font-size:2rem;margin-bottom:8px">⏳</div>Se încarcă...</div>';
-  if(!anunturiCach.length) anunturiCach = await fbLista('anunturi');
+  if(!anunturiCach.length) {
+    try { anunturiCach = await fbLista('anunturi'); }
+    catch(e) {
+      el.innerHTML='<div class="gol"><div class="icon-gol">⚠️</div><h3>Nu s-au putut încărca anunțurile</h3><p>Verificați conexiunea și reîncercați. <button class="btn btn-contur btn-mic" onclick="anunturiCach=[];afiseazaAnunturi()">Reîncearcă</button></p></div>';
+      return;
+    }
+  }
   const cautare = (document.getElementById('cautareAnunturi')?.value||'').toLowerCase().trim();
   const sortare = document.getElementById('sortAnn')?.value||'desc';
 
@@ -2626,21 +2768,28 @@ async function afiseazaAnunturi() {
     return;
   }
 
-  // Randeaza toate uniform - urgent badge vizibil pe card
+  // Randeaza toate uniform
+  if(!lista.length) {
+    el.innerHTML='<div class="gol"><div class="icon-gol">📋</div><h3>Niciun anunț</h3><p>Momentan nu există anunțuri disponibile.</p></div>';
+    return;
+  }
   el.innerHTML='<div class="grid-2">'+lista.map(a=>{
-    const isUrg = a.type==='urgent';
-    const ico = {slujba:'⛪',eveniment:'📅',activitate:'🌿',general:'📋',urgent:'🔴'}[a.type]||'📋';
-    const imgSrc = a.image||'';
+    const isUrg = (a.type||'')==='urgent';
+    const ico = {slujba:'⛪',eveniment:'📅',activitate:'🌿',general:'📋',urgent:'🔴'}[a.type||'general']||'📋';
+    const imgSrc = a.image||a.imageUrl||'';
+    const gradBg = isUrg ? '#7B0000,#C0392B' : 'var(--vd),var(--v)';
     const imgH = imgSrc
-      ? `<img src="${imgSrc}" style="width:100%;height:140px;object-fit:cover;border-radius:var(--rad) var(--rad) 0 0;display:block">`
-      : `<div style="height:70px;background:linear-gradient(135deg,${isUrg?'#7B0000,#C0392B':'var(--vd),var(--v))'};border-radius:var(--rad) var(--rad) 0 0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:var(--g)">${ico}</div>`;
+      ? `<img src="${imgSrc}" alt="${a.title||''}" style="width:100%;height:140px;object-fit:cover;border-radius:var(--rad) var(--rad) 0 0;display:block" loading="lazy" onerror="this.style.display='none'">`
+      : `<div style="height:70px;background:linear-gradient(135deg,${gradBg});border-radius:var(--rad) var(--rad) 0 0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:var(--gl)">${ico}</div>`;
+    const titlu = a.title||a.titlu||'Anunț';
+    const continut = a.content||a.continut||a.text||'';
     return `<div class="${isUrg?'urgent-banner':'card-anunt'}" onclick="deschideModalAnunt('${a.id}')">
       ${imgH}
       <div class="${isUrg?'urgent-banner-body':'card-anunt-body'}">
-        <span class="insigna ${clasaInsigna(a.type)}">${textInsigna(a.type)}</span>
-        <h3 class="an-titlu">${a.title}</h3>
-        <p class="anunt-extras">${(a.content||'').substring(0,140)}${(a.content||'').length>140?'...':''}</p>
-        <p class="anunt-data">📅 ${formateazaData(a.createdAt)}</p>
+        <span class="insigna ${clasaInsigna(a.type||'general')}">${textInsigna(a.type||'general')}</span>
+        <h3 class="an-titlu">${titlu}</h3>
+        <p class="anunt-extras">${continut.substring(0,140)}${continut.length>140?'…':''}</p>
+        <p class="anunt-data">📅 ${formateazaData(a.createdAt||a.creatLa)}</p>
       </div>
     </div>`;
   }).join('')+'</div>';
@@ -2649,12 +2798,18 @@ async function afiseazaAnunturi() {
 function deschideModalAnunt(id) {
   const a = anunturiCach.find(x=>x.id===id);
   if(!a) return;
-  document.getElementById('maInsigna').innerHTML=`<span class="insigna ${clasaInsigna(a.type)}">${textInsigna(a.type)}</span>`;
-  document.getElementById('maTitlu').textContent=a.title||'';
-  document.getElementById('maData').textContent='📅 '+formateazaData(a.createdAt);
+  const tip = a.type||a.tip||'general';
+  const titlu = a.title||a.titlu||'Anunț';
+  const continut = a.content||a.continut||a.text||'';
+  const img = a.image||a.imageUrl||a.imagine||'';
+  const ts = a.createdAt||a.creatLa||null;
+  document.getElementById('maInsigna').innerHTML=`<span class="insigna ${clasaInsigna(tip)}">${textInsigna(tip)}</span>`;
+  document.getElementById('maTitlu').textContent=titlu;
+  document.getElementById('maData').textContent='📅 '+formateazaData(ts);
   const imgEl=document.getElementById('maImg');
-  if(a.image) { imgEl.src=a.image; imgEl.style.display='block'; } else { imgEl.style.display='none'; }
-  document.getElementById('maContinut').innerHTML=(a.content||'').replace(/
+  if(img) { imgEl.src=img; imgEl.style.display='block'; imgEl.onerror=()=>{ imgEl.style.display='none'; }; }
+  else { imgEl.style.display='none'; }
+  document.getElementById('maContinut').innerHTML=continut.replace(/
 /g,'<br>');
   deschideModal('modalAnunt');
 }
@@ -2979,17 +3134,15 @@ async function trimiteComanda() {
     // Goleste cosul
     cos=[]; salveazaCos(); actualizeazaBadge();
     document.getElementById('vedComanda').style.display='none';
-    document.getElementById('vedCos').innerHTML=`
-      <div style="text-align:center;padding:50px 20px">
-        <div style="font-size:3.5rem;margin-bottom:16px">✝</div>
-        <h2 style="font-family:Cinzel,serif;color:var(--v);margin-bottom:10px">Comandă plasată cu succes!</h2>
-        <p style="color:var(--tl);margin-bottom:8px">Comanda #${orderId.substring(0,8).toUpperCase()} a fost înregistrată.</p>
-        <p style="color:var(--tl);margin-bottom:24px">Vei primi un email de confirmare la <strong>${email}</strong>.</p>
-        <button class="btn btn-aur" onclick="mergi('acasa')">← Înapoi la Acasă</button>
-      </div>`;
-    document.getElementById('vedCos').style.display='block';
     lanseazaConfetti();
-    afiseazaToast('✝ Comanda a fost plasată cu succes!', 5000);
+    afiseazaToast('✝ Comanda #'+orderId.substring(0,8).toUpperCase()+' plasată cu succes! Vei primi email de confirmare.', 6000);
+    // Revino la homepage dupa 2 secunde
+    setTimeout(()=>{
+      mergi('acasa');
+      // Reset cos view pentru data viitoare
+      document.getElementById('vedCos').style.display='block';
+      document.getElementById('vedComanda').style.display='none';
+    }, 2000);
     voucherAplicat=''; discVoucher=0;
   } catch(e) {
     afiseazaToast('❌ Eroare: '+e.message);
@@ -3300,11 +3453,16 @@ async function inregistreazaClient() {
 }
 
 async function delogheazaClient() {
-  if(clientCurent&&!adminCurent) {
+  try {
     await auth.signOut();
-    clientCurent=null; esteAbonat=false; discountActiv=0;
-  }
+  } catch(e){}
+  clientCurent=null; esteAbonat=false; discountActiv=0;
+  window._profilCache=null;
   inchideModal('modalClient');
+  actualizeazaUIClient(false);
+  afiseazaToast('Ai fost deconectat.');
+  // Goleste cos daca era blocat pe cont
+  redeazaCos();
 }
 
 /* ═══ PROFIL CLIENT ══════════════════════ */
@@ -3467,12 +3625,16 @@ async function faLogin() {
 }
 
 async function faLogout() {
-  adminCurent=null;
+  adminCurent=null; clientCurent=null;
   localStorage.removeItem('adminSes');
-  await auth.signOut();
+  localStorage.removeItem('paginaCurenta');
+  try { await auth.signOut(); } catch(e){}
   const br=document.getElementById('btnRefresh'); if(br) br.style.display='none';
   document.getElementById('adminPanel').style.display='none';
   document.getElementById('adminLogin').style.display='flex';
+  actualizeazaUIClient(false);
+  afiseazaToast('✅ Deconectat cu succes!');
+  mergi('acasa');
 }
 
 function arataPanou() {
@@ -3897,7 +4059,7 @@ async function salveazaAnunt(id) {
   const cont   =document.getElementById('aContinut')?.value.trim()||'';
   const img    =document.getElementById('aImg')?.value.trim()||'';
   if(!titlu){afiseazaToast('Titlul este obligatoriu!');return;}
-  const data={title:titlu,type:tip,content:cont,image:img,createdAt:TS()};
+  const data={title:titlu,type:tip,content:cont,image:img,createdAt:TS(),creatLa:TS()};
   if(id) await fbActualizeaza('anunturi',id,data);
   else await fbAdauga('anunturi',data);
   afiseazaToast('✅ Anunț salvat!');
@@ -4498,11 +4660,15 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   // Preincarca vouchere
   incarcaVouchere().catch(()=>{});
-  // Restaureaza pagina la refresh
-  const paginaSalvata = localStorage.getItem('paginaCurenta')||'acasa';
-  // Paginile valide pentru restore (nu admin, nu cos gol)
+  // La prima vizita sau daca nu e pagina salvata -> homepage
+  const paginaSalvata = localStorage.getItem('paginaCurenta');
   const paginiValide = ['acasa','magazin','anunturi','audio'];
-  mergi(paginiValide.includes(paginaSalvata) ? paginaSalvata : 'acasa');
+  // Mergi pe pagina salvata DOAR daca exista si e valida
+  if(paginaSalvata && paginiValide.includes(paginaSalvata)) {
+    mergi(paginaSalvata);
+  } else {
+    mergi('acasa');
+  }
 });
 
 /* ══════════════════════════════════════════
