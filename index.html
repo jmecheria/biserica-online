@@ -711,7 +711,17 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:44px 20px 24px}
             <input type="checkbox" id="filtruStoc" onchange="filtreazaProduse()" style="accent-color:var(--v)">
             Doar în stoc
           </label>
-          <button class="btn btn-contur-aur btn-mic" onclick="partajeazaFavorite()">🔗 Partajează Favorite</button>
+          <button class="btn btn-contur-aur btn-mic" onclick="partajeazaFavorite()">🔗 Partajează</button>
+          <button class="btn btn-contur btn-mic" onclick="genereazaQRWishlist()">📱 QR Wishlist</button>
+        </div>
+        <!-- Slider pret -->
+        <div style="margin-top:10px">
+          <p class="eticheta-grup">Preț maxim: <span id="valPret">0 – 500 Lei</span></p>
+          <input type="range" id="sliderPret" min="0" max="500" value="500"
+            oninput="aplicaSliderPret(this.value)"
+            style="width:100%;accent-color:var(--v);margin-top:4px">
+        </div>
+        <div style="display:none"><!-- placeholder pentru a inchide div-ul de mai sus-->
         </div>
       </div>
       <div id="gridProduse" class="grid-prod"></div>
@@ -906,6 +916,8 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:44px 20px 24px}
       <button class="nav-admin" id="nav-audio" onclick="loadSec('audio')">🎵 Audio</button>
       <button class="nav-admin" id="nav-notificari" onclick="loadSec('notificari')">📢 Notificări</button>
       <button class="nav-admin" id="nav-email" onclick="loadSec('email')">✉️ Email</button>
+      <button class="nav-admin" id="nav-faq" onclick="loadSec('faq')">❓ FAQ</button>
+      <button class="nav-admin" id="nav-rezervari" onclick="loadSec('rezervari')">⛪ Rezervări</button>
       <div style="flex:1"></div>
       <button class="nav-admin" onclick="faLogout()" style="border-top:1px solid rgba(255,255,255,.1);margin-top:8px;padding-top:12px;color:rgba(255,100,100,.8)">⏻ Deconectare</button>
     </div>
@@ -954,6 +966,7 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:44px 20px 24px}
             <button class="btn btn-primar" onclick="adaugaDinModal()">🛒 Adaugă în Coș</button>
             <button class="btn-fav" id="btnFavModal" onclick="toggleFavModal()" style="font-size:1.3rem;border:2px solid var(--crd);border-radius:7px;padding:6px 12px">🤍</button>
             <button class="btn btn-contur" onclick="inchideModal('modalProdus')">Închide</button>
+          <button id="btnNotifStoc" class="btn btn-contur btn-mic" style="display:none" onclick="notificaRevenireStoc(prodModalCur?.id,prodModalCur?.name)">🔔 Anunță-mă</button>
           </div>
           <!-- Transport produs -->
           <div id="mpTransport" style="font-size:.78rem;color:var(--tl);padding:8px 12px;background:var(--cr);border-radius:6px;border:1px solid var(--crd)"></div>
@@ -1108,6 +1121,8 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:44px 20px 24px}
         <a href="#" onclick="mergi('anunturi');return false">📋 Anunțuri</a>
         <a href="#" onclick="mergi('audio');return false">🎵 Audio</a>
         <a href="#" onclick="mergi('cos');return false">🛒 Coș</a>
+        <a href="#" onclick="arataDonatie();return false">💝 Donații</a>
+        <a href="#" onclick="aratFormularRezervare('botez');return false">⛪ Rezervări</a>
       </div>
     </div>
     <div class="footer-jos">
@@ -1995,12 +2010,29 @@ let _autoRefInt   = null;
 const TS = () => firebase.firestore.FieldValue.serverTimestamp();
 
 async function fbLista(col, conditions=[]) {
-  try {
-    let q = db.collection(col);
-    conditions.forEach(c => { q = q.where(c[0],c[1],c[2]); });
-    const snap = await q.get();
-    return snap.docs.map(d => ({id:d.id,...d.data()}));
-  } catch(e) { console.warn('fbLista',col,e); return []; }
+  let q = db.collection(col);
+  conditions.forEach(c => { q = q.where(c[0],c[1],c[2]); });
+  const snap = await q.get();
+  return snap.docs.map(d => {
+    const data = d.data();
+    // Normalizeaza campuri comune pentru compatibilitate
+    return {
+      id: d.id,
+      ...data,
+      // Asigura campuri standard indiferent de cum sunt stocate
+      name:  data.name  || data.nume   || data.titlu  || '',
+      price: parseFloat(data.price || data.pret || 0),
+      stock: parseInt(data.stock || data.stoc || 0),
+      description: data.description || data.descriere || data.desc || '',
+      category: data.category || data.categorie || '',
+      title:   data.title   || data.titlu   || '',
+      content: data.content || data.continut || data.text || '',
+      image:   data.image   || data.imageUrl || data.imagine || (data.images&&data.images[0]) || '',
+      images:  data.images  || (data.image ? [data.image] : []),
+      type:    data.type    || data.tip      || 'general',
+      createdAt: data.createdAt || data.creatLa || null,
+    };
+  });
 }
 
 async function fbGetUnul(col, id) {
@@ -2176,9 +2208,14 @@ function getVersetLunar() { return getVersetZilnic(); }
 ══════════════════════════════════════════ */
 async function initTicker() {
   if(!anunturiCach.length) {
-    try { anunturiCach = await fbLista('anunturi'); }
-    catch(e) {
-      el.innerHTML='<div class="gol"><div class="icon-gol">⚠️</div><h3>Nu s-au putut încărca anunțurile</h3><p>Verificați conexiunea și reîncercați. <button class="btn btn-contur btn-mic" onclick="anunturiCach=[];afiseazaAnunturi()">Reîncearcă</button></p></div>';
+    try {
+      anunturiCach = await fbLista('anunturi');
+    } catch(e) {
+      console.error('Anunturi error:', e);
+      const errMsg = e.code==='permission-denied'
+        ? '⚠️ Acces refuzat. Verifică regulile Firestore (permite read: if true pentru colecția anunturi).'
+        : '⚠️ Eroare: '+(e.message||e.code||'necunoscută');
+      el.innerHTML='<div class="gol"><div class="icon-gol">🔧</div><h3>Nu s-au putut încărca anunțurile</h3><p style="font-size:.85rem;color:#C0392B">'+errMsg+'</p><button class="btn btn-contur btn-mic" onclick="anunturiCach=[];afiseazaAnunturi()">↩ Reîncearcă</button></div>';
       return;
     }
   }
@@ -2364,14 +2401,22 @@ console.log('JS Part 1 loaded');
    MAGAZIN - PRODUSE
 ══════════════════════════════════════════ */
 async function incarcaMagazin() {
+  const el = document.getElementById('gridProduse');
   if(!produseCach.length) {
     afiseazaSkeleton('gridProduse', 8);
     try {
       produseCach = await fbLista('produse');
+      if(!produseCach.length && el) {
+        el.innerHTML='<div class="gol" style="grid-column:1/-1"><div class="icon-gol">🕯️</div><h3>Nu există produse</h3><p>Adaugă produse din panoul de administrare.</p></div>';
+        return;
+      }
     } catch(e) {
-      const el=document.getElementById('gridProduse');
-      if(el) el.innerHTML='<div class="gol" style="grid-column:1/-1"><div class="icon-gol">⚠️</div><h3>Nu s-au putut încărca produsele</h3><p>Verificați conexiunea la internet și reîncercați.</p><button class="btn btn-contur btn-mic" onclick="produseCach=[];incarcaMagazin()" style="margin-top:12px">↩ Reîncearcă</button></div>';
-      console.error('Magazin load error:', e, mesajFirebase(e.code));
+      console.error('Produse error:', e);
+      const errMsg = e.code==='permission-denied'
+        ? '⚠️ Acces refuzat. Verifică regulile Firestore (permite read: if true pentru colecția produse).'
+        : e.code==='unavailable' ? '⚠️ Serviciu indisponibil. Verifică conexiunea la internet.'
+        : '⚠️ Eroare: '+(e.message||e.code||'necunoscută');
+      if(el) el.innerHTML='<div class="gol" style="grid-column:1/-1"><div class="icon-gol">🔧</div><h3>Nu s-au putut încărca produsele</h3><p style="font-size:.85rem;color:#C0392B">'+errMsg+'</p><button class="btn btn-contur btn-mic" onclick="produseCach=[];incarcaMagazin()" style="margin-top:12px">↩ Reîncearcă</button></div>';
       return;
     }
   }
@@ -2454,9 +2499,14 @@ function filtreazaProduse() {
   const doarStoc= document.getElementById('filtruStoc')?.checked;
 
   if(catCurenta==='favorite') lista = lista.filter(p=>favorite.includes(p.id));
-  else if(catCurenta!=='toate') lista = lista.filter(p=>p.category===catCurenta);
-  if(cautare) lista = lista.filter(p=>(p.name||'').toLowerCase().includes(cautare)||(p.description||'').toLowerCase().includes(cautare));
-  if(doarStoc) lista = lista.filter(p=>p.stock>0);
+  else if(catCurenta!=='toate') lista = lista.filter(p=>(p.category||p.categorie||'')=== catCurenta);
+  if(cautare) lista = lista.filter(p=>
+    (p.name||p.nume||'').toLowerCase().includes(cautare) ||
+    (p.description||p.descriere||'').toLowerCase().includes(cautare)
+  );
+  if(doarStoc) lista = lista.filter(p=>(p.stock||0)>0);
+  const pretMax=parseInt(document.getElementById('sliderPret')?.value||999999);
+  if(pretMax<999999) lista = lista.filter(p=>(p.price||0)<=pretMax);
 
   switch(sortareCur) {
     case 'pretcrescator':    lista.sort((a,b)=>parseFloat(a.price)-parseFloat(b.price)); break;
@@ -2476,13 +2526,12 @@ function redeazaGridProduse(lista) {
   }
   el.innerHTML = lista.map(p => {
     // Suport pentru images array, image string, sau imageBase64
-    // Normalizeaza campuri Firestore (name/nume, price/pret, etc)
-    const pName  = p.name||p.nume||p.titlu||'Produs';
-    const pPrice = parseFloat(p.price||p.pret||0);
-    const pStock = parseInt(p.stock||p.stoc||0);
-    const pDesc  = p.description||p.descriere||p.desc||'';
-    const pCat   = p.category||p.categorie||'';
-    const imgSrc = (p.images&&p.images[0]) || p.image || p.imageBase64 || p.imageUrl || '';
+    // Campuri deja normalizate de fbLista
+    const pName  = p.name  || 'Produs';
+    const pPrice = p.price || 0;
+    const pStock = p.stock || 0;
+    const pDesc  = p.description || '';
+    const imgSrc = (p.images&&p.images[0]) || p.image || '';
     const imgH = imgSrc
       ? `<img src="${imgSrc}" alt="${p.name||''}" style="width:100%;height:100%;object-fit:cover" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
         + '<div class="produs-ph" style="display:none">✝</div>'
@@ -2504,6 +2553,7 @@ function redeazaGridProduse(lista) {
           <span class="produs-pret">${pPrice.toFixed(2)} Lei</span>
           <span class="stoc-badge ${inStoc?'in-stoc':'epuizat'}">${inStoc?pStock+' buc.':'Epuizat'}</span>
           <button class="btn-cos" ${!inStoc?'disabled':''} onclick="event.stopPropagation();adaugaRapid('${p.id}')">${inStoc?'🛒 Adaugă':'×'}</button>
+          <button class="btn-fav" onclick="event.stopPropagation();adaugaComparator('${p.id}')" title="Compară" style="font-size:.9rem;padding:4px 7px;border:1.5px solid var(--crd);border-radius:5px">⚖️</button>
         </div>
       </div>
     </div>`;
@@ -2523,12 +2573,12 @@ function deschideModalProdus(id) {
   if(!p) return;
   prodModalCur = p; cantModalCur = 1;
 
-  // Normalizeaza campuri
-  const mpName  = p.name||p.nume||p.titlu||'Produs';
-  const mpPrice = parseFloat(p.price||p.pret||0);
-  const mpStock = parseInt(p.stock||p.stoc||0);
-  const mpDesc  = p.description||p.descriere||p.desc||'';
-  const mpCat   = p.category||p.categorie||'';
+  // Campuri normalizate de fbLista
+  const mpName  = p.name  || 'Produs';
+  const mpPrice = p.price || 0;
+  const mpStock = p.stock || 0;
+  const mpDesc  = p.description || '';
+  const mpCat   = p.category || '';
 
   document.getElementById('mpTitlu').textContent = mpName;
   document.getElementById('mpPret').textContent  = mpPrice.toFixed(2)+' Lei';
@@ -2547,10 +2597,13 @@ function deschideModalProdus(id) {
   // Stoc
   const mpS = document.getElementById('mpStoc');
   if(mpS) {
+    const notifBtn=document.getElementById('btnNotifStoc');
     if(mpStock>0) {
       mpS.innerHTML = `<span class="stoc-badge in-stoc">✓ În stoc — ${mpStock} buc. disponibile</span>`;
+      if(notifBtn) notifBtn.style.display='none';
     } else {
-      mpS.innerHTML = '<span class="stoc-badge epuizat">✗ Epuizat</span>';
+      mpS.innerHTML = '<span class="stoc-badge epuizat">✗ Epuizat momentan</span>';
+      if(notifBtn) notifBtn.style.display='inline-flex';
     }
   }
 
@@ -2567,12 +2620,8 @@ function deschideModalProdus(id) {
   actualizaCantUI(1, mpStock);
 
   // Imagine
-  // Suport imagini in toate formatele Firestore
-  const imgsList = p.images && p.images.length ? p.images
-    : p.image ? [p.image]
-    : p.imageBase64 ? [p.imageBase64]
-    : p.imageUrl ? [p.imageUrl]
-    : [];
+  // images este deja normalizat de fbLista ca array
+  const imgsList = p.images && p.images.length ? p.images : [];
   const mpImg = document.getElementById('mpImg');
   const galEl = document.getElementById('mpGalerie');
   const galPh = document.getElementById('mpGaleriePh');
@@ -2748,9 +2797,14 @@ async function afiseazaAnunturi() {
   if(!el) return;
   el.innerHTML='<div style="text-align:center;padding:28px;color:var(--tl)"><div style="font-size:2rem;margin-bottom:8px">⏳</div>Se încarcă...</div>';
   if(!anunturiCach.length) {
-    try { anunturiCach = await fbLista('anunturi'); }
-    catch(e) {
-      el.innerHTML='<div class="gol"><div class="icon-gol">⚠️</div><h3>Nu s-au putut încărca anunțurile</h3><p>Verificați conexiunea și reîncercați. <button class="btn btn-contur btn-mic" onclick="anunturiCach=[];afiseazaAnunturi()">Reîncearcă</button></p></div>';
+    try {
+      anunturiCach = await fbLista('anunturi');
+    } catch(e) {
+      console.error('Anunturi error:', e);
+      const errMsg = e.code==='permission-denied'
+        ? '⚠️ Acces refuzat. Verifică regulile Firestore (permite read: if true pentru colecția anunturi).'
+        : '⚠️ Eroare: '+(e.message||e.code||'necunoscută');
+      el.innerHTML='<div class="gol"><div class="icon-gol">🔧</div><h3>Nu s-au putut încărca anunțurile</h3><p style="font-size:.85rem;color:#C0392B">'+errMsg+'</p><button class="btn btn-contur btn-mic" onclick="anunturiCach=[];afiseazaAnunturi()">↩ Reîncearcă</button></div>';
       return;
     }
   }
@@ -2781,8 +2835,8 @@ async function afiseazaAnunturi() {
     const imgH = imgSrc
       ? `<img src="${imgSrc}" alt="${a.title||''}" style="width:100%;height:140px;object-fit:cover;border-radius:var(--rad) var(--rad) 0 0;display:block" loading="lazy" onerror="this.style.display='none'">`
       : `<div style="height:70px;background:linear-gradient(135deg,${gradBg});border-radius:var(--rad) var(--rad) 0 0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:var(--gl)">${ico}</div>`;
-    const titlu = a.title||a.titlu||'Anunț';
-    const continut = a.content||a.continut||a.text||'';
+    const titlu   = a.title   || 'Anunț';
+    const continut= a.content || '';
     return `<div class="${isUrg?'urgent-banner':'card-anunt'}" onclick="deschideModalAnunt('${a.id}')">
       ${imgH}
       <div class="${isUrg?'urgent-banner-body':'card-anunt-body'}">
@@ -2798,11 +2852,11 @@ async function afiseazaAnunturi() {
 function deschideModalAnunt(id) {
   const a = anunturiCach.find(x=>x.id===id);
   if(!a) return;
-  const tip = a.type||a.tip||'general';
-  const titlu = a.title||a.titlu||'Anunț';
-  const continut = a.content||a.continut||a.text||'';
-  const img = a.image||a.imageUrl||a.imagine||'';
-  const ts = a.createdAt||a.creatLa||null;
+  const tip     = a.type     || 'general';
+  const titlu   = a.title    || 'Anunț';
+  const continut= a.content  || '';
+  const img     = a.image    || '';
+  const ts      = a.createdAt|| null;
   document.getElementById('maInsigna').innerHTML=`<span class="insigna ${clasaInsigna(tip)}">${textInsigna(tip)}</span>`;
   document.getElementById('maTitlu').textContent=titlu;
   document.getElementById('maData').textContent='📅 '+formateazaData(ts);
@@ -3668,6 +3722,8 @@ async function loadSec(sec) {
   if(sec==='audio')      await secAudio(el);
   if(sec==='notificari') await secNotificari(el);
   if(sec==='email')      await secEmail(el);
+  if(sec==='faq')        await secFAQ(el);
+  if(sec==='rezervari')  await secRezervari(el);
 }
 
 function statCard(ico,num,lbl) {
@@ -3895,7 +3951,9 @@ console.log('JS Part 5 loaded');
 const CATS_OPTS = ['','Lumânări','Icoane','Cărți','Cruci','Tămâie','Mir','Alte obiecte'];
 
 async function secProduse(el) {
-  produseCach=await fbLista('produse');
+  try { produseCach=await fbLista('produse'); } catch(e) {
+    el.innerHTML='<div class="gol"><div class="icon-gol">⚠️</div><h3>Eroare Firestore</h3><p>'+mesajFirebase(e.code)+'</p></div>'; return;
+  }
   el.innerHTML=`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
       <h2 style="font-family:Cinzel,serif;color:var(--v);font-size:1.3rem">🕯️ Produse (${produseCach.length})</h2>
@@ -3922,12 +3980,13 @@ async function secProduse(el) {
 
 function formularProdus(id) {
   const p=produseCach.find(x=>x.id===id)||{};
+  window._imgsProdus = [...(p.images||[])]; // Seteaza imediat
   const catOpts=CATS_OPTS.map(c=>`<option value="${c}" ${p.category===c?'selected':''}>${c||'– Selectează –'}</option>`).join('');
-  const imgsList=(p.images||[]).map((src,i)=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
-    <img src="${src}" style="width:50px;height:40px;object-fit:cover;border-radius:4px">
-    <input value="${src}" onchange="actualizaImgProdus(${i},this.value)" style="flex:1;padding:4px 8px;border:1px solid var(--crd);border-radius:5px;font-size:.8rem;background:var(--w)">
-    <button onclick="stergeImgProdus(${i})" style="background:#C0392B;color:#fff;border:none;border-radius:4px;padding:2px 6px;cursor:pointer;font-size:.8rem">✕</button>
-  </div>`).join('');
+  const imgsList=(window._imgsProdus||p.images||[]).map((src,i)=>`
+    <div style="position:relative;display:inline-block">
+      <img src="${src}" style="width:72px;height:60px;object-fit:cover;border-radius:7px;border:2px solid var(--crd);display:block" onerror="this.style.display='none'">
+      <button onclick="stergeImgProdus(${i})" style="position:absolute;top:-5px;right:-5px;background:#C0392B;color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>
+    </div>`).join('');
   const el=document.getElementById('formProdus');
   el.style.display='block';
   el.innerHTML=`<div class="formular-admin">
@@ -3942,12 +4001,27 @@ function formularProdus(id) {
     </div>
     <div class="form-grup"><label>Descriere</label><textarea id="pDesc" rows="3">${p.description||''}</textarea></div>
     <div class="form-grup">
-      <label>Imagini (URL-uri)</label>
-      <div id="imgListProdus">${imgsList}</div>
-      <div style="display:flex;gap:7px;margin-top:7px">
-        <input id="newImgUrl" placeholder="https://... (URL imagine)" style="flex:1;padding:7px 10px;border:1.5px solid var(--crd);border-radius:6px;font-size:.85rem;background:var(--w)">
-        <button class="btn btn-contur btn-mic" onclick="adaugaImgProdus()">+ Adaugă</button>
+      <label>Imagini produs</label>
+      <!-- Drag & Drop zona -->
+      <div id="dropZonaProdus" 
+        style="border:2px dashed var(--crd);border-radius:9px;padding:22px;text-align:center;cursor:pointer;transition:.2s;background:var(--cr);margin-bottom:10px"
+        ondragover="event.preventDefault();this.style.borderColor='var(--v)';this.style.background='rgba(107,26,42,.05)'"
+        ondragleave="this.style.borderColor='var(--crd)';this.style.background='var(--cr)'"
+        ondrop="handleDropImagini(event)"
+        onclick="document.getElementById('inputFisierImagini').click()">
+        <div style="font-size:1.8rem;margin-bottom:6px">🖼️</div>
+        <p style="font-size:.84rem;color:var(--tl);margin-bottom:4px">Trage imaginile aici sau <span style="color:var(--v);text-decoration:underline">alege fișiere</span></p>
+        <p style="font-size:.74rem;color:var(--tl)">JPG, PNG, WebP — max 500KB fiecare (stocate ca Base64)</p>
+        <input type="file" id="inputFisierImagini" multiple accept="image/*" style="display:none" onchange="handleFisierImagini(this.files)">
       </div>
+      <!-- Preview imagini curente -->
+      <div id="imgListProdus" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px">${imgsList}</div>
+      <!-- URL manual -->
+      <div style="display:flex;gap:7px;align-items:center">
+        <input id="newImgUrl" placeholder="sau URL extern: https://..." style="flex:1;padding:7px 10px;border:1.5px solid var(--crd);border-radius:6px;font-size:.84rem;background:var(--w);color:var(--td)">
+        <button class="btn btn-contur btn-mic" onclick="adaugaImgUrl()">+ URL</button>
+      </div>
+      <div id="imgUploadProgress" style="display:none;margin-top:8px;font-size:.78rem;color:var(--tl)"></div>
     </div>
     <div class="form-grup">
       <label>Transport Special (Lei) — lasă gol pentru standard</label>
@@ -3967,15 +4041,90 @@ function formularProdus(id) {
   el.scrollIntoView({behavior:'smooth'});
 }
 
-function adaugaImgProdus() {
+function adaugaImgUrl() {
   const url=document.getElementById('newImgUrl')?.value.trim();
-  if(!url){afiseazaToast('Introdu un URL valid!');return;}
+  if(!url||!url.startsWith('http')){afiseazaToast('Introdu un URL valid (https://...)!');return;}
   if(!window._imgsProdus) window._imgsProdus=[];
   window._imgsProdus.push(url);
-  formularProdus(document.querySelector('#formProdus button[onclick^="salveazaProdus"]')?.getAttribute('onclick')?.match(/'([^']*)'/)?.[1]||'');
+  document.getElementById('newImgUrl').value='';
+  redeazaPreviewImagini();
 }
-function actualizaImgProdus(idx,val){if(window._imgsProdus)window._imgsProdus[idx]=val;}
-function stergeImgProdus(idx){if(window._imgsProdus){window._imgsProdus.splice(idx,1);}}
+
+function stergeImgProdus(idx){
+  if(window._imgsProdus){
+    window._imgsProdus.splice(idx,1);
+    redeazaPreviewImagini();
+  }
+}
+
+function redeazaPreviewImagini(){
+  const el=document.getElementById('imgListProdus');
+  if(!el) return;
+  el.innerHTML=(window._imgsProdus||[]).map((src,i)=>`
+    <div style="position:relative;display:inline-block">
+      <img src="${src}" style="width:72px;height:60px;object-fit:cover;border-radius:7px;border:2px solid var(--crd);display:block" onerror="this.style.display='none'">
+      <button onclick="stergeImgProdus(${i})" style="position:absolute;top:-5px;right:-5px;background:#C0392B;color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>`).join('');
+}
+
+async function handleFisierImagini(files) {
+  if(!files||!files.length) return;
+  const progress=document.getElementById('imgUploadProgress');
+  if(progress){progress.style.display='block';progress.textContent='Se procesează imaginile...';}
+  if(!window._imgsProdus) window._imgsProdus=[];
+  let count=0;
+  for(const file of Array.from(files)) {
+    if(!file.type.startsWith('image/')) continue;
+    if(file.size>800*1024) {
+      afiseazaToast('⚠️ '+file.name+' e prea mare (max 800KB). Se comprimă...');
+    }
+    try {
+      const base64 = await citesteFisierBase64(file, 800);
+      window._imgsProdus.push(base64);
+      count++;
+    } catch(e) { console.warn('Image read error:', e); }
+  }
+  if(progress){progress.style.display='none';}
+  redeazaPreviewImagini();
+  if(count) afiseazaToast('✅ '+count+' imagine'+(count>1?'i':'')+' adăugat'+(count>1?'e':'')+'!');
+}
+
+function handleDropImagini(event) {
+  event.preventDefault();
+  const dropZona=document.getElementById('dropZonaProdus');
+  if(dropZona){dropZona.style.borderColor='var(--crd)';dropZona.style.background='var(--cr)';}
+  const files = event.dataTransfer?.files;
+  if(files) handleFisierImagini(files);
+}
+
+function citesteFisierBase64(file, maxKB) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target.result;
+      // Comprima daca e prea mare
+      if(file.size > maxKB*1024) {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let w=img.width, h=img.height;
+          const MAX=1200;
+          if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
+          if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}
+          canvas.width=w; canvas.height=h;
+          canvas.getContext('2d').drawImage(img,0,0,w,h);
+          resolve(canvas.toDataURL('image/jpeg',0.8));
+        };
+        img.onerror=reject;
+        img.src=result;
+      } else {
+        resolve(result);
+      }
+    };
+    reader.onerror=reject;
+    reader.readAsDataURL(file);
+  });
+}
 
 async function salveazaProdus(id) {
   const name   = document.getElementById('pName')?.value.trim()||'';
@@ -4011,7 +4160,9 @@ async function stergeProdus(id) {
 
 /* ═══ ADMIN - ANUNTURI ═══════════════════ */
 async function secAnunturi(el) {
-  anunturiCach=await fbLista('anunturi');
+  try { anunturiCach=await fbLista('anunturi'); } catch(e) {
+    el.innerHTML='<div class="gol"><div class="icon-gol">⚠️</div><h3>Eroare Firestore</h3><p>'+mesajFirebase(e.code)+'</p></div>'; return;
+  }
   el.innerHTML=`
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
       <h2 style="font-family:Cinzel,serif;color:var(--v);font-size:1.3rem">📋 Anunțuri (${anunturiCach.length})</h2>
@@ -4518,6 +4669,307 @@ function mesajFirebase(code){
 // Verifica conexiunea la internet
 window.addEventListener('offline',()=>afiseazaToast('⚠️ Ești offline. Unele funcții nu sunt disponibile.', 5000));
 window.addEventListener('online',()=>afiseazaToast('✅ Conexiune restabilită!', 3000));
+
+/* ══════════════════════════════════════════
+   FEATURE 3: Cod promo la prima comanda
+══════════════════════════════════════════ */
+function verificaPrimaComanda() {
+  if(!clientCurent) return;
+  const key='primaComanda_'+clientCurent.uid;
+  if(!localStorage.getItem(key)) {
+    localStorage.setItem(key,'1');
+    setTimeout(()=>{
+      afiseazaToast('🎁 Prima ta comandă! Folosește codul BINEVENITI pentru 5% reducere!', 6000);
+    }, 2000);
+  }
+}
+
+/* ══════════════════════════════════════════
+   FEATURE 4: Puncte fidelitate
+══════════════════════════════════════════ */
+function calcPuncteFidelitate(total) { return Math.floor(parseFloat(total)||0); }
+async function incarcaPuncteFidelitate() {
+  if(!clientCurent) return 0;
+  try {
+    const doc=await db.collection('clienti').doc(clientCurent.uid).get();
+    return doc.exists ? (doc.data().puncte||0) : 0;
+  } catch { return 0; }
+}
+async function adaugaPuncteFidelitate(orderId, total) {
+  if(!clientCurent) return;
+  const puncte = calcPuncteFidelitate(total);
+  try {
+    await db.collection('clienti').doc(clientCurent.uid).update({
+      puncte: firebase.firestore.FieldValue.increment(puncte)
+    });
+    afiseazaToast('⭐ +'+puncte+' puncte de fidelitate adăugate!', 3000);
+  } catch(e) {}
+}
+
+/* ══════════════════════════════════════════
+   FEATURE 9: Notificare revenire in stoc
+══════════════════════════════════════════ */
+async function notificaRevenireStoc(prodId, prodNume) {
+  if(!clientCurent) { deschideModal('modalClient'); return; }
+  try {
+    await fbAdauga('notifStoc', {
+      produsId:prodId, produsNume:prodNume,
+      email:clientCurent.email, userId:clientCurent.uid, creatLa:TS()
+    });
+    afiseazaToast('🔔 Vei fi notificat când "'+prodNume+'" revine în stoc!', 4000);
+  } catch(e) { afiseazaToast('❌ Eroare: '+e.message); }
+}
+
+/* ══════════════════════════════════════════
+   FEATURE 10: Wishlist QR code
+══════════════════════════════════════════ */
+function genereazaQRWishlist() {
+  if(!favorite.length) { afiseazaToast('Nu ai produse favorite!'); return; }
+  const url = window.location.href.split('?')[0]+'?wishlist='+encodeURIComponent(favorite.join(','));
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(url);
+  const modal = document.createElement('div');
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center';
+  modal.innerHTML='<div style="background:var(--w);border-radius:14px;padding:28px;text-align:center;max-width:280px"><h3 style="font-family:Cinzel,serif;color:var(--v);margin-bottom:14px">QR Wishlist</h3><img src="'+qrUrl+'" style="width:200px;height:200px;border-radius:8px"><p style="font-size:.78rem;color:var(--tl);margin-top:10px">Scanează pentru a deschide lista de favorite</p><button onclick="this.closest('div').parentElement.remove()" class="btn btn-contur btn-mic" style="margin-top:12px">Închide</button></div>';
+  document.body.appendChild(modal);
+  modal.addEventListener('click',e=>{ if(e.target===modal) modal.remove(); });
+}
+
+/* ══════════════════════════════════════════
+   FEATURE 11: Comparator produse
+══════════════════════════════════════════ */
+let comparator = [];
+function adaugaComparator(prodId) {
+  const p = produseCach.find(x=>x.id===prodId);
+  if(!p) return;
+  if(comparator.find(x=>x.id===prodId)) { afiseazaToast('Produsul e deja în comparator!'); return; }
+  if(comparator.length>=2) { afiseazaToast('Poți compara maxim 2 produse. Scoate unul mai întâi.'); return; }
+  comparator.push(p);
+  actualizeazaBaraComparator();
+  afiseazaToast('✅ '+p.name+' adăugat în comparator!');
+}
+function actualizeazaBaraComparator() {
+  let bara=document.getElementById('baraComparator');
+  if(!bara) {
+    bara=document.createElement('div');
+    bara.id='baraComparator';
+    bara.style.cssText='position:fixed;bottom:0;left:0;right:0;background:var(--v);color:#fff;padding:10px 20px;z-index:1400;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;box-shadow:0 -4px 20px rgba(0,0,0,.3)';
+    document.body.appendChild(bara);
+  }
+  if(!comparator.length) { bara.remove(); return; }
+  bara.innerHTML='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
+    +comparator.map((p,i)=>'<span style="background:rgba(255,255,255,.2);padding:4px 10px;border-radius:6px;font-size:.84rem">'+p.name+'<button onclick="comparator.splice('+i+',1);actualizeazaBaraComparator()" style="background:none;border:none;color:rgba(255,255,255,.7);cursor:pointer;margin-left:6px">✕</button></span>').join('')
+    +'</div><div style="display:flex;gap:8px">'
+    +(comparator.length===2?'<button class="btn btn-aur btn-mic" onclick="aratComparator()">Compară</button>':'<span style="font-size:.78rem;opacity:.8">Alege '+( 2-comparator.length)+' produs'+( 2-comparator.length>1?'e':'')+' pentru comparare</span>')
+    +'<button class="btn btn-contur-aur btn-mic" onclick="comparator=[];actualizeazaBaraComparator()">Șterge</button></div>';
+}
+function aratComparator() {
+  if(comparator.length<2) return;
+  const [a,b]=comparator;
+  const rand=(lbl,va,vb)=>'<tr><td style="padding:8px 12px;font-family:Cinzel,serif;font-size:.78rem;color:var(--v);border-bottom:1px solid var(--crd)">'+lbl+'</td><td style="padding:8px 12px;border-bottom:1px solid var(--crd)">'+va+'</td><td style="padding:8px 12px;border-bottom:1px solid var(--crd)">'+vb+'</td></tr>';
+  const modal=document.createElement('div');
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:14px';
+  modal.innerHTML='<div style="background:var(--w);border-radius:14px;max-width:600px;width:100%;overflow:auto;max-height:90vh"><div style="background:var(--v);padding:18px 22px;border-radius:14px 14px 0 0;display:flex;justify-content:space-between;align-items:center"><h3 style="font-family:Cinzel,serif;color:#fff;font-size:1rem">Comparator Produse</h3><button onclick="this.closest('div').parentElement.parentElement.remove()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:1.3rem;cursor:pointer">✕</button></div><div style="padding:18px"><table style="width:100%;border-collapse:collapse"><thead><tr><th style="padding:8px 12px;text-align:left;font-size:.75rem;color:var(--tl)">Criteriu</th><th style="padding:8px 12px;text-align:left;font-family:Cinzel,serif;color:var(--v)">'+(a.images&&a.images[0]?'<img src="'+a.images[0]+'" style="width:60px;height:50px;object-fit:cover;border-radius:5px;display:block;margin-bottom:5px">':'')+''+a.name+'</th><th style="padding:8px 12px;text-align:left;font-family:Cinzel,serif;color:var(--v)">'+(b.images&&b.images[0]?'<img src="'+b.images[0]+'" style="width:60px;height:50px;object-fit:cover;border-radius:5px;display:block;margin-bottom:5px">':'')+''+b.name+'</th></tr></thead><tbody>'
+    +rand('Preț',a.price.toFixed(2)+' Lei',b.price.toFixed(2)+' Lei')
+    +rand('Stoc',a.stock>0?a.stock+' buc.':'Epuizat',b.stock>0?b.stock+' buc.':'Epuizat')
+    +rand('Categorie',a.category||'–',b.category||'–')
+    +rand('Rating',a._rating?(a._rating+'/5 ⭐'):'Fără recenzii',b._rating?(b._rating+'/5 ⭐'):'Fără recenzii')
+    +rand('Transport',a.faraLivrare?'Ridicare personală':(a.transportCustom?a.transportCustom+' Lei':'Standard 25 Lei'),b.faraLivrare?'Ridicare personală':(b.transportCustom?b.transportCustom+' Lei':'Standard 25 Lei'))
+    +'</tbody></table></div></div>';
+  document.body.appendChild(modal);
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+}
+
+/* ══════════════════════════════════════════
+   FEATURE 14: Badge cel mai vandut
+══════════════════════════════════════════ */
+let topVandute = [];
+async function incarcaTopVandute() {
+  try {
+    const coms=await fbLista('comenzi');
+    const cnt={};
+    coms.filter(o=>o.status!=='anulata').forEach(o=>{
+      (o.items||[]).forEach(i=>{ cnt[i.id]=(cnt[i.id]||0)+(i.cantitate||1); });
+    });
+    topVandute=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,5).map(e=>e[0]);
+  } catch{}
+}
+
+/* ══════════════════════════════════════════
+   FEATURE 21: Tracking comanda real-time
+══════════════════════════════════════════ */
+function urmaresteLiveComanda(orderId) {
+  const unsubscribe = db.collection('comenzi').doc(orderId).onSnapshot(snap=>{
+    if(!snap.exists) return;
+    const o=snap.data();
+    const stariCol={'noua':'#E67E22','procesata':'#2980B9','livrata':'#27AE60','anulata':'#C0392B'};
+    afiseazaToast('📦 Comanda #'+orderId.substring(0,6).toUpperCase()+' → '+( o.status||'noua').toUpperCase(), 4000);
+  });
+  // Opreste tracking dupa 2 ore
+  setTimeout(unsubscribe, 2*3600*1000);
+  return unsubscribe;
+}
+
+/* ══════════════════════════════════════════
+   FEATURE 22: Estimare data livrare
+══════════════════════════════════════════ */
+function calculeazaDataLivrare(tipTransport) {
+  const azi=new Date();
+  const zileExtra={standard:5,express:2,ridicare:0}[tipTransport]||5;
+  let zile=0, data=new Date(azi);
+  while(zile<zileExtra) {
+    data.setDate(data.getDate()+1);
+    const zi=data.getDay();
+    if(zi!==0&&zi!==6) zile++; // Skip weekend
+  }
+  const luni=['Ian','Feb','Mar','Apr','Mai','Iun','Iul','Aug','Sep','Oct','Nov','Dec'];
+  return data.getDate()+' '+luni[data.getMonth()];
+}
+
+/* ══════════════════════════════════════════
+   FEATURE 28: Slider pret in filtre
+══════════════════════════════════════════ */
+function initSliderPret() {
+  const max=Math.max(...produseCach.map(p=>p.price||0),200);
+  const sliderEl=document.getElementById('sliderPret');
+  const valEl=document.getElementById('valPret');
+  if(sliderEl) { sliderEl.max=Math.ceil(max); sliderEl.value=Math.ceil(max); }
+  if(valEl) valEl.textContent='0 – '+Math.ceil(max)+' Lei';
+}
+function aplicaSliderPret(val) {
+  const el=document.getElementById('valPret');
+  if(el) el.textContent='0 – '+val+' Lei';
+  filtreazaProduse();
+}
+
+/* ══════════════════════════════════════════
+   FEATURE 30: Template raspunsuri recenzii
+══════════════════════════════════════════ */
+const TEMPLATE_RASPUNSURI = [
+  'Vă mulțumim pentru recenzia dumneavoastră! Suntem bucuroși că produsul v-a plăcut. Vă așteptăm cu drag!',
+  'Îți mulțumim pentru feedback! Opinia ta ne ajută să ne îmbunătățim. ✝ Dumnezeu să te binecuvânteze!',
+  'Mulțumim pentru că ați ales Parohia Stornești! Sperăm să vă mai bucurați de produsele noastre.',
+  'Apreciem recenzia dumneavoastră! Ne pare rău pentru eventualele inconveniențe. Contactați-ne la parohia@gmail.com.',
+];
+
+/* ══════════════════════════════════════════
+   FEATURE 31: FAQ
+══════════════════════════════════════════ */
+async function incarcaFAQ() {
+  try {
+    const faqs = await fbLista('faq');
+    return faqs.length ? faqs : [
+      {intrebare:'Cum pot plasa o comandă?',raspuns:'Adaugă produse în coș, creează un cont sau loghează-te, apoi completează datele de livrare.'},
+      {intrebare:'Care sunt metodele de plată?',raspuns:'Acceptăm plata ramburs la livrare sau transfer bancar înainte de expediere.'},
+      {intrebare:'Cât durează livrarea?',raspuns:'Curier standard: 3-5 zile lucrătoare. Express: 1-2 zile. Ridicare personală: conform programului parohiei.'},
+      {intrebare:'Pot returna un produs?',raspuns:'Da, în 14 zile de la primire, produsul trebuie să fie nefolosit. Contactați-ne la parohia@gmail.com.'},
+      {intrebare:'Produsele sunt binecuvântate?',raspuns:'Produsele noastre sunt achiziționate de la furnizori autorizați. Binecuvântarea se face de către preot la cerere.'},
+    ];
+  } catch { return []; }
+}
+
+/* ══════════════════════════════════════════
+   FEATURE 33: Grafice admin (simple, fara Chart.js)
+══════════════════════════════════════════ */
+function genereazaGraficVanzari(comenzi) {
+  const luni=['Ian','Feb','Mar','Apr','Mai','Iun','Iul','Aug','Sep','Oct','Nov','Dec'];
+  const data={};
+  comenzi.filter(o=>o.status!=='anulata').forEach(o=>{
+    const d=o.creatLa?.toDate?o.creatLa.toDate():(o.creatLa?.seconds?new Date(o.creatLa.seconds*1000):null);
+    if(!d) return;
+    const key=luni[d.getMonth()];
+    data[key]=(data[key]||0)+parseFloat(o.total||0);
+  });
+  const maxVal=Math.max(...Object.values(data),1);
+  return '<div style="display:flex;align-items:flex-end;gap:8px;height:120px;padding:10px;background:var(--cr);border-radius:8px">'
+    +Object.entries(data).map(([luna,val])=>`
+      <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+        <div style="font-size:.6rem;color:var(--tl);margin-bottom:3px">${Math.round(val)}</div>
+        <div style="background:var(--v);width:100%;border-radius:3px 3px 0 0" style="height:${Math.round(val/maxVal*90)}px" title="${luna}: ${val.toFixed(0)} Lei">&nbsp;</div>
+        <div style="font-size:.6rem;color:var(--tl);margin-top:3px">${luna}</div>
+      </div>`).join('')
+    +'</div>';
+}
+
+/* ══════════════════════════════════════════
+   FEATURE 36: Notificare push la comanda noua (admin)
+══════════════════════════════════════════ */
+let _unsubComandaNou = null;
+function pornListenerComenziNoi() {
+  if(_unsubComandaNou) return;
+  _unsubComandaNou = db.collection('comenzi')
+    .where('status','==','noua')
+    .onSnapshot(snap=>{
+      snap.docChanges().forEach(change=>{
+        if(change.type==='added') {
+          const o=change.doc.data();
+          if(Notification.permission==='granted') {
+            new Notification('✝ Comandă nouă!', {
+              body:'#'+change.doc.id.substring(0,8).toUpperCase()+' — '+o.name+' — '+o.total+' Lei',
+              icon:'',
+            });
+          }
+          afiseazaToast('🔔 Comandă nouă de la '+o.name+'!', 5000);
+        }
+      });
+    });
+}
+
+/* ══════════════════════════════════════════
+   FEATURE 44: Donatie cu IBAN
+══════════════════════════════════════════ */
+function arataDonatie() {
+  const modal=document.createElement('div');
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:14px';
+  const qrIban='https://api.qrserver.com/v1/create-qr-code/?size=180x180&data='+encodeURIComponent('BIC:RNCBROBU IBAN:RO49AAAA1B31007593840000 Parohia Stornesti');
+  modal.innerHTML='<div style="background:var(--w);border-radius:14px;max-width:380px;width:100%;overflow:hidden"><div style="background:var(--v);padding:18px 22px;display:flex;justify-content:space-between;align-items:center"><h3 style="font-family:Cinzel,serif;color:#fff;font-size:1rem">💝 Donație Parohie</h3><button onclick="this.closest('div').parentElement.parentElement.remove()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:1.3rem;cursor:pointer">✕</button></div><div style="padding:20px;text-align:center"><p style="font-family:Cinzel,serif;color:var(--v);font-size:.78rem;margin-bottom:14px;letter-spacing:.5px">CONT BANCAR</p><div style="background:var(--cr);border-radius:8px;padding:12px;margin-bottom:14px"><p style="font-family:monospace;font-size:.85rem;color:var(--td);margin-bottom:4px">IBAN: RO49AAAA1B31007593840000</p><p style="font-size:.78rem;color:var(--tl)">Titular: Parohia Stornești – Sf. Treime</p><p style="font-size:.78rem;color:var(--tl)">BIC: RNCBROBU (Raiffeisen)</p></div><img src="'+qrIban+'" style="width:160px;height:160px;border-radius:8px"><p style="font-size:.74rem;color:var(--tl);margin-top:8px">Scanează QR pentru detalii bancare</p><button onclick="copiazaText('RO49AAAA1B31007593840000','IBAN copiat!')" class="btn btn-contur btn-mic" style="margin-top:10px">📋 Copiază IBAN</button></div></div>';
+  document.body.appendChild(modal);
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+}
+
+/* ══════════════════════════════════════════
+   FEATURE 46: Rezervare slujba
+══════════════════════════════════════════ */
+function aratFormularRezervare(tip) {
+  const tipuri={botez:'Botez',cununie:'Cununie',parastas:'Parastas',sfintire:'Sfințire locas'};
+  const modal=document.createElement('div');
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:14px';
+  modal.innerHTML='<div style="background:var(--w);border-radius:14px;max-width:420px;width:100%;overflow:hidden"><div style="background:var(--v);padding:18px 22px;display:flex;justify-content:space-between;align-items:center"><h3 style="font-family:Cinzel,serif;color:#fff;font-size:1rem">⛪ Rezervare '+(tipuri[tip]||tip)+'</h3><button onclick="this.closest('div').parentElement.parentElement.remove()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:1.3rem;cursor:pointer">✕</button></div><div style="padding:20px"><div class="form-grup"><label>Nume complet *</label><input id="rezNume" style="width:100%;padding:8px 10px;border:1.5px solid var(--crd);border-radius:6px;background:var(--w)"></div><div class="form-grup"><label>Telefon *</label><input id="rezTel" type="tel" style="width:100%;padding:8px 10px;border:1.5px solid var(--crd);border-radius:6px;background:var(--w)"></div><div class="form-grup"><label>Data dorită</label><input id="rezData" type="date" style="width:100%;padding:8px 10px;border:1.5px solid var(--crd);border-radius:6px;background:var(--w)"></div><div class="form-grup"><label>Observații</label><textarea id="rezObs" rows="2" style="width:100%;padding:8px 10px;border:1.5px solid var(--crd);border-radius:6px;background:var(--w)"></textarea></div><div style="display:flex;gap:9px"><button class="btn btn-primar" onclick="trimitRezervare(''+tip+'',''+( tipuri[tip]||tip)+'')">Trimite cerere</button><button class="btn btn-contur" onclick="this.closest('div').parentElement.parentElement.remove()">Anulează</button></div></div></div>';
+  document.body.appendChild(modal);
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+}
+
+async function trimitRezervare(tip, tipNume) {
+  const nume=document.getElementById('rezNume')?.value.trim();
+  const tel=document.getElementById('rezTel')?.value.trim();
+  const data=document.getElementById('rezData')?.value;
+  const obs=document.getElementById('rezObs')?.value.trim();
+  if(!nume||!tel){afiseazaToast('❌ Completează numele și telefonul!');return;}
+  try {
+    await fbAdauga('rezervari',{tip,tipNume,nume,tel,data:data||'',observatii:obs||'',status:'noua',creatLa:TS()});
+    document.querySelectorAll('[id$="ModalRez"]').forEach(m=>m.remove());
+    document.body.querySelector('[style*="z-index:9999"]')?.remove();
+    afiseazaToast('✅ Cerere de rezervare trimisă! Vă vom contacta la '+tel, 5000);
+  } catch(e){afiseazaToast('❌ Eroare: '+e.message);}
+}
+
+/* ══════════════════════════════════════════
+   FEATURE 50: Progres comanda live (onSnapshot)
+══════════════════════════════════════════ */
+function urmaresteComenziLive() {
+  if(!clientCurent||!EJS.adminEmail) return;
+  // Asculta comenzile clientului curent
+  return db.collection('comenzi')
+    .where('email','==',clientCurent.email)
+    .onSnapshot(snap=>{
+      snap.docChanges().forEach(change=>{
+        if(change.type==='modified') {
+          const o=change.doc.data();
+          const stari={procesata:'📦 Comanda ta este procesată!',livrata:'🚚 Comanda ta a fost livrată!',anulata:'❌ Comanda ta a fost anulată.'};
+          if(stari[o.status]) afiseazaToast(stari[o.status]+' #'+change.doc.id.substring(0,6).toUpperCase(), 5000);
+        }
+      });
+    });
+}
 
 /* ══════════════════════════════════════════
    DARK MODE
