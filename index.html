@@ -721,8 +721,6 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:44px 20px 24px}
             oninput="aplicaSliderPret(this.value)"
             style="width:100%;accent-color:var(--v);margin-top:4px">
         </div>
-        <div style="display:none"><!-- placeholder pentru a inchide div-ul de mai sus-->
-        </div>
       </div>
       <div id="gridProduse" class="grid-prod"></div>
     </div>
@@ -2081,8 +2079,7 @@ function mergi(pag) {
   if(pg) { pg.classList.add('activa'); window.scrollTo({top:0,behavior:'smooth'}); }
   document.getElementById('navLinks').classList.remove('deschis');
   window.scrollTo({top:0,behavior:'auto'});
-  // Salveaza pagina curenta pentru restore la refresh (nu salva admin)
-  if(pag!=='admin') localStorage.setItem('paginaCurenta', pag);
+  // Nu salvam pagina - mereu incepe din acasa
   if(pag==='acasa')    incarcaAcasa();
   if(pag==='magazin')  incarcaMagazin();
   if(pag==='anunturi') afiseazaAnunturi();
@@ -2211,11 +2208,14 @@ async function initTicker() {
     try {
       anunturiCach = await fbLista('anunturi');
     } catch(e) {
-      console.error('Anunturi error:', e);
-      const errMsg = e.code==='permission-denied'
-        ? '⚠️ Acces refuzat. Verifică regulile Firestore (permite read: if true pentru colecția anunturi).'
-        : '⚠️ Eroare: '+(e.message||e.code||'necunoscută');
-      el.innerHTML='<div class="gol"><div class="icon-gol">🔧</div><h3>Nu s-au putut încărca anunțurile</h3><p style="font-size:.85rem;color:#C0392B">'+errMsg+'</p><button class="btn btn-contur btn-mic" onclick="anunturiCach=[];afiseazaAnunturi()">↩ Reîncearcă</button></div>';
+      console.error('Anunturi error:', e.code, e.message);
+      const isPermission = e.code==='permission-denied'||e.message?.includes('permissions');
+      el.innerHTML=`
+        <div style="background:#FFF3CD;border:2px solid #F39C12;border-radius:10px;padding:18px;margin:10px 0">
+          <h3 style="font-family:Cinzel,serif;color:#E67E22;margin-bottom:8px">${isPermission?'🔒 Acces blocat Firestore':'⚠️ Eroare la încărcare'}</h3>
+          <p style="font-size:.85rem;color:#7D4F00;margin-bottom:10px">${isPermission?'Anunțurile nu pot fi citite. Setează regulile Firestore pentru acces public la colecția anunturi.':e.message||e.code}</p>
+          <button class="btn btn-contur btn-mic" onclick="anunturiCach=[];afiseazaAnunturi()">↩ Reîncearcă</button>
+        </div>`;
       return;
     }
   }
@@ -2411,12 +2411,28 @@ async function incarcaMagazin() {
         return;
       }
     } catch(e) {
-      console.error('Produse error:', e);
-      const errMsg = e.code==='permission-denied'
-        ? '⚠️ Acces refuzat. Verifică regulile Firestore (permite read: if true pentru colecția produse).'
-        : e.code==='unavailable' ? '⚠️ Serviciu indisponibil. Verifică conexiunea la internet.'
-        : '⚠️ Eroare: '+(e.message||e.code||'necunoscută');
-      if(el) el.innerHTML='<div class="gol" style="grid-column:1/-1"><div class="icon-gol">🔧</div><h3>Nu s-au putut încărca produsele</h3><p style="font-size:.85rem;color:#C0392B">'+errMsg+'</p><button class="btn btn-contur btn-mic" onclick="produseCach=[];incarcaMagazin()" style="margin-top:12px">↩ Reîncearcă</button></div>';
+      console.error('Produse error:', e.code, e.message, e);
+      let errMsg, errTip;
+      if(e.code==='permission-denied'||e.message?.includes('permissions')) {
+        errTip='🔒 Regulile Firestore blochează accesul';
+        errMsg='Produsele nu pot fi citite fără autentificare. Trebuie să setezi regulile Firestore să permită citirea publică.';
+      } else if(e.code==='unavailable'||e.code==='failed-precondition') {
+        errTip='📡 Problemă de conexiune';
+        errMsg='Verifică conexiunea la internet și reîncarcă pagina.';
+      } else {
+        errTip='⚠️ Eroare Firestore: '+(e.code||'necunoscut');
+        errMsg=e.message||'Eroare necunoscută. Verifică consola browserului (F12).';
+      }
+      if(el) el.innerHTML=`
+        <div style="grid-column:1/-1;background:#FFF3CD;border:2px solid #F39C12;border-radius:10px;padding:20px;margin:10px 0">
+          <h3 style="font-family:Cinzel,serif;color:#E67E22;margin-bottom:8px">${errTip}</h3>
+          <p style="font-size:.88rem;color:#7D4F00;margin-bottom:10px">${errMsg}</p>
+          <details style="font-size:.78rem;color:#999;margin-bottom:12px">
+            <summary style="cursor:pointer;color:#E67E22">Detalii tehnice</summary>
+            <code style="display:block;background:#fff;padding:8px;border-radius:5px;margin-top:5px">${e.code||''}: ${e.message||''}</code>
+          </details>
+          <button class="btn btn-contur btn-mic" onclick="produseCach=[];incarcaMagazin()">↩ Reîncearcă</button>
+        </div>`;
       return;
     }
   }
@@ -2800,11 +2816,14 @@ async function afiseazaAnunturi() {
     try {
       anunturiCach = await fbLista('anunturi');
     } catch(e) {
-      console.error('Anunturi error:', e);
-      const errMsg = e.code==='permission-denied'
-        ? '⚠️ Acces refuzat. Verifică regulile Firestore (permite read: if true pentru colecția anunturi).'
-        : '⚠️ Eroare: '+(e.message||e.code||'necunoscută');
-      el.innerHTML='<div class="gol"><div class="icon-gol">🔧</div><h3>Nu s-au putut încărca anunțurile</h3><p style="font-size:.85rem;color:#C0392B">'+errMsg+'</p><button class="btn btn-contur btn-mic" onclick="anunturiCach=[];afiseazaAnunturi()">↩ Reîncearcă</button></div>';
+      console.error('Anunturi error:', e.code, e.message);
+      const isPermission = e.code==='permission-denied'||e.message?.includes('permissions');
+      el.innerHTML=`
+        <div style="background:#FFF3CD;border:2px solid #F39C12;border-radius:10px;padding:18px;margin:10px 0">
+          <h3 style="font-family:Cinzel,serif;color:#E67E22;margin-bottom:8px">${isPermission?'🔒 Acces blocat Firestore':'⚠️ Eroare la încărcare'}</h3>
+          <p style="font-size:.85rem;color:#7D4F00;margin-bottom:10px">${isPermission?'Anunțurile nu pot fi citite. Setează regulile Firestore pentru acces public la colecția anunturi.':e.message||e.code}</p>
+          <button class="btn btn-contur btn-mic" onclick="anunturiCach=[];afiseazaAnunturi()">↩ Reîncearcă</button>
+        </div>`;
       return;
     }
   }
@@ -5116,11 +5135,10 @@ document.addEventListener('DOMContentLoaded',()=>{
   const paginaSalvata = localStorage.getItem('paginaCurenta');
   const paginiValide = ['acasa','magazin','anunturi','audio'];
   // Mergi pe pagina salvata DOAR daca exista si e valida
-  if(paginaSalvata && paginiValide.includes(paginaSalvata)) {
-    mergi(paginaSalvata);
-  } else {
-    mergi('acasa');
-  }
+  // MEREU pagina acasa la incarcare
+  mergi('acasa');
+  // Salveaza pagina pentru refresh dar porneste din acasa
+  localStorage.removeItem('paginaCurenta');
 });
 
 /* ══════════════════════════════════════════
