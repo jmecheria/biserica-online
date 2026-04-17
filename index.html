@@ -574,6 +574,7 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:44px 20px 24px}
 </head>
 <body>
 
+
 <!-- ═══ TIMER BAR ═══════════════════════════════════════ -->
 <div id="timerBar">
   <span class="t-titlu">⛪ PAȘII ORTODOX 2026</span>
@@ -716,8 +717,8 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:44px 20px 24px}
         </div>
         <!-- Slider pret -->
         <div style="margin-top:10px">
-          <p class="eticheta-grup">Preț maxim: <span id="valPret">0 – 500 Lei</span></p>
-          <input type="range" id="sliderPret" min="0" max="500" value="500"
+          <p class="eticheta-grup">Preț maxim: <span id="valPret">Toate prețurile</span></p>
+          <input type="range" id="sliderPret" min="0" max="9999" value="9999"
             oninput="aplicaSliderPret(this.value)"
             style="width:100%;accent-color:var(--v);margin-top:4px">
         </div>
@@ -1986,6 +1987,8 @@ let cos           = JSON.parse(localStorage.getItem('bCos')||'[]');
 let favorite      = JSON.parse(localStorage.getItem('bFav')||'[]');
 let produseCach   = [];
 let anunturiCach  = [];
+let prodIncarcatOk = false;
+let annIncarcatOk  = false;
 let comenziCach   = [];
 let vouchereCach  = [];
 let prodModalCur  = null;
@@ -2012,29 +2015,36 @@ let _autoRefInt   = null;
 const TS = () => firebase.firestore.FieldValue.serverTimestamp();
 
 async function fbLista(col, conditions=[]) {
-  let q = db.collection(col);
-  conditions.forEach(c => { q = q.where(c[0],c[1],c[2]); });
-  const snap = await q.get();
-  return snap.docs.map(d => {
-    const data = d.data();
-    // Normalizeaza campuri comune pentru compatibilitate
-    return {
-      id: d.id,
-      ...data,
-      // Asigura campuri standard indiferent de cum sunt stocate
-      name:  data.name  || data.nume   || data.titlu  || '',
-      price: parseFloat(data.price || data.pret || 0),
-      stock: parseInt(data.stock || data.stoc || 0),
-      description: data.description || data.descriere || data.desc || '',
-      category: data.category || data.categorie || '',
-      title:   data.title   || data.titlu   || '',
-      content: data.content || data.continut || data.text || '',
-      image:   data.image   || data.imageUrl || data.imagine || (data.images&&data.images[0]) || '',
-      images:  data.images  || (data.image ? [data.image] : []),
-      type:    data.type    || data.tip      || 'general',
-      createdAt: data.createdAt || data.creatLa || null,
-    };
-  });
+  try {
+    let q = db.collection(col);
+    conditions.forEach(c => { q = q.where(c[0],c[1],c[2]); });
+    const snap = await q.get();
+    const rezultat = snap.docs.map(d => normalizeaza({id:d.id,...d.data()}));
+    if(rezultat.length) console.log('✓ fbLista', col, rezultat.length);
+    return rezultat;
+  } catch(e) {
+    console.error('fbLista EROARE:', col, e.code, e.message);
+
+    return [];
+  }
+}
+
+// Normalizeaza campurile unui document Firestore
+function normalizeaza(d) {
+  return {
+    ...d,
+    name:        d.name        || d.nume      || d.titlu   || '',
+    price:       parseFloat(d.price       || d.pret     || 0),
+    stock:       parseInt(d.stock         || d.stoc     || 0),
+    description: d.description || d.descriere || d.desc   || '',
+    category:    d.category    || d.categorie || '',
+    title:       d.title       || d.titlu     || d.name   || '',
+    content:     d.content     || d.continut  || d.text   || '',
+    image:       d.image       || d.imageUrl  || d.imagine|| (d.images&&d.images[0])||'',
+    images:      d.images      || (d.image?[d.image]:[]),
+    type:        d.type        || d.tip       || 'general',
+    createdAt:   d.createdAt   || d.creatLa   || null,
+  };
 }
 
 async function fbGetUnul(col, id) {
@@ -2226,18 +2236,19 @@ function getVersetLunar() { return getVersetZilnic(); }
    TICKER ANUNTURI URGENTE
 ══════════════════════════════════════════ */
 async function initTicker() {
-  if(!anunturiCach.length) {
+  if(!anunturiCach.length || !annIncarcatOk) {
     try {
       anunturiCach = await fbLista('anunturi');
+      annIncarcatOk = true;
     } catch(e) {
       console.error('Anunturi error:', e.code, e.message);
       const isPermission = e.code==='permission-denied'||e.message?.includes('permissions');
-      el.innerHTML=`
-        <div style="background:#FFF3CD;border:2px solid #F39C12;border-radius:10px;padding:18px;margin:10px 0">
-          <h3 style="font-family:Cinzel,serif;color:#E67E22;margin-bottom:8px">${isPermission?'🔒 Acces blocat Firestore':'⚠️ Eroare la încărcare'}</h3>
-          <p style="font-size:.85rem;color:#7D4F00;margin-bottom:10px">${isPermission?'Anunțurile nu pot fi citite. Setează regulile Firestore pentru acces public la colecția anunturi.':e.message||e.code}</p>
-          <button class="btn btn-contur btn-mic" onclick="anunturiCach=[];afiseazaAnunturi()">↩ Reîncearcă</button>
-        </div>`;
+      el.innerHTML='<div style="background:#FFF3CD;border:2px solid #F39C12;border-radius:10px;padding:18px;margin:10px 0">'
+        +'<h3 style="font-family:Cinzel,serif;color:#E67E22;margin-bottom:8px">'+(isPermission?'Acces blocat Firestore':'Eroare la incarcarea anunturilor')+'</h3>'
+        +'<p style="font-size:.85rem;color:#7D4F00;margin-bottom:10px">'+(isPermission?'Seteaza regulile Firestore: allow read: if true pentru anunturi.':( e.message||e.code||'Eroare necunoscuta'))+'</p>'
+        +'<p style="font-size:.75rem;color:#999;margin-bottom:8px">Cod: '+(e.code||'N/A')+'</p>'
+        +'<button class="btn btn-contur btn-mic" onclick="anunturiCach=[];annIncarcatOk=false;afiseazaAnunturi()">Reincearca</button>'
+        +'</div>';
       return;
     }
   }
@@ -2429,43 +2440,45 @@ console.log('JS Part 1 loaded');
 ══════════════════════════════════════════ */
 async function incarcaMagazin() {
   const el = document.getElementById('gridProduse');
-  if(!produseCach.length) {
+  if(!el) return;
+  
+  // Daca nu avem date sau ultimul load a esuat, incarca din Firestore
+  if(!produseCach.length || !prodIncarcatOk) {
     afiseazaSkeleton('gridProduse', 8);
     try {
-      produseCach = await fbLista('produse');
-      if(!produseCach.length && el) {
-        el.innerHTML='<div class="gol" style="grid-column:1/-1"><div class="icon-gol">🕯️</div><h3>Nu există produse</h3><p>Adaugă produse din panoul de administrare.</p></div>';
+      const din = await fbLista('produse');
+      if(din.length) {
+        produseCach = din;
+        prodIncarcatOk = true;
+      } else if(!produseCach.length) {
+        // Firestore a returnat gol - arata mesaj cu retry
+        el.innerHTML = '<div class="gol" style="grid-column:1/-1">'
+          + '<div class="icon-gol">🕯️</div>'
+          + '<h3>Produsele nu s-au putut încărca</h3>'
+          + '<p>Verifică că există produse adăugate și că regulile Firestore permit citirea publică.</p>'
+          + '<button class="btn btn-contur btn-mic" onclick="produseCach=[];prodIncarcatOk=false;incarcaMagazin()" style="margin-top:10px">↩ Reîncearcă</button>'
+          + '</div>';
         return;
       }
     } catch(e) {
-      console.error('Produse error:', e.code, e.message, e);
-      let errMsg, errTip;
-      if(e.code==='permission-denied'||e.message?.includes('permissions')) {
-        errTip='🔒 Regulile Firestore blochează accesul';
-        errMsg='Produsele nu pot fi citite fără autentificare. Trebuie să setezi regulile Firestore să permită citirea publică.';
-      } else if(e.code==='unavailable'||e.code==='failed-precondition') {
-        errTip='📡 Problemă de conexiune';
-        errMsg='Verifică conexiunea la internet și reîncarcă pagina.';
-      } else {
-        errTip='⚠️ Eroare Firestore: '+(e.code||'necunoscut');
-        errMsg=e.message||'Eroare necunoscută. Verifică consola browserului (F12).';
+      console.error('Produse error:', e.code, e.message);
+      if(!produseCach.length) {
+        el.innerHTML = '<div class="gol" style="grid-column:1/-1">'
+          + '<div class="icon-gol">⚠️</div>'
+          + '<h3>Eroare la încărcare: ' + (e.code||'necunoscut') + '</h3>'
+          + '<p>' + (e.message||'Verifică conexiunea și regulile Firestore.') + '</p>'
+          + '<button class="btn btn-contur btn-mic" onclick="produseCach=[];prodIncarcatOk=false;incarcaMagazin()" style="margin-top:10px">↩ Reîncearcă</button>'
+          + '</div>';
+        return;
       }
-      if(el) el.innerHTML=`
-        <div style="grid-column:1/-1;background:#FFF3CD;border:2px solid #F39C12;border-radius:10px;padding:20px;margin:10px 0">
-          <h3 style="font-family:Cinzel,serif;color:#E67E22;margin-bottom:8px">${errTip}</h3>
-          <p style="font-size:.88rem;color:#7D4F00;margin-bottom:10px">${errMsg}</p>
-          <details style="font-size:.78rem;color:#999;margin-bottom:12px">
-            <summary style="cursor:pointer;color:#E67E22">Detalii tehnice</summary>
-            <code style="display:block;background:#fff;padding:8px;border-radius:5px;margin-top:5px">${e.code||''}: ${e.message||''}</code>
-          </details>
-          <button class="btn btn-contur btn-mic" onclick="produseCach=[];incarcaMagazin()">↩ Reîncearcă</button>
-        </div>`;
-      return;
     }
   }
+  
+  initSliderPret();
   filtreazaProduse();
   incarcaRatinguri().then(()=>filtreazaProduse()).catch(()=>{});
 }
+
 
 async function incarcaRatinguri() {
   const recenzii = await fbLista('recenzii', [['aprobata','==',true]]);
@@ -2497,7 +2510,8 @@ function steleHTML(r, mic) {
 
 function getBadge(p) {
   const saptMs = 7*24*3600*1000;
-  const crMs   = (p.creatLa?.seconds||0)*1000;
+  const ts = p.createdAt || p.creatLa;
+  const crMs = (ts?.seconds||0)*1000;
   const eNou   = crMs && (Date.now()-crMs)<saptMs;
   if(p.stock>0 && p.stock<=5) return '<span class="badge-stoc-mic">⚠️ Stoc mic</span>';
   if(eNou) return '<span class="badge-nou">✨ Nou</span>';
@@ -2537,6 +2551,7 @@ function setSortare(val, el) {
 }
 
 function filtreazaProduse() {
+  if(!produseCach.length) return; // Nu face nimic daca nu sunt produse incarcate
   let lista = [...produseCach];
   const cautare = (document.getElementById('cautareProduse')?.value||'').toLowerCase().trim();
   const doarStoc= document.getElementById('filtruStoc')?.checked;
@@ -2548,13 +2563,16 @@ function filtreazaProduse() {
     (p.description||p.descriere||'').toLowerCase().includes(cautare)
   );
   if(doarStoc) lista = lista.filter(p=>(p.stock||0)>0);
-  const pretMax=parseInt(document.getElementById('sliderPret')?.value||999999);
-  if(pretMax<999999) lista = lista.filter(p=>(p.price||0)<=pretMax);
+  // Slider pret - aplica DOAR daca a fost modificat manual (nu la default)
+  const sliderEl = document.getElementById('sliderPret');
+  const sliderMax = sliderEl ? parseInt(sliderEl.max||99999) : 99999;
+  const pretMax = sliderEl ? parseInt(sliderEl.value||sliderMax) : sliderMax;
+  if(pretMax < sliderMax) lista = lista.filter(p=>(p.price||0)<=pretMax);
 
   switch(sortareCur) {
     case 'pretcrescator':    lista.sort((a,b)=>parseFloat(a.price)-parseFloat(b.price)); break;
     case 'pretdescrescator': lista.sort((a,b)=>parseFloat(b.price)-parseFloat(a.price)); break;
-    case 'nou':              lista.sort((a,b)=>(b.creatLa?.seconds||0)-(a.creatLa?.seconds||0)); break;
+    case 'nou':              lista.sort((a,b)=>((b.createdAt||b.creatLa)?.seconds||0)-((a.createdAt||a.creatLa)?.seconds||0)); break;
     case 'rating':           lista.sort((a,b)=>(b._rating||0)-(a._rating||0)); break;
   }
   redeazaGridProduse(lista);
@@ -2567,39 +2585,36 @@ function redeazaGridProduse(lista) {
     el.innerHTML='<div class="gol" style="grid-column:1/-1"><div class="icon-gol">🕯️</div><h3>Niciun produs găsit</h3><p>Încearcă să modifici filtrele sau șterge termenul de căutare.</p><button class="btn btn-contur btn-mic" onclick="setCategorie('toate',document.querySelector('#chipsCategorie .chip'));document.getElementById('cautareProduse').value=''">↩ Resetează filtrele</button></div>';
     return;
   }
-  el.innerHTML = lista.map(p => {
-    // Suport pentru images array, image string, sau imageBase64
-    // Campuri deja normalizate de fbLista
-    const pName  = p.name  || 'Produs';
-    const pPrice = p.price || 0;
-    const pStock = p.stock || 0;
-    const pDesc  = p.description || '';
-    const imgSrc = (p.images&&p.images[0]) || p.image || '';
-    const imgH = imgSrc
-      ? `<img src="${imgSrc}" alt="${p.name||''}" style="width:100%;height:100%;object-fit:cover" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-        + '<div class="produs-ph" style="display:none">✝</div>'
-      : '<div class="produs-ph">✝</div>';
-    const img = imgSrc;
-    const inStoc = pStock>0;
-    const rating = p._rating ? `<span class="rating-badge">${steleHTML(p._rating,true)} ${p._rating.toFixed(1)} (${p._ratingCount||0})</span>` : '';
-    const favIco = favorite.includes(p.id) ? '❤️' : '🤍';
-    const badge  = getBadge(p);
-    return `<div class="card-produs" data-pid="${p.id}" onclick="deschideModalProdus('${p.id}')">
-      ${badge}
-      <button class="btn-fav" style="position:absolute;top:8px;right:8px;z-index:2" data-id="${p.id}" onclick="toggleFavorit('${p.id}',event)" title="Favorite">${favIco}</button>
-      <div class="produs-img">${imgH}</div>
-      <div class="produs-corp">
-        <div class="produs-nume">${pName}</div>
-        ${rating}
-        <div class="produs-desc">${pDesc}</div>
-        <div class="produs-footer">
-          <span class="produs-pret">${pPrice.toFixed(2)} Lei</span>
-          <span class="stoc-badge ${inStoc?'in-stoc':'epuizat'}">${inStoc?pStock+' buc.':'Epuizat'}</span>
-          <button class="btn-cos" ${!inStoc?'disabled':''} onclick="event.stopPropagation();adaugaRapid('${p.id}')">${inStoc?'🛒 Adaugă':'×'}</button>
-          <button class="btn-fav" onclick="event.stopPropagation();adaugaComparator('${p.id}')" title="Compară" style="font-size:.9rem;padding:4px 7px;border:1.5px solid var(--crd);border-radius:5px">⚖️</button>
-        </div>
-      </div>
-    </div>`;
+  el.innerHTML = lista.map(function(p) {
+    var pName  = p.name  || 'Produs';
+    var pPrice = p.price || 0;
+    var pStock = p.stock || 0;
+    var pDesc  = p.description || '';
+    var imgSrc = (p.images&&p.images[0]) || p.image || '';
+    var imgH = imgSrc
+      ? '<img src="'+imgSrc+'" alt="'+pName+'" style="width:100%;height:100%;object-fit:cover" loading="lazy" onerror="this.style.display='none'">'
+        + '<div class="produs-ph" style="display:none">&#10011;</div>'
+      : '<div class="produs-ph">&#10011;</div>';
+    var inStoc = pStock > 0;
+    var rating = p._rating
+      ? '<span class="rating-badge">'+steleHTML(p._rating,true)+' '+p._rating.toFixed(1)+' ('+( p._ratingCount||0)+')</span>'
+      : '';
+    var favIco = favorite.includes(p.id) ? '&#10084;&#65039;' : '&#129293;';
+    var badge  = getBadge(p);
+    return '<div class="card-produs" data-pid="'+p.id+'" onclick="deschideModalProdus(''+p.id+'')">'
+      + badge
+      + '<button class="btn-fav" style="position:absolute;top:8px;right:8px;z-index:2" data-id="'+p.id+'" onclick="toggleFavorit(''+p.id+'',event)" title="Favorite">'+favIco+'</button>'
+      + '<div class="produs-img">'+imgH+'</div>'
+      + '<div class="produs-corp">'
+      + '<div class="produs-nume">'+pName+'</div>'
+      + rating
+      + '<div class="produs-desc">'+pDesc+'</div>'
+      + '<div class="produs-footer">'
+      + '<span class="produs-pret">'+pPrice.toFixed(2)+' Lei</span>'
+      + '<span class="stoc-badge '+(inStoc?'in-stoc':'epuizat')+'">'+(inStoc?pStock+' buc.':'Epuizat')+'</span>'
+      + '<button class="btn-cos" '+(inStoc?'':'disabled')+' onclick="event.stopPropagation();adaugaRapid(''+p.id+'')">'+(inStoc?'&#128722; Adaug&#259;':'&times;')+'</button>'
+      + '<button class="btn-fav" onclick="event.stopPropagation();adaugaComparator(''+p.id+'')" title="Compar&#259;" style="font-size:.9rem;padding:4px 7px;border:1.5px solid var(--crd);border-radius:5px">&#9878;&#65039;</button>'
+      + '</div></div></div>';
   }).join('');
 }
 
@@ -2838,19 +2853,89 @@ function textInsigna(tip) {
 async function afiseazaAnunturi() {
   const el = document.getElementById('listaAnunturi');
   if(!el) return;
+  
+  el.innerHTML = '<div style="text-align:center;padding:28px;color:var(--tl)"><div style="font-size:2rem;margin-bottom:8px">⏳</div>Se încarcă...</div>';
+  
+  if(!anunturiCach.length || !annIncarcatOk) {
+    try {
+      const din = await fbLista('anunturi');
+      if(din.length) {
+        anunturiCach = din;
+        annIncarcatOk = true;
+      } else if(!anunturiCach.length) {
+        el.innerHTML = '<div class="gol"><div class="icon-gol">📋</div><h3>Niciun anunț</h3>'
+          + '<p>Nu există anunțuri disponibile momentan.</p>'
+          + '<button class="btn btn-contur btn-mic" onclick="anunturiCach=[];annIncarcatOk=false;afiseazaAnunturi()" style="margin-top:10px">↩ Reîncearcă</button>'
+          + '</div>';
+        return;
+      }
+    } catch(e) {
+      console.error('Anunturi error:', e.code, e.message);
+      if(!anunturiCach.length) {
+        el.innerHTML = '<div class="gol"><div class="icon-gol">⚠️</div>'
+          + '<h3>Eroare la încărcare: ' + (e.code||'necunoscut') + '</h3>'
+          + '<p>' + (e.message||'Verifică conexiunea și regulile Firestore.') + '</p>'
+          + '<button class="btn btn-contur btn-mic" onclick="anunturiCach=[];annIncarcatOk=false;afiseazaAnunturi()" style="margin-top:10px">↩ Reîncearcă</button>'
+          + '</div>';
+        return;
+      }
+    }
+  }
+  
+  const cautare = (document.getElementById('cautareAnunturi')?.value||'').toLowerCase().trim();
+  const sortare = document.getElementById('sortAnn')?.value||'desc';
+  let lista = [...anunturiCach];
+  if(cautare) lista = lista.filter(a=>(a.title||'').toLowerCase().includes(cautare)||(a.content||'').toLowerCase().includes(cautare));
+  lista.sort((a,b)=> sortare==='asc' ? (a.createdAt?.seconds||0)-(b.createdAt?.seconds||0) : (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+  
+  if(!lista.length) {
+    el.innerHTML = '<div class="gol"><div class="icon-gol">📋</div><h3>Niciun anunț</h3><p>Nu există anunțuri disponibile momentan.</p></div>';
+    return;
+  }
+  
+  el.innerHTML = '<div class="grid-2">' + lista.map(a => {
+    const isUrg = (a.type||'') === 'urgent';
+    const ico = {slujba:'⛪',eveniment:'📅',activitate:'🌿',general:'📋',urgent:'🔴'}[a.type||'general']||'📋';
+    const imgSrc = a.image || '';
+    const imgH = imgSrc
+      ? '<img src="'+imgSrc+'" alt="'+( a.title||'')+'" style="width:100%;height:140px;object-fit:cover;border-radius:var(--rad) var(--rad) 0 0;display:block" loading="lazy" onerror="this.style.display='none'">'
+      : '<div style="height:70px;background:linear-gradient(135deg,'+(isUrg?'#7B0000,#C0392B':'var(--vd),var(--v)')+ ');border-radius:var(--rad) var(--rad) 0 0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:var(--gl)">'+ico+'</div>';
+    return '<div class="'+(isUrg?'urgent-banner':'card-anunt')+'" onclick="deschideModalAnunt(''+a.id+'')">'
+      + imgH
+      + '<div class="'+(isUrg?'urgent-banner-body':'card-anunt-body')+'">'
+      + '<span class="insigna '+clasaInsigna(a.type||'general')+'">'+textInsigna(a.type||'general')+'</span>'
+      + '<h3 class="an-titlu">'+(a.title||'Anunț')+'</h3>'
+      + '<p class="anunt-extras">'+(a.content||'').substring(0,140)+((a.content||'').length>140?'…':'')+'</p>'
+      + '<p class="anunt-data">📅 '+formateazaData(a.createdAt)+'</p>'
+      + '</div></div>';
+  }).join('') + '</div>';
+}
+
+
+function clasaInsigna(tip) {
+  return {slujba:'ins-slujba',eveniment:'ins-eveniment',activitate:'ins-activitate',general:'ins-general',urgent:'ins-urgent'}[tip]||'ins-general';
+}
+function textInsigna(tip) {
+  return {slujba:'⛪ Slujbă',eveniment:'📅 Eveniment',activitate:'🌿 Activitate',general:'📋 General',urgent:'🔴 Urgent'}[tip]||'📋';
+}
+
+async function afiseazaAnunturi() {
+  const el = document.getElementById('listaAnunturi');
+  if(!el) return;
   el.innerHTML='<div style="text-align:center;padding:28px;color:var(--tl)"><div style="font-size:2rem;margin-bottom:8px">⏳</div>Se încarcă...</div>';
   if(!anunturiCach.length) {
     try {
       anunturiCach = await fbLista('anunturi');
+      annIncarcatOk = true;
     } catch(e) {
       console.error('Anunturi error:', e.code, e.message);
       const isPermission = e.code==='permission-denied'||e.message?.includes('permissions');
-      el.innerHTML=`
-        <div style="background:#FFF3CD;border:2px solid #F39C12;border-radius:10px;padding:18px;margin:10px 0">
-          <h3 style="font-family:Cinzel,serif;color:#E67E22;margin-bottom:8px">${isPermission?'🔒 Acces blocat Firestore':'⚠️ Eroare la încărcare'}</h3>
-          <p style="font-size:.85rem;color:#7D4F00;margin-bottom:10px">${isPermission?'Anunțurile nu pot fi citite. Setează regulile Firestore pentru acces public la colecția anunturi.':e.message||e.code}</p>
-          <button class="btn btn-contur btn-mic" onclick="anunturiCach=[];afiseazaAnunturi()">↩ Reîncearcă</button>
-        </div>`;
+      el.innerHTML='<div style="background:#FFF3CD;border:2px solid #F39C12;border-radius:10px;padding:18px;margin:10px 0">'
+        +'<h3 style="font-family:Cinzel,serif;color:#E67E22;margin-bottom:8px">'+(isPermission?'Acces blocat Firestore':'Eroare la incarcarea anunturilor')+'</h3>'
+        +'<p style="font-size:.85rem;color:#7D4F00;margin-bottom:10px">'+(isPermission?'Seteaza regulile Firestore: allow read: if true pentru anunturi.':( e.message||e.code||'Eroare necunoscuta'))+'</p>'
+        +'<p style="font-size:.75rem;color:#999;margin-bottom:8px">Cod: '+(e.code||'N/A')+'</p>'
+        +'<button class="btn btn-contur btn-mic" onclick="anunturiCach=[];annIncarcatOk=false;afiseazaAnunturi()">Reincearca</button>'
+        +'</div>';
       return;
     }
   }
@@ -4882,8 +4967,10 @@ function initSliderPret() {
   if(valEl) valEl.textContent='0 – '+Math.ceil(max)+' Lei';
 }
 function aplicaSliderPret(val) {
-  const el=document.getElementById('valPret');
-  if(el) el.textContent='0 – '+val+' Lei';
+  const sliderEl = document.getElementById('sliderPret');
+  const maxVal = sliderEl ? parseInt(sliderEl.max) : 9999;
+  const el = document.getElementById('valPret');
+  if(el) el.textContent = parseInt(val) >= maxVal ? 'Toate prețurile' : '0 – '+val+' Lei';
   filtreazaProduse();
 }
 
