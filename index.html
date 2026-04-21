@@ -1056,6 +1056,39 @@ footer {
 /* ============================================================
    RESPONSIVE
    ============================================================ */
+
+/* GDPR Modal */
+.gdpr-modal-box{max-width:500px;}
+/* Drag Drop */
+.drop-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:30px;text-align:center;cursor:pointer;transition:var(--transition);background:var(--cream);position:relative;}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--visniu);background:rgba(107,26,46,0.04);}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.drop-zone .dz-icon{font-size:36px;margin-bottom:10px;display:block;}
+.drop-zone p{font-size:13px;color:var(--text-light);}
+.img-preview-wrap{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+.img-preview-item{position:relative;}
+.img-preview-item img{width:80px;height:80px;object-fit:cover;border-radius:var(--radius-sm);border:2px solid var(--border);}
+.img-preview-item .remove-img{position:absolute;top:-6px;right:-6px;width:18px;height:18px;background:#E74C3C;color:white;border:none;border-radius:50%;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;}
+.upload-progress{background:var(--cream-dark);border-radius:10px;height:6px;margin-top:8px;overflow:hidden;display:none;}
+.upload-progress-bar{height:100%;background:linear-gradient(90deg,var(--visniu),var(--gold));border-radius:10px;transition:width 0.3s;}
+/* Calendar */
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:20px;}
+.cal-day{padding:8px 4px;text-align:center;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;border:1px solid var(--border);background:var(--cream);transition:var(--transition);}
+.cal-day:hover{background:var(--visniu);color:white;}
+.cal-day.has-saint{background:rgba(201,168,76,0.2);border-color:var(--gold);}
+.cal-day.today{border-color:var(--visniu);font-weight:700;}
+.cal-day.selected{background:var(--visniu);color:white;}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.cal-nav{background:none;border:1px solid var(--border);padding:6px 12px;border-radius:var(--radius-sm);cursor:pointer;font-size:16px;transition:var(--transition);}
+.cal-nav:hover{background:var(--visniu);color:white;}
+/* Invoice */
+.btn-invoice{background:linear-gradient(135deg,#27AE60,#1e8449);color:white;border:none;padding:6px 12px;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;transition:var(--transition);}
+.btn-invoice:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(39,174,96,0.4);}
+/* Saint toggle */
+.saint-desc-full{display:none;margin-top:16px;font-size:14px;color:var(--cream-dark);line-height:1.7;border-top:1px solid rgba(201,168,76,0.3);padding-top:16px;text-align:left;}
+.saint-card.expanded .saint-desc-full{display:block;}
+.saint-toggle-hint{font-size:12px;color:var(--gold-light);margin-top:12px;opacity:0.7;}
+
 @media (max-width: 768px) {
   .nav-links { display: none; }
   .admin-sidebar { width: 60px; }
@@ -1095,10 +1128,25 @@ footer {
 </head>
 <body>
 
-<!-- GDPR Bar -->
-<div class="gdpr-bar" id="gdprBar" style="display:none;">
-  <p>🍪 Acest site folosește cookie-uri pentru funcționarea corectă. Prin continuarea navigării, acceptați <a href="#" onclick="showPage('gdpr');return false;">Politica de confidențialitate</a> și <a href="#" onclick="showPage('terms');return false;">Termenii și condițiile</a>.</p>
-  <button class="btn-gdpr" onclick="acceptGDPR()">Accept</button>
+<!-- GDPR Modal -->
+<div class="modal-overlay" id="gdprModal">
+  <div class="modal gdpr-modal-box" style="max-width:500px;">
+    <div class="modal-body">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="font-size:50px;">🍪</div>
+        <h2 style="color:var(--visniu);margin-bottom:8px;">Politica de Cookies &amp; GDPR</h2>
+        <p style="color:var(--text-light);font-size:14px;line-height:1.6;">Acest site folosește cookie-uri necesare funcționării (autentificare, coș). Nu folosim cookie-uri de tracking sau publicitate. Datele dvs. sunt prelucrate conform <strong>GDPR (UE 2016/679)</strong>.</p>
+      </div>
+      <div style="background:var(--cream);border-radius:var(--radius-sm);padding:16px;margin-bottom:20px;font-size:13px;color:var(--text-mid);line-height:1.7;">
+        ✅ Cookie-uri tehnice (obligatorii)<br>✅ Autentificare și sesiune<br>✅ Coș de cumpărături<br>❌ Fără publicitate sau tracking
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn-primary" style="flex:1;" onclick="acceptGDPR()">✅ Accept</button>
+        <button class="btn-outline" style="flex:1;" onclick="showPage('gdpr');closeModal('gdprModal');">Citesc politica</button>
+      </div>
+      <p style="font-size:11px;color:var(--text-light);margin-top:12px;text-align:center;">Prin continuarea navigării acceptați cookie-urile tehnice necesare.</p>
+    </div>
+  </div>
 </div>
 
 <!-- Navbar -->
@@ -1117,7 +1165,6 @@ footer {
       <button class="nav-link" onclick="showPage('shop')">Magazin</button>
       <button class="nav-link" onclick="showPage('audio')">Audio</button>
       <button class="nav-link" onclick="showPage('faq')">FAQ</button>
-       <button class="nav-link" onclick="showPage('admin')">Admin</button>
     </div>
     <div class="nav-actions">
       <button class="btn-cart" onclick="showPage('cart')">
@@ -1208,10 +1255,13 @@ footer {
   <div class="section">
     <h2 class="section-title">Sfântul Zilei</h2>
     <p class="section-sub">Zi de sărbătoare în calendarul ortodox</p>
-    <div class="saint-card" id="saintCard">
+    <p class="section-sub" style="margin-top:-30px;">Apasă cardul pentru detalii complete</p>
+    <div class="saint-card" id="saintCard" onclick="this.classList.toggle('expanded');this.querySelector('.saint-toggle-hint').textContent=this.classList.contains('expanded')?'👆 Apasă pentru a închide':'👆 Apasă pentru detalii'">
       <div class="saint-date" id="saintDate">Se încarcă...</div>
       <h3 id="saintName">Sfântul Zilei</h3>
-      <p id="saintDesc">Informațiile despre sfinții zilei se încarcă...</p>
+      <p id="saintDescShort" style="font-size:16px;color:var(--cream-dark);"></p>
+      <div class="saint-desc-full" id="saintDescFull"></div>
+      <p class="saint-toggle-hint">👆 Apasă pentru detalii</p>
     </div>
   </div>
 
@@ -1435,23 +1485,33 @@ footer {
   <div class="client-area">
     <div class="client-tabs">
       <button class="client-tab-btn active" onclick="switchClientTab('orders',this)">📦 Comenzile mele</button>
-      <button class="client-tab-btn" onclick="switchClientTab('profile',this)">👤 Profil</button>
-      <button class="client-tab-btn" onclick="switchClientTab('reservations',this)">📅 Rezervări</button>
+      <button class="client-tab-btn" onclick="switchClientTab('reservations',this)">📅 Rezervările mele</button>
+      <button class="client-tab-btn" onclick="switchClientTab('profile',this)">👤 Profilul meu</button>
     </div>
 
     <div class="client-tab active" id="client-tab-orders">
       <div id="clientOrdersList"></div>
     </div>
 
+    <div class="client-tab" id="client-tab-reservations">
+      <div id="clientReservationsList"></div>
+    </div>
+
     <div class="client-tab" id="client-tab-profile">
       <div class="admin-card">
         <h3 style="margin-bottom:20px;color:var(--visniu);">Datele mele</h3>
         <div class="form-grid">
-          <div class="form-group"><label>Nume</label><input type="text" id="profileName"></div>
-          <div class="form-group"><label>Email</label><input type="email" id="profileEmail" disabled></div>
+          <div class="form-group"><label>Nume complet</label><input type="text" id="profileName"></div>
+          <div class="form-group"><label>Email (nu se poate schimba)</label><input type="email" id="profileEmail" disabled style="opacity:0.6;"></div>
           <div class="form-group"><label>Telefon</label><input type="tel" id="profilePhone"></div>
+          <div class="form-group form-full"><label>Adresă (se completează automat la comandă)</label><input type="text" id="profileAddress" placeholder="Str. Exemplu, nr. 1"></div>
+          <div class="form-group"><label>Localitate</label><input type="text" id="profileCity" placeholder="Stornești"></div>
+          <div class="form-group"><label>Județ</label><input type="text" id="profileCounty" placeholder="Iași"></div>
         </div>
-        <button class="btn-primary" style="margin-top:16px;" onclick="saveProfile()">Salvează</button>
+        <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
+          <button class="btn-primary" onclick="saveProfile()">💾 Salvează datele</button>
+          <button class="btn-outline" onclick="logoutUser()">🚪 Deconectare</button>
+        </div>
       </div>
       <div class="subscribe-banner" id="subscribeBanner">
         <div>
@@ -1548,7 +1608,7 @@ footer {
         <button class="admin-nav-item" onclick="switchAdminTab('email',this)"><span class="nav-icon">📧</span><span>Email</span></button>
         <button class="admin-nav-item" onclick="switchAdminTab('faq',this)"><span class="nav-icon">❓</span><span>FAQ</span></button>
         <button class="admin-nav-item" onclick="switchAdminTab('schedule',this)"><span class="nav-icon">📅</span><span>Program</span></button>
-        <button class="admin-nav-item" onclick="switchAdminTab('saint',this)"><span class="nav-icon">😇</span><span>Sf. Zilei</span></button>
+        <button class="admin-nav-item" onclick="switchAdminTab('saint',this)"><span class="nav-icon">📅</span><span>Calendar Sfinți</span></button>
         <button class="admin-nav-item" style="margin-top:auto;" onclick="adminLogout()"><span class="nav-icon">🚪</span><span>Ieșire</span></button>
       </div>
 
@@ -1589,7 +1649,20 @@ footer {
                 <div class="form-group"><label>Badge (ex: NOU, POPULAR)</label><input type="text" id="pBadge"></div>
                 <div class="form-group form-full"><label>Descriere scurtă</label><input type="text" id="pDescShort"></div>
                 <div class="form-group form-full"><label>Descriere completă</label><textarea id="pDesc" rows="4"></textarea></div>
-                <div class="form-group form-full"><label>URL-uri imagini (câte unul pe linie)</label><textarea id="pImages" rows="4" placeholder="https://exemplu.ro/img1.jpg&#10;https://exemplu.ro/img2.jpg"></textarea></div>
+                <div class="form-group form-full">
+                  <label>Imagini produs (drag &amp; drop sau click pentru upload)</label>
+                  <div class="drop-zone" id="pDropZone"
+                    ondragover="event.preventDefault();this.classList.add('dragover')"
+                    ondragleave="this.classList.remove('dragover')"
+                    ondrop="dzDrop(event,'pImgPreview','p')">
+                    <input type="file" accept="image/*" multiple onchange="dzFiles(this,'pImgPreview','p')">
+                    <span class="dz-icon">🖼️</span>
+                    <p>Trage imaginile aici sau <span class="hint">apasă pentru a selecta</span></p>
+                    <p style="font-size:11px;margin-top:4px;">JPG, PNG, WebP · max 5MB/imagine</p>
+                  </div>
+                  <div class="upload-progress" id="pUploadProgress"><div class="upload-progress-bar" id="pUploadBar" style="width:0%"></div></div>
+                  <div class="img-preview-wrap" id="pImgPreview"></div>
+                </div>
                 <div class="form-group form-full"><label>Transport</label>
                   <select id="pTransport">
                     <option value="">Selectează opțiunea de transport</option>
@@ -1631,7 +1704,19 @@ footer {
                   </select>
                 </div>
                 <div class="form-group form-full"><label>Conținut *</label><textarea id="aContent" rows="5"></textarea></div>
-                <div class="form-group form-full"><label>URL-uri imagini (câte unul pe linie)</label><textarea id="aImages" rows="3" placeholder="https://..."></textarea></div>
+                <div class="form-group form-full">
+                  <label>Imagini anunț (drag &amp; drop sau click · poți adăuga oricâte)</label>
+                  <div class="drop-zone" id="aDropZone"
+                    ondragover="event.preventDefault();this.classList.add('dragover')"
+                    ondragleave="this.classList.remove('dragover')"
+                    ondrop="dzDrop(event,'aImgPreview','a')">
+                    <input type="file" accept="image/*" multiple onchange="dzFiles(this,'aImgPreview','a')">
+                    <span class="dz-icon">📸</span>
+                    <p>Trage imaginile aici sau <span class="hint">apasă pentru a selecta</span></p>
+                    <p style="font-size:11px;margin-top:4px;">Fără limită de imagini · JPG, PNG, WebP</p>
+                  </div>
+                  <div class="img-preview-wrap" id="aImgPreview"></div>
+                </div>
               </div>
               <div style="margin-top:16px;display:flex;gap:10px;">
                 <button class="btn-primary" onclick="saveAnnouncement()">💾 Salvează Anunț</button>
@@ -1717,7 +1802,15 @@ footer {
             <h3 style="margin-bottom:20px;color:var(--visniu);">Adaugă opțiune</h3>
             <div class="admin-form">
               <div class="admin-form-grid">
-                <div class="form-group"><label>Denumire *</label><input type="text" id="tName" placeholder="Curier Fan Courier"></div>
+                <div class="form-group"><label>Denumire *</label><input type="text" id="tName" placeholder="Fan Courier"></div>
+                <div class="form-group"><label>Tip transport</label>
+                  <select id="tType">
+                    <option value="curier">Curier rapid</option>
+                    <option value="posta">Poștă română</option>
+                    <option value="ridicare">Ridicare personală</option>
+                    <option value="ramburs">Ramburs curier</option>
+                  </select>
+                </div>
                 <div class="form-group"><label>Cost (lei) *</label><input type="number" id="tCost" step="0.01"></div>
                 <div class="form-group"><label>Descriere</label><input type="text" id="tDesc" placeholder="1-3 zile lucrătoare"></div>
               </div>
@@ -1734,11 +1827,18 @@ footer {
 
         <!-- EMAIL CONFIG -->
         <div class="admin-tab" id="admin-tab-email">
-          <div class="admin-header"><h2>Configurare Email</h2></div>
+          <div class="admin-header"><h2>Configurare Email (FormSub)</h2></div>
           <div class="admin-card">
+            <div style="background:rgba(107,26,46,0.05);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:20px;font-size:13px;color:var(--text-mid);line-height:1.7;">
+              <strong style="color:var(--visniu);">📬 Cum funcționează email-urile:</strong><br>
+              1. Creează-ți cont gratuit la <strong>formsub.io</strong><br>
+              2. Creează un nou formular și copiază <strong>Endpoint URL</strong><br>
+              3. Lipește URL-ul mai jos → email-urile se trimit automat la comenzi noi
+            </div>
             <div class="admin-form">
               <div class="admin-form-grid">
                 <div class="form-group"><label>Email administrator (notificări)</label><input type="email" id="emailAdmin" value="irimia.teodor.17@gmail.com"></div>
+                <div class="form-group"><label>FormSub Endpoint URL *</label><input type="text" id="formsubUrl" placeholder="https://api.formsub.io/..."></div>
                 <div class="form-group"><label>Subiect email confirmare comandă</label><input type="text" id="emailSubjectOrder" value="Comandă confirmată – Parohia Stornești"></div>
                 <div class="form-group form-full"><label>Mesaj confirmare comandă (client)</label><textarea id="emailBodyOrder" rows="5">Bună ziua, {name}!
 
@@ -1797,19 +1897,35 @@ Parohia Stornești</textarea></div>
           </div>
         </div>
 
-        <!-- SAINT ADMIN -->
+        <!-- SAINT CALENDAR ADMIN -->
         <div class="admin-tab" id="admin-tab-saint">
-          <div class="admin-header"><h2>Sfântul Zilei & Verset</h2></div>
+          <div class="admin-header"><h2>Calendar Sfinți &amp; Versete</h2><p>Adaugă sfântul și versetul pentru orice zi din orice lună</p></div>
           <div class="admin-card">
-            <h3 style="margin-bottom:16px;color:var(--visniu);">Sfântul zilei de azi</h3>
-            <div class="admin-form">
-              <div class="admin-form-grid">
-                <div class="form-group"><label>Numele sfântului</label><input type="text" id="saintName2" placeholder="Sf. Gheorghe"></div>
-                <div class="form-group form-full"><label>Descriere scurtă</label><textarea id="saintDesc2" rows="3"></textarea></div>
-                <div class="form-group form-full"><label>Verset / Rugăciunea zilei</label><textarea id="saintVerse" rows="4"></textarea></div>
-                <div class="form-group"><label>Referință bibliografică</label><input type="text" id="saintVerseRef" placeholder="Ioan 3:16"></div>
+            <div class="cal-header">
+              <button class="cal-nav" onclick="prevMonth()">◀</button>
+              <h3 id="calMonthTitle" style="color:var(--visniu);font-size:16px;"></h3>
+              <button class="cal-nav" onclick="nextMonth()">▶</button>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:8px;text-align:center;font-size:11px;font-family:'Cinzel',serif;color:var(--text-light);">
+              <div>Lu</div><div>Ma</div><div>Mi</div><div>Jo</div><div>Vi</div><div>Sâ</div><div>Du</div>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+            <div id="saintEditForm" style="display:none;margin-top:20px;border-top:1px solid var(--border);padding-top:20px;">
+              <h3 style="color:var(--visniu);margin-bottom:16px;">Editează ziua: <span id="selectedDayLabel" style="color:var(--gold-dark);"></span></h3>
+              <div class="admin-form">
+                <div class="admin-form-grid">
+                  <div class="form-group"><label>Numele sfântului</label><input type="text" id="saintNameInput" placeholder="Sf. Gheorghe"></div>
+                  <div class="form-group"><label>Descriere scurtă (preview pe card)</label><input type="text" id="saintDescShortInput" placeholder="Scurtă descriere vizibilă pe card..."></div>
+                  <div class="form-group form-full"><label>Descriere completă (vizibilă la click)</label><textarea id="saintDescFullInput" rows="4" placeholder="Detalii complete despre sfântul zilei..."></textarea></div>
+                  <div class="form-group form-full"><label>Verset / Rugăciunea zilei</label><textarea id="saintVerseInput" rows="4" placeholder="Versetul sau rugăciunea zilei..."></textarea></div>
+                  <div class="form-group"><label>Referință bibliografică</label><input type="text" id="saintVerseRefInput" placeholder="Ioan 3:16"></div>
+                </div>
+                <div style="margin-top:16px;display:flex;gap:10px;">
+                  <button class="btn-primary" onclick="saveSaintDay()">💾 Salvează ziua</button>
+                  <button class="btn-outline" onclick="document.getElementById('saintEditForm').style.display='none'">Închide</button>
+                </div>
+                <input type="hidden" id="saintDayKey">
               </div>
-              <button class="btn-primary" style="margin-top:16px;" onclick="saveSaintDay()">💾 Salvează</button>
             </div>
           </div>
         </div>
@@ -1872,6 +1988,19 @@ Parohia Stornești</textarea></div>
 </footer>
 
 <!-- Toast container -->
+
+<!-- Invoice Modal -->
+<div class="modal-overlay" id="invoiceModal">
+  <div class="modal" style="max-width:720px;">
+    <button class="modal-close" onclick="closeModal('invoiceModal')">✕</button>
+    <div class="modal-body" id="invoiceBody" style="padding-top:40px;"></div>
+    <div style="padding:0 28px 28px;display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn-invoice" onclick="printInvoice()">🖨️ Printează / Salvează PDF</button>
+      <button class="btn-outline" onclick="closeModal('invoiceModal')">Închide</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast-container"></div>
 
 <!-- ============================================================ MODALS ============================================================ -->
@@ -1953,33 +2082,28 @@ Parohia Stornești</textarea></div>
 
 <!-- ============================================================ SCRIPTS ============================================================ -->
 <script>
-// Firebase config
+// ============ FIREBASE ============
 const firebaseConfig = {
-  apiKey: "AIzaSyDjQEkuNvLHWwBJsGWmu1LxLcOoS75pFjQ",
-  authDomain: "biserica-online-d3f0a.firebaseapp.com",
-  projectId: "biserica-online-d3f0a",
-  storageBucket: "biserica-online-d3f0a.firebasestorage.app",
-  messagingSenderId: "582958004765",
-  appId: "1:582958004765:web:60a31c374b9e298c1964f4"
+  apiKey:"AIzaSyDjQEkuNvLHWwBJsGWmu1LxLcOoS75pFjQ",
+  authDomain:"biserica-online-d3f0a.firebaseapp.com",
+  projectId:"biserica-online-d3f0a",
+  storageBucket:"biserica-online-d3f0a.firebasestorage.app",
+  messagingSenderId:"582958004765",
+  appId:"1:582958004765:web:60a31c374b9e298c1964f4"
 };
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
 const storage = firebase.storage();
 
-// ============================================================
-// STATE
-// ============================================================
+// ============ STATE ============
 let cart = JSON.parse(localStorage.getItem('bishopCart') || '[]');
 let currentUser = null;
 let allProducts = [];
 let allAnnouncements = [];
-let allAudio = [];
-let allFaq = [];
 let allTransport = [];
 let filterCategory = '';
-let filterRating = 0;
+let currentRatingFilter = 0;
 let currentProductModalImgIdx = 0;
 let currentProductModalImgs = [];
 let currentProductModalId = '';
@@ -1987,21 +2111,33 @@ let selectedPayment = 'ramburs';
 let selectedTransport = null;
 let currentCouponDiscount = 0;
 let currentCouponCode = '';
+// Drag&drop state keyed by prefix 'p' or 'a'
+let imgDataStore = { p: [], a: [] };
+// Calendar
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+let saintCache = {};
+const ADMIN_EMAIL = 'irimia.teodor.17@gmail.com';
+const monthNames = ['Ianuarie','Februarie','Martie','Aprilie','Mai','Iunie','Iulie','August','Septembrie','Octombrie','Noiembrie','Decembrie'];
 
-// ============================================================
-// EASTER TIMER
-// ============================================================
+// ============ INIT ============
+document.addEventListener('DOMContentLoaded', () => {
+  updateCartBadge();
+  showPage('home');
+  setTimeout(seedInitialData, 2500);
+});
+
+// ============ EASTER TIMER ============
 function updateEasterTimer() {
   const el = document.getElementById('easter-timer');
-  // Înălțarea Domnului 2025 = 29 Mai 2025
   const inaltare = new Date('2025-05-29T00:00:00');
   const now = new Date();
-  if(now < inaltare) {
+  if (now < inaltare) {
     const diff = inaltare - now;
-    const days = Math.floor(diff / 86400000);
-    const hrs = Math.floor((diff % 86400000)/3600000);
-    const mins = Math.floor((diff%3600000)/60000);
-    el.textContent = `✝ HRISTOS A ÎNVIAT! ADEVĂRAT A ÎNVIAT! ✝  |  Înălțarea Domnului peste: ${days}z ${hrs}h ${mins}m`;
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    el.textContent = `✝ HRISTOS A ÎNVIAT! ADEVĂRAT A ÎNVIAT! ✝  |  Înălțarea Domnului peste: ${d}z ${h}h ${m}m`;
   } else {
     el.textContent = '✝ HRISTOS A ÎNVIAT! ADEVĂRAT A ÎNVIAT! ✝';
   }
@@ -2009,68 +2145,67 @@ function updateEasterTimer() {
 updateEasterTimer();
 setInterval(updateEasterTimer, 60000);
 
-// ============================================================
-// GDPR
-// ============================================================
+// ============ GDPR ============
 function checkGDPR() {
-  if(!localStorage.getItem('gdprAccepted')) {
-    setTimeout(() => document.getElementById('gdprBar').style.display = 'flex', 1500);
+  if (!localStorage.getItem('gdprAccepted')) {
+    setTimeout(() => openModal('gdprModal'), 900);
   }
 }
 function acceptGDPR() {
-  localStorage.setItem('gdprAccepted','1');
-  document.getElementById('gdprBar').style.display = 'none';
+  localStorage.setItem('gdprAccepted', '1');
+  closeModal('gdprModal');
 }
 checkGDPR();
 
-// ============================================================
-// PAGE NAVIGATION
-// ============================================================
+// ============ PAGE NAV ============
 function showPage(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const target = document.getElementById('page-' + page);
-  if(target) {
-    target.classList.add('active');
-    window.scrollTo({top:0, behavior:'smooth'});
-  }
-  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-  // Show/hide footer
+  if (target) target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   const footerPages = ['home','announcements','shop','audio','faq','gdpr','terms','client','cart','checkout'];
-  document.getElementById('mainFooter').style.display = footerPages.includes(page) ? 'block' : 'none';
-
-  // Init page
-  if(page === 'home') initHome();
-  if(page === 'announcements') renderAnnouncements();
-  if(page === 'shop') renderShop();
-  if(page === 'audio') renderAudio();
-  if(page === 'cart') renderCart();
-  if(page === 'checkout') initCheckout();
-  if(page === 'faq') renderFaq();
-  if(page === 'client') initClientArea();
-  if(page === 'admin') initAdmin();
+  const footer = document.getElementById('mainFooter');
+  if (footer) footer.style.display = footerPages.includes(page) ? 'block' : 'none';
+  if (page === 'home') initHome();
+  if (page === 'announcements') renderAnnouncements();
+  if (page === 'shop') renderShop();
+  if (page === 'audio') renderAudio();
+  if (page === 'cart') renderCart();
+  if (page === 'checkout') initCheckout();
+  if (page === 'faq') renderFaq();
+  if (page === 'client') initClientArea();
+  if (page === 'admin') initAdmin();
 }
 
-// ============================================================
-// TOAST
-// ============================================================
-function toast(msg, type='success', duration=3500) {
+// ============ TOAST ============
+function toast(msg, type = 'success', duration = 3500) {
   const c = document.getElementById('toast-container');
   const t = document.createElement('div');
   t.className = `toast ${type}`;
   t.innerHTML = msg;
   c.appendChild(t);
-  setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(30px)'; t.style.transition='0.4s'; setTimeout(() => t.remove(), 400); }, duration);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(30px)'; t.style.transition = '0.4s'; setTimeout(() => t.remove(), 400); }, duration);
 }
 
-// ============================================================
-// AUTH
-// ============================================================
+// ============ MODALS ============
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ============ AUTH ============
 auth.onAuthStateChanged(user => {
   currentUser = user;
   const btn = document.getElementById('userBtn');
-  if(user) {
+  if (user) {
     btn.textContent = '👤 ' + (user.displayName || user.email.split('@')[0]);
     btn.onclick = () => showPage('client');
+    if (user.email === ADMIN_EMAIL) {
+      const panel = document.getElementById('adminPanel');
+      const login = document.getElementById('adminLogin');
+      if (panel && document.getElementById('page-admin').classList.contains('active')) {
+        login.style.display = 'none';
+        panel.style.display = 'block';
+      }
+    }
   } else {
     btn.textContent = '👤 Cont';
     btn.onclick = toggleUserMenu;
@@ -2078,29 +2213,26 @@ auth.onAuthStateChanged(user => {
 });
 
 function toggleUserMenu() {
-  if(currentUser) showPage('client');
+  if (currentUser) showPage('client');
   else openModal('authModal');
 }
 
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
 function switchAuthTab(tab, btn) {
-  document.getElementById('auth-tab-login').style.display = tab==='login'?'block':'none';
-  document.getElementById('auth-tab-register').style.display = tab==='register'?'block':'none';
+  document.getElementById('auth-tab-login').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('auth-tab-register').style.display = tab === 'register' ? 'block' : 'none';
   document.querySelectorAll('.auth-tab-btn').forEach(b => b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
+  if (btn) btn.classList.add('active');
 }
 
 async function loginUser() {
   const email = document.getElementById('loginEmail').value.trim();
   const pass = document.getElementById('loginPass').value;
-  if(!email || !pass) return toast('Completați email și parolă!','error');
+  if (!email || !pass) return toast('Completați email și parolă!', 'error');
   try {
     await auth.signInWithEmailAndPassword(email, pass);
     closeModal('authModal');
     toast('Bine ați venit! ✝');
-  } catch(e) { toast('Eroare: ' + (e.code==='auth/wrong-password'?'Parolă incorectă':e.message),'error'); }
+  } catch(e) { toast('Eroare: ' + (e.code === 'auth/wrong-password' ? 'Parolă incorectă' : e.message), 'error'); }
 }
 
 async function loginWithGoogle() {
@@ -2109,7 +2241,7 @@ async function loginWithGoogle() {
     await auth.signInWithPopup(provider);
     closeModal('authModal');
     toast('Bine ați venit! ✝');
-  } catch(e) { toast('Eroare Google: '+e.message,'error'); }
+  } catch(e) { toast('Eroare Google: ' + e.message, 'error'); }
 }
 
 async function registerUser() {
@@ -2117,32 +2249,29 @@ async function registerUser() {
   const email = document.getElementById('regEmail').value.trim();
   const phone = document.getElementById('regPhone').value.trim();
   const pass = document.getElementById('regPass').value;
-  if(!name||!email||!pass) return toast('Completați toate câmpurile obligatorii!','error');
-  if(pass.length < 6) return toast('Parola trebuie să aibă minim 6 caractere!','error');
+  if (!name || !email || !pass) return toast('Completați toate câmpurile!', 'error');
+  if (pass.length < 6) return toast('Parola trebuie să aibă minim 6 caractere!', 'error');
   try {
     const cred = await auth.createUserWithEmailAndPassword(email, pass);
-    await cred.user.updateProfile({displayName: name});
+    await cred.user.updateProfile({ displayName: name });
     await db.collection('users').doc(cred.user.uid).set({
       name, email, phone, subscribed: false, orderCount: 0,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     closeModal('authModal');
     toast('Cont creat cu succes! Bun venit! ✝');
-  } catch(e) { toast('Eroare: '+e.message,'error'); }
+  } catch(e) { toast('Eroare: ' + e.message, 'error'); }
 }
 
 async function logoutUser() {
   await auth.signOut();
   showPage('home');
-  toast('V-ați deconectat','info');
+  toast('V-ați deconectat', 'info');
 }
 
-// ============================================================
-// HOME
-// ============================================================
+// ============ HOME ============
 async function initHome() {
   loadSaintDay();
-  loadVerse();
   loadUrgentAnnouncements();
   loadLatestAnnouncement();
   loadTopProduct();
@@ -2150,36 +2279,40 @@ async function initHome() {
 
 async function loadSaintDay() {
   try {
-    const snap = await db.collection('saintDay').doc('today').get();
-    const d = snap.exists ? snap.data() : {};
     const today = new Date();
-    document.getElementById('saintDate').textContent = today.toLocaleDateString('ro-RO',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    document.getElementById('saintName').textContent = d.name || 'Sfântul zilei';
-    document.getElementById('saintDesc').textContent = d.desc || 'Detalii disponibile în curând. Binecuvântați fie ziua aceasta!';
-    if(d.verse) {
+    const key = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+    const snap = await db.collection('saintDays').doc(key).get();
+    const d = snap.exists ? snap.data() : {};
+    document.getElementById('saintDate').textContent = today.toLocaleDateString('ro-RO', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    document.getElementById('saintName').textContent = d.name || 'Sfântul Zilei';
+    const shortEl = document.getElementById('saintDescShort');
+    if (shortEl) shortEl.textContent = d.descShort || 'Apasă pentru a afla mai multe...';
+    const fullEl = document.getElementById('saintDescFull');
+    if (fullEl) fullEl.textContent = d.descFull || d.desc || '';
+    if (d.verse) {
       document.getElementById('verseText').textContent = d.verse;
       document.getElementById('verseRef').textContent = d.verseRef || '';
     } else {
       const verses = [
-        {t:'"Eu sunt Învierea și Viața; cel ce crede în Mine, chiar dacă va muri, va trăi."',r:'Ioan 11:25'},
-        {t:'"Cereți și vi se va da; căutați și veți găsi; bateți și vi se va deschide."',r:'Matei 7:7'},
-        {t:'"Eu sunt lumina lumii; cel ce Îmi urmează Mie nu va umbla în întuneric, ci va avea lumina vieții."',r:'Ioan 8:12'},
-        {t:'"Căci atât de mult a iubit Dumnezeu lumea, încât pe Fiul Său cel Unul Născut L-a dat."',r:'Ioan 3:16'},
-        {t:'"Doamne, Tu ești adăpostul meu de neam în neam."',r:'Psalmul 90:1'},
+        {t:'"Eu sunt Învierea și Viața; cel ce crede în Mine, chiar dacă va muri, va trăi."', r:'Ioan 11:25'},
+        {t:'"Cereți și vi se va da; căutați și veți găsi; bateți și vi se va deschide."', r:'Matei 7:7'},
+        {t:'"Eu sunt lumina lumii; cel ce Îmi urmează Mie nu va umbla în întuneric."', r:'Ioan 8:12'},
+        {t:'"Căci atât de mult a iubit Dumnezeu lumea, încât pe Fiul Său Cel Unul Născut L-a dat."', r:'Ioan 3:16'},
+        {t:'"Doamne, Tu ești adăpostul meu de neam în neam."', r:'Psalmul 90:1'},
+        {t:'"Nimeni nu are dragoste mai mare decât aceasta: să-și dea viața pentru prietenii săi."', r:'Ioan 15:13'},
+        {t:'"Cu Dumnezeu vom face lucruri mari."', r:'Psalmul 60:12'},
       ];
-      const v = verses[new Date().getDay() % verses.length];
+      const v = verses[today.getDate() % verses.length];
       document.getElementById('verseText').textContent = v.t;
       document.getElementById('verseRef').textContent = v.r;
     }
   } catch(e) { console.error(e); }
 }
 
-function loadVerse() {} // handled in loadSaintDay
-
 async function loadUrgentAnnouncements() {
   try {
     const snap = await db.collection('announcements').where('type','==','urgent').orderBy('createdAt','desc').limit(3).get();
-    if(snap.empty) { document.getElementById('homeUrgentSection').style.display = 'none'; return; }
+    if (snap.empty) { document.getElementById('homeUrgentSection').style.display = 'none'; return; }
     document.getElementById('homeUrgentSection').style.display = 'block';
     const list = document.getElementById('homeUrgentList');
     list.innerHTML = '';
@@ -2188,98 +2321,78 @@ async function loadUrgentAnnouncements() {
       const el = document.createElement('div');
       el.className = 'urgent-home';
       el.onclick = () => showAnnouncementModal(doc.id, d);
-      el.innerHTML = `<span class="tag">⚠️ URGENT</span><div><h4>${d.title}</h4><p>${(d.content||'').substring(0,100)}${d.content?.length>100?'...':''}</p></div>`;
+      el.innerHTML = `<span class="tag">⚠️ URGENT</span><div><h4>${d.title}</h4><p>${(d.content||'').substring(0,100)}...</p></div>`;
       list.appendChild(el);
     });
-  } catch(e) { console.error(e); document.getElementById('homeUrgentSection').style.display='none'; }
+  } catch(e) { document.getElementById('homeUrgentSection').style.display = 'none'; }
 }
 
 async function loadLatestAnnouncement() {
   const el = document.getElementById('homeLatestAnn');
   try {
     const snap = await db.collection('announcements').orderBy('createdAt','desc').limit(1).get();
-    if(snap.empty) { el.innerHTML = '<p style="color:var(--text-light)">Niciun anunț momentan.</p>'; return; }
-    const doc = snap.docs[0];
-    const d = doc.data();
-    el.innerHTML = `<div class="announcement-home" onclick="showAnnouncementModal('${doc.id}', ${JSON.stringify(d).replace(/"/g,"&quot;")})">
+    if (snap.empty) { el.innerHTML = '<p style="color:var(--text-light)">Niciun anunț momentan.</p>'; return; }
+    const doc = snap.docs[0]; const d = doc.data();
+    el.innerHTML = `<div class="announcement-home" onclick="showAnnouncementModal('${doc.id}',${JSON.stringify(d).replace(/"/g,'&quot;')})">
       <span class="ann-type-badge badge-${d.type||'general'}">${typeName(d.type)}</span>
       <h4 style="margin-top:8px;">${d.title}</h4>
-      <p>${(d.content||'').substring(0,150)}${d.content?.length>150?'...':''}</p>
-      <p class="ann-date">${formatDate(d.createdAt)}</p>
+      <p style="font-size:13px;color:var(--text-light);margin-top:6px;">${(d.content||'').substring(0,150)}...</p>
+      <p style="font-size:12px;color:var(--text-light);margin-top:8px;font-style:italic;">${formatDate(d.createdAt)}</p>
     </div>`;
-  } catch(e) { el.innerHTML = '<p>Eroare la încărcare.</p>'; }
+  } catch(e) { el.innerHTML = '<p>Eroare.</p>'; }
 }
 
 async function loadTopProduct() {
   const el = document.getElementById('homeTopProduct');
   try {
-    const snap = await db.collection('products').orderBy('soldCount','desc').limit(1).get();
-    if(snap.empty) {
-      // Fallback to any product
-      const snap2 = await db.collection('products').limit(1).get();
-      if(snap2.empty) { el.innerHTML='<p style="color:var(--text-light)">Niciun produs momentan.</p>'; return; }
-      renderHomeProduct(el, snap2.docs[0]);
-    } else {
-      renderHomeProduct(el, snap.docs[0]);
-    }
-  } catch(e) { el.innerHTML = '<p>Eroare la încărcare.</p>'; }
+    let snap = await db.collection('products').orderBy('soldCount','desc').limit(1).get();
+    if (snap.empty) snap = await db.collection('products').limit(1).get();
+    if (snap.empty) { el.innerHTML = '<p style="color:var(--text-light)">Niciun produs momentan.</p>'; return; }
+    const doc = snap.docs[0]; const d = doc.data();
+    const img = (d.images && d.images[0]) || 'https://via.placeholder.com/300x200/6B1A2E/FDFAF5?text=Produs';
+    el.innerHTML = `<div class="home-product-card" onclick="openProductModal('${doc.id}')">
+      <img src="${img}" alt="${d.name}" onerror="this.src='https://via.placeholder.com/300x200/6B1A2E/FDFAF5?text=Produs'">
+      <div class="prod-info"><h4>${d.name}</h4>
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:8px;">${(d.descShort||'').substring(0,80)}</p>
+      <div class="product-price">${parseFloat(d.price||0).toFixed(2)} lei</div></div></div>`;
+  } catch(e) { el.innerHTML = '<p>Eroare.</p>'; }
 }
 
-function renderHomeProduct(el, doc) {
-  const d = doc.data();
-  const img = (d.images && d.images[0]) || 'https://via.placeholder.com/300x200/6B1A2E/FDFAF5?text=Produs';
-  el.innerHTML = `<div class="home-product-card" onclick="openProductModal('${doc.id}')">
-    <img src="${img}" alt="${d.name}" onerror="this.src='https://via.placeholder.com/300x200/6B1A2E/FDFAF5?text=Produs'">
-    <div class="prod-info">
-      <h4>${d.name}</h4>
-      <p style="font-size:13px;color:var(--text-light);margin-bottom:8px;">${(d.descShort||d.desc||'').substring(0,80)}...</p>
-      <div class="product-price">${parseFloat(d.price||0).toFixed(2)} lei</div>
-    </div>
-  </div>`;
-}
-
-function filterSlujbe(type) {
+function filterSlujbe(type, btn) {
   document.querySelectorAll('.slujbe-tab').forEach(t => t.classList.remove('active'));
-  event.target.classList.add('active');
+  if (btn) btn.classList.add('active');
   document.querySelectorAll('#scheduleBody tr').forEach(tr => {
     tr.style.display = tr.dataset.type?.includes(type) ? '' : 'none';
   });
 }
 
-// ============================================================
-// ANNOUNCEMENTS
-// ============================================================
-async function renderAnnouncements(filter='all') {
+// ============ ANNOUNCEMENTS ============
+async function renderAnnouncements(filter = 'all') {
   const el = document.getElementById('annList');
   el.innerHTML = '<div class="loader"><div class="loader-cross">✝</div></div>';
   try {
-    let q = db.collection('announcements').orderBy('createdAt','desc');
-    const snap = await q.get();
+    const snap = await db.collection('announcements').orderBy('createdAt','desc').get();
     allAnnouncements = snap.docs;
     displayAnnouncements(filter);
   } catch(e) { el.innerHTML = '<p>Eroare la încărcare.</p>'; }
 }
 
-function displayAnnouncements(filter='all') {
+function displayAnnouncements(filter = 'all') {
   const el = document.getElementById('annList');
   let docs = allAnnouncements;
-  if(filter !== 'all') docs = docs.filter(d => d.data().type === filter);
-  if(!docs.length) { el.innerHTML = '<div class="empty-state"><div class="icon">📢</div><h3>Niciun anunț</h3><p>Nu există anunțuri în această categorie momentan.</p></div>'; return; }
+  if (filter !== 'all') docs = docs.filter(d => d.data().type === filter);
+  if (!docs.length) { el.innerHTML = '<div class="empty-state"><div class="icon">📢</div><h3>Niciun anunț</h3><p>Nu există anunțuri în această categorie.</p></div>'; return; }
   el.innerHTML = '';
   docs.forEach(doc => {
     const d = doc.data();
     const card = document.createElement('div');
-    card.className = `ann-card${d.type==='urgent'?' urgent':''}`;
+    card.className = `ann-card${d.type === 'urgent' ? ' urgent' : ''}`;
     card.onclick = () => showAnnouncementModal(doc.id, d);
     const imgThumb = d.images && d.images[0] ? `<div class="ann-images"><img src="${d.images[0]}" class="ann-thumb" onerror="this.style.display='none'"></div>` : '';
-    card.innerHTML = `
-      <span class="ann-type-badge badge-${d.type||'general'}">${typeName(d.type)}</span>
-      <div style="flex:1;">
-        <h3>${d.title}</h3>
-        <p class="ann-preview">${(d.content||'').substring(0,200)}${(d.content||'').length>200?'...':''}</p>
-        ${imgThumb}
-        <p class="ann-date">${formatDate(d.createdAt)}</p>
-      </div>`;
+    card.innerHTML = `<span class="ann-type-badge badge-${d.type||'general'}">${typeName(d.type)}</span>
+      <div style="flex:1;"><h3>${d.title}</h3>
+      <p class="ann-preview">${(d.content||'').substring(0,200)}${(d.content||'').length>200?'...':''}</p>
+      ${imgThumb}<p class="ann-date">${formatDate(d.createdAt)}</p></div>`;
     el.appendChild(card);
   });
 }
@@ -2292,35 +2405,28 @@ function filterAnn(type, btn) {
 
 function showAnnouncementModal(id, d) {
   const body = document.getElementById('annModalBody');
-  const imgsHtml = d.images && d.images.length ? `<div class="ann-modal-imgs">${d.images.map(i=>`<img src="${i}" alt="" onerror="this.style.display='none'">`).join('')}</div>` : '';
-  body.innerHTML = `
-    <span class="ann-type-badge badge-${d.type||'general'}" style="margin-bottom:16px;display:inline-block;">${typeName(d.type)}</span>
+  const imgsHtml = d.images && d.images.length
+    ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;">${d.images.map(i=>`<img src="${i}" style="height:140px;border-radius:8px;object-fit:cover;flex:1;min-width:100px;max-width:200px;" onerror="this.style.display='none'">`).join('')}</div>` : '';
+  body.innerHTML = `<span class="ann-type-badge badge-${d.type||'general'}" style="margin-bottom:16px;display:inline-block;">${typeName(d.type)}</span>
     <h2 style="color:var(--visniu-dark);margin-bottom:12px;font-size:clamp(18px,3vw,26px);">${d.title}</h2>
     <p style="font-size:12px;color:var(--text-light);margin-bottom:20px;font-style:italic;">${formatDate(d.createdAt)}</p>
-    <div style="font-size:15px;color:var(--text-mid);line-height:1.8;white-space:pre-wrap;">${d.content||''}</div>
-    ${imgsHtml}
-  `;
+    <div style="font-size:15px;color:var(--text-mid);line-height:1.8;white-space:pre-wrap;">${d.content||''}</div>${imgsHtml}`;
   openModal('annModal');
 }
 
 function typeName(t) {
-  const map = {urgent:'⚠️ Urgent',slujba:'⛪ Slujbă',activitate:'🎉 Activitate',botez:'💧 Botez',inmormantare:'✝ Înmormântare',general:'📢 General'};
+  const map = { urgent:'⚠️ Urgent', slujba:'⛪ Slujbă', activitate:'🎉 Activitate', botez:'💧 Botez', inmormantare:'✝ Înmormântare', general:'📢 General' };
   return map[t] || '📢 General';
 }
 
-// ============================================================
-// SHOP
-// ============================================================
+// ============ SHOP ============
 async function renderShop() {
   const el = document.getElementById('productsGrid');
   el.innerHTML = '<div class="loader"><div class="loader-cross">✝</div></div>';
   try {
-    const [prodsSnap, transportSnap] = await Promise.all([
-      db.collection('products').get(),
-      db.collection('transport').get()
-    ]);
+    const [prodsSnap, transSnap] = await Promise.all([db.collection('products').get(), db.collection('transport').get()]);
     allProducts = prodsSnap.docs;
-    allTransport = transportSnap.docs.map(d => ({id:d.id,...d.data()}));
+    allTransport = transSnap.docs.map(d => ({ id: d.id, ...d.data() }));
     buildCategoryChips();
     displayProducts(allProducts);
   } catch(e) { el.innerHTML = '<p style="padding:24px;">Eroare la încărcare.</p>'; }
@@ -2329,100 +2435,90 @@ async function renderShop() {
 function buildCategoryChips() {
   const cats = [...new Set(allProducts.map(d => d.data().category).filter(Boolean))];
   const el = document.getElementById('categoryChips');
-  if(!el) return;
+  if (!el) return;
   el.innerHTML = cats.map(c => `<span class="filter-chip" onclick="setCategoryFilter('${c}',this)">${c}</span>`).join('');
 }
 
 function setCategoryFilter(cat, el) {
   document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-  if(filterCategory === cat) { filterCategory = ''; } else { filterCategory = cat; el.classList.add('active'); }
+  filterCategory = filterCategory === cat ? '' : cat;
+  if (filterCategory) el.classList.add('active');
   filterProducts();
 }
 
-let currentRatingFilter = 0;
 function setRatingFilter(r, btn) {
-  currentRatingFilter = currentRatingFilter===r ? 0 : r;
+  currentRatingFilter = currentRatingFilter === r ? 0 : r;
   document.querySelectorAll('.rating-filter button').forEach(b => b.classList.remove('active'));
-  if(currentRatingFilter) btn.classList.add('active');
+  if (currentRatingFilter) btn.classList.add('active');
   filterProducts();
 }
 
 function filterProducts() {
-  const search = (document.getElementById('productSearch')?.value||'').toLowerCase();
-  const minP = parseFloat(document.getElementById('priceMin')?.value||0) || 0;
-  const maxP = parseFloat(document.getElementById('priceMax')?.value||0) || Infinity;
+  const search = (document.getElementById('productSearch')?.value || '').toLowerCase();
+  const minP = parseFloat(document.getElementById('priceMin')?.value || 0) || 0;
+  const maxP = parseFloat(document.getElementById('priceMax')?.value || 0) || Infinity;
   let filtered = allProducts.filter(doc => {
     const d = doc.data();
-    const matchSearch = !search || (d.name||'').toLowerCase().includes(search) || (d.desc||'').toLowerCase().includes(search);
-    const matchCat = !filterCategory || d.category === filterCategory;
-    const price = parseFloat(d.price||0);
-    const matchPrice = price >= minP && price <= maxP;
-    const matchRating = !currentRatingFilter || (parseFloat(d.avgRating||0) >= currentRatingFilter);
-    return matchSearch && matchCat && matchPrice && matchRating;
+    return (!search || (d.name||'').toLowerCase().includes(search) || (d.desc||'').toLowerCase().includes(search)) &&
+      (!filterCategory || d.category === filterCategory) &&
+      (parseFloat(d.price||0) >= minP && parseFloat(d.price||0) <= maxP) &&
+      (!currentRatingFilter || parseFloat(d.avgRating||0) >= currentRatingFilter);
   });
   displayProducts(filtered);
 }
 
 function sortProducts(val) {
   let arr = [...allProducts];
-  if(val==='price-asc') arr.sort((a,b) => parseFloat(a.data().price||0)-parseFloat(b.data().price||0));
-  else if(val==='price-desc') arr.sort((a,b) => parseFloat(b.data().price||0)-parseFloat(a.data().price||0));
-  else if(val==='rating') arr.sort((a,b) => parseFloat(b.data().avgRating||0)-parseFloat(a.data().avgRating||0));
-  else if(val==='popular') arr.sort((a,b) => parseInt(b.data().soldCount||0)-parseInt(a.data().soldCount||0));
+  if (val === 'price-asc') arr.sort((a,b) => parseFloat(a.data().price||0) - parseFloat(b.data().price||0));
+  else if (val === 'price-desc') arr.sort((a,b) => parseFloat(b.data().price||0) - parseFloat(a.data().price||0));
+  else if (val === 'rating') arr.sort((a,b) => parseFloat(b.data().avgRating||0) - parseFloat(a.data().avgRating||0));
+  else if (val === 'popular') arr.sort((a,b) => parseInt(b.data().soldCount||0) - parseInt(a.data().soldCount||0));
   displayProducts(arr);
 }
 
 function clearFilters() {
-  filterCategory=''; currentRatingFilter=0;
-  document.getElementById('productSearch').value='';
-  document.getElementById('priceMin').value='';
-  document.getElementById('priceMax').value='';
-  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
-  document.querySelectorAll('.rating-filter button').forEach(b=>b.classList.remove('active'));
+  filterCategory = ''; currentRatingFilter = 0;
+  ['productSearch','priceMin','priceMax'].forEach(id => { const e = document.getElementById(id); if(e) e.value = ''; });
+  document.querySelectorAll('.filter-chip, .rating-filter button').forEach(b => b.classList.remove('active'));
   displayProducts(allProducts);
 }
 
-function toggleFilterPanel() {
-  document.getElementById('filterPanel').classList.toggle('open');
-}
+function toggleFilterPanel() { document.getElementById('filterPanel').classList.toggle('open'); }
 
 function displayProducts(docs) {
   const el = document.getElementById('productsGrid');
-  if(!docs.length) {
-    el.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="icon">🔍</div><h3>Niciun produs găsit</h3><p>Încearcă alte filtre sau caută alt termen.</p></div>';
-    return;
-  }
+  if (!docs.length) { el.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="icon">🔍</div><h3>Niciun produs găsit</h3><p>Încearcă alte filtre.</p></div>'; return; }
   el.innerHTML = '';
   docs.forEach(doc => {
     const d = doc.data();
     const img = (d.images && d.images[0]) || 'https://via.placeholder.com/300x220/6B1A2E/FDFAF5?text=Produs';
-    const stars = renderStars(d.avgRating||0);
+    const stockOk = (d.stock || 0) > 0;
     const card = document.createElement('div');
     card.className = 'product-card';
     card.innerHTML = `
       <div class="product-img-wrap" onclick="openProductModal('${doc.id}')">
         <img src="${img}" alt="${d.name}" onerror="this.src='https://via.placeholder.com/300x220/6B1A2E/FDFAF5?text=Produs'">
         ${d.badge ? `<span class="product-badge">${d.badge}</span>` : ''}
+        ${!stockOk ? '<span class="product-badge" style="background:#E74C3C;top:10px;right:10px;left:auto;">Epuizat</span>' : ''}
       </div>
       <div class="product-body">
         <div class="product-name" onclick="openProductModal('${doc.id}')">${d.name}</div>
-        <div class="product-rating">
-          <span class="stars">${stars}</span>
-          <span class="rating-count">(${d.reviewCount||0})</span>
-        </div>
-        <div class="product-desc">${(d.descShort||d.desc||'').substring(0,80)}${(d.descShort||d.desc||'').length>80?'...':''}</div>
+        <div class="product-rating"><span class="stars">${renderStars(d.avgRating||0)}</span><span class="rating-count">(${d.reviewCount||0})</span></div>
+        <div class="product-desc">${(d.descShort||d.desc||'').substring(0,80)}...</div>
         <div class="product-footer">
           <div>
             <div class="product-price">${parseFloat(d.price||0).toFixed(2)} lei</div>
             ${d.oldPrice ? `<div class="product-price-old">${parseFloat(d.oldPrice).toFixed(2)} lei</div>` : ''}
           </div>
           <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
-            <div class="qty-control" data-id="${doc.id}">
+            ${stockOk ? `
+            <div class="qty-control">
               <button class="qty-btn" onclick="changeQtyCard('${doc.id}',-1,event)">−</button>
-              <input class="qty-input" type="number" value="1" min="1" max="${d.stock||99}" id="qty-${doc.id}" oninput="validateQty(this,${d.stock||99})">
+              <input class="qty-input" type="number" value="1" min="1" max="${d.stock}" id="qty-${doc.id}" oninput="validateQty(this,${d.stock})">
               <button class="qty-btn" onclick="changeQtyCard('${doc.id}',1,event)">+</button>
             </div>
-            <button class="btn-add-cart" onclick="addToCart('${doc.id}',event)">🛒 Adaugă</button>
+            <button class="btn-add-cart" onclick="addToCart('${doc.id}',event)">🛒 Adaugă</button>` :
+            `<span style="font-size:12px;color:#E74C3C;font-weight:700;">Epuizat</span>`}
           </div>
         </div>
       </div>`;
@@ -2432,87 +2528,62 @@ function displayProducts(docs) {
 
 function changeQtyCard(id, delta, e) {
   e.stopPropagation();
-  const inp = document.getElementById('qty-'+id);
-  if(!inp) return;
-  inp.value = Math.max(1, parseInt(inp.value||1)+delta);
+  const inp = document.getElementById('qty-' + id);
+  if (!inp) return;
+  const prod = allProducts.find(p => p.id === id);
+  const stock = prod ? parseInt(prod.data().stock || 1) : 1;
+  inp.value = Math.max(1, Math.min(parseInt(inp.value || 1) + delta, stock));
 }
+function validateQty(inp, max) { if (parseInt(inp.value) > max) inp.value = max; if (parseInt(inp.value) < 1) inp.value = 1; }
+function renderStars(avg) { const f = Math.floor(avg), h = avg-f>=0.5?1:0, e=5-f-h; return '★'.repeat(f)+(h?'½':'')+'☆'.repeat(e); }
 
-function validateQty(inp, max) {
-  if(parseInt(inp.value) > max) inp.value = max;
-  if(parseInt(inp.value) < 1) inp.value = 1;
-}
-
-function renderStars(avg) {
-  const full = Math.floor(avg);
-  const half = avg - full >= 0.5 ? 1 : 0;
-  const empty = 5 - full - half;
-  return '★'.repeat(full) + (half?'½':'') + '☆'.repeat(empty);
-}
-
-// ============================================================
-// PRODUCT MODAL
-// ============================================================
+// ============ PRODUCT MODAL ============
 async function openProductModal(productId) {
   currentProductModalId = productId;
   currentProductModalImgIdx = 0;
   const doc = await db.collection('products').doc(productId).get();
-  if(!doc.exists) return;
+  if (!doc.exists) return;
   const d = doc.data();
   currentProductModalImgs = d.images && d.images.length ? d.images : ['https://via.placeholder.com/700x300/6B1A2E/FDFAF5?text=Produs'];
-
-  // Build images carousel
+  // Build images
   const imgsEl = document.getElementById('productModalImgs');
-  const existImgs = imgsEl.querySelectorAll('img');
-  existImgs.forEach(i=>i.remove());
-  imgsEl.querySelectorAll('.modal-img-dot').forEach(d=>d.remove());
-  const prev = imgsEl.querySelector('.modal-img-prev');
-  const next = imgsEl.querySelector('.modal-img-next');
-  const dotsEl = document.getElementById('productModalDots');
-  dotsEl.innerHTML='';
-  currentProductModalImgs.forEach((src,i) => {
+  imgsEl.querySelectorAll('img').forEach(i => i.remove());
+  document.getElementById('productModalDots').innerHTML = '';
+  const prev = imgsEl.querySelector('.modal-img-prev'), next = imgsEl.querySelector('.modal-img-next');
+  currentProductModalImgs.forEach((src, i) => {
     const img = document.createElement('img');
-    img.src = src; img.alt = d.name;
-    if(i===0) img.classList.add('active');
-    img.onerror = () => { img.src='https://via.placeholder.com/700x300/6B1A2E/FDFAF5?text=Produs'; };
+    img.src = src; img.alt = d.name; if (i===0) img.classList.add('active');
+    img.onerror = () => { img.src = 'https://via.placeholder.com/700x300/6B1A2E/FDFAF5?text=Produs'; };
     imgsEl.insertBefore(img, prev);
     const dot = document.createElement('div');
     dot.className = 'modal-img-dot' + (i===0?' active':'');
     dot.onclick = () => goToProductImg(i);
-    dotsEl.appendChild(dot);
+    document.getElementById('productModalDots').appendChild(dot);
   });
-
-  // Build reviews html
-  let reviewsHtml = '<div class="reviews-section">';
-  reviewsHtml += `<h3 style="font-size:16px;color:var(--visniu);margin-bottom:16px;">Recenzii (${d.reviewCount||0}) — `;
-  if(d.avgRating) reviewsHtml += `<span style="color:var(--gold);">${renderStars(d.avgRating)}</span> ${parseFloat(d.avgRating).toFixed(1)}/5`;
-  else reviewsHtml += 'Fii primul care recenzează!';
+  // Transport info
+  const transObj = d.transportId ? allTransport.find(t => t.id === d.transportId) : null;
+  const transHtml = transObj ? `<div style="background:var(--cream);border-radius:6px;padding:12px;margin-bottom:14px;font-size:13px;color:var(--text-light);">🚚 <strong>${transObj.name}</strong> — ${parseFloat(transObj.cost).toFixed(2)} lei (${transObj.desc||''})</div>` : '';
+  // Reviews
+  let reviewsHtml = `<div class="reviews-section"><h3 style="font-size:16px;color:var(--visniu);margin-bottom:16px;">Recenzii (${d.reviewCount||0})`;
+  if (d.avgRating) reviewsHtml += ` — <span style="color:var(--gold);">${renderStars(d.avgRating)}</span> ${parseFloat(d.avgRating).toFixed(1)}/5`;
   reviewsHtml += '</h3>';
-  // Load reviews
   try {
     const revSnap = await db.collection('products').doc(productId).collection('reviews').orderBy('createdAt','desc').limit(5).get();
     revSnap.docs.forEach(r => {
       const rv = r.data();
       reviewsHtml += `<div class="review-item"><div class="rev-header"><span class="rev-author">${rv.name||'Anonim'}</span><span class="rev-stars">${'★'.repeat(rv.rating||5)}</span></div><p>${rv.text||''}</p></div>`;
     });
-  } catch(e){}
-  reviewsHtml += `<div class="add-review">
-    <h4>Lasă o recenzie</h4>
-    <div class="star-select" id="starSelect">
-      ${[1,2,3,4,5].map(n=>`<span onclick="selectStar(${n})" data-star="${n}">★</span>`).join('')}
-    </div>
-    <div class="form-group" style="margin-bottom:10px;"><textarea id="reviewText" rows="3" placeholder="Experiența dvs. cu acest produs..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;font-family:Lato,sans-serif;resize:vertical;"></textarea></div>
-    <div class="form-group" style="margin-bottom:10px;"><input type="text" id="reviewName" placeholder="Numele dvs." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;font-family:Lato,sans-serif;"></div>
-    <button class="btn-outline" onclick="submitReview('${productId}')">Trimite recenzia</button>
-  </div>`;
-  reviewsHtml += '</div>';
-
-  const transportInfo = d.transportId ? allTransport.find(t=>t.id===d.transportId) : null;
-  const transHtml = transportInfo ? `<div class="modal-transport-info">🚚 Transport: <strong>${transportInfo.name}</strong> — ${parseFloat(transportInfo.cost).toFixed(2)} lei (${transportInfo.desc||''})</div>` : '';
+  } catch(e) {}
+  reviewsHtml += `<div class="add-review"><h4 style="font-family:'Cinzel',serif;color:var(--visniu);margin-bottom:12px;">Lasă o recenzie</h4>
+    <div class="star-select" id="starSelect">${[1,2,3,4,5].map(n=>`<span onclick="selectStar(${n})" data-star="${n}">★</span>`).join('')}</div>
+    <textarea id="reviewText" rows="3" placeholder="Experiența dvs..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;font-family:Lato,sans-serif;resize:vertical;outline:none;margin-bottom:8px;"></textarea>
+    <input type="text" id="reviewName" placeholder="Numele dvs." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;font-family:Lato,sans-serif;outline:none;margin-bottom:10px;">
+    <button class="btn-outline" onclick="submitReview('${productId}')">Trimite recenzia</button></div></div>`;
 
   document.getElementById('productModalBody').innerHTML = `
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
-      ${d.badge?`<span class="product-badge" style="position:static;">${d.badge}</span>`:''}
-      ${d.category?`<span style="font-size:12px;color:var(--text-light);border:1px solid var(--border);padding:2px 8px;border-radius:20px;">${d.category}</span>`:''}
+      ${d.badge ? `<span class="product-badge" style="position:static;">${d.badge}</span>` : ''}
+      ${d.category ? `<span style="font-size:12px;color:var(--text-light);border:1px solid var(--border);padding:2px 8px;border-radius:20px;">${d.category}</span>` : ''}
     </div>
     <div class="modal-title">${d.name}</div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
@@ -2522,141 +2593,96 @@ async function openProductModal(productId) {
     <div class="modal-price">${parseFloat(d.price||0).toFixed(2)} lei ${d.oldPrice?`<span style="font-size:16px;text-decoration:line-through;color:var(--text-light);font-family:Lato;">${parseFloat(d.oldPrice).toFixed(2)} lei</span>`:''}</div>
     <p class="modal-desc">${d.desc||''}</p>
     ${transHtml}
-    <div style="margin-bottom:8px;font-size:13px;color:var(--text-light);">Stoc disponibil: <strong style="color:${(d.stock||0)>0?'#27AE60':'#E74C3C'}">${d.stock||0} buc.</strong></div>
+    <div style="margin-bottom:12px;font-size:13px;color:var(--text-light);">Stoc: <strong style="color:${(d.stock||0)>0?'#27AE60':'#E74C3C'}">${d.stock||0} buc.</strong></div>
     <div class="modal-actions">
       <div class="qty-control">
         <button class="qty-btn" onclick="changeModalQty(-1)">−</button>
         <input class="qty-input" type="number" value="1" min="1" max="${d.stock||99}" id="modalQty">
         <button class="qty-btn" onclick="changeModalQty(1)">+</button>
       </div>
-      <button class="btn-primary" onclick="addToCartFromModal('${productId}')">🛒 Adaugă în coș</button>
-      <button class="btn-outline" onclick="openReservationModal('${productId}','${d.name}')">📅 Rezervă</button>
+      ${(d.stock||0)>0 ? `<button class="btn-primary" onclick="addToCartFromModal('${productId}')">🛒 Adaugă în coș</button>` : '<span style="color:#E74C3C;font-weight:700;">Epuizat</span>'}
+      <button class="btn-outline" onclick="openReservationModal('${productId}','${d.name.replace(/'/g,'')}')">📅 Rezervă</button>
     </div>
-    ${reviewsHtml}
-  `;
+    ${reviewsHtml}`;
   openModal('productModal');
 }
 
 let selectedStar = 5;
-function selectStar(n) {
-  selectedStar = n;
-  document.querySelectorAll('#starSelect span').forEach((s,i) => {
-    s.classList.toggle('selected', i < n);
-  });
-}
+function selectStar(n) { selectedStar = n; document.querySelectorAll('#starSelect span').forEach((s,i) => s.classList.toggle('selected', i < n)); }
 
 async function submitReview(productId) {
-  if(!currentUser) { toast('Trebuie să fiți autentificat pentru a lăsa o recenzie!','error'); return; }
+  if (!currentUser) { toast('Trebuie să fiți autentificat!', 'error'); return; }
   const text = document.getElementById('reviewText').value.trim();
-  const name = document.getElementById('reviewName').value.trim() || (currentUser.displayName||'Anonim');
-  if(!text) return toast('Scrieți o recenzie!','error');
+  const name = document.getElementById('reviewName').value.trim() || (currentUser.displayName || 'Anonim');
+  if (!text) return toast('Scrieți o recenzie!', 'error');
   try {
-    await db.collection('products').doc(productId).collection('reviews').add({
-      text, name, rating: selectedStar, userId: currentUser.uid,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    // Update avgRating
+    await db.collection('products').doc(productId).collection('reviews').add({ text, name, rating: selectedStar, userId: currentUser.uid, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
     const revs = await db.collection('products').doc(productId).collection('reviews').get();
-    const ratings = revs.docs.map(r => r.data().rating||5);
-    const avg = ratings.reduce((a,b)=>a+b,0)/ratings.length;
+    const ratings = revs.docs.map(r => r.data().rating || 5);
+    const avg = ratings.reduce((a,b) => a+b, 0) / ratings.length;
     await db.collection('products').doc(productId).update({ avgRating: avg, reviewCount: ratings.length });
     toast('Recenzie trimisă! Mulțumim! ✝');
     openProductModal(productId);
-  } catch(e) { toast('Eroare: '+e.message,'error'); }
+  } catch(e) { toast('Eroare: ' + e.message, 'error'); }
 }
 
-function changeModalQty(delta) {
-  const inp = document.getElementById('modalQty');
-  if(!inp) return;
-  inp.value = Math.max(1, parseInt(inp.value||1)+delta);
-}
-
-function changeProductImg(dir) {
-  const len = currentProductModalImgs.length;
-  currentProductModalImgIdx = (currentProductModalImgIdx + dir + len) % len;
-  goToProductImg(currentProductModalImgIdx);
-}
-
+function changeModalQty(delta) { const inp = document.getElementById('modalQty'); if (!inp) return; inp.value = Math.max(1, parseInt(inp.value||1)+delta); }
+function changeProductImg(dir) { const len = currentProductModalImgs.length; currentProductModalImgIdx = (currentProductModalImgIdx+dir+len)%len; goToProductImg(currentProductModalImgIdx); }
 function goToProductImg(idx) {
   currentProductModalImgIdx = idx;
-  const imgs = document.querySelectorAll('#productModalImgs img');
-  const dots = document.querySelectorAll('.modal-img-dot');
-  imgs.forEach((i,n) => i.classList.toggle('active', n===idx));
-  dots.forEach((d,n) => d.classList.toggle('active', n===idx));
+  document.querySelectorAll('#productModalImgs img').forEach((i,n) => i.classList.toggle('active', n===idx));
+  document.querySelectorAll('.modal-img-dot').forEach((d,n) => d.classList.toggle('active', n===idx));
 }
+function addToCartFromModal(productId) { const qty = parseInt(document.getElementById('modalQty')?.value||1); addToCart(productId, null, qty); closeModal('productModal'); }
 
-function addToCartFromModal(productId) {
-  const qty = parseInt(document.getElementById('modalQty')?.value||1);
-  addToCart(productId, null, qty);
-  closeModal('productModal');
-}
-
-// ============================================================
-// CART
-// ============================================================
-async function addToCart(productId, event, qty=null) {
-  if(event) event.stopPropagation();
-  const doc = await db.collection('products').doc(productId).get();
-  if(!doc.exists) return toast('Produs negăsit!','error');
-  const d = doc.data();
-  const quantity = qty || parseInt(document.getElementById('qty-'+productId)?.value||1);
-
-  // Check stock
-  const existingItem = cart.find(i => i.id === productId);
-  const currentInCart = existingItem ? existingItem.qty : 0;
-  if(currentInCart + quantity > (d.stock||0)) {
-    return toast(`Stoc insuficient! Disponibil: ${d.stock||0} buc.`,'error');
-  }
-
-  if(existingItem) {
-    existingItem.qty += quantity;
+// ============ CART ============
+async function addToCart(productId, event, qty = null) {
+  if (event) event.stopPropagation();
+  // Re-fetch live stock from Firestore
+  const docSnap = await db.collection('products').doc(productId).get();
+  if (!docSnap.exists) return toast('Produs negăsit!', 'error');
+  const d = docSnap.data();
+  const liveStock = parseInt(d.stock || 0);
+  const quantity = qty || parseInt(document.getElementById('qty-' + productId)?.value || 1);
+  if (liveStock <= 0) return toast('Produsul este epuizat!', 'error');
+  if (quantity > liveStock) return toast(`Stoc insuficient! Disponibil: ${liveStock} buc.`, 'error');
+  const existing = cart.find(i => i.id === productId);
+  if (existing) {
+    if (existing.qty + quantity > liveStock) return toast(`Poți adăuga maxim ${liveStock - existing.qty} buc. suplimentare.`, 'error');
+    existing.qty += quantity;
   } else {
-    cart.push({
-      id: productId,
-      name: d.name,
-      price: parseFloat(d.price||0),
-      image: d.images&&d.images[0] ? d.images[0] : '',
-      stock: d.stock||0,
-      transportId: d.transportId||'',
-      qty: quantity
-    });
+    cart.push({ id: productId, name: d.name, price: parseFloat(d.price||0), image: d.images&&d.images[0]?d.images[0]:'', stock: liveStock, transportId: d.transportId||'', qty: quantity });
   }
-  // Decrease stock in Firestore
   await db.collection('products').doc(productId).update({ stock: firebase.firestore.FieldValue.increment(-quantity) });
-
-  saveCart();
-  updateCartBadge();
+  // Update local cache
+  const local = allProducts.find(p => p.id === productId);
+  if (local) { const dat = local.data(); dat.stock = (dat.stock||0) - quantity; }
+  saveCart(); updateCartBadge();
   toast(`✝ "${d.name}" adăugat în coș!`);
 }
 
 function saveCart() { localStorage.setItem('bishopCart', JSON.stringify(cart)); }
-
 function updateCartBadge() {
   const total = cart.reduce((s,i) => s+i.qty, 0);
   const badge = document.getElementById('cartBadge');
   const totalEl = document.getElementById('cartTotal');
-  badge.textContent = total;
-  badge.style.display = total > 0 ? 'flex' : 'none';
-  const sum = cart.reduce((s,i) => s+i.qty*i.price, 0);
-  totalEl.textContent = (sum*(1-currentCouponDiscount/100)).toFixed(2) + ' lei';
+  if (badge) { badge.textContent = total; badge.style.display = total > 0 ? 'flex' : 'none'; }
+  if (totalEl) { const sum = cart.reduce((s,i) => s+i.qty*i.price, 0); totalEl.textContent = (sum*(1-currentCouponDiscount/100)).toFixed(2) + ' lei'; }
 }
 
 function renderCart() {
   const listEl = document.getElementById('cartItemsList');
   const summaryEl = document.getElementById('cartSummaryBlock');
-  if(!cart.length) {
+  if (!cart.length) {
     listEl.innerHTML = '<div class="empty-state"><div class="icon">🛒</div><h3>Coșul este gol</h3><p>Adaugă produse din magazin.</p><button class="btn-primary" style="margin-top:20px;" onclick="showPage(\'shop\')">Mergi la magazin</button></div>';
-    summaryEl.innerHTML='';
-    return;
+    summaryEl.innerHTML = ''; return;
   }
   listEl.innerHTML = '';
-  cart.forEach((item,idx) => {
+  cart.forEach((item, idx) => {
     const el = document.createElement('div');
     el.className = 'cart-item';
-    el.innerHTML = `
-      <img src="${item.image||'https://via.placeholder.com/80x80/6B1A2E/FFF?text=P'}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/80x80/6B1A2E/FFF?text=P'">
-      <div class="cart-item-info">
-        <h4>${item.name}</h4>
+    el.innerHTML = `<img src="${item.image||'https://via.placeholder.com/80x80/6B1A2E/FFF?text=P'}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/80x80/6B1A2E/FFF?text=P'">
+      <div class="cart-item-info"><h4>${item.name}</h4>
         <div class="price">${(item.price*item.qty*(1-currentCouponDiscount/100)).toFixed(2)} lei</div>
         <div style="font-size:12px;color:var(--text-light);">${item.price.toFixed(2)} lei/buc.</div>
       </div>
@@ -2670,110 +2696,107 @@ function renderCart() {
       </div>`;
     listEl.appendChild(el);
   });
-
   const subtotal = cart.reduce((s,i) => s+i.qty*i.price, 0);
   const discount = subtotal * currentCouponDiscount / 100;
-  const total = subtotal - discount;
-
-  summaryEl.innerHTML = `
-    <div class="cart-summary">
-      <h3>Rezumat comandă</h3>
-      <div class="coupon-row">
-        <input type="text" class="coupon-input" id="couponInput" placeholder="Cod reducere..." value="${currentCouponCode}">
-        <button class="btn-apply" onclick="applyCoupon()">Aplică</button>
-      </div>
-      <div class="summary-row"><span>Subtotal</span><span>${subtotal.toFixed(2)} lei</span></div>
-      ${discount>0?`<div class="summary-row" style="color:#27AE60;"><span>Reducere (${currentCouponDiscount}%)</span><span>-${discount.toFixed(2)} lei</span></div>`:''}
-      <div class="summary-row total"><span>Total</span><span>${total.toFixed(2)} lei</span></div>
-      <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;">
-        <button class="btn-outline" onclick="showPage('shop')">← Continuă cumpărăturile</button>
-        <button class="btn-primary" onclick="showPage('checkout')">Finalizează comanda →</button>
-      </div>
-    </div>`;
+  summaryEl.innerHTML = `<div class="cart-summary"><h3>Rezumat comandă</h3>
+    <div class="coupon-row"><input type="text" class="coupon-input" id="couponInput" placeholder="Cod reducere..." value="${currentCouponCode}"><button class="btn-apply" onclick="applyCoupon()">Aplică</button></div>
+    <div class="summary-row"><span>Subtotal</span><span>${subtotal.toFixed(2)} lei</span></div>
+    ${discount>0?`<div class="summary-row" style="color:#27AE60;"><span>Reducere (${currentCouponDiscount}%)</span><span>-${discount.toFixed(2)} lei</span></div>`:''}
+    <div class="summary-row total"><span>Total</span><span>${(subtotal-discount).toFixed(2)} lei</span></div>
+    <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;">
+      <button class="btn-outline" onclick="showPage('shop')">← Continuă</button>
+      <button class="btn-primary" onclick="showPage('checkout')">Finalizează →</button>
+    </div></div>`;
   updateCartBadge();
 }
 
 async function changeCartQty(idx, delta) {
-  const newQty = cart[idx].qty + delta;
-  if(newQty < 1) return removeFromCart(idx);
-  if(newQty > cart[idx].stock) return toast('Stoc insuficient!','error');
-  const diff = delta;
-  cart[idx].qty = newQty;
-  // update firestore stock
-  await db.collection('products').doc(cart[idx].id).update({ stock: firebase.firestore.FieldValue.increment(-diff) });
+  if (cart[idx].qty + delta < 1) return removeFromCart(idx);
+  const docSnap = await db.collection('products').doc(cart[idx].id).get();
+  const liveStock = docSnap.exists ? parseInt(docSnap.data().stock||0) : 0;
+  if (delta > 0 && liveStock < 1) return toast('Stoc insuficient!', 'error');
+  cart[idx].qty += delta;
+  await db.collection('products').doc(cart[idx].id).update({ stock: firebase.firestore.FieldValue.increment(-delta) }).catch(()=>{});
   saveCart(); renderCart();
 }
 
 async function setCartQty(idx, val) {
-  const newQty = Math.max(1, Math.min(parseInt(val)||1, cart[idx].stock));
+  const newQty = Math.max(1, parseInt(val)||1);
   const diff = newQty - cart[idx].qty;
+  if (diff > 0) {
+    const docSnap = await db.collection('products').doc(cart[idx].id).get();
+    const liveStock = docSnap.exists ? parseInt(docSnap.data().stock||0) : 0;
+    if (diff > liveStock) { toast('Stoc insuficient!', 'error'); renderCart(); return; }
+  }
   cart[idx].qty = newQty;
-  if(diff !== 0) await db.collection('products').doc(cart[idx].id).update({ stock: firebase.firestore.FieldValue.increment(-diff) });
+  if (diff !== 0) await db.collection('products').doc(cart[idx].id).update({ stock: firebase.firestore.FieldValue.increment(-diff) }).catch(()=>{});
   saveCart(); renderCart();
 }
 
 async function removeFromCart(idx) {
-  // Restore stock
-  await db.collection('products').doc(cart[idx].id).update({ stock: firebase.firestore.FieldValue.increment(cart[idx].qty) });
-  cart.splice(idx,1);
+  await db.collection('products').doc(cart[idx].id).update({ stock: firebase.firestore.FieldValue.increment(cart[idx].qty) }).catch(()=>{});
+  cart.splice(idx, 1);
   saveCart(); renderCart(); updateCartBadge();
 }
 
 async function applyCoupon() {
   const code = (document.getElementById('couponInput')?.value||'').trim().toUpperCase();
-  if(!code) return;
+  if (!code) return;
   try {
     const snap = await db.collection('coupons').where('code','==',code).get();
-    if(snap.empty) return toast('Cod de reducere invalid!','error');
+    if (snap.empty) return toast('Cod de reducere invalid!', 'error');
     const coupon = snap.docs[0].data();
-    const now = new Date();
-    if(coupon.expiresAt && coupon.expiresAt.toDate() < now) return toast('Codul de reducere a expirat!','error');
-    if(coupon.usedCount >= coupon.maxUses) return toast('Codul de reducere a atins limita de utilizări!','error');
+    if (coupon.expiresAt && coupon.expiresAt.toDate() < new Date()) return toast('Codul a expirat!', 'error');
+    if ((coupon.usedCount||0) >= (coupon.maxUses||100)) return toast('Codul a atins limita!', 'error');
     currentCouponDiscount = parseInt(coupon.discount||0);
     currentCouponCode = code;
     toast(`✝ Reducere de ${currentCouponDiscount}% aplicată!`);
     renderCart();
-  } catch(e) { toast('Eroare la verificare!','error'); }
+  } catch(e) { toast('Eroare la verificare!', 'error'); }
 }
 
-// ============================================================
-// CHECKOUT
-// ============================================================
+// ============ CHECKOUT ============
+function toggleDiffAddress() {
+  const checked = document.getElementById('diffAddress').checked;
+  document.getElementById('diffAddressBlock').style.display = checked ? 'block' : 'none';
+}
+
 async function initCheckout() {
-  // Load transport options
   try {
     const snap = await db.collection('transport').get();
-    allTransport = snap.docs.map(d => ({id:d.id,...d.data()}));
+    allTransport = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     const el = document.getElementById('transportOptions');
-    if(!el) return;
+    if (!el) return;
     el.innerHTML = '';
-    allTransport.forEach((t,i) => {
+    allTransport.forEach((t, i) => {
       const lbl = document.createElement('label');
       lbl.className = 'transport-opt' + (i===0?' selected':'');
-      lbl.innerHTML = `<input type="radio" name="transport" value="${t.id}" ${i===0?'checked':''} onchange="selectTransport('${t.id}')"> 🚚 ${t.name} – ${parseFloat(t.cost).toFixed(2)} lei <small style="color:var(--text-light);">(${t.desc||''})</small>`;
+      const icon = t.type==='ridicare' ? '🏛️' : t.type==='posta' ? '📮' : '🚚';
+      lbl.innerHTML = `<input type="radio" name="transport" value="${t.id}" ${i===0?'checked':''} onchange="selectTransport('${t.id}')"> ${icon} ${t.name} – ${parseFloat(t.cost).toFixed(2)} lei <small style="color:var(--text-light);">(${t.desc||''})</small>`;
       el.appendChild(lbl);
-      if(i===0) selectedTransport = t;
+      if (i===0) selectedTransport = t;
     });
   } catch(e) {}
-
-  // Prefill from user
-  if(currentUser) {
+  // Prefill from user profile
+  if (currentUser) {
     try {
       const uDoc = await db.collection('users').doc(currentUser.uid).get();
-      if(uDoc.exists) {
+      if (uDoc.exists) {
         const u = uDoc.data();
-        if(u.name) document.getElementById('chkName').value = u.name;
-        if(u.email) document.getElementById('chkEmail').value = u.email;
-        if(u.phone) document.getElementById('chkPhone').value = u.phone;
+        if (u.name) document.getElementById('chkName').value = u.name;
+        if (u.email) document.getElementById('chkEmail').value = u.email;
+        if (u.phone) document.getElementById('chkPhone').value = u.phone;
+        if (u.address) document.getElementById('chkAddress').value = u.address;
+        if (u.city) document.getElementById('chkCity').value = u.city;
+        if (u.county) document.getElementById('chkCounty').value = u.county;
       }
-    } catch(e){}
+    } catch(e) {}
   }
-
   renderCheckoutSummary();
 }
 
 function selectTransport(id) {
-  selectedTransport = allTransport.find(t=>t.id===id);
+  selectedTransport = allTransport.find(t => t.id === id);
   document.querySelectorAll('.transport-opt').forEach(l => l.classList.remove('selected'));
   event.target.closest('.transport-opt').classList.add('selected');
   renderCheckoutSummary();
@@ -2781,23 +2804,22 @@ function selectTransport(id) {
 
 function selectPayment(radio) {
   selectedPayment = radio.value;
-  document.querySelectorAll('.transport-opt').forEach(l => l.classList.remove('selected'));
+  document.querySelectorAll('[id^=pay]').forEach(l => l.classList.remove('selected'));
   radio.closest('.transport-opt').classList.add('selected');
 }
 
 function renderCheckoutSummary() {
   const el = document.getElementById('checkoutSummary');
-  if(!el) return;
-  const subtotal = cart.reduce((s,i)=>s+i.qty*i.price,0);
-  const discount = subtotal*currentCouponDiscount/100;
+  if (!el) return;
+  const subtotal = cart.reduce((s,i) => s+i.qty*i.price, 0);
+  const discount = subtotal * currentCouponDiscount / 100;
   const transport = selectedTransport ? parseFloat(selectedTransport.cost||0) : 0;
   const total = subtotal - discount + transport;
-  el.innerHTML = `<div class="cart-summary"><h3>Rezumat</h3>
+  el.innerHTML = `<div class="cart-summary"><h3>Rezumat comandă</h3>
     <div class="summary-row"><span>Subtotal</span><span>${subtotal.toFixed(2)} lei</span></div>
-    ${discount>0?`<div class="summary-row" style="color:#27AE60;"><span>Reducere</span><span>-${discount.toFixed(2)} lei</span></div>`:''}
+    ${discount>0?`<div class="summary-row" style="color:#27AE60;"><span>Reducere (${currentCouponDiscount}%)</span><span>-${discount.toFixed(2)} lei</span></div>`:''}
     <div class="summary-row"><span>Transport (${selectedTransport?selectedTransport.name:'Neales'})</span><span>${transport.toFixed(2)} lei</span></div>
-    <div class="summary-row total"><span>Total de plată</span><span>${total.toFixed(2)} lei</span></div>
-  </div>`;
+    <div class="summary-row total"><span>Total de plată</span><span>${total.toFixed(2)} lei</span></div></div>`;
 }
 
 async function placeOrder() {
@@ -2809,118 +2831,109 @@ async function placeOrder() {
   const county = document.getElementById('chkCounty').value.trim();
   const note = document.getElementById('chkNote').value.trim();
   const gdpr = document.getElementById('gdprCheck').checked;
-
-  if(!name||!email||!phone||!address||!city) return toast('Completați toate câmpurile obligatorii!','error');
-  if(!gdpr) return toast('Trebuie să acceptați GDPR!','error');
-  if(!cart.length) return toast('Coșul este gol!','error');
-
-  const subtotal = cart.reduce((s,i)=>s+i.qty*i.price,0);
-  const discount = subtotal*currentCouponDiscount/100;
+  const diffAddr = document.getElementById('diffAddress').checked;
+  const shipAddress = diffAddr ? document.getElementById('chkShipAddress').value.trim() : address;
+  const shipCity = diffAddr ? document.getElementById('chkShipCity').value.trim() : city;
+  const shipCounty = diffAddr ? document.getElementById('chkShipCounty').value.trim() : county;
+  if (!name||!email||!phone||!address||!city) return toast('Completați toate câmpurile obligatorii!', 'error');
+  if (!gdpr) return toast('Trebuie să acceptați GDPR!', 'error');
+  if (!cart.length) return toast('Coșul este gol!', 'error');
+  const subtotal = cart.reduce((s,i) => s+i.qty*i.price, 0);
+  const discount = subtotal * currentCouponDiscount / 100;
   const transport = selectedTransport ? parseFloat(selectedTransport.cost||0) : 0;
-
-  // Subscriber discount
   let subscriberDiscount = 0;
-  if(currentUser) {
-    const uDoc = await db.collection('users').doc(currentUser.uid).get();
-    if(uDoc.exists && uDoc.data().subscribed) subscriberDiscount = 5;
-  }
-  const finalDiscount = currentCouponDiscount + subscriberDiscount;
-  const total = subtotal * (1-finalDiscount/100) + transport;
-
+  if (currentUser) { try { const uDoc = await db.collection('users').doc(currentUser.uid).get(); if (uDoc.exists && uDoc.data().subscribed) subscriberDiscount = 5; } catch(e) {} }
+  const finalDiscPct = currentCouponDiscount + subscriberDiscount;
+  const total = subtotal*(1-finalDiscPct/100) + transport;
   const orderData = {
     name, email, phone, address, city, county, note,
-    items: cart.map(i=>({id:i.id,name:i.name,price:i.price,qty:i.qty,image:i.image})),
+    shipAddress, shipCity, shipCounty,
+    items: cart.map(i => ({ id:i.id, name:i.name, price:i.price, qty:i.qty, image:i.image })),
     subtotal: parseFloat(subtotal.toFixed(2)),
-    discount: parseFloat((subtotal*(currentCouponDiscount+subscriberDiscount)/100).toFixed(2)),
-    transport: transport,
-    total: parseFloat(total.toFixed(2)),
-    coupon: currentCouponCode||'',
-    transportName: selectedTransport?.name||'',
-    payment: selectedPayment,
-    status: 'pending',
+    discount: parseFloat((subtotal*finalDiscPct/100).toFixed(2)),
+    transport, total: parseFloat(total.toFixed(2)),
+    coupon: currentCouponCode||'', transportName: selectedTransport?.name||'',
+    payment: selectedPayment, status: 'pending',
     userId: currentUser?.uid||'',
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   };
-
   try {
     const ref = await db.collection('orders').add(orderData);
-    // Update coupon usage
-    if(currentCouponCode) {
-      const cSnap = await db.collection('coupons').where('code','==',currentCouponCode).get();
-      if(!cSnap.empty) await cSnap.docs[0].ref.update({usedCount: firebase.firestore.FieldValue.increment(1)});
-    }
-    // Update user order count
-    if(currentUser) {
-      await db.collection('users').doc(currentUser.uid).update({orderCount: firebase.firestore.FieldValue.increment(1)}).catch(()=>{});
-    }
-    // Update product sold counts
-    for(const item of cart) {
-      await db.collection('products').doc(item.id).update({soldCount: firebase.firestore.FieldValue.increment(item.qty)}).catch(()=>{});
-    }
-
-    // Restore stock is NOT needed (was already decreased when added to cart)
-    cart = [];
-    currentCouponDiscount = 0; currentCouponCode = '';
+    if (currentCouponCode) { const cSnap = await db.collection('coupons').where('code','==',currentCouponCode).get(); if (!cSnap.empty) await cSnap.docs[0].ref.update({usedCount: firebase.firestore.FieldValue.increment(1)}); }
+    if (currentUser) await db.collection('users').doc(currentUser.uid).update({orderCount: firebase.firestore.FieldValue.increment(1)}).catch(()=>{});
+    for (const item of cart) await db.collection('products').doc(item.id).update({soldCount: firebase.firestore.FieldValue.increment(item.qty)}).catch(()=>{});
+    sendOrderEmail(ref.id, orderData);
+    cart = []; currentCouponDiscount = 0; currentCouponCode = '';
     saveCart(); updateCartBadge();
-
-    toast('✝ Comandă plasată cu succes! Vă mulțumim!', 'success', 5000);
-
-    // Show success message then go to home
+    toast('✝ Comandă plasată cu succes!', 'success', 5000);
     document.getElementById('page-checkout').innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:center;min-height:60vh;padding:40px;text-align:center;">
-        <div>
-          <div style="font-size:80px;margin-bottom:20px;">✝</div>
-          <h2 style="color:var(--visniu);font-size:28px;margin-bottom:16px;">Comandă plasată cu succes!</h2>
-          <p style="color:var(--text-light);margin-bottom:8px;">Comanda dvs. #${ref.id.substring(0,8).toUpperCase()} a fost primită.</p>
-          <p style="color:var(--text-light);margin-bottom:32px;">Vă vom contacta în cel mai scurt timp la ${email}.</p>
-          <button class="btn-primary" onclick="showPage('home')">← Înapoi la pagina principală</button>
-        </div>
-      </div>
-    `;
-    setTimeout(() => showPage('home'), 5000);
-  } catch(e) { toast('Eroare la plasarea comenzii: '+e.message,'error'); }
+      <div style="display:flex;align-items:center;justify-content:center;min-height:70vh;padding:40px;text-align:center;">
+        <div><div style="font-size:80px;margin-bottom:20px;">✝</div>
+        <h2 style="color:var(--visniu);font-size:28px;margin-bottom:16px;">Comandă plasată cu succes!</h2>
+        <p style="color:var(--text-light);margin-bottom:8px;">Comanda dvs. <strong>#${ref.id.substring(0,8).toUpperCase()}</strong> a fost primită.</p>
+        <p style="color:var(--text-light);margin-bottom:32px;">Vă vom contacta la adresa <strong>${email}</strong>.</p>
+        <button class="btn-primary" onclick="showPage('home')">← Înapoi la pagina principală</button></div>
+      </div>`;
+    setTimeout(() => showPage('home'), 7000);
+  } catch(e) { toast('Eroare: ' + e.message, 'error'); }
 }
 
-// ============================================================
-// AUDIO
-// ============================================================
+async function sendOrderEmail(orderId, data) {
+  try {
+    const cfgSnap = await db.collection('settings').doc('email').get();
+    if (!cfgSnap.exists) return;
+    const cfg = cfgSnap.data();
+    if (!cfg.formsubUrl) return;
+    const body = (cfg.bodyOrder||'').replace('{name}',data.name).replace('{orderId}',orderId.substring(0,8).toUpperCase()).replace('{total}',data.total);
+    await fetch(cfg.formsubUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: data.email, subject: cfg.subjectOrder||'Comandă confirmată', message: body }) });
+    // Also notify admin
+    await fetch(cfg.formsubUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: cfg.adminEmail||ADMIN_EMAIL, subject: `Comandă nouă #${orderId.substring(0,8).toUpperCase()} de la ${data.name}`, message: `Comandă nouă primită!\nClient: ${data.name}\nEmail: ${data.email}\nTelefon: ${data.phone}\nTotal: ${data.total} lei\nProduse: ${data.items.map(i=>i.name+'x'+i.qty).join(', ')}` }) });
+  } catch(e) { console.warn('Email send failed:', e); }
+}
+
+// ============ AUDIO ============
 async function renderAudio() {
   const el = document.getElementById('audioList');
   el.innerHTML = '<div class="loader"><div class="loader-cross">✝</div></div>';
   try {
     const snap = await db.collection('audio').orderBy('createdAt','desc').get();
-    if(snap.empty) { el.innerHTML='<div class="empty-state"><div class="icon">🎵</div><h3>Nicio înregistrare</h3><p>Înregistrările audio vor fi disponibile în curând.</p></div>'; return; }
+    if (snap.empty) { el.innerHTML = '<div class="empty-state"><div class="icon">🎵</div><h3>Nicio înregistrare</h3><p>Înregistrările audio vor fi disponibile în curând.</p></div>'; return; }
     el.innerHTML = '';
     snap.docs.forEach(doc => {
       const d = doc.data();
+      // Fix Dropbox links for direct playback
+      let audioUrl = d.url || '';
+      if (audioUrl.includes('dropbox.com')) {
+        audioUrl = audioUrl.replace('www.dropbox.com','dl.dropboxusercontent.com').replace('?dl=0','?dl=1').replace('?dl=0','').replace('dropbox.com/s/','dropbox.com/s/');
+        if (!audioUrl.includes('?')) audioUrl += '?dl=1'; else if (!audioUrl.includes('dl=1')) audioUrl += '&dl=1';
+      }
       const ap = document.createElement('div');
       ap.className = 'audio-player';
-      ap.innerHTML = `
-        <div class="audio-meta">
-          <div class="audio-icon">🎵</div>
-          <div class="audio-info">
-            <h4>${d.title}</h4>
-            <span>${d.author||'Parohia Stornești'} • ${formatDate(d.createdAt)}</span>
-            ${d.desc?`<p style="font-size:13px;color:var(--text-light);margin-top:4px;">${d.desc}</p>`:''}
-          </div>
-        </div>
-        ${d.url ? `<audio controls src="${d.url}"><source src="${d.url}">Browserul dvs. nu suportă audio HTML5.</audio>` : '<p style="color:var(--text-light);font-size:13px;">Fișier audio indisponibil</p>'}
-      `;
+      ap.innerHTML = `<div class="audio-meta">
+        <div class="audio-icon">🎵</div>
+        <div class="audio-info"><h4>${d.title}</h4>
+          <span>${d.author||'Parohia Stornești'} • ${formatDate(d.createdAt)}</span>
+          ${d.desc ? `<p style="font-size:13px;color:var(--text-light);margin-top:4px;">${d.desc}</p>` : ''}
+        </div></div>
+        ${audioUrl ? `<audio controls preload="metadata" style="width:100%;border-radius:6px;accent-color:var(--visniu);">
+          <source src="${audioUrl}" type="audio/mpeg">
+          <source src="${audioUrl}" type="audio/ogg">
+          <source src="${audioUrl}" type="audio/wav">
+          Browserul dvs. nu suportă redarea audio HTML5.
+        </audio>` : '<p style="color:var(--text-light);font-size:13px;">💡 Adăugați un URL valid din Admin → Audio</p>'}`;
       el.appendChild(ap);
     });
-  } catch(e) { el.innerHTML='<p>Eroare la încărcare.</p>'; }
+  } catch(e) { el.innerHTML = '<p>Eroare la încărcare.</p>'; }
 }
 
-// ============================================================
-// FAQ
-// ============================================================
+// ============ FAQ ============
 async function renderFaq() {
   const el = document.getElementById('faqList');
   el.innerHTML = '<div class="loader"><div class="loader-cross">✝</div></div>';
   try {
-    const snap = await db.collection('faq').orderBy('createdAt','desc').get();
-    if(snap.empty) { el.innerHTML='<div class="empty-state"><div class="icon">❓</div><h3>Nicio întrebare</h3><p>Întrebările frecvente vor fi disponibile în curând.</p></div>'; return; }
-    el.innerHTML='';
+    const snap = await db.collection('faq').get();
+    if (snap.empty) { el.innerHTML = '<div class="empty-state"><div class="icon">❓</div><h3>Nicio întrebare</h3></div>'; return; }
+    el.innerHTML = '';
     snap.docs.forEach(doc => {
       const d = doc.data();
       const item = document.createElement('div');
@@ -2928,121 +2941,117 @@ async function renderFaq() {
       item.innerHTML = `<div class="faq-q" onclick="toggleFaq(this)"><span>${d.question}</span><span class="arrow">▼</span></div><div class="faq-a">${d.answer}</div>`;
       el.appendChild(item);
     });
-  } catch(e) { el.innerHTML='<p>Eroare.</p>'; }
+  } catch(e) { el.innerHTML = '<p>Eroare.</p>'; }
 }
+function toggleFaq(el) { el.classList.toggle('open'); el.nextElementSibling.classList.toggle('open'); }
 
-function toggleFaq(el) {
-  el.classList.toggle('open');
-  el.nextElementSibling.classList.toggle('open');
-}
-
-// ============================================================
-// CLIENT AREA
-// ============================================================
+// ============ CLIENT ============
 async function initClientArea() {
-  if(!currentUser) { openModal('authModal'); showPage('home'); return; }
+  if (!currentUser) { openModal('authModal'); showPage('home'); return; }
   loadClientOrders();
-  loadClientProfile();
   loadClientReservations();
+  loadClientProfile();
 }
 
 async function loadClientOrders() {
   const el = document.getElementById('clientOrdersList');
-  el.innerHTML='<div class="loader"><div class="loader-cross">✝</div></div>';
+  el.innerHTML = '<div class="loader"><div class="loader-cross">✝</div></div>';
   try {
     const snap = await db.collection('orders').where('userId','==',currentUser.uid).orderBy('createdAt','desc').get();
-    if(snap.empty) { el.innerHTML='<div class="empty-state"><div class="icon">📦</div><h3>Nicio comandă</h3><p>Nu aveți comenzi plasate.</p></div>'; return; }
-    el.innerHTML='';
+    if (snap.empty) { el.innerHTML = '<div class="empty-state"><div class="icon">📦</div><h3>Nicio comandă</h3></div>'; return; }
+    el.innerHTML = '';
     snap.docs.forEach(doc => {
       const d = doc.data();
       const card = document.createElement('div');
-      card.className='admin-card';
-      card.style.marginBottom='12px';
-      card.innerHTML=`
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-          <div>
-            <h4 style="color:var(--visniu);">Comanda #${doc.id.substring(0,8).toUpperCase()}</h4>
-            <p style="font-size:13px;color:var(--text-light);">${formatDate(d.createdAt)} • ${d.items?.length||0} produse</p>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;">
-            <span class="order-status status-${d.status}">${statusName(d.status)}</span>
-            <strong style="font-family:'Cinzel',serif;color:var(--gold-dark);">${parseFloat(d.total||0).toFixed(2)} lei</strong>
-          </div>
-        </div>
+      card.className = 'admin-card'; card.style.marginBottom = '12px';
+      card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <div><h4 style="color:var(--visniu);">Comanda #${doc.id.substring(0,8).toUpperCase()}</h4>
+        <p style="font-size:13px;color:var(--text-light);">${formatDate(d.createdAt)} • ${d.items?.length||0} produse</p></div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="order-status status-${d.status}">${statusName(d.status)}</span>
+          <strong style="font-family:'Cinzel',serif;color:var(--gold-dark);">${parseFloat(d.total||0).toFixed(2)} lei</strong>
+        </div></div>
         <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
-          ${(d.items||[]).map(i=>`<div style="display:flex;align-items:center;gap:6px;font-size:13px;"><img src="${i.image||''}" style="width:32px;height:32px;object-fit:cover;border-radius:4px;" onerror="this.style.display='none'"> ${i.name} x${i.qty}</div>`).join('')}
+          ${(d.items||[]).map(i=>`<div style="display:flex;align-items:center;gap:6px;font-size:13px;"><img src="${i.image||''}" style="width:32px;height:32px;object-fit:cover;border-radius:4px;" onerror="this.style.display='none'"> ${i.name} ×${i.qty}</div>`).join('')}
         </div>`;
       el.appendChild(card);
     });
-  } catch(e) { el.innerHTML='<p>Eroare la încărcare.</p>'; }
+  } catch(e) { el.innerHTML = '<p>Eroare.</p>'; }
+}
+
+async function loadClientReservations() {
+  const el = document.getElementById('clientReservationsList');
+  if (!el) return;
+  el.innerHTML = '<div class="loader"><div class="loader-cross">✝</div></div>';
+  try {
+    const snap = await db.collection('reservations').where('userId','==',currentUser.uid).orderBy('createdAt','desc').get();
+    if (snap.empty) { el.innerHTML = '<div class="empty-state"><div class="icon">📅</div><h3>Nicio rezervare</h3><p>Nu aveți rezervări active.</p></div>'; return; }
+    el.innerHTML = '';
+    snap.docs.forEach(doc => {
+      const d = doc.data();
+      const card = document.createElement('div');
+      card.className = 'admin-card'; card.style.marginBottom = '10px';
+      card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <div><h4 style="color:var(--visniu);">📅 ${d.productName||'Produs rezervat'}</h4>
+        <p style="font-size:13px;color:var(--text-light);">Cantitate: ${d.qty} buc. • Ridicare: ${d.pickupDate||'Nespecificat'} • ${formatDate(d.createdAt)}</p></div>
+        <span class="order-status status-${d.status||'pending'}">${statusName(d.status||'pending')}</span>
+      </div>`;
+      el.appendChild(card);
+    });
+  } catch(e) { el.innerHTML = '<p>Eroare.</p>'; }
 }
 
 async function loadClientProfile() {
   try {
     const uDoc = await db.collection('users').doc(currentUser.uid).get();
     const u = uDoc.exists ? uDoc.data() : {};
-    document.getElementById('profileName').value = u.name || currentUser.displayName || '';
-    document.getElementById('profileEmail').value = currentUser.email || '';
-    document.getElementById('profilePhone').value = u.phone || '';
-    // Subscribe banner
+    if (document.getElementById('profileName')) document.getElementById('profileName').value = u.name || currentUser.displayName || '';
+    if (document.getElementById('profileEmail')) document.getElementById('profileEmail').value = currentUser.email || '';
+    if (document.getElementById('profilePhone')) document.getElementById('profilePhone').value = u.phone || '';
+    if (document.getElementById('profileAddress')) document.getElementById('profileAddress').value = u.address || '';
+    if (document.getElementById('profileCity')) document.getElementById('profileCity').value = u.city || '';
+    if (document.getElementById('profileCounty')) document.getElementById('profileCounty').value = u.county || '';
     const banner = document.getElementById('subscribeBanner');
-    if(u.subscribed) banner.innerHTML='<div><h3>✅ Ești abonat!</h3><p>Beneficiezi de 5% reducere la fiecare comandă.</p></div>';
-  } catch(e){}
+    if (banner && u.subscribed) banner.innerHTML = '<div><h3>✅ Ești abonat!</h3><p>Beneficiezi de 5% reducere la fiecare comandă.</p></div>';
+  } catch(e) {}
 }
 
 async function saveProfile() {
   const name = document.getElementById('profileName').value.trim();
   const phone = document.getElementById('profilePhone').value.trim();
+  const address = document.getElementById('profileAddress')?.value.trim() || '';
+  const city = document.getElementById('profileCity')?.value.trim() || '';
+  const county = document.getElementById('profileCounty')?.value.trim() || '';
   try {
-    await db.collection('users').doc(currentUser.uid).set({name, phone, email:currentUser.email},{merge:true});
-    await currentUser.updateProfile({displayName:name});
+    await db.collection('users').doc(currentUser.uid).set({ name, phone, address, city, county, email: currentUser.email }, { merge: true });
+    await currentUser.updateProfile({ displayName: name });
     toast('Profil salvat! ✝');
-  } catch(e) { toast('Eroare: '+e.message,'error'); }
+  } catch(e) { toast('Eroare: ' + e.message, 'error'); }
 }
 
 async function subscribeUser() {
-  if(!currentUser) return openModal('authModal');
+  if (!currentUser) return openModal('authModal');
   try {
-    await db.collection('users').doc(currentUser.uid).set({subscribed:true},{merge:true});
-    toast('✅ Te-ai abonat! Vei primi 5% reducere la fiecare comandă!');
-    document.getElementById('subscribeBanner').innerHTML='<div><h3>✅ Ești abonat!</h3><p>Beneficiezi de 5% reducere la fiecare comandă.</p></div>';
-  } catch(e) { toast('Eroare: '+e.message,'error'); }
-}
-
-async function loadClientReservations() {
-  if(!currentUser) return;
-  const el = document.getElementById('clientReservationsList');
-  el.innerHTML='<div class="loader"><div class="loader-cross">✝</div></div>';
-  try {
-    const snap = await db.collection('reservations').where('userId','==',currentUser.uid).orderBy('createdAt','desc').get();
-    if(snap.empty) { el.innerHTML='<div class="empty-state"><div class="icon">📅</div><h3>Nicio rezervare</h3><p>Nu aveți rezervări active.</p></div>'; return; }
-    el.innerHTML='';
-    snap.docs.forEach(doc => {
-      const d = doc.data();
-      const card = document.createElement('div');
-      card.className='admin-card'; card.style.marginBottom='10px';
-      card.innerHTML=`<h4 style="color:var(--visniu);">Rezervare: ${d.productName}</h4><p style="font-size:13px;color:var(--text-light);">Cantitate: ${d.qty} • Ridicare: ${d.pickupDate||'Nespecificat'} • ${formatDate(d.createdAt)}</p>`;
-      el.appendChild(card);
-    });
-  } catch(e) { el.innerHTML='<p>Eroare.</p>'; }
+    await db.collection('users').doc(currentUser.uid).set({ subscribed: true }, { merge: true });
+    toast('✅ Te-ai abonat! 5% reducere la fiecare comandă!');
+    const banner = document.getElementById('subscribeBanner');
+    if (banner) banner.innerHTML = '<div><h3>✅ Ești abonat!</h3><p>Beneficiezi de 5% reducere la fiecare comandă.</p></div>';
+  } catch(e) { toast('Eroare: ' + e.message, 'error'); }
 }
 
 function switchClientTab(tab, btn) {
-  document.querySelectorAll('.client-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('client-tab-'+tab).classList.add('active');
-  document.querySelectorAll('.client-tab-btn').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
+  document.querySelectorAll('.client-tab').forEach(t => t.classList.remove('active'));
+  const target = document.getElementById('client-tab-' + tab);
+  if (target) target.classList.add('active');
+  document.querySelectorAll('.client-tab-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
 }
 
-// ============================================================
-// RESERVATION
-// ============================================================
+// ============ RESERVATION ============
 function openReservationModal(productId, productName) {
   document.getElementById('reserveProductId').value = productId;
   document.getElementById('reserveProductName').value = productName;
-  if(currentUser) {
-    document.getElementById('reserveName').value = currentUser.displayName||'';
-  }
+  if (currentUser) document.getElementById('reserveName').value = currentUser.displayName || '';
   openModal('reservationModal');
 }
 
@@ -3054,91 +3063,131 @@ async function submitReservation() {
   const phone = document.getElementById('reservePhone').value.trim();
   const date = document.getElementById('reserveDate').value;
   const msg = document.getElementById('reserveMsg').value.trim();
-  if(!name||!phone||!date) return toast('Completați toate câmpurile obligatorii!','error');
+  if (!name||!phone||!date) return toast('Completați toate câmpurile!', 'error');
   try {
     await db.collection('reservations').add({
-      productId, productName, qty, name, phone, pickupDate:date, msg,
-      userId: currentUser?.uid||'',
+      productId, productName, qty, name, phone, pickupDate: date, msg,
+      userId: currentUser?.uid||'', status: 'pending',
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     closeModal('reservationModal');
-    toast('✝ Rezervare trimisă cu succes! Vă vom contacta.');
-  } catch(e) { toast('Eroare: '+e.message,'error'); }
+    toast('✝ Rezervare trimisă! Vă vom contacta.');
+  } catch(e) { toast('Eroare: ' + e.message, 'error'); }
 }
 
-// ============================================================
-// ADMIN
-// ============================================================
-const ADMIN_EMAIL = 'irimia.teodor.17@gmail.com';
+// ============ DRAG & DROP ============
+function dzDragOver(e, id) { e.preventDefault(); document.getElementById(id).classList.add('dragover'); }
+function dzDragLeave(id) { document.getElementById(id).classList.remove('dragover'); }
 
+function dzDrop(e, previewId, prefix) {
+  e.preventDefault();
+  const zone = e.currentTarget; zone.classList.remove('dragover');
+  const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+  processFiles(files, previewId, prefix);
+}
+
+function dzFiles(input, previewId, prefix) {
+  processFiles(Array.from(input.files), previewId, prefix);
+  input.value = '';
+}
+
+async function processFiles(files, previewId, prefix) {
+  for (const file of files) {
+    if (file.size > 5*1024*1024) { toast(`"${file.name}" depășește 5MB`, 'error'); continue; }
+    const path = `uploads/${prefix}/${Date.now()}_${file.name.replace(/\s+/g,'_')}`;
+    try {
+      if (prefix === 'p') {
+        const prog = document.getElementById('pUploadProgress');
+        const bar = document.getElementById('pUploadBar');
+        if (prog) prog.style.display = 'block';
+        const task = storage.ref(path).put(file);
+        await new Promise((res, rej) => task.on('state_changed', snap => { if(bar) bar.style.width=(snap.bytesTransferred/snap.totalBytes*100)+'%'; }, rej, res));
+        const url = await storage.ref(path).getDownloadURL();
+        imgDataStore.p.push({ url, path });
+        if (prog) prog.style.display = 'none';
+      } else {
+        const task = storage.ref(path).put(file);
+        await new Promise((res, rej) => task.on('state_changed', null, rej, res));
+        const url = await storage.ref(path).getDownloadURL();
+        imgDataStore.a.push({ url, path });
+      }
+      renderImgPreview(previewId, prefix);
+    } catch(err) { toast('Eroare upload: ' + err.message, 'error'); }
+  }
+}
+
+function renderImgPreview(previewId, prefix) {
+  const el = document.getElementById(previewId);
+  if (!el) return;
+  el.innerHTML = '';
+  imgDataStore[prefix].forEach((item, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'img-preview-item';
+    wrap.innerHTML = `<img src="${item.url}" alt=""><button class="remove-img" onclick="removeImg(${i},'${previewId}','${prefix}')">✕</button>`;
+    el.appendChild(wrap);
+  });
+}
+
+function removeImg(i, previewId, prefix) {
+  const item = imgDataStore[prefix][i];
+  if (item && item.path) storage.ref(item.path).delete().catch(()=>{});
+  imgDataStore[prefix].splice(i, 1);
+  renderImgPreview(previewId, prefix);
+}
+
+// ============ ADMIN ============
 async function adminLogin() {
   const email = document.getElementById('adminEmail').value.trim();
   const pass = document.getElementById('adminPass').value;
-  if(email !== ADMIN_EMAIL) return toast('Acces interzis!','error');
+  if (email !== ADMIN_EMAIL) return toast('Acces interzis!', 'error');
   try {
     await auth.signInWithEmailAndPassword(email, pass);
-    document.getElementById('adminLogin').style.display='none';
-    document.getElementById('adminPanel').style.display='block';
+    document.getElementById('adminLogin').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
     loadAdminDashboard();
-  } catch(e) {
-    toast('Eroare autentificare: '+e.message,'error');
-  }
+  } catch(e) { toast('Eroare: ' + e.message, 'error'); }
 }
 
 function adminLogout() {
   auth.signOut();
-  document.getElementById('adminLogin').style.display='flex';
-  document.getElementById('adminPanel').style.display='none';
+  document.getElementById('adminLogin').style.display = 'flex';
+  document.getElementById('adminPanel').style.display = 'none';
 }
 
 function initAdmin() {
-  if(currentUser && currentUser.email === ADMIN_EMAIL) {
-    document.getElementById('adminLogin').style.display='none';
-    document.getElementById('adminPanel').style.display='block';
+  if (currentUser && currentUser.email === ADMIN_EMAIL) {
+    document.getElementById('adminLogin').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
     loadAdminDashboard();
   } else {
-    document.getElementById('adminLogin').style.display='flex';
-    document.getElementById('adminPanel').style.display='none';
+    document.getElementById('adminLogin').style.display = 'flex';
+    document.getElementById('adminPanel').style.display = 'none';
   }
 }
 
 function switchAdminTab(tab, btn) {
-  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('admin-tab-'+tab).classList.add('active');
-  document.querySelectorAll('.admin-nav-item').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  if(tab==='dashboard') loadAdminDashboard();
-  if(tab==='orders') loadAdminOrders();
-  if(tab==='products') { loadAdminProducts(); loadTransportSelect(); }
-  if(tab==='announcements') loadAdminAnnouncements();
-  if(tab==='audio') loadAdminAudio();
-  if(tab==='clients') loadAdminClients();
-  if(tab==='coupons') loadAdminCoupons();
-  if(tab==='transport') loadAdminTransport();
-  if(tab==='faq') loadAdminFaq();
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('admin-tab-' + tab).classList.add('active');
+  document.querySelectorAll('.admin-nav-item').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const loaders = { dashboard: loadAdminDashboard, orders: loadAdminOrders, products: () => { loadAdminProducts(); loadTransportSelect(); }, announcements: loadAdminAnnouncements, audio: loadAdminAudio, clients: loadAdminClients, coupons: loadAdminCoupons, transport: loadAdminTransport, faq: loadAdminFaq, saint: initCalendar };
+  if (loaders[tab]) loaders[tab]();
 }
 
 async function loadAdminDashboard() {
   try {
-    const [ordSnap, prodSnap, userSnap, annSnap] = await Promise.all([
-      db.collection('orders').get(),
-      db.collection('products').get(),
-      db.collection('users').get(),
-      db.collection('announcements').get()
-    ]);
-    const revenue = ordSnap.docs.reduce((s,d)=>s+(parseFloat(d.data().total||0)),0);
-    const pending = ordSnap.docs.filter(d=>d.data().status==='pending').length;
-    document.getElementById('adminStats').innerHTML=`
+    const [ordSnap, prodSnap, userSnap, annSnap] = await Promise.all([db.collection('orders').get(), db.collection('products').get(), db.collection('users').get(), db.collection('announcements').get()]);
+    const revenue = ordSnap.docs.reduce((s,d) => s+parseFloat(d.data().total||0), 0);
+    const pending = ordSnap.docs.filter(d => d.data().status === 'pending').length;
+    document.getElementById('adminStats').innerHTML = `
       <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-val">${ordSnap.size}</div><div class="stat-label">Total comenzi</div></div>
       <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-val">${pending}</div><div class="stat-label">În așteptare</div></div>
-      <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-val">${revenue.toFixed(0)}</div><div class="stat-label">Venit total (lei)</div></div>
+      <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-val">${revenue.toFixed(0)}</div><div class="stat-label">Venit (lei)</div></div>
       <div class="stat-card"><div class="stat-icon">🕯</div><div class="stat-val">${prodSnap.size}</div><div class="stat-label">Produse</div></div>
       <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-val">${userSnap.size}</div><div class="stat-label">Clienți</div></div>
-      <div class="stat-card"><div class="stat-icon">📢</div><div class="stat-val">${annSnap.size}</div><div class="stat-label">Anunțuri</div></div>
-    `;
-    // Recent orders
-    const recent = ordSnap.docs.sort((a,b)=>(b.data().createdAt?.seconds||0)-(a.data().createdAt?.seconds||0)).slice(0,5);
-    document.getElementById('recentOrdersAdmin').innerHTML=`<table class="admin-table"><thead><tr><th>Client</th><th>Total</th><th>Status</th><th>Data</th></tr></thead><tbody>
+      <div class="stat-card"><div class="stat-icon">📢</div><div class="stat-val">${annSnap.size}</div><div class="stat-label">Anunțuri</div></div>`;
+    const recent = ordSnap.docs.sort((a,b) => (b.data().createdAt?.seconds||0)-(a.data().createdAt?.seconds||0)).slice(0,5);
+    document.getElementById('recentOrdersAdmin').innerHTML = `<table class="admin-table"><thead><tr><th>Client</th><th>Total</th><th>Status</th><th>Data</th></tr></thead><tbody>
       ${recent.map(d=>`<tr><td>${d.data().name}</td><td>${parseFloat(d.data().total||0).toFixed(2)} lei</td><td><span class="order-status status-${d.data().status}">${statusName(d.data().status)}</span></td><td>${formatDate(d.data().createdAt)}</td></tr>`).join('')}
     </tbody></table>`;
   } catch(e) { console.error(e); }
@@ -3146,90 +3195,187 @@ async function loadAdminDashboard() {
 
 async function loadAdminOrders() {
   const tbody = document.getElementById('adminOrdersTbody');
-  tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;">Se încarcă...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;">Se încarcă...</td></tr>';
   try {
     const snap = await db.collection('orders').orderBy('createdAt','desc').get();
-    tbody.innerHTML='';
+    tbody.innerHTML = '';
     snap.docs.forEach(doc => {
       const d = doc.data();
-      const shortId = doc.id.substring(0,8).toUpperCase();
       const tr = document.createElement('tr');
-      tr.innerHTML=`
-        <td style="font-family:'Cinzel',serif;font-size:11px;">#${shortId}</td>
-        <td>${d.name}<br><span style="font-size:11px;color:var(--text-light);">${d.email}</span></td>
-        <td style="font-size:12px;">${(d.items||[]).map(i=>i.name+'x'+i.qty).join(', ')}</td>
+      tr.innerHTML = `<td style="font-family:'Cinzel',serif;font-size:11px;">#${doc.id.substring(0,8).toUpperCase()}</td>
+        <td>${d.name}<br><span style="font-size:11px;color:var(--text-light);">${d.email} • ${d.phone||''}</span></td>
+        <td style="font-size:12px;max-width:180px;">${(d.items||[]).map(i=>i.name+'×'+i.qty).join(', ')}</td>
         <td>${parseFloat(d.total||0).toFixed(2)} lei</td>
-        <td>
-          <select onchange="updateOrderStatus('${doc.id}',this.value)" style="border:1px solid var(--border);border-radius:4px;padding:4px;font-size:12px;">
-            ${['pending','confirmed','shipped','delivered','cancelled'].map(s=>`<option value="${s}" ${d.status===s?'selected':''}>${statusName(s)}</option>`).join('')}
-          </select>
-        </td>
+        <td><select onchange="updateOrderStatus('${doc.id}',this.value)" style="border:1px solid var(--border);border-radius:4px;padding:4px;font-size:12px;">
+          ${['pending','confirmed','shipped','delivered','cancelled'].map(s=>`<option value="${s}" ${d.status===s?'selected':''}>${statusName(s)}</option>`).join('')}
+        </select></td>
         <td style="font-size:12px;">${formatDate(d.createdAt)}</td>
-        <td>
-          <button class="btn-sm" onclick="showOrderDetails('${doc.id}')">Detalii</button>
-          <button class="btn-sm danger" onclick="deleteOrder('${doc.id}')">Șterge</button>
+        <td style="display:flex;flex-direction:column;gap:4px;min-width:90px;">
+          <button class="btn-sm" onclick="showOrderDetailsAdmin('${doc.id}')">🔍 Detalii</button>
+          <button class="btn-invoice" onclick="generateInvoice('${doc.id}')">🧾 Factură</button>
+          <button class="btn-sm danger" onclick="deleteOrder('${doc.id}')">🗑 Șterge</button>
         </td>`;
       tbody.appendChild(tr);
     });
-  } catch(e) { tbody.innerHTML='<tr><td colspan="7">Eroare.</td></tr>'; }
+  } catch(e) { tbody.innerHTML = '<tr><td colspan="7">Eroare.</td></tr>'; }
 }
 
 async function updateOrderStatus(id, status) {
   try {
-    await db.collection('orders').doc(id).update({status});
+    await db.collection('orders').doc(id).update({ status });
     toast('Status actualizat! ✝');
-    // In production: trigger email notification
-  } catch(e) { toast('Eroare: '+e.message,'error'); }
+    sendStatusEmail(id, status);
+  } catch(e) { toast('Eroare: ' + e.message, 'error'); }
+}
+
+async function sendStatusEmail(orderId, status) {
+  try {
+    const [cfgSnap, orderSnap] = await Promise.all([db.collection('settings').doc('email').get(), db.collection('orders').doc(orderId).get()]);
+    if (!cfgSnap.exists || !orderSnap.exists) return;
+    const cfg = cfgSnap.data(); const d = orderSnap.data();
+    if (!cfg.formsubUrl) return;
+    const body = (cfg.bodyStatus||'').replace('{name}',d.name||'').replace('{orderId}',orderId.substring(0,8).toUpperCase()).replace('{status}',statusName(status));
+    await fetch(cfg.formsubUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: d.email, subject: 'Actualizare comandă – Parohia Stornești', message: body }) });
+  } catch(e) { console.warn(e); }
 }
 
 async function deleteOrder(id) {
-  if(!confirm('Sigur ștergeți comanda?')) return;
-  try { await db.collection('orders').doc(id).delete(); toast('Comandă ștearsă!','info'); loadAdminOrders(); }
-  catch(e) { toast('Eroare: '+e.message,'error'); }
+  if (!confirm('Sigur ștergeți comanda?')) return;
+  try { await db.collection('orders').doc(id).delete(); toast('Comandă ștearsă!', 'info'); loadAdminOrders(); }
+  catch(e) { toast('Eroare: ' + e.message, 'error'); }
 }
 
-async function showOrderDetails(id) {
+async function showOrderDetailsAdmin(id) {
   const doc = await db.collection('orders').doc(id).get();
-  if(!doc.exists) return;
+  if (!doc.exists) return;
   const d = doc.data();
-  document.getElementById('orderModalBody').innerHTML=`
-    <h2 style="color:var(--visniu);margin-bottom:20px;">Comanda #${id.substring(0,8).toUpperCase()}</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
-      <div><strong>Client:</strong> ${d.name}</div>
-      <div><strong>Email:</strong> ${d.email}</div>
+  document.getElementById('orderModalBody').innerHTML = `
+    <h2 style="color:var(--visniu);margin-bottom:16px;">Comanda #${id.substring(0,8).toUpperCase()}</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;font-size:14px;">
+      <div><strong>Client:</strong> ${d.name}</div><div><strong>Email:</strong> ${d.email}</div>
       <div><strong>Telefon:</strong> ${d.phone}</div>
-      <div><strong>Status:</strong> <span class="order-status status-${d.status}">${statusName(d.status)}</span></div>
-      <div style="grid-column:1/-1;"><strong>Adresă:</strong> ${d.address}, ${d.city}, ${d.county}</div>
-      ${d.note?`<div style="grid-column:1/-1;"><strong>Observații:</strong> ${d.note}</div>`:''}
+      <div><strong>Status:</strong> <select onchange="updateOrderStatus('${id}',this.value)" style="border:1px solid var(--border);border-radius:4px;padding:4px;font-size:12px;">
+        ${['pending','confirmed','shipped','delivered','cancelled'].map(s=>`<option value="${s}" ${d.status===s?'selected':''}>${statusName(s)}</option>`).join('')}
+      </select></div>
+      <div style="grid-column:1/-1;"><strong>Adresă facturare:</strong> ${d.address}, ${d.city}, ${d.county}</div>
+      ${d.shipAddress && d.shipAddress !== d.address ? `<div style="grid-column:1/-1;"><strong>Adresă livrare:</strong> ${d.shipAddress}, ${d.shipCity}, ${d.shipCounty}</div>` : ''}
+      ${d.note ? `<div style="grid-column:1/-1;"><strong>Observații:</strong> ${d.note}</div>` : ''}
+      <div><strong>Transport:</strong> ${d.transportName||'—'}</div>
+      <div><strong>Plată:</strong> ${d.payment === 'ramburs' ? '💵 Ramburs' : '🏦 Transfer'}</div>
     </div>
-    <h3 style="margin-bottom:12px;color:var(--visniu);">Produse</h3>
-    ${(d.items||[]).map(i=>`<div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--cream);border-radius:6px;margin-bottom:8px;font-size:14px;">
-      <img src="${i.image||''}" style="width:50px;height:50px;object-fit:cover;border-radius:4px;" onerror="this.style.display='none'">
-      <div style="flex:1;">${i.name}</div>
-      <div>x${i.qty}</div>
-      <div style="font-weight:700;">${(i.price*i.qty).toFixed(2)} lei</div>
-    </div>`).join('')}
-    <div style="margin-top:16px;text-align:right;">
-      ${d.coupon?`<p style="color:#27AE60;">Cupon: ${d.coupon}</p>`:''}
-      <p style="font-size:13px;">Transport: ${d.transportName||'—'} (${parseFloat(d.transport||0).toFixed(2)} lei)</p>
-      <p style="font-size:18px;font-family:'Cinzel',serif;color:var(--gold-dark);">Total: ${parseFloat(d.total||0).toFixed(2)} lei</p>
+    <div style="background:var(--cream);border-radius:8px;padding:14px;margin-bottom:16px;">
+      <h4 style="color:var(--visniu);margin-bottom:12px;font-size:14px;">✏️ Editare produse din comandă</h4>
+      ${(d.items||[]).map((item,i)=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+        <img src="${item.image||''}" style="width:40px;height:40px;object-fit:cover;border-radius:4px;" onerror="this.style.display='none'">
+        <span style="flex:1;font-size:13px;">${item.name}</span>
+        <input type="number" value="${item.qty}" min="0" id="oeQty_${i}" style="width:60px;padding:4px;border:1px solid var(--border);border-radius:4px;font-size:13px;">
+        <span style="font-size:12px;color:var(--text-light);">${item.price.toFixed(2)} lei/buc</span>
+      </div>`).join('')}
+      <button class="btn-sm" style="margin-top:8px;" onclick="saveOrderEdit('${id}',${JSON.stringify(d.items)})">💾 Salvează modificările</button>
     </div>
-  `;
+    <div style="text-align:right;margin-top:12px;">
+      ${d.coupon ? `<p style="color:#27AE60;font-size:13px;">Cupon: ${d.coupon}</p>` : ''}
+      <p style="font-size:13px;color:var(--text-light);">Transport: ${parseFloat(d.transport||0).toFixed(2)} lei</p>
+      <p style="font-size:20px;font-family:'Cinzel',serif;color:var(--gold-dark);">Total: ${parseFloat(d.total||0).toFixed(2)} lei</p>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn-invoice" onclick="generateInvoice('${id}')">🧾 Generează Factură</button>
+      <button class="btn-outline" onclick="closeModal('orderModal')">Închide</button>
+    </div>`;
   openModal('orderModal');
 }
 
+async function saveOrderEdit(orderId, origItems) {
+  const newItems = origItems.map((item,i) => {
+    const newQty = parseInt(document.getElementById('oeQty_'+i)?.value||0);
+    return { ...item, qty: newQty };
+  }).filter(i => i.qty > 0);
+  if (!newItems.length) return toast('Comanda nu poate fi goală!', 'error');
+  const newTotal = newItems.reduce((s,i) => s+i.qty*i.price, 0);
+  try {
+    await db.collection('orders').doc(orderId).update({ items: newItems, total: parseFloat(newTotal.toFixed(2)) });
+    toast('Comandă actualizată! ✝');
+    closeModal('orderModal');
+    loadAdminOrders();
+  } catch(e) { toast('Eroare: ' + e.message, 'error'); }
+}
+
+// ============ INVOICE ============
+async function generateInvoice(orderId) {
+  const doc = await db.collection('orders').doc(orderId).get();
+  if (!doc.exists) return;
+  const d = doc.data();
+  document.getElementById('invoiceBody').innerHTML = `
+    <div id="invoicePrint" style="font-family:'Lato',sans-serif;color:#1A0A10;padding:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;border-bottom:3px solid #6B1A2E;padding-bottom:16px;">
+        <div><h1 style="font-family:'Cinzel',serif;color:#6B1A2E;font-size:22px;">✝ PAROHIA STORNEȘTI</h1>
+        <p style="font-size:12px;color:#7A4555;line-height:1.7;">Biserica Sfânta Treime<br>Stornești, județul Iași<br>CIF: RO12345678<br>IBAN: RO49 AAAA 0000 0000 0000 0000<br>Banca Transilvania</p></div>
+        <div style="text-align:right;"><h2 style="font-family:'Cinzel',serif;color:#6B1A2E;font-size:18px;">FACTURĂ FISCALĂ</h2>
+        <p style="font-size:12px;color:#7A4555;line-height:1.7;">Nr: ${orderId.substring(0,8).toUpperCase()}<br>Data: ${new Date().toLocaleDateString('ro-RO')}</p></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+        <div style="background:#F5EFE0;border-radius:8px;padding:14px;"><h3 style="font-family:'Cinzel',serif;color:#6B1A2E;margin-bottom:8px;font-size:12px;letter-spacing:1px;">FURNIZOR</h3>
+        <p style="font-size:13px;line-height:1.7;">Parohia Stornești<br>Stornești, Iași<br>CIF: RO12345678</p></div>
+        <div style="background:#F5EFE0;border-radius:8px;padding:14px;"><h3 style="font-family:'Cinzel',serif;color:#6B1A2E;margin-bottom:8px;font-size:12px;letter-spacing:1px;">CUMPĂRĂTOR</h3>
+        <p style="font-size:13px;line-height:1.7;">${d.name}<br>${d.address}, ${d.city}<br>${d.phone}<br>${d.email}</p></div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
+        <thead><tr style="background:#6B1A2E;color:#E8C97A;">
+          <th style="padding:10px;text-align:left;font-size:12px;font-family:'Cinzel',serif;">Produs</th>
+          <th style="padding:10px;text-align:center;font-size:12px;font-family:'Cinzel',serif;">Cant.</th>
+          <th style="padding:10px;text-align:right;font-size:12px;font-family:'Cinzel',serif;">Preț/buc</th>
+          <th style="padding:10px;text-align:right;font-size:12px;font-family:'Cinzel',serif;">Total</th>
+        </tr></thead>
+        <tbody>${(d.items||[]).map((item,idx)=>`<tr style="background:${idx%2===0?'#F5EFE0':'white'};">
+          <td style="padding:10px;font-size:13px;">${item.name}</td>
+          <td style="padding:10px;text-align:center;font-size:13px;">${item.qty}</td>
+          <td style="padding:10px;text-align:right;font-size:13px;">${item.price.toFixed(2)} lei</td>
+          <td style="padding:10px;text-align:right;font-size:13px;font-weight:700;">${(item.price*item.qty).toFixed(2)} lei</td>
+        </tr>`).join('')}</tbody>
+      </table>
+      <div style="display:flex;justify-content:flex-end;">
+        <div style="min-width:260px;border-top:2px solid #6B1A2E;padding-top:12px;">
+          <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;"><span>Subtotal:</span><span>${parseFloat(d.subtotal||d.total||0).toFixed(2)} lei</span></div>
+          ${d.discount>0?`<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:#27AE60;"><span>Reducere:</span><span>-${parseFloat(d.discount).toFixed(2)} lei</span></div>`:''}
+          <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;"><span>Transport (${d.transportName||'—'}):</span><span>${parseFloat(d.transport||0).toFixed(2)} lei</span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:18px;font-weight:700;font-family:'Cinzel',serif;color:#6B1A2E;border-top:1px solid #E8DFC8;margin-top:6px;"><span>TOTAL:</span><span>${parseFloat(d.total||0).toFixed(2)} lei</span></div>
+        </div>
+      </div>
+      <div style="margin-top:24px;border-top:2px solid #6B1A2E;padding-top:16px;text-align:center;font-size:12px;color:#7A4555;">
+        <p>Metodă plată: ${d.payment==='ramburs'?'Ramburs la livrare':'Transfer bancar'}</p>
+        <p style="margin-top:8px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;">"Toate darurile desăvârșite sunt de sus." — Iacov 1:17</p>
+        <p style="margin-top:4px;">✝ Parohia Stornești – Biserica Sfânta Treime ✝</p>
+      </div>
+    </div>`;
+  openModal('invoiceModal');
+}
+
+function printInvoice() {
+  const content = document.getElementById('invoicePrint').innerHTML;
+  const w = window.open('', '_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Factură</title>
+    <style>body{font-family:Arial,sans-serif;padding:20px;max-width:800px;margin:0 auto;}@media print{@page{margin:1cm;size:A4;}}</style>
+    </head><body>${content}</body></html>`);
+  w.document.close(); w.focus(); setTimeout(() => w.print(), 500);
+}
+
+// ============ ADMIN PRODUCTS ============
 async function loadAdminProducts() {
   const tbody = document.getElementById('adminProductsTbody');
-  tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;">Se încarcă...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;">Se încarcă...</td></tr>';
   try {
-    const snap = await db.collection('products').get();
-    tbody.innerHTML='';
+    const [snap, transSnap] = await Promise.all([db.collection('products').get(), db.collection('transport').get()]);
+    const transMap = {}; transSnap.docs.forEach(d => { transMap[d.id] = d.data().name; });
+    tbody.innerHTML = '';
     snap.docs.forEach(doc => {
       const d = doc.data();
       const img = d.images&&d.images[0] ? `<img src="${d.images[0]}" style="width:50px;height:50px;object-fit:cover;border-radius:4px;" onerror="this.style.display='none'">` : '—';
       const tr = document.createElement('tr');
-      tr.innerHTML=`<td>${img}</td><td>${d.name}</td><td>${parseFloat(d.price||0).toFixed(2)} lei</td><td>${d.stock||0}</td><td>${d.category||'—'}</td>
-        <td><button class="btn-sm" onclick="editProduct('${doc.id}')">Editează</button> <button class="btn-sm danger" onclick="deleteProduct('${doc.id}')">Șterge</button></td>`;
+      tr.innerHTML = `<td>${img}</td><td>${d.name}</td><td>${parseFloat(d.price||0).toFixed(2)} lei</td>
+        <td><strong style="color:${(d.stock||0)>0?'#27AE60':'#E74C3C'}">${d.stock||0}</strong></td>
+        <td>${d.category||'—'}</td>
+        <td>${d.transportId ? transMap[d.transportId]||'—' : '—'}</td>
+        <td><button class="btn-sm" onclick="editProduct('${doc.id}')">✏️</button> <button class="btn-sm danger" onclick="deleteProduct('${doc.id}')">🗑</button></td>`;
       tbody.appendChild(tr);
     });
   } catch(e) {}
@@ -3237,16 +3383,17 @@ async function loadAdminProducts() {
 
 async function loadTransportSelect() {
   const sel = document.getElementById('pTransport');
-  if(!sel) return;
+  if (!sel) return;
   try {
     const snap = await db.collection('transport').get();
-    sel.innerHTML = '<option value="">Fără transport specific</option>';
-    snap.docs.forEach(d => { sel.innerHTML += `<option value="${d.id}">${d.data().name} – ${parseFloat(d.data().cost||0).toFixed(2)} lei</option>`; });
-  } catch(e){}
+    sel.innerHTML = '<option value="">Selectează tipul de transport...</option>';
+    snap.docs.forEach(d => { sel.innerHTML += `<option value="${d.id}">${d.data().name} (${d.data().type||'curier'}) – ${parseFloat(d.data().cost||0).toFixed(2)} lei</option>`; });
+  } catch(e) {}
 }
 
 async function saveProduct() {
   const id = document.getElementById('pEditId').value;
+  const images = imgDataStore.p.map(i => i.url);
   const data = {
     name: document.getElementById('pName').value.trim(),
     price: parseFloat(document.getElementById('pPrice').value||0),
@@ -3256,26 +3403,21 @@ async function saveProduct() {
     badge: document.getElementById('pBadge').value.trim(),
     descShort: document.getElementById('pDescShort').value.trim(),
     desc: document.getElementById('pDesc').value.trim(),
-    images: document.getElementById('pImages').value.trim().split('\n').map(s=>s.trim()).filter(Boolean),
+    images,
     transportId: document.getElementById('pTransport').value,
     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
   };
-  if(!data.name||!data.price) return toast('Completați denumirea și prețul!','error');
+  if (!data.name || !data.price) return toast('Completați denumirea și prețul!', 'error');
   try {
-    if(id) { await db.collection('products').doc(id).update(data); toast('Produs actualizat! ✝'); }
-    else {
-      data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-      data.soldCount = 0; data.avgRating = 0; data.reviewCount = 0;
-      await db.collection('products').add(data);
-      toast('Produs adăugat! ✝');
-    }
+    if (id) { await db.collection('products').doc(id).update(data); toast('Produs actualizat! ✝'); }
+    else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); data.soldCount = 0; data.avgRating = 0; data.reviewCount = 0; await db.collection('products').add(data); toast('Produs adăugat! ✝'); }
     clearProductForm(); loadAdminProducts();
-  } catch(e) { toast('Eroare: '+e.message,'error'); }
+  } catch(e) { toast('Eroare: ' + e.message, 'error'); }
 }
 
 async function editProduct(id) {
   const doc = await db.collection('products').doc(id).get();
-  if(!doc.exists) return;
+  if (!doc.exists) return;
   const d = doc.data();
   document.getElementById('pEditId').value = id;
   document.getElementById('pName').value = d.name||'';
@@ -3286,114 +3428,115 @@ async function editProduct(id) {
   document.getElementById('pBadge').value = d.badge||'';
   document.getElementById('pDescShort').value = d.descShort||'';
   document.getElementById('pDesc').value = d.desc||'';
-  document.getElementById('pImages').value = (d.images||[]).join('\n');
   document.getElementById('pTransport').value = d.transportId||'';
-  window.scrollTo({top: document.getElementById('admin-tab-products').offsetTop, behavior:'smooth'});
+  imgDataStore.p = (d.images||[]).map(url => ({ url, path: '' }));
+  renderImgPreview('pImgPreview', 'p');
+  document.getElementById('productFormTitle').textContent = 'Editează produs';
+  document.getElementById('admin-tab-products').scrollIntoView({ behavior:'smooth' });
 }
 
 function clearProductForm() {
-  ['pEditId','pName','pPrice','pOldPrice','pStock','pCategory','pBadge','pDescShort','pDesc','pImages'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
-  document.getElementById('pStock').value='0';
+  ['pEditId','pName','pPrice','pOldPrice','pCategory','pBadge','pDescShort','pDesc'].forEach(id => { const e = document.getElementById(id); if(e) e.value = ''; });
+  document.getElementById('pStock').value = '0';
+  if (document.getElementById('pTransport')) document.getElementById('pTransport').value = '';
+  imgDataStore.p = [];
+  document.getElementById('pImgPreview').innerHTML = '';
+  const t = document.getElementById('productFormTitle'); if(t) t.textContent = 'Adaugă produs nou';
 }
 
 async function deleteProduct(id) {
-  if(!confirm('Sigur ștergeți produsul?')) return;
-  try { await db.collection('products').doc(id).delete(); toast('Produs șters!','info'); loadAdminProducts(); }
-  catch(e) { toast('Eroare: '+e.message,'error'); }
+  if (!confirm('Sigur ștergeți produsul?')) return;
+  try { await db.collection('products').doc(id).delete(); toast('Produs șters!', 'info'); loadAdminProducts(); }
+  catch(e) { toast('Eroare: ' + e.message, 'error'); }
 }
 
+// ============ ADMIN ANNOUNCEMENTS ============
 async function loadAdminAnnouncements() {
   const tbody = document.getElementById('adminAnnTbody');
-  tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:20px;">Se încarcă...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;">Se încarcă...</td></tr>';
   try {
     const snap = await db.collection('announcements').orderBy('createdAt','desc').get();
-    tbody.innerHTML='';
+    tbody.innerHTML = '';
     snap.docs.forEach(doc => {
       const d = doc.data();
       const tr = document.createElement('tr');
-      tr.innerHTML=`<td>${d.title}</td><td><span class="ann-type-badge badge-${d.type||'general'}">${typeName(d.type)}</span></td><td>${formatDate(d.createdAt)}</td>
-        <td><button class="btn-sm" onclick="editAnn('${doc.id}')">Editează</button> <button class="btn-sm danger" onclick="deleteAnn('${doc.id}')">Șterge</button></td>`;
+      tr.innerHTML = `<td>${d.title}</td><td><span class="ann-type-badge badge-${d.type||'general'}">${typeName(d.type)}</span></td>
+        <td>${formatDate(d.createdAt)}</td>
+        <td><button class="btn-sm" onclick="editAnn('${doc.id}')">✏️</button> <button class="btn-sm danger" onclick="deleteAnn('${doc.id}')">🗑</button></td>`;
       tbody.appendChild(tr);
     });
-  } catch(e){}
+  } catch(e) {}
 }
 
 async function saveAnnouncement() {
   const id = document.getElementById('aEditId').value;
-  const data = {
-    title: document.getElementById('aTitle').value.trim(),
-    type: document.getElementById('aType').value,
-    content: document.getElementById('aContent').value.trim(),
-    images: document.getElementById('aImages').value.trim().split('\n').map(s=>s.trim()).filter(Boolean),
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-  };
-  if(!data.title||!data.content) return toast('Completați titlul și conținutul!','error');
+  const images = imgDataStore.a.map(i => i.url);
+  const data = { title: document.getElementById('aTitle').value.trim(), type: document.getElementById('aType').value, content: document.getElementById('aContent').value.trim(), images, updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
+  if (!data.title || !data.content) return toast('Completați titlul și conținutul!', 'error');
   try {
-    if(id) { await db.collection('announcements').doc(id).update(data); toast('Anunț actualizat!'); }
+    if (id) { await db.collection('announcements').doc(id).update(data); toast('Anunț actualizat!'); }
     else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('announcements').add(data); toast('Anunț adăugat!'); }
     clearAnnForm(); loadAdminAnnouncements();
-  } catch(e) { toast('Eroare: '+e.message,'error'); }
+  } catch(e) { toast('Eroare: ' + e.message, 'error'); }
 }
 
 async function editAnn(id) {
   const doc = await db.collection('announcements').doc(id).get();
-  if(!doc.exists) return;
+  if (!doc.exists) return;
   const d = doc.data();
   document.getElementById('aEditId').value = id;
   document.getElementById('aTitle').value = d.title||'';
   document.getElementById('aType').value = d.type||'general';
   document.getElementById('aContent').value = d.content||'';
-  document.getElementById('aImages').value = (d.images||[]).join('\n');
+  imgDataStore.a = (d.images||[]).map(url => ({ url, path: '' }));
+  renderImgPreview('aImgPreview', 'a');
 }
 
 function clearAnnForm() {
-  ['aEditId','aTitle','aContent','aImages'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('aType').value='general';
+  ['aEditId','aTitle','aContent'].forEach(id => { const e = document.getElementById(id); if(e) e.value = ''; });
+  if (document.getElementById('aType')) document.getElementById('aType').value = 'general';
+  imgDataStore.a = []; document.getElementById('aImgPreview').innerHTML = '';
 }
 
 async function deleteAnn(id) {
-  if(!confirm('Sigur ștergeți anunțul?')) return;
-  try { await db.collection('announcements').doc(id).delete(); toast('Anunț șters!','info'); loadAdminAnnouncements(); }
-  catch(e) { toast('Eroare: '+e.message,'error'); }
+  if (!confirm('Sigur ștergeți anunțul?')) return;
+  try { await db.collection('announcements').doc(id).delete(); toast('Anunț șters!', 'info'); loadAdminAnnouncements(); }
+  catch(e) { toast('Eroare: ' + e.message, 'error'); }
 }
 
+// ============ ADMIN AUDIO ============
 async function loadAdminAudio() {
   const tbody = document.getElementById('adminAudioTbody');
-  tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:20px;">Se încarcă...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;">Se încarcă...</td></tr>';
   try {
     const snap = await db.collection('audio').orderBy('createdAt','desc').get();
-    tbody.innerHTML='';
+    tbody.innerHTML = '';
     snap.docs.forEach(doc => {
       const d = doc.data();
       const tr = document.createElement('tr');
-      tr.innerHTML=`<td>${d.title}</td><td>${d.author||'—'}</td><td>${formatDate(d.createdAt)}</td>
-        <td><button class="btn-sm" onclick="editAudio('${doc.id}')">Editează</button> <button class="btn-sm danger" onclick="deleteAudio('${doc.id}')">Șterge</button></td>`;
+      tr.innerHTML = `<td>${d.title}</td><td>${d.author||'—'}</td><td>${formatDate(d.createdAt)}</td>
+        <td><button class="btn-sm" onclick="editAudio('${doc.id}')">✏️</button> <button class="btn-sm danger" onclick="deleteAudio('${doc.id}')">🗑</button></td>`;
       tbody.appendChild(tr);
     });
-  } catch(e){}
+  } catch(e) {}
 }
 
 async function saveAudio() {
   const id = document.getElementById('audEditId').value;
-  const data = {
-    title: document.getElementById('audTitle').value.trim(),
-    author: document.getElementById('audAuthor').value.trim(),
-    url: document.getElementById('audUrl').value.trim(),
-    desc: document.getElementById('audDesc').value.trim(),
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-  };
-  if(!data.title||!data.url) return toast('Completați titlul și URL-ul!','error');
+  const data = { title: document.getElementById('audTitle').value.trim(), author: document.getElementById('audAuthor').value.trim(), url: document.getElementById('audUrl').value.trim(), desc: document.getElementById('audDesc').value.trim(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
+  if (!data.title || !data.url) return toast('Completați titlul și URL-ul!', 'error');
   try {
-    if(id) { await db.collection('audio').doc(id).update(data); toast('Audio actualizat!'); }
+    if (id) { await db.collection('audio').doc(id).update(data); toast('Audio actualizat!'); }
     else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('audio').add(data); toast('Audio adăugat!'); }
     clearAudioForm(); loadAdminAudio();
-  } catch(e) { toast('Eroare: '+e.message,'error'); }
+  } catch(e) { toast('Eroare: ' + e.message, 'error'); }
 }
 
 async function editAudio(id) {
   const doc = await db.collection('audio').doc(id).get();
-  if(!doc.exists) return;
+  if (!doc.exists) return;
   const d = doc.data();
+  ['audEditId','audTitle','audAuthor','audUrl','audDesc'].forEach(k => { const el = document.getElementById(k); if(el) el.value = d[k.replace('aud','').toLowerCase()]||d[k]||''; });
   document.getElementById('audEditId').value = id;
   document.getElementById('audTitle').value = d.title||'';
   document.getElementById('audAuthor').value = d.author||'';
@@ -3401,47 +3544,48 @@ async function editAudio(id) {
   document.getElementById('audDesc').value = d.desc||'';
 }
 
-function clearAudioForm() {
-  ['audEditId','audTitle','audAuthor','audUrl','audDesc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-}
+function clearAudioForm() { ['audEditId','audTitle','audAuthor','audUrl','audDesc'].forEach(id => { const e = document.getElementById(id); if(e) e.value=''; }); }
 
 async function deleteAudio(id) {
-  if(!confirm('Sigur ștergeți înregistrarea?')) return;
-  try { await db.collection('audio').doc(id).delete(); toast('Audio șters!','info'); loadAdminAudio(); }
-  catch(e) { toast('Eroare: '+e.message,'error'); }
+  if (!confirm('Sigur ștergeți?')) return;
+  try { await db.collection('audio').doc(id).delete(); toast('Audio șters!', 'info'); loadAdminAudio(); }
+  catch(e) {}
 }
 
+// ============ ADMIN CLIENTS ============
 async function loadAdminClients() {
   const tbody = document.getElementById('adminClientsTbody');
-  tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;">Se încarcă...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;">Se încarcă...</td></tr>';
   try {
     const snap = await db.collection('users').get();
-    tbody.innerHTML='';
+    tbody.innerHTML = '';
     snap.docs.forEach(doc => {
       const d = doc.data();
       const tr = document.createElement('tr');
-      tr.innerHTML=`<td>${d.name||'—'}</td><td>${d.email||'—'}</td><td>${d.phone||'—'}</td>
-        <td><span style="color:${d.subscribed?'#27AE60':'var(--text-light)'};">${d.subscribed?'✅ Da':'Nu'}</span></td>
+      tr.innerHTML = `<td>${d.name||'—'}</td><td>${d.email||'—'}</td><td>${d.phone||'—'}</td>
+        <td><span style="color:${d.subscribed?'#27AE60':'var(--text-light)'};">${d.subscribed?'✅':'Nu'}</span></td>
         <td>${d.orderCount||0}</td><td>${formatDate(d.createdAt)}</td>`;
       tbody.appendChild(tr);
     });
-  } catch(e){}
+  } catch(e) {}
 }
 
+// ============ ADMIN COUPONS ============
 async function loadAdminCoupons() {
   const tbody = document.getElementById('adminCouponsTbody');
-  tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;">Se încarcă...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;">Se încarcă...</td></tr>';
   try {
     const snap = await db.collection('coupons').get();
-    tbody.innerHTML='';
+    tbody.innerHTML = '';
     snap.docs.forEach(doc => {
       const d = doc.data();
       const tr = document.createElement('tr');
-      tr.innerHTML=`<td style="font-family:'Cinzel',serif;letter-spacing:1px;">${d.code}</td><td>${d.discount}%</td><td>${d.expiresAt?formatDate(d.expiresAt):'Fără limită'}</td><td>${d.usedCount||0}/${d.maxUses||'∞'}</td>
-        <td><button class="btn-sm danger" onclick="deleteCoupon('${doc.id}')">Șterge</button></td>`;
+      tr.innerHTML = `<td style="font-family:'Cinzel',serif;letter-spacing:1px;">${d.code}</td><td>${d.discount}%</td>
+        <td>${d.expiresAt ? formatDate(d.expiresAt) : 'Fără limită'}</td><td>${d.usedCount||0}/${d.maxUses||'∞'}</td>
+        <td><button class="btn-sm danger" onclick="deleteCoupon('${doc.id}')">🗑</button></td>`;
       tbody.appendChild(tr);
     });
-  } catch(e){}
+  } catch(e) {}
 }
 
 async function saveCoupon() {
@@ -3449,222 +3593,246 @@ async function saveCoupon() {
   const disc = parseInt(document.getElementById('couponDisc').value||0);
   const exp = document.getElementById('couponExp').value;
   const maxUses = parseInt(document.getElementById('couponUses').value||100);
-  if(!code||!disc) return toast('Completați codul și reducerea!','error');
+  if (!code || !disc) return toast('Completați codul și reducerea!', 'error');
   try {
-    await db.collection('coupons').add({
-      code, discount: disc, maxUses, usedCount: 0,
-      expiresAt: exp ? firebase.firestore.Timestamp.fromDate(new Date(exp)) : null,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    toast('Cupon adăugat!');
-    loadAdminCoupons();
-  } catch(e) { toast('Eroare: '+e.message,'error'); }
+    await db.collection('coupons').add({ code, discount: disc, maxUses, usedCount: 0, expiresAt: exp ? firebase.firestore.Timestamp.fromDate(new Date(exp)) : null, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    toast('Cupon adăugat!'); loadAdminCoupons();
+  } catch(e) { toast('Eroare: ' + e.message, 'error'); }
 }
 
 async function deleteCoupon(id) {
-  if(!confirm('Ștergeți cuponul?')) return;
-  try { await db.collection('coupons').doc(id).delete(); toast('Cupon șters!','info'); loadAdminCoupons(); }
-  catch(e){}
+  if (!confirm('Ștergeți cuponul?')) return;
+  try { await db.collection('coupons').doc(id).delete(); toast('Cupon șters!', 'info'); loadAdminCoupons(); }
+  catch(e) {}
 }
 
+// ============ ADMIN TRANSPORT ============
 async function loadAdminTransport() {
   const tbody = document.getElementById('adminTransportTbody');
-  tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:20px;">Se încarcă...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;">Se încarcă...</td></tr>';
   try {
     const snap = await db.collection('transport').get();
-    tbody.innerHTML='';
+    tbody.innerHTML = '';
     snap.docs.forEach(doc => {
       const d = doc.data();
       const tr = document.createElement('tr');
-      tr.innerHTML=`<td>${d.name}</td><td>${parseFloat(d.cost||0).toFixed(2)} lei</td><td>${d.desc||'—'}</td>
-        <td><button class="btn-sm danger" onclick="deleteTransport('${doc.id}')">Șterge</button></td>`;
+      tr.innerHTML = `<td>${d.name}</td><td><span style="background:var(--cream-dark);padding:2px 8px;border-radius:12px;font-size:11px;">${d.type||'curier'}</span></td>
+        <td>${parseFloat(d.cost||0).toFixed(2)} lei</td><td>${d.desc||'—'}</td>
+        <td><button class="btn-sm danger" onclick="deleteTransport('${doc.id}')">🗑</button></td>`;
       tbody.appendChild(tr);
     });
-  } catch(e){}
+  } catch(e) {}
 }
 
 async function saveTransport() {
   const name = document.getElementById('tName').value.trim();
   const cost = parseFloat(document.getElementById('tCost').value||0);
   const desc = document.getElementById('tDesc').value.trim();
-  if(!name) return toast('Completați denumirea!','error');
+  const type = document.getElementById('tType').value;
+  if (!name) return toast('Completați denumirea!', 'error');
   try {
-    await db.collection('transport').add({name, cost, desc, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
-    toast('Transport adăugat!');
-    loadAdminTransport();
-  } catch(e) { toast('Eroare: '+e.message,'error'); }
+    await db.collection('transport').add({ name, cost, desc, type, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    toast('Transport adăugat!'); loadAdminTransport();
+  } catch(e) { toast('Eroare: ' + e.message, 'error'); }
 }
 
 async function deleteTransport(id) {
-  if(!confirm('Ștergeți opțiunea?')) return;
-  try { await db.collection('transport').doc(id).delete(); toast('Șters!','info'); loadAdminTransport(); }
-  catch(e){}
+  if (!confirm('Ștergeți?')) return;
+  try { await db.collection('transport').doc(id).delete(); toast('Șters!', 'info'); loadAdminTransport(); }
+  catch(e) {}
 }
 
-async function loadAdminFaq() {
-  const tbody = document.getElementById('adminFaqTbody');
-  tbody.innerHTML='<tr><td colspan="2" style="text-align:center;padding:20px;">Se încarcă...</td></tr>';
-  try {
-    const snap = await db.collection('faq').get();
-    tbody.innerHTML='';
-    snap.docs.forEach(doc => {
-      const d = doc.data();
-      const tr = document.createElement('tr');
-      tr.innerHTML=`<td>${d.question}</td><td><button class="btn-sm" onclick="editFaq('${doc.id}')">Editează</button> <button class="btn-sm danger" onclick="deleteFaq('${doc.id}')">Șterge</button></td>`;
-      tbody.appendChild(tr);
-    });
-  } catch(e){}
-}
-
-async function saveFaq() {
-  const id = document.getElementById('faqEditId').value;
-  const q = document.getElementById('faqQ').value.trim();
-  const a = document.getElementById('faqA').value.trim();
-  if(!q||!a) return toast('Completați întrebarea și răspunsul!','error');
-  try {
-    if(id) { await db.collection('faq').doc(id).update({question:q,answer:a}); toast('FAQ actualizat!'); }
-    else { await db.collection('faq').add({question:q,answer:a,createdAt:firebase.firestore.FieldValue.serverTimestamp()}); toast('FAQ adăugat!'); }
-    document.getElementById('faqQ').value=''; document.getElementById('faqA').value=''; document.getElementById('faqEditId').value='';
-    loadAdminFaq();
-  } catch(e) { toast('Eroare: '+e.message,'error'); }
-}
-
-async function editFaq(id) {
-  const doc = await db.collection('faq').doc(id).get();
-  if(!doc.exists) return;
-  document.getElementById('faqEditId').value=id;
-  document.getElementById('faqQ').value=doc.data().question||'';
-  document.getElementById('faqA').value=doc.data().answer||'';
-}
-
-async function deleteFaq(id) {
-  if(!confirm('Ștergeți?')) return;
-  try { await db.collection('faq').doc(id).delete(); toast('Șters!','info'); loadAdminFaq(); }
-  catch(e){}
-}
-
+// ============ ADMIN EMAIL ============
 async function saveEmailConfig() {
   try {
     await db.collection('settings').doc('email').set({
       adminEmail: document.getElementById('emailAdmin').value,
+      formsubUrl: document.getElementById('formsubUrl').value,
       subjectOrder: document.getElementById('emailSubjectOrder').value,
       bodyOrder: document.getElementById('emailBodyOrder').value,
       bodyStatus: document.getElementById('emailBodyStatus').value,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     toast('Configurare email salvată!');
-  } catch(e) { toast('Eroare: '+e.message,'error'); }
+  } catch(e) { toast('Eroare: ' + e.message, 'error'); }
 }
 
-async function saveSchedule() {
-  const data = {
-    day: document.getElementById('schDay').value.trim(),
-    service: document.getElementById('schService').value.trim(),
-    time: document.getElementById('schTime').value.trim(),
-    place: document.getElementById('schPlace').value.trim(),
-    type: document.getElementById('schType').value.trim(),
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  };
-  if(!data.day||!data.service) return toast('Completați ziua și slujba!','error');
-  try { await db.collection('schedule').add(data); toast('Program adăugat!'); }
-  catch(e) { toast('Eroare: '+e.message,'error'); }
+// ============ ADMIN FAQ ============
+async function loadAdminFaq() {
+  const tbody = document.getElementById('adminFaqTbody');
+  tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;padding:20px;">Se încarcă...</td></tr>';
+  try {
+    const snap = await db.collection('faq').get();
+    tbody.innerHTML = '';
+    snap.docs.forEach(doc => {
+      const d = doc.data();
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${d.question}</td><td><button class="btn-sm" onclick="editFaq('${doc.id}')">✏️</button> <button class="btn-sm danger" onclick="deleteFaq('${doc.id}')">🗑</button></td>`;
+      tbody.appendChild(tr);
+    });
+  } catch(e) {}
+}
+
+async function saveFaq() {
+  const id = document.getElementById('faqEditId').value;
+  const q = document.getElementById('faqQ').value.trim();
+  const a = document.getElementById('faqA').value.trim();
+  if (!q || !a) return toast('Completați câmpurile!', 'error');
+  try {
+    if (id) { await db.collection('faq').doc(id).update({ question:q, answer:a }); toast('FAQ actualizat!'); }
+    else { await db.collection('faq').add({ question:q, answer:a, createdAt: firebase.firestore.FieldValue.serverTimestamp() }); toast('FAQ adăugat!'); }
+    ['faqQ','faqA','faqEditId'].forEach(id => { const e = document.getElementById(id); if(e) e.value=''; });
+    loadAdminFaq();
+  } catch(e) { toast('Eroare: ' + e.message, 'error'); }
+}
+
+async function editFaq(id) {
+  const doc = await db.collection('faq').doc(id).get();
+  if (!doc.exists) return;
+  document.getElementById('faqEditId').value = id;
+  document.getElementById('faqQ').value = doc.data().question||'';
+  document.getElementById('faqA').value = doc.data().answer||'';
+}
+
+async function deleteFaq(id) {
+  if (!confirm('Ștergeți?')) return;
+  try { await db.collection('faq').doc(id).delete(); toast('Șters!', 'info'); loadAdminFaq(); }
+  catch(e) {}
+}
+
+// ============ CALENDAR SAINTS ============
+function initCalendar() {
+  calYear = new Date().getFullYear();
+  calMonth = new Date().getMonth();
+  renderCalendar();
+}
+
+async function renderCalendar() {
+  document.getElementById('calMonthTitle').textContent = `${monthNames[calMonth]} ${calYear}`;
+  const grid = document.getElementById('calendarGrid');
+  grid.innerHTML = '';
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const offset = firstDay === 0 ? 6 : firstDay - 1;
+  for (let i = 0; i < offset; i++) { const d = document.createElement('div'); d.className = 'cal-day'; d.style.visibility = 'hidden'; grid.appendChild(d); }
+  // Load saints for this month
+  const prefix = `${calYear}-${String(calMonth+1).padStart(2,'0')}`;
+  try {
+    const snap = await db.collection('saintDays').where(firebase.firestore.FieldPath.documentId(), '>=', prefix+'-01').where(firebase.firestore.FieldPath.documentId(), '<=', prefix+'-31').get();
+    snap.docs.forEach(d => { saintCache[d.id] = d.data(); });
+  } catch(e) {}
+  const today = new Date();
+  for (let day = 1; day <= daysInMonth; day++) {
+    const key = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const hasSaint = !!saintCache[key];
+    const isToday = today.getFullYear()===calYear && today.getMonth()===calMonth && today.getDate()===day;
+    const d = document.createElement('div');
+    d.className = `cal-day${hasSaint?' has-saint':''}${isToday?' today':''}`;
+    d.textContent = day;
+    d.title = hasSaint ? (saintCache[key].name||'') : 'Apasă pentru a adăuga';
+    d.onclick = () => selectCalDay(day, key, d);
+    grid.appendChild(d);
+  }
+}
+
+function prevMonth() { calMonth--; if (calMonth < 0) { calMonth=11; calYear--; } renderCalendar(); }
+function nextMonth() { calMonth++; if (calMonth > 11) { calMonth=0; calYear++; } renderCalendar(); }
+
+function selectCalDay(day, key, el) {
+  document.querySelectorAll('.cal-day').forEach(d => d.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('saintDayKey').value = key;
+  document.getElementById('selectedDayLabel').textContent = `${day} ${monthNames[calMonth]} ${calYear}`;
+  const ex = saintCache[key] || {};
+  document.getElementById('saintNameInput').value = ex.name||'';
+  document.getElementById('saintDescShortInput').value = ex.descShort||'';
+  document.getElementById('saintDescFullInput').value = ex.descFull||'';
+  document.getElementById('saintVerseInput').value = ex.verse||'';
+  document.getElementById('saintVerseRefInput').value = ex.verseRef||'';
+  document.getElementById('saintEditForm').style.display = 'block';
 }
 
 async function saveSaintDay() {
+  const key = document.getElementById('saintDayKey').value;
+  if (!key) return;
+  const data = {
+    name: document.getElementById('saintNameInput').value.trim(),
+    descShort: document.getElementById('saintDescShortInput').value.trim(),
+    descFull: document.getElementById('saintDescFullInput').value.trim(),
+    verse: document.getElementById('saintVerseInput').value.trim(),
+    verseRef: document.getElementById('saintVerseRefInput').value.trim(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
   try {
-    await db.collection('saintDay').doc('today').set({
-      name: document.getElementById('saintName2').value.trim(),
-      desc: document.getElementById('saintDesc2').value.trim(),
-      verse: document.getElementById('saintVerse').value.trim(),
-      verseRef: document.getElementById('saintVerseRef').value.trim(),
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    toast('Sfântul zilei actualizat!');
-  } catch(e) { toast('Eroare: '+e.message,'error'); }
+    await db.collection('saintDays').doc(key).set(data, { merge: true });
+    saintCache[key] = data;
+    toast('Sfântul zilei salvat! ✝');
+    renderCalendar();
+  } catch(e) { toast('Eroare: ' + e.message, 'error'); }
 }
 
-// ============================================================
-// HELPERS
-// ============================================================
+// ============ HELPERS ============
 function formatDate(ts) {
-  if(!ts) return '—';
-  try {
-    const d = ts.toDate ? ts.toDate() : new Date(ts);
-    return d.toLocaleDateString('ro-RO',{day:'numeric',month:'long',year:'numeric'});
-  } catch(e) { return '—'; }
+  if (!ts) return '—';
+  try { const d = ts.toDate ? ts.toDate() : new Date(ts); return d.toLocaleDateString('ro-RO', { day:'numeric', month:'long', year:'numeric' }); }
+  catch(e) { return '—'; }
 }
 
 function statusName(s) {
-  const map = {pending:'⏳ În așteptare',confirmed:'✅ Confirmat',shipped:'🚚 Expediat',delivered:'📦 Livrat',cancelled:'❌ Anulat'};
-  return map[s]||s;
+  const map = { pending:'⏳ În așteptare', confirmed:'✅ Confirmat', shipped:'🚚 Expediat', delivered:'📦 Livrat', cancelled:'❌ Anulat' };
+  return map[s] || s;
 }
 
-// ============================================================
-// INITIAL SEED DATA (runs only once if collections are empty)
-// ============================================================
+// ============ SEED DATA ============
 async function seedInitialData() {
   try {
-    // Check if products exist
-    const prodSnap = await db.collection('products').limit(1).get();
-    if(!prodSnap.empty) return; // Already seeded
-
+    const check = await db.collection('products').limit(1).get();
+    if (!check.empty) return;
     const ts = firebase.firestore.FieldValue.serverTimestamp();
-
-    // Products
-    const products = [
-      { name:'Lumânare Pascală Sculptată', price:25.00, stock:50, category:'Lumânări', badge:'NOU', descShort:'Lumânare pascală din ceară naturală', desc:'Lumânare pascală sculptată manual din ceară de albine 100% naturală. Simbolizează Lumina lui Hristos. Ideală pentru slujbele de Paști și alte ocazii sfinte.', images:['https://images.unsplash.com/photo-1606756790138-261d2b21cd75?w=400&q=80'], soldCount:45, avgRating:4.8, reviewCount:12 },
-      { name:'Iconiță Maica Domnului', price:85.00, stock:20, category:'Icoane', badge:'POPULAR', descShort:'Iconiță pe lemn cu aurire', desc:'Iconiță pictată pe lemn de tei cu foiță de aur 22K. Maica Domnului cu Pruncul Iisus. Dimensiune: 15x20 cm. Sfințită de preot.', images:['https://images.unsplash.com/photo-1578301978018-3005759f48f7?w=400&q=80'], soldCount:32, avgRating:5.0, reviewCount:8 },
-      { name:'Carte de Rugăciuni Ortodoxe', price:35.00, stock:30, category:'Cărți', descShort:'Colecție completă de rugăciuni', desc:'Carte de rugăciuni ortodoxe completă, conținând Molitfelnicul, rugăciunile de dimineață și seară, Acatistele principale și Psaltirea.', images:['https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&q=80'], soldCount:28, avgRating:4.9, reviewCount:15 },
-      { name:'Tămâie Athos Premium', price:45.00, stock:40, category:'Tămâie', badge:'ATHOS', descShort:'Tămâie de calitate superioară', desc:'Tămâie autentică din Sfântul Munte Athos. Aromă profundă și durabilă. Ambalaj 500g. Recomandată pentru toate tipurile de cădelniță.', images:['https://images.unsplash.com/photo-1547637589-f54c34f5d7a4?w=400&q=80'], soldCount:67, avgRating:4.7, reviewCount:22 },
-      { name:'Cădelniță Argintată', price:120.00, stock:10, category:'Veșminte & Obiecte', descShort:'Cădelniță de calitate superioară', desc:'Cădelniță argintată de înaltă calitate, pentru uz casnic și bisericesc. Include lanțul și placa pentru cărbune. Certificat de calitate inclus.', images:['https://images.unsplash.com/photo-1601024445121-e5b82f020549?w=400&q=80'], soldCount:18, avgRating:4.6, reviewCount:6 },
-      { name:'Metanii din Lemn de Mahon', price:55.00, stock:25, category:'Accesorii', descShort:'Metanii lucrate manual din lemn exotic', desc:'Metanii ortodoxe lucrate manual din lemn de mahon, cu 100 de boabe. Cu cruce incrustată. Lungime: 45cm. Include etui protector din catifea.', images:['https://images.unsplash.com/photo-1517456793572-1d8efd6dc135?w=400&q=80'], soldCount:41, avgRating:4.9, reviewCount:19 },
+    const prods = [
+      {name:'Lumânare Pascală Sculptată',price:25,stock:50,category:'Lumânări',badge:'NOU',descShort:'Lumânare din ceară naturală',desc:'Lumânare pascală sculptată manual din ceară de albine 100% naturală. Simbolizează Lumina lui Hristos.',images:['https://images.unsplash.com/photo-1606756790138-261d2b21cd75?w=400&q=80'],soldCount:45,avgRating:4.8,reviewCount:12},
+      {name:'Iconiță Maica Domnului',price:85,stock:20,category:'Icoane',badge:'POPULAR',descShort:'Iconiță pe lemn cu aurire',desc:'Iconiță pictată pe lemn de tei cu foiță de aur 22K. Sfințită de preot.',images:['https://images.unsplash.com/photo-1578301978018-3005759f48f7?w=400&q=80'],soldCount:32,avgRating:5,reviewCount:8},
+      {name:'Carte de Rugăciuni Ortodoxe',price:35,stock:30,category:'Cărți',descShort:'Colecție completă de rugăciuni',desc:'Molitfelnic, rugăciuni de dimineață și seară, Acatistele principale.',images:['https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&q=80'],soldCount:28,avgRating:4.9,reviewCount:15},
+      {name:'Tămâie Athos Premium',price:45,stock:40,category:'Tămâie',badge:'ATHOS',descShort:'Tămâie din Sfântul Munte',desc:'Tămâie autentică din Sfântul Munte Athos. Ambalaj 500g.',images:['https://images.unsplash.com/photo-1547637589-f54c34f5d7a4?w=400&q=80'],soldCount:67,avgRating:4.7,reviewCount:22},
+      {name:'Cădelniță Argintată',price:120,stock:10,category:'Obiecte sfinte',descShort:'Cădelniță de calitate',desc:'Cădelniță argintată pentru uz casnic și bisericesc. Certificat de calitate inclus.',images:['https://images.unsplash.com/photo-1601024445121-e5b82f020549?w=400&q=80'],soldCount:18,avgRating:4.6,reviewCount:6},
+      {name:'Metanii din Lemn de Mahon',price:55,stock:25,category:'Accesorii',descShort:'Metanii lucrate manual',desc:'Metanii ortodoxe din lemn de mahon. 100 de boabe cu cruce incrustată.',images:['https://images.unsplash.com/photo-1517456793572-1d8efd6dc135?w=400&q=80'],soldCount:41,avgRating:4.9,reviewCount:19},
     ];
-
-    for(const p of products) {
-      await db.collection('products').add({...p, createdAt:ts});
-    }
-
-    // Announcements
-    await db.collection('announcements').add({ title:'Programul Slujbelor de Înălțare', type:'slujba', content:'Vă anunțăm că Duminică, 25 mai 2025, de la ora 09:00, va avea loc Sfânta Liturghie urmată de Acatistul Înălțării Domnului.\n\nToți credincioșii sunt invitați să participe!\n\nBinecuvântarea Preotului Paroh.', images:[], createdAt:ts });
-    await db.collection('announcements').add({ title:'URGENT: Strângere de fonduri pentru acoperișul bisericii', type:'urgent', content:'Dragi enoriași,\n\nAcoperișul Bisericii Sfânta Treime necesită reparații urgente. Vă rugăm să contribuiți cu ce puteți.\n\nContul parohiei: RO49 AAAA 0000 0000 0000 0000\n\nDumnezeu să vă răsplătească!', images:[], createdAt:ts });
-    await db.collection('announcements').add({ title:'Botezul pruncilor din luna Mai', type:'botez', content:'Botezurile din luna Mai se vor desfășura în zilele de 10, 17 și 24 Mai, după Sfânta Liturghie. Vă rugăm să contactați biroul parohial pentru programare.', images:[], createdAt:ts });
-
-    // Audio
-    await db.collection('audio').add({ title:'Predică Duminica Tomei – Învierea Domnului', author:'Pr. Teodor Irimia', url:'', desc:'Predică despre credință și necredință. Importanța mărturisirii lui Hristos Cel Înviat.', createdAt:ts });
-    await db.collection('audio').add({ title:'Cântare: Hristos a Înviat', author:'Corul Parohial Stornești', url:'', desc:'Înregistrare din cadrul Slujbei de Înviere 2024.', createdAt:ts });
-
-    // Transport
-    await db.collection('transport').add({ name:'Fan Courier', cost:20, desc:'1-3 zile lucrătoare', createdAt:ts });
-    await db.collection('transport').add({ name:'DPD România', cost:18, desc:'2-4 zile lucrătoare', createdAt:ts });
-    await db.collection('transport').add({ name:'Ridicare personală', cost:0, desc:'Direct de la parohie', createdAt:ts });
-
-    // FAQ
-    await db.collection('faq').add({ question:'Cum pot face o comandă?', answer:'Selectați produsele dorite din Magazin, adăugați-le în coș, apoi completați formularul de finalizare comandă cu datele dvs.', createdAt:ts });
-    await db.collection('faq').add({ question:'Cum plătesc comanda?', answer:'Acceptăm plata ramburs (la primirea coletului) și transfer bancar. Datele contului se găsesc la finalul paginii.', createdAt:ts });
-    await db.collection('faq').add({ question:'Cum pot face o rezervare?', answer:'Deschideți produsul dorit, apăsați butonul "Rezervă" și completați formularul. Vă vom contacta pentru confirmare.', createdAt:ts });
-    await db.collection('faq').add({ question:'Cum pot beneficia de reducere de 5%?', answer:'Creați-vă un cont, mergeți la "Contul meu" > "Profil" și abonați-vă la newsletter. Reducerea se aplică automat la fiecare comandă.', createdAt:ts });
-    await db.collection('faq').add({ question:'Produsele sunt sfințite?', answer:'Icoanele și obiectele sfinte sunt sfințite înainte de vânzare. Pentru cărți și alte articole, sfințirea se poate face la cerere.', createdAt:ts });
-    await db.collection('faq').add({ question:'Câte zile durează livrarea?', answer:'Durata livrării depinde de modalitatea de transport aleasă: Fan Courier 1-3 zile, DPD 2-4 zile, sau ridicare personală de la parohie.', createdAt:ts });
-
-    // Saint day (default)
-    await db.collection('saintDay').doc('today').set({
-      name:'Sf. Gheorghe, Purtătorul de Biruință', desc:'Sfântul Mare Mucenic Gheorghe, Purtătorul de Biruință, a trăit în timpul împăratului Dioclețian. A suferit mucenicia pentru credința sa creștină, devenind unul dintre cei mai iubiți sfinți ai Ortodoxiei.',
-      verse:'"Eu sunt Învierea și Viața; cel ce crede în Mine, chiar dacă va muri, va trăi."', verseRef:'Ioan 11:25', updatedAt:ts
-    });
-
-    console.log('Date inițiale populate cu succes!');
-  } catch(e) { console.error('Eroare la popularea datelor:', e); }
+    for (const p of prods) await db.collection('products').add({...p, createdAt:ts});
+    const anns = [
+      {title:'Programul Slujbelor de Înălțare', type:'slujba', content:'Duminică, 25 mai 2025, de la ora 09:00, Sfânta Liturghie urmată de Acatistul Înălțării Domnului.\n\nToți credincioșii sunt invitați!\n\nCu binecuvântare, Preotul Paroh.', images:[]},
+      {title:'URGENT: Strângere fonduri acoperișul bisericii', type:'urgent', content:'Dragi enoriași,\n\nAcoperișul necesită reparații urgente. Vă rugăm să contribuiți.\n\nCont: RO49 AAAA 0000 0000 0000 0000\n\nDumnezeu să vă răsplătească!', images:[]},
+      {title:'Botezurile din luna Mai', type:'botez', content:'Botezurile din Mai se desfășoară în 10, 17 și 24 Mai, după Sf. Liturghie. Programare la biroul parohial.', images:[]},
+    ];
+    for (const a of anns) await db.collection('announcements').add({...a, createdAt:ts});
+    const trans = [
+      {name:'Fan Courier', cost:20, desc:'1-3 zile lucrătoare', type:'curier'},
+      {name:'DPD România', cost:18, desc:'2-4 zile lucrătoare', type:'curier'},
+      {name:'Ridicare personală', cost:0, desc:'Direct de la parohie', type:'ridicare'},
+    ];
+    for (const t of trans) await db.collection('transport').add({...t, createdAt:ts});
+    const faqs = [
+      {question:'Cum pot face o comandă?', answer:'Selectați produsele din Magazin, adăugați în coș și completați formularul de finalizare.'},
+      {question:'Cum plătesc comanda?', answer:'Ramburs la primire sau transfer bancar. Contul este afișat în footer.'},
+      {question:'Cum fac o rezervare?', answer:'Deschideți produsul, apăsați Rezervă și completați formularul. Vă contactăm pentru confirmare.'},
+      {question:'Cum beneficiez de reducere 5%?', answer:'Creați cont, mergeți la Profilul meu și abonați-vă la newsletter.'},
+      {question:'Produsele sunt sfințite?', answer:'Icoanele și obiectele sfinte sunt sfințite. Sfințirea se poate face la cerere pentru celelalte.'},
+    ];
+    for (const f of faqs) await db.collection('faq').add({...f, createdAt:ts});
+    // Default saint day
+    const today = new Date();
+    const key = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+    await db.collection('saintDays').doc(key).set({
+      name:'Sf. Gheorghe, Purtătorul de Biruință',
+      descShort:'Sfântul Mucenic Gheorghe, apărătorul credincioșilor.',
+      descFull:'Sfântul Mare Mucenic Gheorghe a trăit în vremea împăratului Dioclețian. A suferit mucenicia pentru credința sa, devenind unul dintre cei mai iubiți sfinți ai Ortodoxiei.',
+      verse:'"Eu sunt Învierea și Viața; cel ce crede în Mine, chiar dacă va muri, va trăi."',
+      verseRef:'Ioan 11:25',
+      updatedAt:ts
+    }, {merge:true});
+    console.log('Date inițiale populate!');
+  } catch(e) { console.error('Seed error:', e); }
 }
-
-// ============================================================
-// INIT
-// ============================================================
-document.addEventListener('DOMContentLoaded', () => {
-  updateCartBadge();
-  showPage('home');
-  // Seed data after short delay
-  setTimeout(seedInitialData, 2000);
-});
 </script>
 </body>
 </html>
+
