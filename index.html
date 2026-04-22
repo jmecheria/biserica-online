@@ -50,7 +50,7 @@ textarea,input,select{font-family:'Lato',sans-serif}
 .nav-cart-total{font-size:11px;color:var(--gl);white-space:nowrap;font-weight:700;letter-spacing:.5px}
 
 /* ====== TIMER BANNER ====== */
-#timer-banner{position:fixed;top:66px;left:0;right:0;z-index:999;background:linear-gradient(135deg,var(--vd) 0%,var(--v) 100%);border-bottom:1px solid rgba(200,169,110,.25);padding:7px 20px;text-align:center}
+#timer-banner{position:fixed;top:66px;left:0;right:0;z-index:997;background:linear-gradient(135deg,var(--vd) 0%,var(--v) 100%);border-bottom:1px solid rgba(200,169,110,.25);padding:7px 20px;text-align:center}
 .timer-inner{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap}
 .timer-label{font-family:'Cinzel',serif;font-size:11px;color:rgba(255,255,255,.6);letter-spacing:1.5px;text-transform:uppercase}
 .timer-display{font-family:'Cinzel',serif;font-size:13px;color:var(--g);font-weight:700;letter-spacing:2px;animation:glowPulse 2.5s ease-in-out infinite}
@@ -77,12 +77,12 @@ textarea,input,select{font-family:'Lato',sans-serif}
 .section-divider{width:90px;height:3px;background:linear-gradient(90deg,transparent,var(--g),transparent);margin:10px auto 44px}
 
 /* ====== HERO ====== */
-.hero{background:linear-gradient(160deg,var(--vd) 0%,var(--v) 45%,#8c2a40 100%);min-height:82vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:70px 24px;position:relative;overflow:hidden}
+.hero{background:linear-gradient(160deg,var(--vd) 0%,var(--v) 45%,#8c2a40 100%);min-height:70vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:50px 24px;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.025'%3E%3Cpath d='M40 0L40 80M0 40L80 40' stroke='%23fff' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");opacity:.4}
 .hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to bottom,transparent,var(--cr))}
 .hero-content{position:relative;z-index:1;animation:fadeUp .8s ease both}
-.hero-cross{font-size:88px;color:var(--g);display:block;margin-bottom:28px;animation:crossFloat 4.5s ease-in-out infinite;text-shadow:0 0 50px rgba(200,169,110,.55),0 0 100px rgba(200,169,110,.25);line-height:1}
-.hero-title{font-family:'Cinzel',serif;font-size:clamp(26px,4.5vw,58px);color:var(--gl);letter-spacing:4px;line-height:1.15;margin-bottom:8px;text-shadow:0 2px 24px rgba(0,0,0,.35)}
+.hero-cross{font-size:72px;color:var(--g);display:block;margin-bottom:28px;animation:crossFloat 4.5s ease-in-out infinite;text-shadow:0 0 50px rgba(200,169,110,.55),0 0 100px rgba(200,169,110,.25);line-height:1}
+.hero-title{font-family:'Cinzel',serif;font-size:clamp(22px,3.5vw,42px);color:var(--gl);letter-spacing:3px;line-height:1.2;margin-bottom:6px;text-shadow:0 2px 20px rgba(0,0,0,.3)}
 .hero-subtitle{font-family:'Cinzel',serif;font-size:clamp(13px,2vw,19px);color:rgba(255,255,255,.62);letter-spacing:3px;margin-bottom:36px;text-transform:uppercase}
 .hero-quote{font-family:'Cormorant Garamond',serif;font-size:clamp(17px,2.5vw,24px);color:rgba(255,255,255,.82);font-style:italic;max-width:620px;margin:0 auto 44px;line-height:1.85;padding:0 20px}
 .hero-inviere{font-family:'Cinzel',serif;font-size:clamp(16px,2.8vw,30px);color:var(--g);font-weight:700;letter-spacing:4px;animation:glowPulse 2s ease-in-out infinite;text-transform:uppercase}
@@ -387,13 +387,30 @@ footer{background:var(--vd);color:rgba(255,255,255,.78);padding:56px 22px 26px;m
 .fl-link{color:rgba(255,255,255,.6);font-size:13.5px;display:block;margin-bottom:8px;cursor:pointer;transition:color .2s}
 .fl-link:hover{color:var(--gl)}
 .ft{font-size:13.5px;line-height:1.85;color:rgba(255,255,255,.6)}
-.footer-anaf{background:rgba(255,255,255,.07);border-radius:9px;padding:14px 18px;margin-top:13px;font-size:12.5px;border:1px solid rgba(255,255,255,.1)}
-.footer-anaf .lbl{color:var(--gl);font-weight:700;font-size:11px;letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px}
+.footer-anpc{background:rgba(255,255,255,.07);border-radius:9px;padding:14px 18px;margin-top:13px;font-size:12.5px;border:1px solid rgba(255,255,255,.1)}
+.footer-anpc .lbl{color:var(--gl);font-weight:700;font-size:11px;letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px}
 .footer-bot{border-top:1px solid rgba(255,255,255,.1);padding-top:22px;max-width:1220px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:13px;font-size:12px;color:rgba(255,255,255,.38)}
 .footer-bot-links{display:flex;gap:18px}
 .fbl{color:rgba(255,255,255,.38);cursor:pointer;transition:color .2s}.fbl:hover{color:var(--gl)}
 
 /* ====== RESPONSIVE ====== */
+
+.nav-mobile-menu{display:none;position:fixed;top:66px;left:0;right:0;background:var(--vd);z-index:998;padding:16px;flex-direction:column;gap:4px;border-bottom:2px solid rgba(200,169,110,.2)}
+.nav-mobile-menu.open{display:flex}
+.nav-mobile-link{color:rgba(255,255,255,.85);padding:12px 16px;border-radius:8px;font-size:14px;font-weight:700;letter-spacing:.5px;cursor:pointer;border:none;background:none;text-align:left;transition:background .2s;width:100%;font-family:'Lato',sans-serif;text-transform:uppercase}
+.nav-mobile-link:hover{color:var(--gl);background:rgba(255,255,255,.1)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px}
+.hamburger span{display:block;width:22px;height:2px;background:white;border-radius:2px;transition:all .3s}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+@media(max-width:768px){.hamburger{display:flex}.nav-links{display:none}}
+
+.quick-nav{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;padding:28px 22px 0;max-width:900px;margin:0 auto}
+.quick-nav-btn{display:flex;flex-direction:column;align-items:center;gap:7px;padding:18px 24px;background:#fff;border-radius:var(--r);box-shadow:var(--sh);cursor:pointer;transition:all .22s;border:2px solid transparent;min-width:110px;text-decoration:none;color:var(--v)}
+.quick-nav-btn:hover{border-color:var(--v);transform:translateY(-3px);box-shadow:var(--shl)}
+.quick-nav-icon{font-size:26px;line-height:1}
+.quick-nav-label{font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:700}
 @media(max-width:900px){.admin-layout{flex-direction:column}.admin-sb{width:100%;flex-direction:row;flex-wrap:wrap;padding:10px}.asb-btn{width:auto;padding:8px 14px}}
 @media(max-width:768px){.nav-links{display:none}.form-row{grid-template-columns:1fr}.checkout-layout{grid-template-columns:1fr}}
 @media(max-width:480px){.section{padding:44px 16px}.hl-grid{grid-template-columns:1fr}.products-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}}
@@ -416,7 +433,9 @@ footer{background:var(--vd);color:rgba(255,255,255,.78);padding:56px 22px 26px;m
       <button class="nav-link" onclick="nav('shop')">Magazin</button>
       <button class="nav-link" onclick="nav('audio')">Audio</button>
       <button class="nav-link" onclick="nav('faq')">FAQ</button>
+      <button class="nav-link" onclick="nav('admin')">Admin</button>
     </div>
+    <div class="hamburger" id="hamburger" onclick="toggleMobileMenu()" title="Meniu"><span></span><span></span><span></span></div>
     <div class="nav-actions">
       <span class="nav-cart-total" id="nav-cart-total"></span>
       <button class="nav-btn" onclick="nav('cart')" title="Coș">🛒<span class="cart-badge" id="cart-badge" style="display:none">0</span></button>
@@ -426,6 +445,16 @@ footer{background:var(--vd);color:rgba(255,255,255,.78);padding:56px 22px 26px;m
   </div>
 </nav>
 
+<!-- MOBILE MENU -->
+<div class="nav-mobile-menu" id="mobile-menu">
+  <button class="nav-mobile-link" onclick="navMobile('home')">✝ Acasă</button>
+  <button class="nav-mobile-link" onclick="navMobile('announcements')">📢 Anunțuri</button>
+  <button class="nav-mobile-link" onclick="navMobile('shop')">🛒 Magazin</button>
+  <button class="nav-mobile-link" onclick="navMobile('audio')">🎵 Audio</button>
+  <button class="nav-mobile-link" onclick="navMobile('faq')">❓ FAQ</button>
+  <button class="nav-mobile-link" onclick="navMobile('account')">👤 Contul meu</button>
+  <button class="nav-mobile-link" onclick="navMobile('admin')">👤 Admin</button>
+</div>
 <!-- TIMER BANNER -->
 <div id="timer-banner">
   <div class="timer-inner">
@@ -447,6 +476,32 @@ footer{background:var(--vd);color:rgba(255,255,255,.78);padding:56px 22px 26px;m
       <div class="hero-quote corm">„Eu sunt Calea, Adevărul și Viața. Nimeni nu vine la Tatăl Meu decât prin Mine."<br><small style="font-size:15px;opacity:.7;font-style:normal">— Ioan 14:6</small></div>
       <div class="hero-inviere" id="hero-inviere">HRISTOS A ÎNVIAT! ADEVĂRAT A ÎNVIAT!</div>
     </div>
+  </div>
+  <div class="quick-nav">
+    <a class="quick-nav-btn" onclick="nav('announcements')">
+      <span class="quick-nav-icon">📢</span>
+      <span class="quick-nav-label">Anunțuri</span>
+    </a>
+    <a class="quick-nav-btn" onclick="nav('shop')">
+      <span class="quick-nav-icon">🛒</span>
+      <span class="quick-nav-label">Magazin</span>
+    </a>
+    <a class="quick-nav-btn" onclick="nav('audio')">
+      <span class="quick-nav-icon">🎵</span>
+      <span class="quick-nav-label">Audio</span>
+    </a>
+    <a class="quick-nav-btn" onclick="nav('faq')">
+      <span class="quick-nav-icon">❓</span>
+      <span class="quick-nav-label">FAQ</span>
+    </a>
+    <a class="quick-nav-btn" onclick="openAccOrAuth()">
+      <span class="quick-nav-icon">👤</span>
+      <span class="quick-nav-label">Cont</span>
+    </a>
+    <a class="quick-nav-btn" onclick="nav('cart')">
+      <span class="quick-nav-icon">🛍</span>
+      <span class="quick-nav-label">Coș</span>
+    </a>
   </div>
   <div id="urgent-section"></div>
   <div class="section">
@@ -936,10 +991,10 @@ footer{background:var(--vd);color:rgba(255,255,255,.78);padding:56px 22px 26px;m
       <div class="fc-title">Informații legale</div>
       <a class="fl-link" onclick="nav('gdpr')">Politica GDPR</a>
       <a class="fl-link" onclick="nav('terms')">Termeni și condiții</a>
-      <div class="footer-anaf">
+      <div class="footer-anpc">
         <div class="lbl">Date fiscale</div>
         <div style="margin-top:5px;line-height:1.8;color:rgba(255,255,255,.62);font-size:12.5px">
-          CIF: RO12345678<br>IBAN: RO49 AAAA 0000 0000 0000 0000<br>Banca Transilvania
+          Autoritatea Națională pentru Protecția Consumatorilor<br><a href="https://anpc.ro" target="_blank" style="color:var(--gl)">www.anpc.ro</a><br>Tel: 021 9551 (InfoConsumator)
         </div>
       </div>
     </div>
@@ -1241,7 +1296,7 @@ async function addFromCard(id,ev){ev.stopPropagation();const p=allProds.find(x=>
 async function openProdModal(id){let p=allProds.find(x=>x.id===id);if(!p){const d=await db.collection('products').doc(id).get();p={id:d.id,...d.data()};}curProd=p;galIdx=0;
 document.getElementById('pm-title').textContent=p.name;document.getElementById('pm-desc').textContent=p.desc||p.shortDesc||'';
 const ic=cart.filter(c=>c.id===p.id).reduce((s,c)=>s+c.qty,0),stk=(p.stock||0)-ic;
-document.getElementById('pm-stock').innerHTML=`Stoc disponibil: <strong style="color:${stk>0?'var(--green)':'var(--red)';font-size:15px">${stk>0?stk+' bucăți':'Stoc epuizat'}</strong>`;
+document.getElementById('pm-stock').innerHTML=`Stoc disponibil: <strong style="color:${stk>0?'var(--green)':'var(--red)'}">${stk>0?stk+' bucăți':'Stoc epuizat'}</strong>`;
 document.getElementById('pm-price').innerHTML=`<div class="price-row"><span class="price-cur" style="font-size:28px">${p.price} lei</span>${p.oldPrice?`<span class="price-old" style="font-size:16px">${p.oldPrice} lei</span>`:''}</div>`;
 document.getElementById('pm-stars').innerHTML=starsHtml(p.avgRating||0)+` <span style="color:var(--tl);font-size:13px;margin-left:4px">(${p.reviewCount||0} recenzii)</span>`;
 document.getElementById('pm-cat').textContent=p.category?`Categorie: ${p.category}`:'';
@@ -1342,7 +1397,7 @@ async function delOrd(id){if(!confirm('Ștergi definitiv comanda? Această acți
 async function openOrdDetail(id){const d=await db.collection('orders').doc(id).get();if(!d.exists)return;curOrd={id,...d.data()};const o=curOrd;const SL={pending:'⏳ În așteptare',confirmed:'✅ Confirmat',shipped:'🚚 Expediat',delivered:'📦 Livrat',cancelled:'❌ Anulat'};document.getElementById('ord-detail-body').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px"><div><div class="form-sec-title" style="font-size:14px;margin-bottom:14px">Date client</div><div style="font-size:13.5px;line-height:2.1"><strong>Nume:</strong> ${o.name}<br><strong>Email:</strong> ${o.email}<br><strong>Telefon:</strong> ${o.phone}<br><strong>Adresă:</strong> ${o.address}, ${o.city} ${o.county||''}</div>${o.notes?`<div style="margin-top:10px;font-size:13px;color:var(--tm);background:var(--cr);padding:10px;border-radius:8px"><strong>Observații:</strong> ${o.notes}</div>`:''} ${o.diffAddress?`<div style="margin-top:10px;font-size:13.5px;background:#fffbeb;padding:10px;border-radius:8px"><strong>📦 Livrare la:</strong> ${o.shippingAddress}, ${o.shippingCity} ${o.shippingCounty||''}</div>`:''}</div><div><div class="form-sec-title" style="font-size:14px;margin-bottom:14px">Detalii comandă</div><div style="font-size:13.5px;line-height:2.1"><strong>Transport:</strong> ${o.transportName||'—'}<br><strong>Metodă plată:</strong> ${o.payMethod==='ramburs'?'Ramburs la livrare':'Transfer bancar'}<br><strong>Cupon:</strong> ${o.coupon||'—'}<br><strong>Total:</strong> <span style="font-family:'Cinzel',serif;color:var(--v);font-size:18px;font-weight:700">${(o.total||0).toFixed(2)} lei</span></div><div style="margin-top:14px"><label class="fl">Schimbă statusul comenzii</label><select id="d-status" class="fi styled-sel" style="margin-top:5px">${['pending','confirmed','shipped','delivered','cancelled'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${SL[s]}</option>`).join('')}</select></div></div></div><div><div class="form-sec-title" style="font-size:14px;margin-bottom:14px">Produse comandate</div><table class="dt"><thead><tr><th>Produs</th><th>Preț/buc</th><th>Cantitate</th><th>Total linie</th></tr></thead><tbody>${(o.items||[]).map((it,i)=>`<tr><td>${it.name}</td><td>${it.price} lei</td><td><input type="number" id="dq-${i}" value="${it.qty}" min="0" style="width:68px;padding:6px 10px;border:1.5px solid var(--crd);border-radius:7px;text-align:center;font-size:14px"></td><td><strong>${(it.price*it.qty).toFixed(2)} lei</strong></td></tr>`).join('')}</tbody></table></div>`;openModal('ord-detail-modal');}
 async function saveOrdDetail(){if(!curOrd)return;const st=document.getElementById('d-status').value,items=curOrd.items.map((it,i)=>({...it,qty:parseInt(document.getElementById('dq-'+i)?.value)||0})).filter(x=>x.qty>0),tot=items.reduce((s,x)=>s+(x.price*x.qty),0)+(curOrd.transport||0);await db.collection('orders').doc(curOrd.id).update({status:st,items,total:tot});if(st!==curOrd.status)sendEjStatus({...curOrd,items},curOrd.id,st);toast('Comanda a fost salvată cu succes!','success');closeModal('ord-detail-modal');admOrders();}
 async function genInvoiceId(id){const d=await db.collection('orders').doc(id).get();if(!d.exists)return;curOrd={id,...d.data()};genInvoice();}
-function genInvoice(){if(!curOrd)return;const o=curOrd;document.getElementById('invoice-body').innerHTML=`<div style="font-family:'Lato',sans-serif;color:#1a0a0e"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:22px;border-bottom:2px solid #6B1A2E"><div><div style="font-family:'Cinzel',serif;font-size:30px;color:#6B1A2E;letter-spacing:2px;font-weight:700">FACTURĂ PROFORMĂ</div><div style="font-size:13px;color:#4a3540;margin-top:6px">Nr: #${o.id.substring(0,8).toUpperCase()} &nbsp;|&nbsp; Data: ${fmtDate(o.createdAt)}</div></div><div style="text-align:right"><div style="font-family:'Cinzel',serif;color:#6B1A2E;font-size:16px;font-weight:700">Parohia Stornești</div><div style="font-size:13px;color:#4a3540;line-height:1.9;margin-top:4px">CIF: RO12345678<br>IBAN: RO49 AAAA 0000 0000 0000 0000<br>Banca Transilvania</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:26px"><div><div style="font-size:11px;text-transform:uppercase;color:#8a7580;font-weight:700;letter-spacing:1px;margin-bottom:8px">Emis de</div><div style="font-size:13.5px;line-height:1.9">Parohia Stornești – Biserica Sfânta Treime<br>Stornești, Județul Iași<br>Tel: 0740 000 000<br>parohia.stornesti@gmail.com</div></div><div><div style="font-size:11px;text-transform:uppercase;color:#8a7580;font-weight:700;letter-spacing:1px;margin-bottom:8px">Facturat către</div><div style="font-size:13.5px;line-height:1.9">${o.name}<br>${o.address||''}, ${o.city||''} ${o.county||''}<br>${o.phone||''}<br>${o.email||''}</div></div></div><table style="width:100%;border-collapse:collapse;margin:20px 0"><thead><tr><th style="background:#6B1A2E;color:#E2C98A;padding:12px 15px;text-align:left;font-size:12.5px;font-family:'Cinzel',serif;letter-spacing:1px">Produs</th><th style="background:#6B1A2E;color:#E2C98A;padding:12px 15px;text-align:left;font-size:12.5px;font-family:'Cinzel',serif;letter-spacing:1px">Preț/buc</th><th style="background:#6B1A2E;color:#E2C98A;padding:12px 15px;text-align:left;font-size:12.5px;font-family:'Cinzel',serif;letter-spacing:1px">Cant.</th><th style="background:#6B1A2E;color:#E2C98A;padding:12px 15px;text-align:left;font-size:12.5px;font-family:'Cinzel',serif;letter-spacing:1px">Total</th></tr></thead><tbody>${(o.items||[]).map((x,i)=>`<tr style="background:${i%2===0?'#fff':'#faf7f2'}"><td style="padding:11px 15px;border-bottom:1px solid #eee;font-size:14px">${x.name}</td><td style="padding:11px 15px;border-bottom:1px solid #eee;font-size:14px">${x.price} lei</td><td style="padding:11px 15px;border-bottom:1px solid #eee;font-size:14px;font-weight:700">${x.qty}</td><td style="padding:11px 15px;border-bottom:1px solid #eee;font-size:14px;font-weight:700">${(x.price*x.qty).toFixed(2)} lei</td></tr>`).join('')}</tbody></table><div style="text-align:right;margin-top:14px"><table style="margin-left:auto;border-collapse:collapse"><tbody><tr><td style="padding:7px 16px;color:#4a3540;font-size:13.5px">Subtotal:</td><td style="padding:7px 16px;text-align:right;font-size:13.5px">${(o.subtotal||0).toFixed(2)} lei</td></tr>${(o.discount||0)>0?`<tr><td style="padding:7px 16px;color:#4a3540;font-size:13.5px">Reducere (${o.coupon||''}):</td><td style="padding:7px 16px;text-align:right;color:#27AE60;font-weight:700;font-size:13.5px">-${(o.discount||0).toFixed(2)} lei</td></tr>`:''}${(o.transport||0)>0?`<tr><td style="padding:7px 16px;color:#4a3540;font-size:13.5px">Transport (${o.transportName||''}):</td><td style="padding:7px 16px;text-align:right;font-size:13.5px">${(o.transport||0).toFixed(2)} lei</td></tr>`:''}<tr><td style="padding:14px 16px;font-family:'Cinzel',serif;font-size:19px;color:#6B1A2E;border-top:2px solid #6B1A2E;font-weight:700">TOTAL DE PLATĂ:</td><td style="padding:14px 16px;text-align:right;font-family:'Cinzel',serif;font-size:19px;color:#6B1A2E;border-top:2px solid #6B1A2E;font-weight:700">${(o.total||0).toFixed(2)} lei</td></tr></tbody></table></div><div style="margin-top:24px;padding-top:16px;border-top:1px solid #eee;font-size:13px;color:#8a7580">Metodă de plată: <strong>${o.payMethod==='ramburs'?'Ramburs la livrare':'Transfer bancar'}</strong></div><div style="margin-top:24px;text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;color:#6B1A2E;font-size:18px;opacity:.7">„Binecuvântați pe cei ce vă binecuvântează" — Romani 12:14</div></div>`;closeModal('ord-detail-modal');openModal('invoice-modal');}
+function genInvoice(){if(!curOrd)return;const o=curOrd;document.getElementById('invoice-body').innerHTML=`<div style="font-family:'Lato',sans-serif;color:#1a0a0e"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:22px;border-bottom:2px solid #6B1A2E"><div><div style="font-family:'Cinzel',serif;font-size:30px;color:#6B1A2E;letter-spacing:2px;font-weight:700">FACTURĂ PROFORMĂ</div><div style="font-size:13px;color:#4a3540;margin-top:6px">Nr: #${o.id.substring(0,8).toUpperCase()} &nbsp;|&nbsp; Data: ${fmtDate(o.createdAt)}</div></div><div style="text-align:right"><div style="font-family:'Cinzel',serif;color:#6B1A2E;font-size:16px;font-weight:700">Parohia Stornești</div><div style="font-size:13px;color:#4a3540;line-height:1.9;margin-top:4px">Autoritatea Națională pentru Protecția Consumatorilor<br><a href="https://anpc.ro" target="_blank" style="color:var(--gl)">www.anpc.ro</a><br>Tel: 021 9551 (InfoConsumator)</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:26px"><div><div style="font-size:11px;text-transform:uppercase;color:#8a7580;font-weight:700;letter-spacing:1px;margin-bottom:8px">Emis de</div><div style="font-size:13.5px;line-height:1.9">Parohia Stornești – Biserica Sfânta Treime<br>Stornești, Județul Iași<br>Tel: 0740 000 000<br>parohia.stornesti@gmail.com</div></div><div><div style="font-size:11px;text-transform:uppercase;color:#8a7580;font-weight:700;letter-spacing:1px;margin-bottom:8px">Facturat către</div><div style="font-size:13.5px;line-height:1.9">${o.name}<br>${o.address||''}, ${o.city||''} ${o.county||''}<br>${o.phone||''}<br>${o.email||''}</div></div></div><table style="width:100%;border-collapse:collapse;margin:20px 0"><thead><tr><th style="background:#6B1A2E;color:#E2C98A;padding:12px 15px;text-align:left;font-size:12.5px;font-family:'Cinzel',serif;letter-spacing:1px">Produs</th><th style="background:#6B1A2E;color:#E2C98A;padding:12px 15px;text-align:left;font-size:12.5px;font-family:'Cinzel',serif;letter-spacing:1px">Preț/buc</th><th style="background:#6B1A2E;color:#E2C98A;padding:12px 15px;text-align:left;font-size:12.5px;font-family:'Cinzel',serif;letter-spacing:1px">Cant.</th><th style="background:#6B1A2E;color:#E2C98A;padding:12px 15px;text-align:left;font-size:12.5px;font-family:'Cinzel',serif;letter-spacing:1px">Total</th></tr></thead><tbody>${(o.items||[]).map((x,i)=>`<tr style="background:${i%2===0?'#fff':'#faf7f2'}"><td style="padding:11px 15px;border-bottom:1px solid #eee;font-size:14px">${x.name}</td><td style="padding:11px 15px;border-bottom:1px solid #eee;font-size:14px">${x.price} lei</td><td style="padding:11px 15px;border-bottom:1px solid #eee;font-size:14px;font-weight:700">${x.qty}</td><td style="padding:11px 15px;border-bottom:1px solid #eee;font-size:14px;font-weight:700">${(x.price*x.qty).toFixed(2)} lei</td></tr>`).join('')}</tbody></table><div style="text-align:right;margin-top:14px"><table style="margin-left:auto;border-collapse:collapse"><tbody><tr><td style="padding:7px 16px;color:#4a3540;font-size:13.5px">Subtotal:</td><td style="padding:7px 16px;text-align:right;font-size:13.5px">${(o.subtotal||0).toFixed(2)} lei</td></tr>${(o.discount||0)>0?`<tr><td style="padding:7px 16px;color:#4a3540;font-size:13.5px">Reducere (${o.coupon||''}):</td><td style="padding:7px 16px;text-align:right;color:#27AE60;font-weight:700;font-size:13.5px">-${(o.discount||0).toFixed(2)} lei</td></tr>`:''}${(o.transport||0)>0?`<tr><td style="padding:7px 16px;color:#4a3540;font-size:13.5px">Transport (${o.transportName||''}):</td><td style="padding:7px 16px;text-align:right;font-size:13.5px">${(o.transport||0).toFixed(2)} lei</td></tr>`:''}<tr><td style="padding:14px 16px;font-family:'Cinzel',serif;font-size:19px;color:#6B1A2E;border-top:2px solid #6B1A2E;font-weight:700">TOTAL DE PLATĂ:</td><td style="padding:14px 16px;text-align:right;font-family:'Cinzel',serif;font-size:19px;color:#6B1A2E;border-top:2px solid #6B1A2E;font-weight:700">${(o.total||0).toFixed(2)} lei</td></tr></tbody></table></div><div style="margin-top:24px;padding-top:16px;border-top:1px solid #eee;font-size:13px;color:#8a7580">Metodă de plată: <strong>${o.payMethod==='ramburs'?'Ramburs la livrare':'Transfer bancar'}</strong></div><div style="margin-top:24px;text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;color:#6B1A2E;font-size:18px;opacity:.7">„Binecuvântați pe cei ce vă binecuvântează" — Romani 12:14</div></div>`;closeModal('ord-detail-modal');openModal('invoice-modal');}
 function printInvoice(){const c=document.getElementById('invoice-body').innerHTML;const w=window.open('','_blank');w.document.write(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><title>Factură Parohia Stornești</title><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Lato:wght@400;700&display=swap" rel="stylesheet"><style>body{margin:0;padding:24px;font-family:Lato,sans-serif}@page{margin:15mm}</style></head><body>${c}<script>window.onload=()=>{setTimeout(()=>window.print(),600)}<\/script></body></html>`);w.document.close();}
 
 /* ===== ADMIN - PRODUCTS ===== */
@@ -1424,10 +1479,21 @@ document.addEventListener('click',e=>{if(e.target.classList.contains('overlay')&
 /* ===== TOAST ===== */
 function toast(msg,type='info'){const c=document.getElementById('toast-cnt');const t=document.createElement('div');t.className=`toast ${type}`;const icons={success:'✅',error:'❌',info:'ℹ️',warning:'⚠️'};t.innerHTML=`<span style="font-size:16px">${icons[type]||'ℹ️'}</span><span>${msg}</span>`;c.appendChild(t);setTimeout(()=>{t.style.animation='toastIn .3s ease reverse';setTimeout(()=>t.remove(),320);},3800);}
 
+/* ===== MOBILE NAV ===== */
+function toggleMobileMenu(){
+  const m=document.getElementById('mobile-menu');
+  const h=document.getElementById('hamburger');
+  m.classList.toggle('open');
+  h.classList.toggle('open');
+}
+function navMobile(page){
+  document.getElementById('mobile-menu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+  nav(page);
+}
 /* ===== HELPERS ===== */
 function fmtDate(ts){if(!ts)return'—';try{const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString('ro-RO',{day:'2-digit',month:'2-digit',year:'numeric'});}catch(e){return'—';}}
 function fmtDateRo(d){const M=['Ianuarie','Februarie','Martie','Aprilie','Mai','Iunie','Iulie','August','Septembrie','Octombrie','Noiembrie','Decembrie'];return`${d.getDate()} ${M[d.getMonth()]} ${d.getFullYear()}`;}
-   ============================================================ */
 async function seedProds(){try{const prods=[{name:'Icoană Sfânta Treime',price:45,oldPrice:null,shortDesc:'Icoană pictată pe lemn, 20×30 cm',desc:'Icoană tradițională pictată manual pe lemn de tei, cu aurire foiță de aur 24K. Dimensiune 20×30 cm. Ambalată în cutie cadou.',category:'Icoane',badge:'POPULAR',stock:15,images:['https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500&auto=format'],soldCount:28,avgRating:4.8,reviewCount:12,transportId:'',createdAt:new Date()},{name:'Lumânări Paști — Set 10 buc',price:12,oldPrice:null,shortDesc:'Lumânări din ceară naturală de albine',desc:'Lumânări din ceară naturală de albine, parfumate cu tămâie și smirnă. Set de 10 bucăți, lungime 25 cm. Ideale pentru slujba de Paști.',category:'Lumânări',badge:'NOU',stock:50,images:['https://images.unsplash.com/photo-1616348436168-de43ad0db179?w=500&auto=format'],soldCount:9,avgRating:4.5,reviewCount:4,transportId:'',createdAt:new Date()},{name:'Biblie ortodoxă — Ediția 2021',price:85,oldPrice:95,shortDesc:'Biblia în traducere modernă, copertă piele ecologică',desc:'Biblia în traducerea cornilescu revizuită, copertă piele ecologică neagră, text pe două coloane. Format A5, 1200 pagini. Include concordanță și hărți biblice.',category:'Cărți',badge:'',stock:8,images:['https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=500&auto=format'],soldCount:17,avgRating:5,reviewCount:8,transportId:'',createdAt:new Date()},{name:'Tămâie naturală Athos — 100g',price:18,oldPrice:null,shortDesc:'Tămâie naturală din Muntele Athos, Grecia',desc:'Tămâie naturală de cea mai înaltă calitate, importată direct din mânăstirile de pe Muntele Athos, Grecia. Aromă intensă și persistentă. Ambalaj 100g.',category:'Tămâie',badge:'POPULAR',stock:30,images:['https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=500&auto=format'],soldCount:42,avgRating:4.9,reviewCount:20,transportId:'',createdAt:new Date()},{name:'Cruce lemn de măslin — Israel',price:35,oldPrice:null,shortDesc:'Cruce sculptată manual, lemn autentic de măslin',desc:'Cruce de lemn de măslin din Țara Sfântă, sculptată manual de meșteri din Betleem. Include certificat de autenticitate și cutie cadou decorată.',category:'Cruci',badge:'',stock:5,images:['https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=500&auto=format'],soldCount:4,avgRating:4.7,reviewCount:3,transportId:'',createdAt:new Date()},{name:'Agheasmatar ceramică pictată',price:28,oldPrice:null,shortDesc:'Recipient pentru agheasmă, ceramică tradițională',desc:'Agheasmatar din ceramică pictată manual de artizani din Horezu. Capacitate 500ml. Glazurat interior pentru a fi ușor de curățat. Motive tradiționale românești.',category:'Obiecte de cult',badge:'NOU',stock:12,images:['https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=500&auto=format'],soldCount:7,avgRating:4.6,reviewCount:5,transportId:'',createdAt:new Date()}];for(const p of prods)await db.collection('products').add(p);allProds=[];await loadShop();}catch(e){console.error('Seed prods err:',e);}}
 
 async function seedAnns(){try{await db.collection('announcements').add({title:'Program special Sfânta Liturghie de Paști',type:'urgent',content:'Vă anunțăm că în noaptea Sfintelor Paști, Sfânta Liturghie va începe la ora 23:30.\n\nToți credincioșii sunt invitați să ia parte la această binecuvântată slujbă. Vă rugăm să veniți cu lumânări.\n\nSfânta Împărtășanie va fi distribuită conform rânduielii bisericești. Vă așteptăm cu bucurie să sărbătorim împreună Învierea Domnului!',images:[],createdAt:new Date(Date.now()-86400000)});await db.collection('announcements').add({title:'Curs de catehizare pentru tineri — Înscrieri deschise',type:'activitate',content:'Parohia Stornești organizează un nou curs de catehizare pentru tineri cu vârste între 14 și 25 de ani.\n\nCursurile vor avea loc în fiecare sâmbătă, de la ora 17:00, în sala parohială. Tematica cursului include: Sfânta Scriptură, Viețile Sfinților, Tainele Bisericii și viața duhovnicească.\n\nPentru înscrieri, contactați secretariatul parohiei sau scrieți la parohia.stornesti@gmail.com.',images:[],createdAt:new Date(Date.now()-3*86400000)});await db.collection('announcements').add({title:'Colectă pentru familii nevoiașe din parohie',type:'general',content:'Parohia noastră colectează alimente neperisabile și haine în stare bună pentru familiile nevoiașe din comunitate.\n\nDacă doriți să contribuiți, puteți aduce donațiile la cancelaria parohiei în fiecare zi de luni și miercuri, între orele 10:00 și 13:00.\n\nDumnezeu să vă răsplătească generozitatea!',images:[],createdAt:new Date(Date.now()-7*86400000)});allAnns=[];await loadAnns();}catch(e){console.error('Seed anns err:',e);}}
