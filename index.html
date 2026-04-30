@@ -433,7 +433,7 @@ footer{background:var(--vd);color:rgba(255,255,255,.78);padding:56px 22px 26px;m
       <button class="nav-link" onclick="nav('shop')">Magazin</button>
       <button class="nav-link" onclick="nav('audio')">Audio</button>
       <button class="nav-link" onclick="nav('faq')">FAQ</button>
-      <button class="nav-link" onclick="nav('admin')">Admin</button>
+      <button class="nav-link" id="anl" onclick="nav('admin')" style="display:none;background:rgba(200,169,110,.18);color:var(--gl)">⚙ Admin</button>
     </div>
     <div class="hamburger" id="hamburger" onclick="toggleMobileMenu()" title="Meniu"><span></span><span></span><span></span></div>
     <div class="nav-actions">
@@ -453,7 +453,7 @@ footer{background:var(--vd);color:rgba(255,255,255,.78);padding:56px 22px 26px;m
   <button class="nav-mobile-link" onclick="navMobile('audio')">🎵 Audio</button>
   <button class="nav-mobile-link" onclick="navMobile('faq')">❓ FAQ</button>
   <button class="nav-mobile-link" onclick="navMobile('account')">👤 Contul meu</button>
-  <button class="nav-mobile-link" onclick="navMobile('admin')">Admin</button>
+  <button class="nav-mobile-link" id="aml" onclick="navMobile('admin')" style="display:none;color:var(--gl)">⚙ Admin</button>
 </div>
 <!-- TIMER BANNER -->
 <div id="timer-banner">
@@ -754,6 +754,8 @@ footer{background:var(--vd);color:rgba(255,255,255,.78);padding:56px 22px 26px;m
         <button class="asb-btn" onclick="admSec('announcements',this)">📢 Anunțuri</button>
         <button class="asb-btn" onclick="admSec('audio',this)">🎵 Audio</button>
         <button class="asb-btn" onclick="admSec('clients',this)">👥 Clienți</button>
+        <button class="asb-btn" onclick="admSec('reservations',this)">📅 Rezervări</button>
+        <button class="asb-btn" onclick="admSec('categories',this)">🏷 Categorii</button>
         <button class="asb-btn" onclick="admSec('coupons',this)">🎟 Cupoane</button>
         <button class="asb-btn" onclick="admSec('transport',this)">🚚 Transport</button>
         <button class="asb-btn" onclick="admSec('email',this)">📧 Email</button>
@@ -845,6 +847,7 @@ footer{background:var(--vd);color:rgba(255,255,255,.78);padding:56px 22px 26px;m
               🎵 Dropbox: înlocuiți <code>dl=0</code> cu <code>dl=1</code> • <code>www.dropbox.com</code> → <code>dl.dropboxusercontent.com</code><br>
               🎵 MP3 direct: orice link ce se termină în <code>.mp3</code>
             </div>
+            <div class="fg" style="margin-bottom:12px"><label class="fl">Categorie (opțional)</label><input type="text" class="fi" id="audf-cat" placeholder="ex: Predici, Slujbe..." list="audio-cat-dl"><datalist id="audio-cat-dl"></datalist></div>
             <div class="fg" style="margin-bottom:13px"><label class="fl">Descriere</label><textarea class="fi" id="audf-desc" rows="3"></textarea></div>
             <div style="display:flex;gap:11px"><button class="btn btn-primary" onclick="saveAudio()">💾 Salvează</button><button class="btn btn-secondary" onclick="cancelAudioEdit()">✕ Anulează</button></div>
           </div>
@@ -852,6 +855,34 @@ footer{background:var(--vd);color:rgba(255,255,255,.78);padding:56px 22px 26px;m
         </div>
         <!-- CLIENTS -->
         <div id="adm-clients" class="adm-sec"><div class="adm-sec-title">👥 Clienți</div><div id="clients-tbl"></div></div>
+        <div id="adm-reservations" class="adm-sec">
+          <div class="adm-sec-title">📅 Rezervări</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px" id="res-adm-filter">
+            <button class="f-btn active" onclick="filterResAdm('all',this)">Toate</button>
+            <button class="f-btn" onclick="filterResAdm('pending',this)">⏳ Așteptare</button>
+            <button class="f-btn" onclick="filterResAdm('confirmed',this)">✅ Confirmate</button>
+            <button class="f-btn" onclick="filterResAdm('cancelled',this)">❌ Anulate</button>
+          </div>
+          <div id="res-adm-tbl"></div>
+        </div>
+        <div id="adm-categories" class="adm-sec">
+          <div class="adm-sec-title">🏷 Categorii</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px">
+            <div class="adm-form"><div class="adm-form-title">📦 Categorii Produse</div>
+              <div class="fg" style="margin-bottom:12px"><label class="fl">Denumire</label><input type="text" class="fi" id="cat-prod-inp" placeholder="ex: Icoane, Lumânări..."></div>
+              <button class="btn btn-primary btn-sm" onclick="addCat('products','cat-prod-inp','cat-prod-list')">+ Adaugă</button>
+              <div id="cat-prod-list" style="margin-top:14px"></div></div>
+            <div class="adm-form"><div class="adm-form-title">📢 Tipuri Anunțuri</div>
+              <div class="fg" style="margin-bottom:8px"><label class="fl">Tip nou</label><input type="text" class="fi" id="cat-ann-inp" placeholder="ex: Nuntă, Cununie..."></div>
+              <div style="font-size:12px;color:var(--tl);font-style:italic;margin-bottom:10px">Tipurile implicite sunt mereu disponibile.</div>
+              <button class="btn btn-primary btn-sm" onclick="addCat('announcements','cat-ann-inp','cat-ann-list')">+ Adaugă</button>
+              <div id="cat-ann-list" style="margin-top:14px"></div></div>
+            <div class="adm-form"><div class="adm-form-title">🎵 Categorii Audio</div>
+              <div class="fg" style="margin-bottom:12px"><label class="fl">Denumire</label><input type="text" class="fi" id="cat-audio-inp" placeholder="ex: Predici, Colinde..."></div>
+              <button class="btn btn-primary btn-sm" onclick="addCat('audio','cat-audio-inp','cat-audio-list')">+ Adaugă</button>
+              <div id="cat-audio-list" style="margin-top:14px"></div></div>
+          </div>
+        </div>
         <!-- COUPONS -->
         <div id="adm-coupons" class="adm-sec">
           <div class="adm-sec-title">🎟 Cupoane</div>
@@ -1134,9 +1165,9 @@ footer{background:var(--vd);color:rgba(255,255,255,.78);padding:56px 22px 26px;m
   <div class="modal lg">
     <div class="modal-hdr"><div class="modal-title" id="am-title"></div><button class="modal-close" onclick="closeModal('ann-modal')">✕</button></div>
     <div class="modal-body">
-      <div id="am-meta" style="margin-bottom:18px"></div>
+      <div id="am-meta" style="margin-bottom:14px"></div>
+      <div id="am-imgs"></div>
       <div id="am-content" style="font-family:'Cormorant Garamond',serif;font-size:18px;line-height:1.9;color:var(--tm);white-space:pre-wrap"></div>
-      <div id="am-imgs" style="display:flex;flex-wrap:wrap;gap:11px;margin-top:18px"></div>
     </div>
   </div>
 </div>
@@ -1215,7 +1246,7 @@ auth.onAuthStateChanged(u=>{
   if(u&&curPage==='account') renderAccount();
   if(u) checkUserGdpr(u);
 });
-function updateAccBtn(){const b=document.getElementById('acc-btn');b.title=CU?(CU.displayName||CU.email):'Autentificare';b.innerHTML=CU?'👤':'🔓';}
+function updateAccBtn(){const b=document.getElementById('acc-btn');b.title=CU?(CU.displayName||CU.email):'Autentificare';b.innerHTML=CU?'👤':'🔓';const ia=CU&&CU.email===ADMIN_EMAIL;const al=document.getElementById('anl');const am=document.getElementById('aml');if(al)al.style.display=ia?'inline-block':'none';if(am)am.style.display=ia?'block':'none';}
 function openAccOrAuth(){if(CU)nav('account');else openModal('auth-modal');}
 function switchAuthTab(t,el){document.querySelectorAll('#auth-tabs .acc-tab').forEach(x=>x.classList.remove('active'));el.classList.add('active');document.getElementById('auth-login-form').style.display=t==='login'?'block':'none';document.getElementById('auth-reg-form').style.display=t==='register'?'block':'none';document.getElementById('auth-err').textContent='';}
 async function signIn(){try{await auth.signInWithEmailAndPassword(document.getElementById('auth-email').value,document.getElementById('auth-pass').value);closeModal('auth-modal');toast('Autentificat cu succes!','success');nav('account');}catch(e){document.getElementById('auth-err').textContent=authErr(e.code);}}
@@ -1291,7 +1322,12 @@ async function loadAnns(silent=false){const g=document.getElementById('ann-grid'
 function annType(t){return{urgent:'Urgent',slujba:'Slujbă',activitate:'Activitate',botez:'Botez',inmormantare:'Înmormântare',general:'General'}[t]||'General';}
 function renderAnns(filter){const g=document.getElementById('ann-grid');let it=allAnns;if(filter!=='all')it=it.filter(a=>a.type===filter);if(!it.length){g.innerHTML='<p style="text-align:center;color:var(--tl);padding:40px">Nu există anunțuri în această categorie.</p>';return;}g.innerHTML=it.map(a=>{const img=(a.images&&a.images.length)?`<img class="ann-img" src="${a.images[0]}" loading="lazy" onerror="this.style.display='none'">`:`<div class="ann-img-ph">📜</div>`;return`<div class="ann-card ${a.type==='urgent'?'urgent':''}" onclick="openAnnModal('${a.id}')">${img}<div class="ann-body"><span class="ann-badge b-${a.type||'general'}">${annType(a.type)}</span><div class="ann-title">${a.title}</div><div class="ann-excerpt">${(a.content||'').substring(0,200)}${(a.content||'').length>200?'...':''}</div><div class="ann-date">📅 ${fmtDate(a.createdAt)}</div></div></div>`;}).join('');}
 function filterAnn(t,btn){document.querySelectorAll('.af-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderAnns(t);}
-async function openAnnModal(id){let a=allAnns.find(x=>x.id===id);if(!a){const d=await db.collection('announcements').doc(id).get();a={id:d.id,...d.data()};}document.getElementById('am-title').textContent=a.title;document.getElementById('am-meta').innerHTML=`<span class="ann-badge b-${a.type||'general'}">${annType(a.type)}</span><span style="font-size:13px;color:var(--tl);margin-left:10px">📅 ${fmtDate(a.createdAt)}</span>`;document.getElementById('am-content').textContent=a.content||'';document.getElementById('am-imgs').innerHTML=(a.images||[]).map(s=>`<img src="${s}" style="max-width:100%;border-radius:10px;max-height:340px;object-fit:cover" onerror="this.style.display='none'">`).join('');openModal('ann-modal');}
+async function openAnnModal(id){let a=allAnns.find(x=>x.id===id);if(!a){const d=await db.collection('announcements').doc(id).get();a={id:d.id,...d.data()};}document.getElementById('am-title').textContent=a.title;
+  document.getElementById('am-meta').innerHTML=`<span class="ann-badge b-${a.type||'general'}">${annType(a.type)}</span><span style="font-size:13px;color:var(--tl);margin-left:10px">📅 ${fmtDate(a.createdAt)}</span>`;
+  const imgs=a.images||[];
+  document.getElementById('am-imgs').innerHTML=imgs.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:18px">${imgs.map(s=>`<img src="${s}" style="width:100%;border-radius:9px;max-height:280px;object-fit:cover;display:block" onerror="this.style.display='none'">`).join('')}</div>`:'';
+  document.getElementById('am-content').textContent=a.content||'';
+  openModal('ann-modal');}
 
 /* ===== SHOP ===== */
 async function loadShop(silent=false){const g=document.getElementById('prods-grid');if(!silent)g.innerHTML='<div class="pg-loading"><div class="spinner"></div></div>';try{const[ps,ts]=await Promise.all([db.collection('products').get(),db.collection('transport').get()]);allProds=[];ps.forEach(d=>allProds.push({id:d.id,...d.data()}));allTrans=[];ts.forEach(d=>allTrans.push({id:d.id,...d.data()}));if(!allProds.length){seedProds();return;}buildChips();renderProds();}catch(e){g.innerHTML='<p style="text-align:center;color:var(--tl);padding:40px">Eroare la încărcarea produselor.</p>';}}
@@ -1386,18 +1422,57 @@ document.querySelectorAll('audio').forEach(x=>{if(x.id!=='aud-'+id&&!x.paused){x
 function seekAudio(id,val){const a=document.getElementById('aud-'+id);if(a)a.currentTime=parseFloat(val);}
 function audioEnded(id){const btn=document.getElementById('ap-btn-'+id);if(btn){btn.textContent='▶';btn.classList.remove('playing');}const seek=document.getElementById('ap-seek-'+id);if(seek)seek.value=0;document.getElementById('ap-fill-'+id).style.width='0%';document.getElementById('ap-cur-'+id).textContent='0:00';}
 function fixDropbox(url){return url.replace('www.dropbox.com','dl.dropboxusercontent.com').replace('dl=0','dl=1');}
-function renderAudioItem(a){const yt=isYt(a.url||'');let media='';if(yt){const em=ytEmbed(a.url||'');if(em){const ytid=em.split('/embed/')[1]?.split('?')[0]||'';media=`<div class="audio-embed"><div class="yt-thumb-wrap" id="yt-${a.id}" onclick="loadYtPlayer('${a.id}','${em}')"><img src="https://img.youtube.com/vi/${ytid}/hqdefault.jpg" style="width:100%;border-radius:9px;display:block" onerror="this.src=''" alt="${(a.title||'').replace(/'/g,'')}" loading="lazy"><div class="yt-play-btn"><span>▶</span></div><div class="yt-info-bar">📺 ${(a.title||'').replace(/'/g,'')} — Click pentru a reda</div></div></div>`;}}else if(a.url){const src=fixDropbox(a.url);media=`<div class="audio-embed"><div class="audio-player-wrap" id="ap-${a.id}"><audio id="aud-${a.id}" preload="metadata" onloadedmetadata="updateAudioMeta('${a.id}')" ontimeupdate="updateAudioTime('${a.id}')" onended="audioEnded('${a.id}')"><source src="${src}"></audio><div class="custom-audio-player"><button class="audio-play-btn" onclick="toggleAudio('${a.id}')" id="ap-btn-${a.id}">▶</button><div class="audio-progress-wrap"><div class="audio-progress-bar"><div class="audio-progress-fill" id="ap-fill-${a.id}" style="width:0%"></div></div><input type="range" class="audio-seek" id="ap-seek-${a.id}" value="0" min="0" step="0.1" oninput="seekAudio('${a.id}',this.value)"></div><div class="audio-time-display"><span id="ap-cur-${a.id}">0:00</span> / <span id="ap-dur-${a.id}">--:--</span></div></div></div></div>`;}return`<div class="audio-item"><div class="audio-hdr"><div class="audio-icon">${yt?'📺':'🎵'}</div><div class="audio-info"><div class="audio-title">${a.title||''}</div><div class="audio-meta">${a.author?'Autor: '+a.author+' · ':''}${fmtDate(a.createdAt)}</div></div></div>${a.desc?`<div class="audio-desc">${a.desc}</div>`:''}${media}</div>`;}
+function renderAudioItem(a){
+  var yt=isYt(a.url||'');
+  var media='';
+  if(yt){
+    var em=ytEmbed(a.url||'');
+    if(em){
+      var ytid=(em.split('/embed/')[1]||'').split('?')[0];
+      var thumb='https://img.youtube.com/vi/'+ytid+'/hqdefault.jpg';
+      media='<div style="position:relative;border-radius:9px;overflow:hidden;cursor:pointer;background:#000" onclick="loadYtPlayer(''+a.id+'',''+em+'')">'+
+        '<img src="'+thumb+'" loading="lazy" alt="" style="width:100%;display:block;max-height:220px;object-fit:cover" onerror="this.src=''">'+
+        '<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;pointer-events:none">'+
+        '<div style="width:52px;height:52px;background:rgba(220,0,0,.9);border-radius:50%;display:flex;align-items:center;justify-content:center"><div style="width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:17px solid white;margin-left:3px"></div></div>'+
+        '<div style="color:white;font-size:12px;background:rgba(0,0,0,.6);padding:3px 12px;border-radius:10px">Click pentru a reda</div>'+
+        '</div></div>';
+    }
+  } else if(a.base64||a.url){
+    var src=a.base64||fixDropbox(a.url||'');
+    media='<div style="background:var(--cr);border-radius:10px;padding:12px 14px;border:1.5px solid var(--crd);display:flex;align-items:center;gap:12px">'+
+      '<audio id="aud-'+a.id+'" preload="none" onloadedmetadata="audMeta(''+a.id+'')" ontimeupdate="audTime(''+a.id+'')" onended="audEnd(''+a.id+'')">'+
+      '<source src="'+src+'"></audio>'+
+      '<button id="apb-'+a.id+'" onclick="audToggle(''+a.id+'')" style="width:40px;height:40px;border-radius:50%;background:var(--v);color:white;border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s">&#9654;</button>'+
+      '<div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px">'+
+      '<div style="flex:1;height:5px;background:var(--crd);border-radius:3px;position:relative;cursor:pointer" onclick="audSeekClick(''+a.id+'',event)">'+
+      '<div id="apf-'+a.id+'" style="height:100%;background:var(--v);border-radius:3px;width:0%;transition:width .1s linear;pointer-events:none"></div>'+
+      '<input type="range" id="aps-'+a.id+'" value="0" min="0" step="0.01" oninput="audSeek(''+a.id+'',this.value)" style="position:absolute;inset:0;width:100%;opacity:0;cursor:pointer;margin:0;height:100%">'+
+      '</div>'+
+      '<div style="font-size:11.5px;color:var(--tl);white-space:nowrap;font-family:Cinzel,serif"><span id="apc-'+a.id+'">0:00</span> / <span id="apd-'+a.id+'">--:--</span></div>'+
+      '</div></div>';
+  }
+  var cat=a.category?'<span style="display:inline-block;padding:2px 8px;background:var(--crd);color:var(--v);border-radius:6px;font-size:10.5px;font-weight:700;margin-right:5px;text-transform:uppercase;letter-spacing:.5px">'+a.category+'</span>':'';
+  var hasBody=!!(a.desc||media);
+  var icon=yt?'&#128250;':'&#127925;';
+  return '<div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;transition:box-shadow .2s">'+
+    '<div style="display:flex;align-items:center;gap:14px;padding:16px 18px '+(hasBody?'10px':'16px')+'">'+
+    '<div style="width:44px;height:44px;background:var(--cr);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;border:1.5px solid var(--crd)">'+icon+'</div>'+
+    '<div style="flex:1;min-width:0">'+
+    '<div style="font-family:Cinzel,serif;font-size:14.5px;color:var(--v);margin-bottom:3px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(a.title||'')+'</div>'+
+    '<div style="font-size:12px;color:var(--tl)">'+cat+(a.author?a.author+' &middot; ':'')+fmtDate(a.createdAt)+'</div>'+
+    '</div></div>'+
+    (hasBody?'<div style="padding:0 18px 16px">'+(a.desc?'<div style="font-size:13.5px;color:var(--tm);line-height:1.65;margin-bottom:'+(media?'12px':'0')+'">'+a.desc+'</div>':'')+media+'</div>':'')+
+    '</div>';
+}
 
-/* ===== FAQ ===== */
-async function loadFaq(silent=false){const l=document.getElementById('faq-list');if(!silent)l.innerHTML='<div class="pg-loading"><div class="spinner"></div></div>';try{const s=await db.collection('faq').orderBy('order','asc').get();if(s.empty){l.innerHTML='<p style="text-align:center;color:var(--tl);padding:50px">Nu există întrebări frecvente adăugate.</p>';return;}l.innerHTML=s.docs.map((d,i)=>{const f={id:d.id,...d.data()};return`<div class="faq-item" id="fq-${i}"><div class="faq-q" onclick="toggleFq(${i})"><span>${f.q||''}</span><span class="faq-chev">▼</span></div><div class="faq-a"><div class="faq-a-inner">${f.a||''}</div></div></div>`;}).join('');}catch(e){l.innerHTML='<p style="text-align:center;color:var(--tl)">Eroare la încărcare.</p>';}}
 function toggleFq(i){document.getElementById('fq-'+i)?.classList.toggle('open');}
 
 /* ===== ACCOUNT ===== */
 async function renderAccount(){const w=document.getElementById('acc-content');if(!CU){w.innerHTML='<p>Te rugăm să te autentifici pentru a accesa contul.</p>';return;}const ud=await db.collection('users').doc(CU.uid).get(),u=ud.exists?ud.data():{};w.innerHTML=`<div class="acc-tabs"><button class="acc-tab active" onclick="swAccTab('orders',this)">📦 Comenzile mele</button><button class="acc-tab" onclick="swAccTab('reservations',this)">📅 Rezervările mele</button><button class="acc-tab" onclick="swAccTab('profile',this)">👤 Profilul meu</button></div><div id="acc-orders"></div><div id="acc-reservations" style="display:none"></div><div id="acc-profile" style="display:none"></div>`;loadAccOrds();loadAccRes();renderAccProfile(u);}
 function swAccTab(t,btn){document.querySelectorAll('.acc-tabs .acc-tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');['orders','reservations','profile'].forEach(x=>{const el=document.getElementById('acc-'+x);if(el)el.style.display=x===t?'block':'none';});}
-async function loadAccOrds(){const w=document.getElementById('acc-orders');try{let s;try{s=await db.collection('orders').where('userId','==',CU.uid).orderBy('createdAt','desc').get();}catch(idxErr){s=await db.collection('orders').where('userId','==',CU.uid).get();}if(s.empty){w.innerHTML='<p style="text-align:center;color:var(--tl);padding:50px;font-style:italic">Nu ai plassat nicio comandă încă.<br><a onclick="nav(\'shop\')" style="color:var(--v);text-decoration:underline;cursor:pointer">Mergi la magazin →</a></p>';return;}const SL={pending:'⏳ În așteptare',confirmed:'✅ Confirmat',shipped:'🚚 Expediat',delivered:'📦 Livrat',cancelled:'❌ Anulat'};w.innerHTML=s.docs.map(d=>{const o=d.data();return`<div class="order-card"><div class="oc-hdr"><div><strong style="font-family:'Cinzel',serif;color:var(--v);font-size:15.5px">Comandă #${d.id.substring(0,8).toUpperCase()}</strong><div style="font-size:12.5px;color:var(--tl);margin-top:3px">📅 ${fmtDate(o.createdAt)} · ${(o.items||[]).length} produs(e)</div></div><span class="st-badge st-${o.status||'pending'}">${SL[o.status||'pending']}</span></div>${(o.items||[]).map(i=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:13.5px;padding:6px 0;border-bottom:1px solid var(--crd)"><span style="flex:1">${i.name}</span><span style="color:var(--tl)">x${i.qty}</span><span style="color:var(--v);font-weight:700;font-family:'Cinzel',serif">${(i.price*i.qty).toFixed(2)} lei</span></div>`).join('')}<div style="text-align:right;font-family:'Cinzel',serif;color:var(--v);font-size:18px;margin-top:10px;padding-top:10px"><strong>Total: ${(o.total||0).toFixed(2)} lei</strong></div></div>`;}).join('');}catch(e){w.innerHTML='<p style="color:var(--tl)">Eroare la încărcarea comenzilor.</p>';}}
+async function loadAccOrds(){const w=document.getElementById('acc-orders');try{let s;try{s=await db.collection('orders').where('userId','==',CU.uid).orderBy('createdAt','desc').get();}catch(idxErr){s=await db.collection('orders').where('userId','==',CU.uid).get();}if(s.empty){w.innerHTML='<p style="text-align:center;color:var(--tl);padding:50px;font-style:italic">Nu ai plassat nicio comandă încă.<br><a onclick="nav(\'shop\')" style="color:var(--v);text-decoration:underline;cursor:pointer">Mergi la magazin →</a></p>';return;}const SL={pending:'⏳ În așteptare',confirmed:'✅ Confirmat',shipped:'🚚 Expediat',delivered:'📦 Livrat',cancelled:'❌ Anulat'};w.innerHTML=s.docs.map(d=>buildOrderCard(d)).join('');}catch(e){w.innerHTML='<p style="color:var(--tl)">Eroare la încărcarea comenzilor.</p>';}}
 async function loadAccRes(){const w=document.getElementById('acc-reservations');try{let s;try{s=await db.collection('reservations').where('userId','==',CU.uid).orderBy('createdAt','desc').get();}catch(idxErr){// Fallback without orderBy if index missing
-s=await db.collection('reservations').where('userId','==',CU.uid).get();}if(s.empty){w.innerHTML='<p style="text-align:center;color:var(--tl);padding:50px;font-style:italic">Nu ai nicio rezervare activă.</p>';return;}w.innerHTML=s.docs.map(d=>{const r=d.data();return`<div class="order-card"><div class="oc-hdr"><div><strong style="font-family:'Cinzel',serif;color:var(--v)">${r.productName||'Produs'}</strong><div style="font-size:12.5px;color:var(--tl);margin-top:3px">Cantitate: ${r.qty} · Rezervat: ${fmtDate(r.createdAt)}</div></div><span class="st-badge st-${r.status||'pending'}">${r.status==='pending'?'⏳ În așteptare':'✅ Confirmat'}</span></div><div style="font-size:13.5px;color:var(--tm)">📅 Data ridicare: <strong>${r.pickupDate||'—'}</strong>${r.msg?`<br>📝 Mesaj: ${r.msg}`:''}</div></div>`;}).join('');}catch(e){w.innerHTML='';}}
+s=await db.collection('reservations').where('userId','==',CU.uid).get();}if(s.empty){w.innerHTML='<p style="text-align:center;color:var(--tl);padding:50px;font-style:italic">Nu ai nicio rezervare activă.</p>';return;}w.innerHTML=s.docs.map(d=>buildResCard(d)).join('');}catch(e){w.innerHTML='';}}
 function renderAccProfile(u){const w=document.getElementById('acc-profile'),sub=u.newsletter||false;w.innerHTML=(sub?`<div style="background:#eafaf1;border-radius:var(--r);padding:18px 24px;margin-bottom:24px;display:flex;align-items:center;gap:14px;box-shadow:var(--sh)"><span style="font-size:26px">✅</span><div><div style="font-weight:700;color:var(--green);font-size:15px">Ești abonat la newsletter!</div><div style="font-size:13.5px;color:var(--tm);margin-top:3px">Beneficiezi de 5% reducere la toate comenzile tale.</div></div></div>`:`<div class="nl-banner"><div><div class="nl-text">🌟 Abonează-te la newsletter!</div><div style="font-size:13.5px;color:var(--vd);margin-top:4px">Primești 5% reducere la fiecare comandă plasată</div></div><button class="btn btn-primary" onclick="subscribe()">Abonare gratuită</button></div>`)+`<div class="form-row"><div class="fg"><label class="fl">Nume complet</label><input type="text" class="fi" id="pr-name" value="${u.name||''}" oninput="vf(this,'name')"><div class="fe" id="pr-name-e"></div></div><div class="fg"><label class="fl">Email (nemodificabil)</label><input type="email" class="fi" value="${CU.email}" disabled style="opacity:.55;cursor:not-allowed;background:var(--crd)"></div></div><div class="form-row"><div class="fg"><label class="fl">Telefon</label><input type="text" class="fi" id="pr-phone" value="${u.phone||''}" oninput="vf(this,'phone')"><div class="fe" id="pr-phone-e"></div></div><div class="fg"><label class="fl">Județ</label><input type="text" class="fi" id="pr-county" value="${u.county||''}"></div></div><div class="form-row full"><div class="fg"><label class="fl">Adresă</label><input type="text" class="fi" id="pr-addr" value="${u.address||''}"></div></div><div class="form-row"><div class="fg"><label class="fl">Localitate</label><input type="text" class="fi" id="pr-city" value="${u.city||''}"></div></div><div style="display:flex;gap:13px;margin-top:20px;flex-wrap:wrap"><button class="btn btn-primary" onclick="saveProfile()">💾 Salvează datele</button><button class="btn btn-danger" onclick="logout()">🚪 Deconectare</button></div>`;}
 async function saveProfile(){if(!vf(document.getElementById('pr-name'),'name'))return;const ph=document.getElementById('pr-phone').value;if(ph&&!PAT.phone.test(ph)){vf(document.getElementById('pr-phone'),'phone');return;}try{await db.collection('users').doc(CU.uid).update({name:document.getElementById('pr-name').value,phone:ph,address:document.getElementById('pr-addr')?.value||'',city:document.getElementById('pr-city')?.value||'',county:document.getElementById('pr-county')?.value||''});await CU.updateProfile({displayName:document.getElementById('pr-name').value});toast('Profil salvat cu succes!','success');}catch(e){toast('Eroare la salvarea profilului','error');}}
 async function subscribe(){if(!CU)return;await db.collection('users').doc(CU.uid).update({newsletter:true});toast('Abonat! Beneficiezi acum de 5% reducere la toate comenzile!','success');renderAccount();}
@@ -1410,15 +1485,25 @@ async function submitRes(){if(!vf(document.getElementById('res-name'),'name')||!
 async function adminLogin(){const e=document.getElementById('adm-login-email').value,p=document.getElementById('adm-pass').value,err=document.getElementById('adm-login-err');if(e!==ADMIN_EMAIL){err.textContent='Acces interzis. Emailul nu corespunde contului de administrator.';return;}try{await auth.signInWithEmailAndPassword(e,p);document.getElementById('admin-login-screen').style.display='none';document.getElementById('admin-panel-wrap').style.display='block';admSec('dashboard',document.querySelector('.asb-btn'));}catch(e2){err.textContent=authErr(e2.code);}}
 async function adminLogout(){await auth.signOut();toast('Deconectat din panoul admin','info');nav('home');}
 function admSec(n,btn){document.querySelectorAll('.adm-sec').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.asb-btn').forEach(b=>b.classList.remove('active'));document.getElementById('adm-'+n)?.classList.add('active');if(btn)btn.classList.add('active');loadAdmSec(n);}
-function loadAdmSec(n){({dashboard:admDash,orders:admOrders,products:admProds,announcements:admAnns,audio:admAudio,clients:admClients,coupons:admCoupons,transport:admTransport,email:admEmail,faq:admFaq,schedule:admSched,saints:renderCal})[n]?.();}
+function loadAdmSec(n){({dashboard:admDash,orders:admOrders,products:admProds,announcements:admAnns,audio:admAudio,clients:admClients,reservations:admReservations,coupons:admCoupons,transport:admTransport,email:admEmail,faq:admFaq,schedule:admSched,saints:renderCal,categories:admCategories})[n]?.();}
 
 async function admDash(){try{const[o,p,u,a]=await Promise.all([db.collection('orders').get(),db.collection('products').get(),db.collection('users').get(),db.collection('announcements').get()]);const pend=o.docs.filter(d=>d.data().status==='pending').length,rev=o.docs.reduce((s,d)=>s+(d.data().total||0),0);document.getElementById('stat-cards').innerHTML=`<div class="stat-card"><div class="stat-num">${o.size}</div><div class="stat-lbl">Total comenzi</div></div><div class="stat-card"><div class="stat-num" style="color:var(--orange)">${pend}</div><div class="stat-lbl">În așteptare</div></div><div class="stat-card"><div class="stat-num" style="color:var(--green)">${rev.toFixed(0)} lei</div><div class="stat-lbl">Venit total</div></div><div class="stat-card"><div class="stat-num">${p.size}</div><div class="stat-lbl">Produse</div></div><div class="stat-card"><div class="stat-num">${u.size}</div><div class="stat-lbl">Clienți</div></div><div class="stat-card"><div class="stat-num">${a.size}</div><div class="stat-lbl">Anunțuri</div></div>`;const rec=o.docs.sort((a,b)=>(b.data().createdAt?.seconds||0)-(a.data().createdAt?.seconds||0)).slice(0,5);const SL={pending:'⏳',confirmed:'✅',shipped:'🚚',delivered:'📦',cancelled:'❌'};document.getElementById('recent-ord').innerHTML=`<table class="dt"><thead><tr><th>ID Comandă</th><th>Client</th><th>Total</th><th>Status</th><th>Data</th></tr></thead><tbody>${rec.map(d=>{const o2=d.data();return`<tr><td><strong>#${d.id.substring(0,8).toUpperCase()}</strong></td><td>${o2.name||''}</td><td><strong>${(o2.total||0).toFixed(2)} lei</strong></td><td>${SL[o2.status||'pending']||''} ${o2.status||''}</td><td>${fmtDate(o2.createdAt)}</td></tr>`;}).join('')}</tbody></table>`;}catch(e){document.getElementById('stat-cards').innerHTML='<p>Eroare la încărcarea datelor.</p>';}}
 
 async function admOrders(){const w=document.getElementById('orders-tbl');w.innerHTML='<div class="pg-loading"><div class="spinner"></div></div>';try{const s=await db.collection('orders').orderBy('createdAt','desc').get();const SL={pending:'⏳ În așteptare',confirmed:'✅ Confirmat',shipped:'🚚 Expediat',delivered:'📦 Livrat',cancelled:'❌ Anulat'};w.innerHTML=`<table class="dt"><thead><tr><th>ID</th><th>Client</th><th>Produse</th><th>Total</th><th>Status</th><th>Data</th><th>Acțiuni</th></tr></thead><tbody>${s.docs.map(d=>{const o=d.data();return`<tr><td><strong>#${d.id.substring(0,8).toUpperCase()}</strong></td><td><strong>${o.name||''}</strong><br><small style="color:var(--tl)">${o.email||''}</small><br><small>${o.phone||''}</small></td><td style="max-width:160px;font-size:12px;color:var(--tm)">${(o.items||[]).map(i=>`${i.name} x${i.qty}`).join(', ')}</td><td><strong style="color:var(--v);font-family:'Cinzel',serif">${(o.total||0).toFixed(2)} lei</strong></td><td><select class="styled-sel" style="font-size:12px;padding:5px 9px" onchange="updOrdStatus('${d.id}',this.value)">${['pending','confirmed','shipped','delivered','cancelled'].map(st=>`<option value="${st}" ${o.status===st?'selected':''}>${SL[st]}</option>`).join('')}</select></td><td style="font-size:12.5px">${fmtDate(o.createdAt)}</td><td style="white-space:nowrap"><button class="btn btn-secondary btn-sm" onclick="openOrdDetail('${d.id}')">Detalii</button> <button class="btn btn-gold btn-sm" onclick="genInvoiceId('${d.id}')">🧾</button> <button class="btn btn-danger btn-sm" onclick="delOrd('${d.id}')">🗑</button></td></tr>`;}).join('')}</tbody></table>`;}catch(e){w.innerHTML='<p>Eroare la încărcarea comenzilor.</p>';}}
 async function updOrdStatus(id,st){await db.collection('orders').doc(id).update({status:st});toast('Status actualizat','success');const d=await db.collection('orders').doc(id).get();if(d.exists)sendEjStatus(d.data(),id,st);}
 async function delOrd(id){if(!confirm('Ștergi definitiv comanda? Această acțiune nu poate fi anulată.'))return;await db.collection('orders').doc(id).delete();toast('Comandă ștearsă','info');admOrders();}
-async function openOrdDetail(id){const d=await db.collection('orders').doc(id).get();if(!d.exists)return;curOrd={id,...d.data()};const o=curOrd;const SL={pending:'⏳ În așteptare',confirmed:'✅ Confirmat',shipped:'🚚 Expediat',delivered:'📦 Livrat',cancelled:'❌ Anulat'};document.getElementById('ord-detail-body').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px"><div><div class="form-sec-title" style="font-size:14px;margin-bottom:14px">Date client</div><div style="font-size:13.5px;line-height:2.1"><strong>Nume:</strong> ${o.name}<br><strong>Email:</strong> ${o.email}<br><strong>Telefon:</strong> ${o.phone}<br><strong>Adresă:</strong> ${o.address}, ${o.city} ${o.county||''}</div>${o.notes?`<div style="margin-top:10px;font-size:13px;color:var(--tm);background:var(--cr);padding:10px;border-radius:8px"><strong>Observații:</strong> ${o.notes}</div>`:''} ${o.diffAddress?`<div style="margin-top:10px;font-size:13.5px;background:#fffbeb;padding:10px;border-radius:8px"><strong>📦 Livrare la:</strong> ${o.shippingAddress}, ${o.shippingCity} ${o.shippingCounty||''}</div>`:''}</div><div><div class="form-sec-title" style="font-size:14px;margin-bottom:14px">Detalii comandă</div><div style="font-size:13.5px;line-height:2.1"><strong>Transport:</strong> ${o.transportName||'—'}<br><strong>Metodă plată:</strong> ${o.payMethod==='ramburs'?'Ramburs la livrare':'Transfer bancar'}<br><strong>Cupon:</strong> ${o.coupon||'—'}<br><strong>Total:</strong> <span style="font-family:'Cinzel',serif;color:var(--v);font-size:18px;font-weight:700">${(o.total||0).toFixed(2)} lei</span></div><div style="margin-top:14px"><label class="fl">Schimbă statusul comenzii</label><select id="d-status" class="fi styled-sel" style="margin-top:5px">${['pending','confirmed','shipped','delivered','cancelled'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${SL[s]}</option>`).join('')}</select></div></div></div><div><div class="form-sec-title" style="font-size:14px;margin-bottom:14px">Produse comandate</div><table class="dt"><thead><tr><th>Produs</th><th>Preț/buc</th><th>Cantitate</th><th>Total linie</th></tr></thead><tbody>${(o.items||[]).map((it,i)=>`<tr><td>${it.name}</td><td>${it.price} lei</td><td><input type="number" id="dq-${i}" value="${it.qty}" min="0" style="width:68px;padding:6px 10px;border:1.5px solid var(--crd);border-radius:7px;text-align:center;font-size:14px"></td><td><strong>${(it.price*it.qty).toFixed(2)} lei</strong></td></tr>`).join('')}</tbody></table></div>`;openModal('ord-detail-modal');}
-async function saveOrdDetail(){if(!curOrd)return;const st=document.getElementById('d-status').value,items=curOrd.items.map((it,i)=>({...it,qty:parseInt(document.getElementById('dq-'+i)?.value)||0})).filter(x=>x.qty>0),tot=items.reduce((s,x)=>s+(x.price*x.qty),0)+(curOrd.transport||0);await db.collection('orders').doc(curOrd.id).update({status:st,items,total:tot});if(st!==curOrd.status)sendEjStatus({...curOrd,items},curOrd.id,st);toast('Comanda a fost salvată cu succes!','success');closeModal('ord-detail-modal');admOrders();}
+async function openOrdDetail(id){const d=await db.collection('orders').doc(id).get();if(!d.exists)return;curOrd={id,...d.data()};const o=curOrd;const SL={pending:'⏳ În așteptare',confirmed:'✅ Confirmat',shipped:'🚚 Expediat',delivered:'📦 Livrat',cancelled:'❌ Anulat'};document.getElementById('ord-detail-body').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px"><div><div class="form-sec-title" style="font-size:14px;margin-bottom:14px">Date client</div><div style="font-size:13.5px;line-height:2.1"><strong>Nume:</strong> ${o.name}<br><strong>Email:</strong> ${o.email}<br><strong>Telefon:</strong> ${o.phone}<br><strong>Adresă:</strong> ${o.address}, ${o.city} ${o.county||''}</div>${o.notes?`<div style="margin-top:10px;font-size:13px;color:var(--tm);background:var(--cr);padding:10px;border-radius:8px"><strong>Observații:</strong> ${o.notes}</div>`:''} ${o.diffAddress?`<div style="margin-top:10px;font-size:13.5px;background:#fffbeb;padding:10px;border-radius:8px"><strong>📦 Livrare la:</strong> ${o.shippingAddress}, ${o.shippingCity} ${o.shippingCounty||''}</div>`:''}</div><div><div class="form-sec-title" style="font-size:14px;margin-bottom:14px">Detalii comandă</div><div style="font-size:13.5px;line-height:2.1"><strong>Transport:</strong> <select id="d-transport" class="styled-sel" style="font-size:12px;padding:4px 8px;margin-left:4px"></select><br><strong>Metodă plată:</strong> ${o.payMethod==='ramburs'?'Ramburs la livrare':'Transfer bancar'}<br><strong>Cupon:</strong> ${o.coupon||'—'}<br><strong>Total:</strong> <span style="font-family:'Cinzel',serif;color:var(--v);font-size:18px;font-weight:700">${(o.total||0).toFixed(2)} lei</span></div><div style="margin-top:14px"><label class="fl">Schimbă statusul comenzii</label><select id="d-status" class="fi styled-sel" style="margin-top:5px">${['pending','confirmed','shipped','delivered','cancelled'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${SL[s]}</option>`).join('')}</select></div></div></div><div><div class="form-sec-title" style="font-size:14px;margin-bottom:14px">Produse comandate</div><table class="dt"><thead><tr><th>Produs</th><th>Preț/buc</th><th>Cantitate</th><th>Total linie</th></tr></thead><tbody>${(o.items||[]).map((it,i)=>`<tr><td>${it.name}</td><td>${it.price} lei</td><td><input type="number" id="dq-${i}" value="${it.qty}" min="0" style="width:68px;padding:6px 10px;border:1.5px solid var(--crd);border-radius:7px;text-align:center;font-size:14px"></td><td><strong>${(it.price*it.qty).toFixed(2)} lei</strong></td></tr>`).join('')}</tbody></table></div>`;populateOrderTransportSel(o.transportId||'');
+  openModal('ord-detail-modal');}
+async function saveOrdDetail(){if(!curOrd)return;const st=document.getElementById('d-status').value;
+  const tsel=document.getElementById('d-transport');
+  const selTrId=tsel?tsel.value:'';
+  const selTr=allTrans.find(t=>t.id===selTrId);
+  const newTrCost=selTr?(selTr.cost||0):(curOrd.transport||0);
+  const items=curOrd.items.map((it,i)=>({...it,qty:parseInt(document.getElementById('dq-'+i)?.value)||0})).filter(x=>x.qty>0);
+  const tot=items.reduce((s,x)=>s+(x.price*x.qty),0)+newTrCost;
+  const upd={status:st,items,total:tot};
+  if(selTr){upd.transportId=selTrId;upd.transportName=selTr.name;upd.transport=newTrCost;}
+  await db.collection('orders').doc(curOrd.id).update(upd);if(st!==curOrd.status)sendEjStatus({...curOrd,items},curOrd.id,st);toast('Comanda a fost salvată cu succes!','success');closeModal('ord-detail-modal');admOrders();}
 async function genInvoiceId(id){const d=await db.collection('orders').doc(id).get();if(!d.exists)return;curOrd={id,...d.data()};genInvoice();}
 function genInvoice(){if(!curOrd)return;const o=curOrd;document.getElementById('invoice-body').innerHTML=`<div style="font-family:'Lato',sans-serif;color:#1a0a0e"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;padding-bottom:22px;border-bottom:2px solid #6B1A2E"><div><div style="font-family:'Cinzel',serif;font-size:30px;color:#6B1A2E;letter-spacing:2px;font-weight:700">FACTURĂ PROFORMĂ</div><div style="font-size:13px;color:#4a3540;margin-top:6px">Nr: #${o.id.substring(0,8).toUpperCase()} &nbsp;|&nbsp; Data: ${fmtDate(o.createdAt)}</div></div><div style="text-align:right"><div style="font-family:'Cinzel',serif;color:#6B1A2E;font-size:16px;font-weight:700">Parohia Stornești</div><div style="font-size:13px;color:#4a3540;line-height:1.9;margin-top:4px">CIF: RO12345678<br>IBAN: RO49 AAAA 0000 0000 0000 0000<br>Banca Transilvania</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:26px"><div><div style="font-size:11px;text-transform:uppercase;color:#8a7580;font-weight:700;letter-spacing:1px;margin-bottom:8px">Emis de</div><div style="font-size:13.5px;line-height:1.9">Parohia Stornești – Biserica Sfânta Treime<br>Stornești, Județul Iași<br>Tel: 0740 000 000<br>parohia.stornesti@gmail.com</div></div><div><div style="font-size:11px;text-transform:uppercase;color:#8a7580;font-weight:700;letter-spacing:1px;margin-bottom:8px">Facturat către</div><div style="font-size:13.5px;line-height:1.9">${o.name}<br>${o.address||''}, ${o.city||''} ${o.county||''}<br>${o.phone||''}<br>${o.email||''}</div></div></div><table style="width:100%;border-collapse:collapse;margin:20px 0"><thead><tr><th style="background:#6B1A2E;color:#E2C98A;padding:12px 15px;text-align:left;font-size:12.5px;font-family:'Cinzel',serif;letter-spacing:1px">Produs</th><th style="background:#6B1A2E;color:#E2C98A;padding:12px 15px;text-align:left;font-size:12.5px;font-family:'Cinzel',serif;letter-spacing:1px">Preț/buc</th><th style="background:#6B1A2E;color:#E2C98A;padding:12px 15px;text-align:left;font-size:12.5px;font-family:'Cinzel',serif;letter-spacing:1px">Cant.</th><th style="background:#6B1A2E;color:#E2C98A;padding:12px 15px;text-align:left;font-size:12.5px;font-family:'Cinzel',serif;letter-spacing:1px">Total</th></tr></thead><tbody>${(o.items||[]).map((x,i)=>`<tr style="background:${i%2===0?'#fff':'#faf7f2'}"><td style="padding:11px 15px;border-bottom:1px solid #eee;font-size:14px">${x.name}</td><td style="padding:11px 15px;border-bottom:1px solid #eee;font-size:14px">${x.price} lei</td><td style="padding:11px 15px;border-bottom:1px solid #eee;font-size:14px;font-weight:700">${x.qty}</td><td style="padding:11px 15px;border-bottom:1px solid #eee;font-size:14px;font-weight:700">${(x.price*x.qty).toFixed(2)} lei</td></tr>`).join('')}</tbody></table><div style="text-align:right;margin-top:14px"><table style="margin-left:auto;border-collapse:collapse"><tbody><tr><td style="padding:7px 16px;color:#4a3540;font-size:13.5px">Subtotal:</td><td style="padding:7px 16px;text-align:right;font-size:13.5px">${(o.subtotal||0).toFixed(2)} lei</td></tr>${(o.discount||0)>0?`<tr><td style="padding:7px 16px;color:#4a3540;font-size:13.5px">Reducere (${o.coupon||''}):</td><td style="padding:7px 16px;text-align:right;color:#27AE60;font-weight:700;font-size:13.5px">-${(o.discount||0).toFixed(2)} lei</td></tr>`:''}${(o.transport||0)>0?`<tr><td style="padding:7px 16px;color:#4a3540;font-size:13.5px">Transport (${o.transportName||''}):</td><td style="padding:7px 16px;text-align:right;font-size:13.5px">${(o.transport||0).toFixed(2)} lei</td></tr>`:''}<tr><td style="padding:14px 16px;font-family:'Cinzel',serif;font-size:19px;color:#6B1A2E;border-top:2px solid #6B1A2E;font-weight:700">TOTAL DE PLATĂ:</td><td style="padding:14px 16px;text-align:right;font-family:'Cinzel',serif;font-size:19px;color:#6B1A2E;border-top:2px solid #6B1A2E;font-weight:700">${(o.total||0).toFixed(2)} lei</td></tr></tbody></table></div><div style="margin-top:24px;padding-top:16px;border-top:1px solid #eee;font-size:13px;color:#8a7580">Metodă de plată: <strong>${o.payMethod==='ramburs'?'Ramburs la livrare':'Transfer bancar'}</strong></div><div style="margin-top:24px;text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;color:#6B1A2E;font-size:18px;opacity:.7">„Binecuvântați pe cei ce vă binecuvântează" — Romani 12:14</div></div>`;closeModal('ord-detail-modal');openModal('invoice-modal');}
 function printInvoice(){const c=document.getElementById('invoice-body').innerHTML;const w=window.open('','_blank');w.document.write(`<!DOCTYPE html><html lang="ro"><head><meta charset="UTF-8"><title>Factură Parohia Stornești</title><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Lato:wght@400;700&display=swap" rel="stylesheet"><style>body{margin:0;padding:24px;font-family:Lato,sans-serif}@page{margin:15mm}</style></head><body>${c}<script>window.onload=()=>{setTimeout(()=>window.print(),600)}<\/script></body></html>`);w.document.close();}
@@ -1447,9 +1532,9 @@ async function delAnn(id){if(!confirm('Ștergi definitiv anunțul?'))return;awai
 
 /* ===== ADMIN - AUDIO ===== */
 async function admAudio(){const w=document.getElementById('audio-adm-tbl');try{const s=await db.collection('audio').orderBy('createdAt','desc').get();if(s.empty){w.innerHTML='<p style="text-align:center;color:var(--tl);padding:22px">Nicio înregistrare adăugată.</p>';return;}w.innerHTML=`<table class="dt"><thead><tr><th>Tip</th><th>Titlu</th><th>Autor</th><th>Data</th><th>Acțiuni</th></tr></thead><tbody>${s.docs.map(d=>{const a=d.data();return`<tr><td style="font-size:20px">${isYt(a.url||'')?'📺':'🎵'}</td><td><strong>${a.title}</strong></td><td>${a.author||'—'}</td><td>${fmtDate(a.createdAt)}</td><td><button class="btn btn-secondary btn-sm" onclick="editAudio('${d.id}')">✏️</button> <button class="btn btn-danger btn-sm" onclick="delAudio('${d.id}')">🗑</button></td></tr>`;}).join('')}</tbody></table>`;}catch(e){w.innerHTML='<p>Eroare.</p>';}}
-async function editAudio(id){const d=await db.collection('audio').doc(id).get();const a=d.data();editAudioId=id;document.getElementById('audf-id').value=id;document.getElementById('audf-ttl').value=a.title||'';document.getElementById('audf-author').value=a.author||'';document.getElementById('audf-url').value=a.url||'';document.getElementById('audf-desc').value=a.desc||'';detectUrl(a.url||'');document.getElementById('audf-title').textContent='Editează înregistrarea';document.getElementById('audio-adm-form').scrollIntoView({behavior:'smooth',block:'start'});}
-function cancelAudioEdit(){editAudioId=null;['audf-id','audf-ttl','audf-author','audf-url','audf-desc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('audf-title').textContent='Adaugă înregistrare';document.getElementById('url-hint').innerHTML='';}
-async function saveAudio(){const ttl=document.getElementById('audf-ttl').value.trim(),url=document.getElementById('audf-url').value.trim();if(!ttl||!url){toast('Completează titlul și URL-ul','error');return;}const data={title:ttl,url,author:document.getElementById('audf-author').value||'',desc:document.getElementById('audf-desc').value||'',updatedAt:new Date()};try{if(editAudioId){await db.collection('audio').doc(editAudioId).update(data);toast('Înregistrare actualizată!','success');}else{await db.collection('audio').add({...data,createdAt:new Date()});toast('Înregistrare adăugată!','success');}cancelAudioEdit();admAudio();}catch(e){toast('Eroare: '+e.message,'error');}}
+async function editAudio(id){const d=await db.collection('audio').doc(id).get();const a=d.data();editAudioId=id;document.getElementById('audf-id').value=id;document.getElementById('audf-ttl').value=a.title||'';document.getElementById('audf-author').value=a.author||'';document.getElementById('audf-url').value=a.url||'';document.getElementById('audf-desc').value=a.desc||'';const audfCat=document.getElementById('audf-cat');if(audfCat)audfCat.value=a.category||'';detectUrl(a.url||'');document.getElementById('audf-title').textContent='Editează înregistrarea';document.getElementById('audio-adm-form').scrollIntoView({behavior:'smooth',block:'start'});}
+function cancelAudioEdit(){editAudioId=null;['audf-id','audf-ttl','audf-author','audf-url','audf-desc','audf-cat'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('audf-title').textContent='Adaugă înregistrare';document.getElementById('url-hint').innerHTML='';}
+async function saveAudio(){const ttl=document.getElementById('audf-ttl').value.trim(),url=document.getElementById('audf-url').value.trim();if(!ttl||!url){toast('Completează titlul și URL-ul','error');return;}const data={title:ttl,url,author:document.getElementById('audf-author').value||'',desc:document.getElementById('audf-desc').value||'',category:document.getElementById('audf-cat')?.value||'',updatedAt:new Date()};try{if(editAudioId){await db.collection('audio').doc(editAudioId).update(data);toast('Înregistrare actualizată!','success');}else{await db.collection('audio').add({...data,createdAt:new Date()});toast('Înregistrare adăugată!','success');}cancelAudioEdit();admAudio();}catch(e){toast('Eroare: '+e.message,'error');}}
 async function delAudio(id){if(!confirm('Ștergi înregistrarea?'))return;await db.collection('audio').doc(id).delete();admAudio();toast('Înregistrare ștearsă','info');}
 function detectUrl(url){const h=document.getElementById('url-hint');if(!url){h.innerHTML='';return;}if(isYt(url))h.innerHTML='<div class="url-hint url-yt">📺 YouTube detectat — se va afișa ca iframe embed cu player integrat</div>';else if(url.toLowerCase().includes('.mp3')||url.includes('dropbox'))h.innerHTML='<div class="url-hint url-mp3">🎵 Audio MP3 detectat — se va afișa cu player HTML5 nativ</div>';else h.innerHTML='<div class="url-hint url-bad">⚠ Format necunoscut — acceptat: YouTube sau link MP3 direct (inclusiv Dropbox cu dl=1)</div>';}
 
@@ -1594,13 +1679,234 @@ async function seedFaq(){try{const faqs=[{q:'Cum mă pot programa pentru Sfântu
    ============================================================ */
 async function checkAndSeed(){try{const [ps,ts,fs,ss,aes]=await Promise.all([db.collection('products').limit(1).get(),db.collection('transport').limit(1).get(),db.collection('faq').limit(1).get(),db.collection('schedule').limit(1).get(),db.collection('announcements').limit(1).get()]);if(ps.empty)await seedProds();if(ts.empty)await seedTransport();if(fs.empty)await seedFaq();if(ss.empty)await seedSchedule();if(aes.empty)await seedAnns();}catch(e){console.warn('Seed check err:',e);}}
 
-/* ============================================================
-   INIT
-   ============================================================ */
-checkFirstVisit();
-updateBadge();
-loadHome();
-checkAndSeed();
-</script>
-</body>
-</html>
+/* ===== ADMIN RESERVATIONS ===== */
+let resAdmAll=[];
+async function admReservations(){
+  const w=document.getElementById('res-adm-tbl');if(!w)return;
+  w.innerHTML='<div class="pg-loading"><div class="spinner"></div></div>';
+  try{
+    const s=await db.collection('reservations').orderBy('createdAt','desc').get();
+    resAdmAll=[];s.forEach(d=>resAdmAll.push({id:d.id,...d.data()}));
+    renderResAdm('all');
+  }catch(e){w.innerHTML='<p style="color:var(--red)">Eroare la încărcare.</p>';}
+}
+function filterResAdm(filter,btn){
+  document.querySelectorAll('#res-adm-filter .f-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderResAdm(filter);
+}
+function renderResAdm(filter){
+  var w=document.getElementById('res-adm-tbl');if(!w)return;
+  var SL={pending:'In asteptare',confirmed:'Confirmat',cancelled:'Anulat'};
+  var items=filter==='all'?resAdmAll:resAdmAll.filter(function(r){return(r.status||'pending')===filter;});
+  if(!items.length){w.innerHTML='<p style="text-align:center;color:var(--tl);padding:24px">Nicio rezervare.</p>';return;}
+  w.innerHTML='<table class="dt"><thead><tr><th>Produs</th><th>Client</th><th>Tel.</th><th>Cant.</th><th>Ridicare</th><th>Mesaj</th><th>Status</th><th>Data</th><th>Actiuni</th></tr></thead><tbody>'+
+  items.map(function(r){
+    var statusOpts=['pending','confirmed','cancelled'].map(function(st){
+      return '<option value="'+st+'" '+((r.status||'pending')===st?'selected':'')+'>'+SL[st]+'</option>';
+    }).join('');
+    return '<tr>'+
+      '<td><strong>'+(r.productName||'&mdash;')+'</strong></td>'+
+      '<td>'+(r.name||'&mdash;')+'</td>'+
+      '<td>'+(r.phone||'&mdash;')+'</td>'+
+      '<td style="text-align:center;font-weight:700">'+(r.qty||1)+'</td>'+
+      '<td>'+(r.pickupDate||'&mdash;')+'</td>'+
+      '<td style="font-size:12px;max-width:120px">'+(r.msg||'&mdash;')+'</td>'+
+      '<td><select class="styled-sel" style="font-size:12px;padding:4px 8px" onchange="updResStatus(''+r.id+'',this.value)">'+statusOpts+'</select></td>'+
+      '<td style="font-size:12px">'+fmtDate(r.createdAt)+'</td>'+
+      '<td><button class="btn btn-danger btn-sm" onclick="delResAdm(''+r.id+'')">&#128465;</button></td>'+
+      '</tr>';
+  }).join('')+'</tbody></table>';
+}
+
+async function updResStatus(id,st){
+  await db.collection('reservations').doc(id).update({status:st});
+  toast('Status actualizat','success');
+  const r=resAdmAll.find(x=>x.id===id);if(r)r.status=st;
+}
+async function delResAdm(id){
+  if(!confirm(''+String.fromCodePoint(353)+'tergi rezervarea?'))return;
+  await db.collection('reservations').doc(id).delete();
+  resAdmAll=resAdmAll.filter(x=>x.id!==id);
+  renderResAdm('all');toast(''+String.fromCodePoint(350)+'ters','info');
+}
+
+/* ===== CLIENT CANCEL ===== */
+async function cancelClientOrder(id){
+  if(!confirm('Anulezi comanda? Stocul va fi refacut.'))return;
+  try{
+    const d=await db.collection('orders').doc(id).get();
+    if(!d.exists){toast('Comanda nu exista','error');return;}
+    const o=d.data();
+    if(o.status&&o.status!=='pending'){toast('Comanda nu mai poate fi anulata - a fost procesata.','error');return;}
+    for(const item of(o.items||[])){
+      await db.collection('products').doc(item.id).update({
+        stock:firebase.firestore.FieldValue.increment(item.qty),
+        soldCount:firebase.firestore.FieldValue.increment(-item.qty)
+      }).catch(()=>{});
+    }
+    await db.collection('orders').doc(id).update({status:'cancelled'});
+    toast('Comanda anulata! Stocul a fost refacut.','success');
+    loadAccOrds();
+  }catch(e){toast('Eroare: '+e.message,'error');}
+}
+async function cancelClientRes(id){
+  if(!confirm('Anulezi rezervarea?'))return;
+  try{
+    await db.collection('reservations').doc(id).update({status:'cancelled'});
+    toast('Rezervare anulata!','success');loadAccRes();
+  }catch(e){toast('Eroare: '+e.message,'error');}
+}
+
+/* ===== DYNAMIC CATEGORIES ===== */
+async function admCategories(){
+  await Promise.all(['products','announcements','audio'].map(t=>loadCatList(t)));
+}
+async function loadCatList(type){
+  const ids={products:'cat-prod-list',announcements:'cat-ann-list',audio:'cat-audio-list'};
+  const w=document.getElementById(ids[type]);if(!w)return;
+  try{
+    const s=await db.collection('categories').where('type','==',type).orderBy('name','asc').get();
+    if(s.empty){w.innerHTML='<p style="color:var(--tl);font-size:13px;font-style:italic;margin-top:8px">Nicio categorie personalizata.</p>';return;}
+    w.innerHTML=s.docs.map(d=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--cr);border-radius:7px;margin-bottom:6px;font-size:13.5px"><span>'+String.fromCodePoint(128204)+' '+d.data().name+'</span><button onclick="delCat(\''+d.id+'\',\''+type+'\')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;padding:0 4px" title="Sterge">'+String.fromCodePoint(10005)+'</button></div>').join('');
+    if(type==='products')populateProdCatDL();
+    if(type==='announcements')populateAnnTypesSel();
+    if(type==='audio')populateAudioCatDL();
+  }catch(e){}
+}
+async function addCat(type,inputId){
+  const inp=document.getElementById(inputId);
+  const name=(inp?.value||'').trim();
+  if(!name){toast('Scrie denumirea categoriei','error');return;}
+  try{
+    await db.collection('categories').add({name,type,createdAt:new Date()});
+    inp.value='';await loadCatList(type);toast('Categorie adaugata!','success');
+  }catch(e){toast('Eroare: '+e.message,'error');}
+}
+async function delCat(id,type){
+  if(!confirm('Stergi categoria?'))return;
+  await db.collection('categories').doc(id).delete();
+  await loadCatList(type);toast('Categorie stearsa','info');
+}
+async function populateProdCatDL(){
+  try{
+    const s=await db.collection('categories').where('type','==','products').orderBy('name','asc').get();
+    let dl=document.getElementById('prod-cat-dl');
+    if(!dl){dl=document.createElement('datalist');dl.id='prod-cat-dl';document.body.appendChild(dl);}
+    dl.innerHTML=s.docs.map(d=>'<option value="'+d.data().name+'">').join('');
+    const inp=document.getElementById('pf-cat');if(inp&&!inp.getAttribute('list'))inp.setAttribute('list','prod-cat-dl');
+  }catch(e){}
+}
+async function populateAnnTypesSel(){
+  const sel=document.getElementById('af-type');if(!sel)return;
+  const cur=sel.value;
+  const DEF=[{v:'general',l:'General'},{v:'urgent',l:'Urgent'},{v:'slujba',l:'Slujba'},{v:'activitate',l:'Activitate'},{v:'botez',l:'Botez'},{v:'inmormantare',l:'Inmormantare'}];
+  try{
+    const s=await db.collection('categories').where('type','==','announcements').orderBy('name','asc').get();
+    const custom=s.docs.map(d=>{const n=d.data().name;return{v:n.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,''),l:n};});
+    const all=[...DEF,...custom];
+    sel.innerHTML=all.map(t=>'<option value="'+t.v+'" '+(cur===t.v?'selected':'')+'>'+t.l+'</option>').join('');
+    const fc=document.querySelector('.ann-filters');
+    if(fc){fc.innerHTML='<button class="af-btn active" onclick="filterAnn(\'all\',this)">Toate</button>'+all.map(t=>'<button class="af-btn" onclick="filterAnn(\''+t.v+'\',this)">'+t.l+'</button>').join('');}
+  }catch(e){}
+}
+async function populateAudioCatDL(){
+  try{
+    const s=await db.collection('categories').where('type','==','audio').orderBy('name','asc').get();
+    const dl=document.getElementById('audio-cat-dl');
+    if(dl)dl.innerHTML=s.docs.map(d=>'<option value="'+d.data().name+'">').join('');
+  }catch(e){}
+}
+
+/* ===== TRANSPORT IN ORDER DETAIL ===== */
+async function populateOrderTransportSel(ordTrId){
+  const sel=document.getElementById('d-transport');if(!sel)return;
+  try{
+    if(!allTrans.length){const ts=await db.collection('transport').get();ts.forEach(d=>allTrans.push({id:d.id,...d.data()}));}
+    sel.innerHTML='<option value="">— Fara transport —</option>'+allTrans.map(t=>'<option value="'+t.id+'" '+(t.id===ordTrId?'selected':'')+'>'+t.name+' ('+(t.cost>0?t.cost+' lei':'Gratuit')+')</option>').join('');
+  }catch(e){if(sel)sel.innerHTML='<option>—</option>';}
+}
+
+/* ===== AUDIO HELPERS ===== */
+function audFmt(s){if(isNaN(s)||!isFinite(s))return'--:--';return Math.floor(s/60)+':'+(('0'+Math.floor(s%60)).slice(-2));}
+function audMeta(id){const a=document.getElementById('aud-'+id);if(!a)return;const d=document.getElementById('apd-'+id);if(d)d.textContent=audFmt(a.duration);const sk=document.getElementById('aps-'+id);if(sk&&a.duration)sk.max=a.duration;}
+function audTime(id){const a=document.getElementById('aud-'+id);if(!a)return;const p=a.currentTime,d=a.duration||1;const ce=document.getElementById('apc-'+id);if(ce)ce.textContent=audFmt(p);const f=document.getElementById('apf-'+id);if(f)f.style.width=(p/d*100)+'%';const sk=document.getElementById('aps-'+id);if(sk&&document.activeElement!==sk)sk.value=p;}
+function audToggle(id){const a=document.getElementById('aud-'+id),b=document.getElementById('apb-'+id);if(!a||!b)return;if(a.paused){document.querySelectorAll('audio').forEach(x=>{if(x.id!=='aud-'+id&&!x.paused){x.pause();const oid=x.id.replace('aud-','');const ob=document.getElementById('apb-'+oid);if(ob){ob.textContent='\u25B6';ob.classList.remove('playing');}}});a.play().catch(()=>{});b.textContent='\u23F8';b.classList.add('playing');}else{a.pause();b.textContent='\u25B6';b.classList.remove('playing');}}
+function audSeek(id,v){const a=document.getElementById('aud-'+id);if(!a)return;a.currentTime=parseFloat(v);const f=document.getElementById('apf-'+id);if(f)f.style.width=(parseFloat(v)/(a.duration||1)*100)+'%';}
+function audSeekClick(id,e){const a=document.getElementById('aud-'+id);if(!a)return;const r=e.currentTarget.getBoundingClientRect();a.currentTime=(a.duration||0)*Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));}
+function audEnd(id){const b=document.getElementById('apb-'+id);if(b){b.textContent='\u25B6';b.classList.remove('playing');}const f=document.getElementById('apf-'+id);if(f)f.style.width='0%';const ce=document.getElementById('apc-'+id);if(ce)ce.textContent='0:00';const sk=document.getElementById('aps-'+id);if(sk)sk.value=0;}
+
+/* ===== NEW AUDIO RENDER ===== */
+function renderAudioItem(a){
+  const yt=isYt(a.url||'');
+  let media='';
+  if(yt){
+    const em=ytEmbed(a.url||'');
+    if(em){
+      const ytid=em.split('/embed/')[1]&&em.split('/embed/')[1].split('?')[0]||'';
+      media='<div style="position:relative;border-radius:9px;overflow:hidden;cursor:pointer;background:#000" onclick="loadYtPlayer(\''+a.id+'\',\''+em+'\')">'
+        +'<img src="https://img.youtube.com/vi/'+ytid+'/hqdefault.jpg" loading="lazy" alt="" style="width:100%;display:block;max-height:220px;object-fit:cover;transition:opacity .2s" onerror="this.src=\'\'">'
+        +'<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;pointer-events:none">'
+        +'<div style="width:52px;height:52px;background:rgba(220,0,0,.9);border-radius:50%;display:flex;align-items:center;justify-content:center"><div style="width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:17px solid #fff;margin-left:3px"></div></div>'
+        +'<div style="color:#fff;font-size:12px;background:rgba(0,0,0,.6);padding:3px 12px;border-radius:10px">Click pentru a reda</div>'
+        +'</div></div>';
+    }
+  } else if(a.base64||a.url){
+    const src=a.base64||fixDropbox(a.url||'');
+    media='<div style="background:var(--cr);border-radius:10px;padding:12px 14px;border:1.5px solid var(--crd);display:flex;align-items:center;gap:12px">'
+      +'<audio id="aud-'+a.id+'" preload="none" onloadedmetadata="audMeta(\''+a.id+'\')" ontimeupdate="audTime(\''+a.id+'\')" onended="audEnd(\''+a.id+'\')">'
+      +'<source src="'+src+'"></audio>'
+      +'<button id="apb-'+a.id+'" onclick="audToggle(\''+a.id+'\')" style="width:40px;height:40px;border-radius:50%;background:var(--v);color:#fff;border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s">\u25B6</button>'
+      +'<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">'
+      +'<div style="display:flex;align-items:center;gap:8px">'
+      +'<div style="flex:1;height:5px;background:var(--crd);border-radius:3px;position:relative;cursor:pointer" onclick="audSeekClick(\''+a.id+'\',event)">'
+      +'<div id="apf-'+a.id+'" style="height:100%;background:var(--v);border-radius:3px;width:0%;transition:width .1s linear;pointer-events:none"></div>'
+      +'<input type="range" id="aps-'+a.id+'" value="0" min="0" step="0.01" oninput="audSeek(\''+a.id+'\',this.value)" style="position:absolute;inset:0;width:100%;opacity:0;cursor:pointer;margin:0;height:100%">'
+      +'</div>'
+      +'<div style="font-size:11.5px;color:var(--tl);white-space:nowrap;font-family:\'Cinzel\',serif;letter-spacing:.3px"><span id="apc-'+a.id+'">0:00</span> / <span id="apd-'+a.id+'">--:--</span></div>'
+      +'</div></div></div>';
+  }
+  const cat=a.category?'<span style="display:inline-block;padding:2px 8px;background:var(--crd);color:var(--v);border-radius:6px;font-size:10.5px;font-weight:700;margin-right:5px;text-transform:uppercase;letter-spacing:.5px">'+a.category+'</span>':'';
+  const hasBody=!!(a.desc||media);
+  return '<div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;transition:box-shadow .2s">'
+    +'<div style="display:flex;align-items:center;gap:14px;padding:16px 18px '+(hasBody?'10px':'16px')+'">'
+    +'<div style="width:44px;height:44px;background:var(--cr);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;border:1.5px solid var(--crd)">'+(yt?'\uD83D\uDCFA':'\uD83C\uDFB5')+'</div>'
+    +'<div style="flex:1;min-width:0">'
+    +'<div style="font-family:\'Cinzel\',serif;font-size:14.5px;color:var(--v);margin-bottom:3px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(a.title||'')+'</div>'
+    +'<div style="font-size:12px;color:var(--tl)">'+cat+(a.author?a.author+' \u00B7 ':'')+fmtDate(a.createdAt)+'</div>'
+    +'</div></div>'
+    +(hasBody?'<div style="padding:0 18px 16px">'+(a.desc?'<div style="font-size:13.5px;color:var(--tm);line-height:1.65;margin-bottom:'+(media?'12px':'0')+'">'+a.desc+'</div>':'')+media+'</div>':'')
+    +'</div>';
+}
+
+/* ===== ADD CANCEL BUTTONS TO CLIENT ORDER CARDS ===== */
+function buildOrderCard(d){
+  var o=d.data?d.data():d;
+  var id=d.id||o.id||'';
+  var SL={pending:'&#9203; In asteptare',confirmed:'&#9989; Confirmat',shipped:'&#128666; Expediat',delivered:'&#128230; Livrat',cancelled:'&#10060; Anulat'};
+  return '<div class="order-card">'+
+    '<div class="oc-hdr"><div>'+
+    '<strong style="font-family:Cinzel,serif;color:var(--v);font-size:15.5px">Comanda #'+id.substring(0,8).toUpperCase()+'</strong>'+
+    '<div style="font-size:12.5px;color:var(--tl);margin-top:3px">&#128197; '+fmtDate(o.createdAt)+' &middot; '+(o.items||[]).length+' produs(e)</div></div>'+
+    '<span class="st-badge st-'+(o.status||'pending')+'">'+(SL[o.status||'pending']||o.status)+'</span></div>'+
+    (o.items||[]).map(function(i){return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:13.5px;padding:6px 0;border-bottom:1px solid var(--crd)"><span style="flex:1">'+i.name+'</span><span style="color:var(--tl)">x'+i.qty+'</span><span style="color:var(--v);font-weight:700;font-family:Cinzel,serif">'+(i.price*i.qty).toFixed(2)+' lei</span></div>';}).join('')+
+    '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:9px;border-top:1px solid var(--crd);padding-top:9px">'+
+    '<strong style="font-family:Cinzel,serif;color:var(--v);font-size:17px">Total: '+(o.total||0).toFixed(2)+' lei</strong>'+
+    ((!o.status||o.status==='pending')?'<button onclick="cancelClientOrder(''+id+'');event.stopPropagation()" class="btn btn-danger btn-sm">&#10005; Anuleaza comanda</button>':'')+
+    '</div></div>';
+}
+
+function buildResCard(d){
+  var r=d.data?d.data():d;
+  var id=d.id||r.id||'';
+  return '<div class="order-card">'+
+    '<div class="oc-hdr"><div>'+
+    '<strong style="font-family:Cinzel,serif;color:var(--v)">'+(r.productName||'Produs')+'</strong>'+
+    '<div style="font-size:12.5px;color:var(--tl);margin-top:3px">Cantitate: '+r.qty+' &middot; Rezervat: '+fmtDate(r.createdAt)+'</div></div>'+
+    '<span class="st-badge st-'+(r.status||'pending')+'">'+(r.status==='pending'?'&#9203; In asteptare':r.status==='confirmed'?'&#9989; Confirmat':'&#10060; Anulat')+'</span></div>'+
+    '<div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:8px">'+
+    '<div style="font-size:13.5px;color:var(--tm)">&#128197; Ridicare: <strong>'+(r.pickupDate||'&mdash;')+'</strong>'+(r.msg?'<br>&#128221; '+r.msg:'')+'</div>'+
+    ((!r.status||r.status==='pending')?'<button onclick="cancelClientRes(''+id+'');event.stopPropagation()" class="btn btn-danger btn-sm">&#10005; Anuleaza</button>':'')+
+    '</div></div>';
+}
+
