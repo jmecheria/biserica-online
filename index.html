@@ -342,13 +342,13 @@ body{font-family:'Lato',sans-serif;background:var(--cr);color:var(--td);min-heig
 .newsletter-banner p{color:var(--vd);font-weight:700;font-family:'Cinzel',serif;font-size:13px}
 
 /* ADMIN */
-.admin-sidebar{width:220px;background:var(--vd);flex-shrink:0;padding:20px 0;position:sticky;top:112px;height:calc(100vh - 112px);overflow-y:auto}
+.admin-sidebar{width:220px;min-width:220px;background:var(--vd);flex-shrink:0;padding:20px 0;position:sticky;top:112px;height:calc(100vh - 112px);overflow-y:auto}
 .admin-logo{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--g);padding:0 16px 20px;letter-spacing:1px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:12px}
 .admin-nav-btn{display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:none;border:none;color:rgba(255,255,255,.7);font-family:'Cinzel',serif;font-size:11px;font-weight:600;cursor:pointer;transition:var(--tr);letter-spacing:.5px;text-align:left}
 .admin-nav-btn:hover{background:rgba(255,255,255,.1);color:white}
 .admin-nav-btn.active{background:rgba(201,168,76,.2);color:var(--g);border-right:3px solid var(--g)}
-.admin-main{flex:1;padding:24px;overflow-x:auto}
-.admin-section{display:none}.admin-section.active{display:block}
+.admin-main{flex:1;padding:24px;overflow-x:auto;min-width:0}
+.admin-section{display:none;width:100%}.admin-section.active{display:block;width:100%}
 .admin-section-title{font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--v);margin-bottom:24px;display:flex;align-items:center;gap:10px}
 .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
 .stat-card{background:var(--w);border-radius:var(--r);padding:20px;box-shadow:0 2px 8px rgba(107,26,46,.06);border-top:3px solid var(--v)}
@@ -374,7 +374,7 @@ body{font-family:'Lato',sans-serif;background:var(--cr);color:var(--td);min-heig
 .stock-ok{color:var(--ok);font-weight:700}.stock-zero{color:var(--er);font-weight:700}
 
 /* CALENDAR */
-.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;width:100%}
 .cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;font-family:'Cinzel',serif;font-weight:700;color:var(--v)}
 .cal-weekday{text-align:center;font-size:11px;font-weight:700;color:var(--tl);font-family:'Cinzel',serif;padding:6px 0;letter-spacing:.5px}
 .cal-day{aspect-ratio:1;border:1px solid rgba(107,26,46,.1);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:4px;cursor:pointer;font-size:13px;font-family:'Cinzel',serif;font-weight:600;color:var(--tm);transition:var(--tr);overflow:hidden;background:var(--w)}
@@ -382,7 +382,7 @@ body{font-family:'Lato',sans-serif;background:var(--cr);color:var(--td);min-heig
 .cal-saint-preview{font-size:8px;color:#8B6914;margin-top:2px;text-align:center;line-height:1.2;font-family:'Lato',sans-serif;font-weight:400}
 
 /* CATEGORIES */
-.category-panels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+.category-panels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;width:100%}
 .category-panel{background:var(--w);border-radius:var(--r);padding:20px;box-shadow:0 2px 8px rgba(107,26,46,.06)}
 .category-panel h4{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--v);margin-bottom:16px}
 .category-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
@@ -444,7 +444,7 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:48px 24px 24px;m
 .static-page ul{padding-left:20px}
 
 /* MISC */
-.table-wrap{overflow-x:auto;border-radius:var(--r)}
+.table-wrap{overflow-x:auto;border-radius:var(--r);width:100%}
 .loading{display:flex;justify-content:center;align-items:center;padding:40px}
 .spinner{width:36px;height:36px;border:3px solid rgba(107,26,46,.2);border-top-color:var(--v);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -744,7 +744,7 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:48px 24px 24px;m
 <div class="page" id="page-terms"><div class="static-page"><h1>Termeni și Condiții</h1><p class="lead">Informații despre magazinul parohial.</p><h2>Date fiscale</h2><div style="background:var(--cd);border-radius:var(--rs);padding:16px;margin-bottom:16px"><p><strong>Parohia Stornești</strong></p><p>CIF: RO12345678</p><p>IBAN: RO49 AAAA 0000 0000 0000 0001 — Banca Transilvania</p></div><h2>Comenzi și plăți</h2><ul><li>Ramburs sau transfer bancar</li><li>Livrare 1-3 zile lucrătoare</li><li>Returnări în 14 zile</li></ul></div></div>
 
 <!-- ADMIN -->
-<div class="page" id="page-admin">
+<div class="page" id="page-admin" style="min-height:calc(100vh - 112px)">
   <div id="admin-login-screen" style="max-width:400px;margin:60px auto;padding:24px">
     <div class="admin-form"><h3>⚙ Panou Administrare</h3>
       <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="admin-email-inp"></div>
@@ -754,7 +754,7 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:48px 24px 24px;m
     </div>
   </div>
   <div id="admin-panel" style="display:none;width:100%">
-    <div style="display:flex;width:100%">
+    <div style="display:flex;width:100%;min-height:calc(100vh - 112px)">
       <div class="admin-sidebar">
         <div class="admin-logo">✝ ADMIN</div>
         <button class="admin-nav-btn active" onclick="switchAdminTab('dashboard',this)">📊 Dashboard</button>
@@ -855,12 +855,14 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:48px 24px 24px;m
               <div class="form-group"><label class="form-label">Categorie</label><input type="text" class="form-input" id="au-category" list="audio-cat-list"><datalist id="audio-cat-list"></datalist></div>
               <div class="form-group"><label class="form-label">Autor</label><input type="text" class="form-input" id="au-author"></div>
             </div>
-            <div class="form-group"><label class="form-label">Fișier Audio (upload direct)</label>
-              <div class="upload-zone" onclick="document.getElementById('au-file-input').click()" ondrop="handleAudioDrop(event)" ondragover="handleDragOver(event)">🎵 Trage fișierul MP3/WAV sau click pentru selectare<p>Se salvează ca Base64 în Firestore — max 5MB recomandat</p></div>
-              <input type="file" id="au-file-input" accept="audio/*" style="display:none" onchange="handleAudioUpload(event)">
-              <div id="au-upload-status" style="font-size:12px;color:var(--ok);margin-top:4px"></div>
+            <div style="background:rgba(41,128,185,.08);border-radius:var(--rs);padding:14px;margin-bottom:16px;font-size:12px;color:var(--tm);line-height:1.8">
+              <strong style="font-family:'Cinzel',serif;font-size:13px;color:var(--v);display:block;margin-bottom:8px">📋 Cum adaugi audio fără YouTube:</strong>
+              <strong>1. Dropbox:</strong> Urcă fișierul pe Dropbox → Share → copiază link → înlocuiește <code>dl=0</code> cu <code>dl=1</code> și <code>www.dropbox.com</code> cu <code>dl.dropboxusercontent.com</code><br>
+              <strong>2. Google Drive:</strong> Urcă fișierul → Share (Anyone with link) → copiază ID-ul din URL → folosește: <code>https://drive.google.com/uc?export=download&id=ID_FISIER</code><br>
+              <strong>3. Server propriu / hosting:</strong> Urcă fișierul .mp3 pe server → copiează URL-ul direct (ex: <code>https://site.ro/audio/slujba.mp3</code>)<br>
+              <strong>4. SoundCloud:</strong> Nu este suportat direct — folosiți Dropbox sau Drive.<br>
+              <em style="color:var(--v)">Nu există limită de mărime dacă folosiți Dropbox/Drive/server propriu!</em>
             </div>
-            <div style="background:rgba(41,128,185,.08);border-radius:var(--rs);padding:12px;margin-bottom:16px;font-size:12px;color:var(--tm)"><strong style="font-family:'Cinzel',serif">💡 Dropbox:</strong> Schimbă <code>dl=0</code> în <code>dl=1</code> și <code>www.dropbox.com</code> în <code>dl.dropboxusercontent.com</code></div>
             <div class="form-group"><label class="form-label">Descriere</label><textarea class="admin-textarea" id="au-desc"></textarea></div>
             <div style="display:flex;gap:10px"><button class="btn-primary" onclick="saveAudio()">💾 Salvează</button><button class="btn-secondary" onclick="resetAudioForm()">✕ Anulează</button></div>
           </div>
@@ -892,7 +894,21 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:48px 24px 24px;m
         <div class="admin-section" id="admin-email-config">
           <div class="admin-section-title">📧 Configurare EmailJS</div>
           <div class="admin-form">
-            <div class="admin-form-grid"><div class="form-group"><label class="form-label">Public Key</label><input type="text" class="form-input" id="ejs-public-key"></div><div class="form-group"><label class="form-label">Service ID</label><input type="text" class="form-input" id="ejs-service-id"></div><div class="form-group"><label class="form-label">Template — Confirmare</label><input type="text" class="form-input" id="ejs-template-confirm"></div><div class="form-group"><label class="form-label">Template — Status</label><input type="text" class="form-input" id="ejs-template-status"></div><div class="form-group"><label class="form-label">Email administrator</label><input type="email" class="form-input" id="ejs-admin-email"></div></div>
+            <div style="background:var(--cream,#FDF8F0);border-radius:8px;padding:14px;margin-bottom:16px;font-size:12px;color:#4a3040;line-height:1.8">
+              <strong style="font-family:'Cinzel',serif;color:#6B1A2E">📋 Template-uri necesare în EmailJS:</strong><br>
+              <strong>Template Confirmare</strong> — pentru confirmarea comenzilor noi<br>
+              <strong>Template Status</strong> — când adminul schimbă statusul unei comenzi<br>
+              <strong>Template Newsletter</strong> — pentru abonați (anunțuri noi, produse noi, newsletter manual)<br>
+              Variabile disponibile: <code>{{to_name}}</code> <code>{{to_email}}</code> <code>{{order_id}}</code> <code>{{total}}</code> <code>{{products_list}}</code> <code>{{payment_method}}</code> <code>{{status}}</code>
+            </div>
+            <div class="admin-form-grid">
+              <div class="form-group"><label class="form-label">Public Key</label><input type="text" class="form-input" id="ejs-public-key"></div>
+              <div class="form-group"><label class="form-label">Service ID</label><input type="text" class="form-input" id="ejs-service-id"></div>
+              <div class="form-group"><label class="form-label">Template — Confirmare comandă</label><input type="text" class="form-input" id="ejs-template-confirm" placeholder="template_xxxxx"></div>
+              <div class="form-group"><label class="form-label">Template — Actualizare status</label><input type="text" class="form-input" id="ejs-template-status" placeholder="template_xxxxx"></div>
+              <div class="form-group"><label class="form-label">Template — Newsletter</label><input type="text" class="form-input" id="ejs-template-newsletter" placeholder="template_xxxxx"></div>
+              <div class="form-group"><label class="form-label">Email administrator</label><input type="email" class="form-input" id="ejs-admin-email"></div>
+            </div>
             <div style="display:flex;gap:10px;align-items:center"><button class="btn-primary" onclick="saveEmailConfig()">💾 Salvează</button><button class="btn-secondary" onclick="testEmail()">🧪 Test email</button></div>
             <div id="email-test-result" style="margin-top:10px;font-size:13px"></div>
           </div>
@@ -1112,7 +1128,7 @@ const FC={apiKey:"AIzaSyDjQEkuNvLHWwBJsGWmu1LxLcOoS75pFjQ",authDomain:"biserica-
 firebase.initializeApp(FC);
 const db=firebase.firestore(),auth=firebase.auth(),ADMIN='irimia.teodor.17@gmail.com';
 let currentUser=null,cart=JSON.parse(localStorage.getItem('cart')||'[]'),appliedCoupon=null,selectedPayment='ramburs',selectedTransportId=null,allProducts=[],allAnnouncements=[],allSchedule=[],allAudioData=[],allFaq=[],scheduleData=[],currentPage='acasa',calYear=new Date().getFullYear(),calMonth=new Date().getMonth(),saintDaysCache={},currentProductModal=null,currentGalleryIndex=0,reviewStarValue=0,currentResProduct=null,emailConfig={},adminResFilter='all',uploadedImages={p:[],a:[]},activeAudioEl=null,allTransport=[],allCategories=[],allOrders=[],allClients=[],allReservations=[],allCoupons=[],currentScheduleFilter='all',currentAnnFilter='all';
-let pendingAudioBase64='';
+
 
 // TOAST
 function toast(msg,type='info'){const icons={success:'✅',error:'❌',info:'ℹ️',warning:'⚠️'};const el=document.createElement('div');el.className=`toast ${type}`;el.innerHTML=`<span class="toast-icon">${icons[type]}</span><span>${msg}</span>`;document.getElementById('toast-container').appendChild(el);setTimeout(()=>{el.style.animation='slideOut .3s ease forwards';setTimeout(()=>el.remove(),300)},3800);}
@@ -1197,7 +1213,16 @@ function startCarouselAuto(id){if(carouselTimers[id])clearInterval(carouselTimer
 function openAnnouncementModal(ann){document.getElementById('ann-modal-title').textContent=ann.title||'';const badge=document.getElementById('ann-modal-badge');badge.textContent=ann.type||'General';badge.className=`type-badge badge-${(ann.type||'general').toLowerCase()}`;document.getElementById('ann-modal-date').textContent=formatDate(ann.createdAt);document.getElementById('ann-modal-content').textContent=ann.content||'';const car=document.getElementById('ann-modal-carousel');if(ann.images&&ann.images.length>0){car.style.display='';car.innerHTML=`${ann.images.map((img,i)=>`<img src="${img}" class="${i===0?'active':''}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:${i===0?1:0};transition:opacity .5s ease">`).join('')}${ann.images.length>1?`<button class="ann-carousel-btn ann-carousel-prev" onclick="carouselPrev(event,'ann-modal-c')">◀</button><button class="ann-carousel-btn ann-carousel-next" onclick="carouselNext(event,'ann-modal-c')">▶</button><div class="ann-carousel-dots">${ann.images.map((_,i)=>`<button class="ann-carousel-dot ${i===0?'active':''}" onclick="carouselGo(event,'ann-modal-c',${i})"></button>`).join('')}</div>`:''}`;car.id='ann-modal-c';if(ann.images.length>1)startCarouselAuto('ann-modal-c');}else{car.style.display='none';}openModal('modal-announcement');}
 // PRODUCTS
 async function loadProducts(){const g=document.getElementById('products-grid');g.innerHTML='<div class="loading"><div class="spinner"></div></div>';try{const s=await db.collection('products').get();allProducts=s.docs.map(d=>({id:d.id,...d.data()}));}catch(e){g.innerHTML='<p>Eroare.</p>';return;}await loadCategoryChips();renderProducts();}
-async function loadCategoryChips(){try{const s=await db.collection('categories').where('type','==','products').get();const cats=s.docs.map(d=>d.data().name),pc=[...new Set(allProducts.map(p=>p.category).filter(Boolean))],all=[...new Set([...cats,...pc])];const el=document.getElementById('cat-chips');if(el)el.innerHTML=`<div class="cat-chip active" data-cat="" onclick="selectCatChip(this)">Toate</div>`+all.map(c=>`<div class="cat-chip" data-cat="${c}" onclick="selectCatChip(this)">${c}</div>`).join('');const dl=document.getElementById('products-cat-list');if(dl)dl.innerHTML=all.map(c=>`<option value="${c}">`).join('');}catch(e){}}
+async function loadCategoryChips(){try{
+  const s=await db.collection('categories').where('type','==','products').get();
+  let cats=s.docs.map(d=>d.data().name);
+  // If no Firestore categories yet, fallback to product categories
+  if(!cats.length) cats=[...new Set(allProducts.map(p=>p.category).filter(Boolean))];
+  const el=document.getElementById('cat-chips');
+  if(el)el.innerHTML=`<div class="cat-chip active" data-cat="" onclick="selectCatChip(this)">Toate</div>`+cats.map(c=>`<div class="cat-chip" data-cat="${c}" onclick="selectCatChip(this)">${c}</div>`).join('');
+  const dl=document.getElementById('products-cat-list');
+  if(dl)dl.innerHTML=cats.map(c=>`<option value="${c}">`).join('');
+}catch(e){}}
 function selectCatChip(el){document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');filterProducts();}
 function toggleFilters(){document.getElementById('filters-panel').classList.toggle('open');}
 function filterProducts(){const search=(document.getElementById('shop-search').value||'').toLowerCase(),sort=document.getElementById('shop-sort').value,ac=document.querySelector('.cat-chip.active'),cat=ac?ac.dataset.cat:'',minP=parseFloat(document.getElementById('price-min').value)||0,maxP=parseFloat(document.getElementById('price-max').value)||Infinity,minR=parseInt(document.getElementById('rating-filter').value)||0;let items=allProducts.filter(p=>{if(search&&!p.name?.toLowerCase().includes(search)&&!p.shortDesc?.toLowerCase().includes(search))return false;if(cat&&p.category!==cat)return false;if(parseFloat(p.price)<minP||parseFloat(p.price)>maxP)return false;if(minR>0&&(p.rating||0)<minR)return false;return true;});if(sort==='price_asc')items.sort((a,b)=>parseFloat(a.price)-parseFloat(b.price));else if(sort==='price_desc')items.sort((a,b)=>parseFloat(b.price)-parseFloat(a.price));else if(sort==='rating')items.sort((a,b)=>(b.rating||0)-(a.rating||0));else if(sort==='new')items.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));renderProducts(items);}
@@ -1230,9 +1255,17 @@ ${!isYT&&src?`<audio id="paudio-${idx}" src="${src}" ontimeupdate="updatePlayer(
 
 function isYouTube(u){return u&&(u.includes('youtube.com')||u.includes('youtu.be'));}
 function getYTId(u){const m=u.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);return m?m[1]:'';}
-function convertDropbox(u){if(!u)return'';return u.replace('www.dropbox.com','dl.dropboxusercontent.com').replace('dl=0','dl=1');}
+function convertDropbox(u){if(!u)return'';
+// Dropbox
+if(u.includes('dropbox.com'))return u.replace('www.dropbox.com','dl.dropboxusercontent.com').replace('dl=0','dl=1');
+// Google Drive - convert share link to direct download
+if(u.includes('drive.google.com/file/d/')){const m=u.match(/\/d\/([a-zA-Z0-9_-]+)/);if(m)return`https://drive.google.com/uc?export=download&id=${m[1]}`;}
+if(u.includes('drive.google.com/open?id=')){const m=u.match(/id=([a-zA-Z0-9_-]+)/);if(m)return`https://drive.google.com/uc?export=download&id=${m[1]}`;}
+return u;}
 
-function togglePlayer(idx,type,src){const btn=document.getElementById('pbtn-'+idx),media=document.getElementById('pmedia-'+idx);if(type==='youtube'){const pm=document.getElementById('pmedia-'+idx);const showing=pm.classList.contains('show');if(!showing){pm.classList.add('show');pm.innerHTML=`<iframe src="https://www.youtube.com/embed/${src}?autoplay=1&enablejsapi=1" frameborder="0" allowfullscreen allow="autoplay"></iframe>`;btn.textContent='⏸';}else{pm.classList.remove('show');pm.innerHTML='';btn.textContent='▶';}}else{const audio=document.getElementById('paudio-'+idx);if(!audio)return;if(activeAudioEl&&activeAudioEl!==audio){activeAudioEl.pause();const oi=activeAudioEl.dataset.pidx;const ob=document.getElementById('pbtn-'+oi);if(ob)ob.textContent='▶';}audio.dataset.pidx=idx;if(audio.paused){audio.play().catch(()=>{});btn.textContent='⏸';activeAudioEl=audio;}else{audio.pause();btn.textContent='▶';}}}
+function togglePlayer(idx,type,src){const btn=document.getElementById('pbtn-'+idx),media=document.getElementById('pmedia-'+idx);if(type==='youtube'){const pm=document.getElementById('pmedia-'+idx);const showing=pm.classList.contains('show');if(!showing){pm.classList.add('show');pm.innerHTML=`<iframe src="https://www.youtube.com/embed/${src}?autoplay=1&enablejsapi=1" frameborder="0" allowfullscreen allow="autoplay"></iframe>`;btn.textContent='⏸';}else{pm.classList.remove('show');pm.innerHTML='';btn.textContent='▶';}}else{const audio=document.getElementById('paudio-'+idx);if(!audio)return;// Stop all other audios
+if(activeAudioEl&&activeAudioEl!==audio){activeAudioEl.pause();const oi=activeAudioEl.dataset.pidx;const ob=document.getElementById('pbtn-'+oi);if(ob)ob.textContent='▶';const om=document.getElementById('pmedia-'+oi);if(om){om.classList.remove('show');om.innerHTML='';}}
+audio.dataset.pidx=idx;if(audio.paused){audio.play().catch(err=>{toast('Nu s-a putut reda. Verificați URL-ul sau permisiunile fișierului.','error');console.error('Audio error:',err);});btn.textContent='⏸';activeAudioEl=audio;}else{audio.pause();btn.textContent='▶';}}}
 
 function toggleVideoPanel(idx){const media=document.getElementById('pmedia-'+idx),audio=document.getElementById('paudio-'+idx),ytId=audio?audio.dataset.ytid:'';if(media.classList.contains('show')){media.classList.remove('show');media.innerHTML='';}else{media.classList.add('show');if(ytId){media.innerHTML=`<img class="yt-thumb" src="https://img.youtube.com/vi/${ytId}/hqdefault.jpg" alt="">`;}}  }
 
@@ -1241,10 +1274,9 @@ function seekPlayer(e,idx){const audio=document.getElementById('paudio-'+idx),ba
 function playerEnded(idx){const btn=document.getElementById('pbtn-'+idx);if(btn)btn.textContent='▶';}
 function fmtTime(s){const t=Math.floor(s);return`${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`;}
 
-// AUDIO UPLOAD (drag & drop fișier audio)
-function handleAudioDrop(e){e.preventDefault();e.currentTarget.classList.remove('dragover');const f=e.dataTransfer.files[0];if(f)processAudioFile(f);}
-async function handleAudioUpload(e){const f=e.target.files[0];if(f)processAudioFile(f);e.target.value='';}
-async function processAudioFile(file){const st=document.getElementById('au-upload-status');if(file.size>10*1024*1024){toast('Fișierul e prea mare (max 10MB recomandat)','warning');}st.textContent='⏳ Se încarcă...';const reader=new FileReader();reader.onload=ev=>{pendingAudioBase64=ev.target.result;document.getElementById('au-url').value='[upload local]';st.textContent=`✅ Fișier încărcat: ${file.name}`;document.getElementById('url-hint').className='url-hint mp3';document.getElementById('url-hint').textContent='🎵 Fișier audio local detectat';};reader.readAsDataURL(file);}
+// AUDIO - URL only approach (no base64 upload)
+function handleAudioDrop(e){e.preventDefault();}
+async function handleAudioUpload(e){toast('Folosiți un URL Dropbox/Google Drive/server în loc de upload direct!','info');}
 
 // FAQ
 async function loadFaq(){const el=document.getElementById('faq-list');el.innerHTML='<div class="loading"><div class="spinner"></div></div>';try{const s=await db.collection('faq').orderBy('order').get();allFaq=s.docs.map(d=>({id:d.id,...d.data()}));}catch(e){try{const s=await db.collection('faq').get();allFaq=s.docs.map(d=>({id:d.id,...d.data()}));}catch(e2){el.innerHTML='<p>Eroare.</p>';return;}}if(!allFaq.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">❓</div><p>Nicio întrebare</p></div>';return;}el.innerHTML=allFaq.map((f,i)=>`<div class="faq-item" id="faq-${i}"><div class="faq-question" onclick="toggleFaq(${i})">${f.question||''}<span class="faq-chevron">▼</span></div><div class="faq-answer">${f.answer||''}</div></div>`).join('');}
@@ -1303,12 +1335,12 @@ function resetAnnForm(){document.getElementById('edit-ann-id').value='';document
 async function deleteAnnouncement(id){if(!confirm('Ștergi anunțul?'))return;await db.collection('announcements').doc(id).delete();toast('Șters.','success');loadAdminAnnouncements();}
 
 // AUDIO ADMIN
-function detectMediaType(){const url=document.getElementById('au-url').value.trim(),hint=document.getElementById('url-hint');hint.className='url-hint';if(!url||url==='[upload local]')return;if(url.includes('youtube.com')||url.includes('youtu.be')){hint.className='url-hint youtube';hint.textContent='📺 YouTube detectat';}else if(url.endsWith('.mp3')||url.includes('dropbox')){hint.className='url-hint mp3';hint.textContent='🎵 Audio MP3 detectat';}else{hint.className='url-hint unknown';hint.textContent='⚠️ Format necunoscut';}}
+function detectMediaType(){const url=document.getElementById('au-url').value.trim(),hint=document.getElementById('url-hint');hint.className='url-hint';if(!url)return;if(url.includes('youtube.com')||url.includes('youtu.be')){hint.className='url-hint youtube';hint.textContent='📺 YouTube detectat';}else if(url.endsWith('.mp3')||url.endsWith('.wav')||url.endsWith('.ogg')||url.endsWith('.m4a')||url.includes('dropbox.com')||url.includes('dropboxusercontent.com')){hint.className='url-hint mp3';hint.textContent='🎵 Audio MP3/WAV detectat';}else if(url.includes('drive.google.com')){hint.className='url-hint mp3';hint.textContent='🎵 Google Drive detectat — asigurați-vă că fișierul e public';}else if(url.startsWith('http')){hint.className='url-hint mp3';hint.textContent='🎵 URL audio extern detectat';}else{hint.className='url-hint unknown';hint.textContent='⚠️ Format necunoscut';}}
 async function loadAdminAudio(){try{const s=await db.collection('audio').orderBy('createdAt','desc').get();allAudioData=s.docs.map(d=>({id:d.id,...d.data()}));}catch(e){try{const s=await db.collection('audio').get();allAudioData=s.docs.map(d=>({id:d.id,...d.data()}));}catch(e2){}}const tb=document.getElementById('admin-audio-tbody');if(tb)tb.innerHTML=allAudioData.map(a=>`<tr><td>${isYouTube(a.url)?'📺':'🎵'}</td><td>${a.title||''}</td><td>${a.author||''}</td><td>${formatDate(a.createdAt)}</td><td><div class="action-btns"><button class="btn-edit" onclick="editAudio('${a.id}')">✏️</button><button class="btn-delete" onclick="deleteAudio('${a.id}')">🗑</button></div></td></tr>`).join('')||'<tr><td colspan="5">Nicio înregistrare</td></tr>';}
 async function loadAdminAudioCats(){try{const s=await db.collection('categories').where('type','==','audio').get();const cats=s.docs.map(d=>d.data().name),dl=document.getElementById('audio-cat-list');if(dl)dl.innerHTML=cats.map(c=>`<option value="${c}">`).join('');}catch(e){}}
 function editAudio(id){const a=allAudioData.find(a=>a.id===id);if(!a)return;document.getElementById('edit-audio-id').value=id;document.getElementById('audio-form-title').textContent='✏️ Editează';document.getElementById('au-title').value=a.title||'';document.getElementById('au-url').value=a.url||'';document.getElementById('au-category').value=a.category||'';document.getElementById('au-author').value=a.author||'';document.getElementById('au-desc').value=a.description||'';pendingAudioBase64='';document.getElementById('au-upload-status').textContent='';detectMediaType();window.scrollTo(0,0);}
-async function saveAudio(){const id=document.getElementById('edit-audio-id').value,title=document.getElementById('au-title').value.trim();let url=document.getElementById('au-url').value.trim();if(!title){toast('Introduceți titlul!','warning');return;}const data={title,category:document.getElementById('au-category').value.trim(),author:document.getElementById('au-author').value.trim(),description:document.getElementById('au-desc').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};if(pendingAudioBase64){data.base64=pendingAudioBase64;data.url='';}else if(url&&url!=='[upload local]'){data.url=url;delete data.base64;}else if(!id){toast('Adăugați un URL sau încărcați un fișier!','warning');return;}try{if(id){await db.collection('audio').doc(id).update(data);toast('Actualizat!','success');}else{data.createdAt=firebase.firestore.FieldValue.serverTimestamp();await db.collection('audio').add(data);toast('Adăugat!','success');}resetAudioForm();loadAdminAudio();}catch(e){toast('Eroare: '+e.message,'error');}}
-function resetAudioForm(){document.getElementById('edit-audio-id').value='';document.getElementById('audio-form-title').textContent='➕ Adaugă';['au-title','au-url','au-category','au-author','au-desc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});const hint=document.getElementById('url-hint');if(hint)hint.className='url-hint';pendingAudioBase64='';const st=document.getElementById('au-upload-status');if(st)st.textContent='';}
+async function saveAudio(){const id=document.getElementById('edit-audio-id').value,title=document.getElementById('au-title').value.trim(),url=document.getElementById('au-url').value.trim();if(!title){toast('Introduceți titlul!','warning');return;}if(!url&&!id){toast('Introduceți un URL (YouTube, Dropbox, Drive, server)!','warning');return;}const data={title,url:url||'',category:document.getElementById('au-category').value.trim(),author:document.getElementById('au-author').value.trim(),description:document.getElementById('au-desc').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};try{if(id){await db.collection('audio').doc(id).update(data);toast('Actualizat!','success');}else{data.createdAt=firebase.firestore.FieldValue.serverTimestamp();await db.collection('audio').add(data);toast('Adăugat!','success');}resetAudioForm();loadAdminAudio();}catch(e){toast('Eroare: '+e.message,'error');}}
+function resetAudioForm(){document.getElementById('edit-audio-id').value='';document.getElementById('audio-form-title').textContent='➕ Adaugă';['au-title','au-url','au-category','au-author','au-desc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});const hint=document.getElementById('url-hint');if(hint)hint.className='url-hint';}
 async function deleteAudio(id){if(!confirm('Ștergi?'))return;await db.collection('audio').doc(id).delete();toast('Șters.','success');loadAdminAudio();}
 
 // CLIENTS ADMIN
@@ -1336,8 +1368,8 @@ function resetTransportForm(){document.getElementById('edit-transport-id').value
 async function deleteTransport(id){if(!confirm('Ștergi?'))return;await db.collection('transport').doc(id).delete();toast('Ștearsă.','success');loadAdminTransport();}
 
 // EMAIL CONFIG
-async function loadEmailConfigSettings(){try{const s=await db.collection('settings').doc('email').get();if(s.exists){const d=s.data();emailConfig=d;const map={publicKey:'ejs-public-key',serviceId:'ejs-service-id',templateConfirm:'ejs-template-confirm',templateStatus:'ejs-template-status',adminEmail:'ejs-admin-email'};Object.entries(map).forEach(([k,elId])=>{const el=document.getElementById(elId);if(el)el.value=d[k]||'';});if(d.publicKey)emailjs.init(d.publicKey);}}catch(e){}}
-async function saveEmailConfig(){const data={publicKey:document.getElementById('ejs-public-key').value.trim(),serviceId:document.getElementById('ejs-service-id').value.trim(),templateConfirm:document.getElementById('ejs-template-confirm').value.trim(),templateStatus:document.getElementById('ejs-template-status').value.trim(),adminEmail:document.getElementById('ejs-admin-email').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};try{await db.collection('settings').doc('email').set(data);emailConfig=data;if(data.publicKey)emailjs.init(data.publicKey);toast('Salvat!','success');}catch(e){toast('Eroare: '+e.message,'error');}}
+async function loadEmailConfigSettings(){try{const s=await db.collection('settings').doc('email').get();if(s.exists){const d=s.data();emailConfig=d;const map={publicKey:'ejs-public-key',serviceId:'ejs-service-id',templateConfirm:'ejs-template-confirm',templateStatus:'ejs-template-status',templateNewsletter:'ejs-template-newsletter',adminEmail:'ejs-admin-email'};Object.entries(map).forEach(([k,elId])=>{const el=document.getElementById(elId);if(el)el.value=d[k]||'';});if(d.publicKey)emailjs.init(d.publicKey);}}catch(e){}}
+async function saveEmailConfig(){const data={publicKey:document.getElementById('ejs-public-key').value.trim(),serviceId:document.getElementById('ejs-service-id').value.trim(),templateConfirm:document.getElementById('ejs-template-confirm').value.trim(),templateStatus:document.getElementById('ejs-template-status').value.trim(),templateNewsletter:document.getElementById('ejs-template-newsletter').value.trim(),adminEmail:document.getElementById('ejs-admin-email').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};try{await db.collection('settings').doc('email').set(data);emailConfig=data;if(data.publicKey)emailjs.init(data.publicKey);toast('Salvat!','success');}catch(e){toast('Eroare: '+e.message,'error');}}
 async function testEmail(){const r=document.getElementById('email-test-result');r.textContent='Se trimite...';if(!emailConfig.publicKey||!emailConfig.serviceId||!emailConfig.templateConfirm){r.style.color='#e74c3c';r.textContent='Configurați mai întâi EmailJS!';return;}try{emailjs.init(emailConfig.publicKey);await emailjs.send(emailConfig.serviceId,emailConfig.templateConfirm,{to_name:'Admin',to_email:emailConfig.adminEmail||ADMIN,order_id:'TEST001',total:'99.99 lei',products_list:'Test x1',payment_method:'Test',status:'Test'});r.style.color='var(--ok)';r.textContent='✅ Email trimis!';}catch(e){r.style.color='#e74c3c';r.textContent='❌ Eroare: '+e.message;}}
 
 // FAQ ADMIN
@@ -1444,11 +1476,12 @@ async function sendNewsletterToSubscribers(subject, bodyText) {
     if (!subscribers.length) return;
     
     emailjs.init(emailConfig.publicKey);
+    const nlTemplate = emailConfig.templateNewsletter || emailConfig.templateConfirm;
     let sent = 0;
     for (const user of subscribers) {
       if (!user.email) continue;
       try {
-        await emailjs.send(emailConfig.serviceId, emailConfig.templateConfirm, {
+        await emailjs.send(emailConfig.serviceId, nlTemplate, {
           to_name: user.name || 'Credincios',
           to_email: user.email,
           order_id: 'NEWSLETTER',
