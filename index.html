@@ -205,7 +205,7 @@ body{font-family:'Lato',sans-serif;background:var(--cr);color:var(--td);min-heig
 .player-progress-wrap{flex:1;display:flex;flex-direction:column;gap:4px}
 .player-progress-bar{width:100%;height:5px;background:rgba(107,26,46,.15);border-radius:3px;cursor:pointer;position:relative;overflow:hidden}
 .player-progress-fill{height:100%;background:var(--v);border-radius:3px;width:0%;transition:width .1s linear}
-.player-time{font-size:11px;color:var(--tl);font-family:'Cinzel',serif;letter-spacing:.5px}
+.player-time{font-size:11px;color:var(--tl);font-family:'Cinzel',serif;letter-spacing:.5px;min-width:90px}
 .player-show-video-btn{background:rgba(107,26,46,.1);border:none;color:var(--v);font-size:11px;padding:4px 10px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;white-space:nowrap;transition:var(--tr)}
 .player-show-video-btn:hover{background:var(--v);color:white}
 
@@ -550,8 +550,8 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:48px 24px 24px;m
     <div class="verse-card"><div class="verse-quote">"</div><div class="verse-text" id="verse-text">Se încarcă...</div><div class="verse-ref" id="verse-ref"></div></div>
     <h2 class="section-title">ℹ️ Informații Utile</h2>
     <div class="info-grid">
-      <div class="info-card"><div class="info-icon">📍</div><h4>Locație</h4><p>Stornești, jud. Ia;i</p><a href="https://www.google.com/maps/@47.1139994,27.1652511,47m/data=!3m1!1e3?entry=ttu&g_ep=EgoyMDI2MDQyOS4wIKXMDSoASAFQAw%3D%3D" target="_blank">Deschide în Maps →</a></div>
-      <div class="info-card"><div class="info-icon">📞</div><h4>Contact</h4><p>Tel: 0743 609 099</p><a href="mailto:irimia.teodor.17@gmail.com">Contacteaza-ne prin email</a></div>
+      <div class="info-card"><div class="info-icon">📍</div><h4>Locație</h4><p>Stornești, jud. Iași</p><a href="https://maps.google.com?q=Stornesti+Iasi" target="_blank">Deschide în Maps →</a></div>
+      <div class="info-card"><div class="info-icon">📞</div><h4>Contact</h4><p>Tel: 0740 000 000</p><a href="mailto:irimia.teodor.17@gmail.com">irimia.teodor.17@gmail.com</a></div>
       <div class="info-card"><div class="info-icon">✝</div><h4>Sfinte Taine</h4><p>Botez, Cununie, Spovedanie, Maslu — programare prealabilă</p></div>
       <div class="info-card"><div class="info-icon">🙏</div><h4>Voluntariat</h4><p>Alătură-te comunității. Suntem deschiși pentru ajutor și implicare.</p></div>
     </div>
@@ -738,7 +738,7 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:48px 24px 24px;m
 </div>
 
 <!-- GDPR -->
-<div class="page" id="page-gdpr"><div class="static-page"><h1>Politica de Confidențialitate</h1><p class="lead">Protecția datelor dumneavoastră este prioritatea noastră.</p><h2>Cine suntem</h2><p>Parohia Stornești – Biserica Sfânta Treime, CIF: RO12345678, Stornești, jud. Teleorman.</p><h2>Ce date colectăm</h2><ul><li>✅ Nume, email, telefon, adresă — pentru comenzi</li><li>✅ Date autentificare — pentru cont</li><li>❌ Nu colectăm GPS</li><li>❌ Nu cookie-uri de tracking</li><li>❌ Nu vindem date</li></ul><h2>Drepturile GDPR</h2><ul><li>🔍 Drept de acces</li><li>✏️ Drept de rectificare</li><li>🗑 Drept la ștergere</li><li>📦 Drept la portabilitate</li></ul><h2>Contact DPO</h2><p>irimia.teodor.17@gmail.com | 0740 000 000</p></div></div>
+<div class="page" id="page-gdpr"><div class="static-page"><h1>Politica de Confidențialitate</h1><p class="lead">Protecția datelor dumneavoastră este prioritatea noastră.</p><h2>Cine suntem</h2><p>Parohia Stornești – Biserica Sfânta Treime, CIF: RO12345678, Stornești, jud. Iași.</p><h2>Ce date colectăm</h2><ul><li>✅ Nume, email, telefon, adresă — pentru comenzi</li><li>✅ Date autentificare — pentru cont</li><li>❌ Nu colectăm GPS</li><li>❌ Nu cookie-uri de tracking</li><li>❌ Nu vindem date</li></ul><h2>Drepturile GDPR</h2><ul><li>🔍 Drept de acces</li><li>✏️ Drept de rectificare</li><li>🗑 Drept la ștergere</li><li>📦 Drept la portabilitate</li></ul><h2>Contact DPO</h2><p>irimia.teodor.17@gmail.com | 0740 000 000</p></div></div>
 
 <!-- TERMS -->
 <div class="page" id="page-terms"><div class="static-page"><h1>Termeni și Condiții</h1><p class="lead">Informații despre magazinul parohial.</p><h2>Date fiscale</h2><div style="background:var(--cd);border-radius:var(--rs);padding:16px;margin-bottom:16px"><p><strong>Parohia Stornești</strong></p><p>CIF: RO12345678</p><p>IBAN: RO49 AAAA 0000 0000 0000 0001 — Banca Transilvania</p></div><h2>Comenzi și plăți</h2><ul><li>Ramburs sau transfer bancar</li><li>Livrare 1-3 zile lucrătoare</li><li>Returnări în 14 zile</li></ul></div></div>
@@ -783,7 +783,21 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:48px 24px 24px;m
             <div class="stat-card"><div class="stat-value" id="stat-clients">—</div><div class="stat-label">Clienți</div></div>
             <div class="stat-card"><div class="stat-value" id="stat-announcements">—</div><div class="stat-label">Anunțuri</div></div>
           </div>
-          <h3 style="font-family:'Cinzel',serif;font-size:15px;color:var(--v);margin-bottom:16px">Ultimele 5 Comenzi</h3>
+          <div style="background:var(--w);border-radius:var(--r);padding:20px;margin-bottom:24px;box-shadow:0 2px 8px rgba(107,26,46,.06);display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+          <div style="font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--v)">🔄 Actualizare Date</div>
+          <button class="btn-primary" onclick="adminManualRefresh()" style="padding:8px 20px">🔄 Actualizează acum</button>
+          <div style="display:flex;align-items:center;gap:8px">
+            <label style="font-family:'Cinzel',serif;font-size:11px;color:var(--v);font-weight:600">Auto-actualizare:</label>
+            <select class="styled-select" id="auto-refresh-select" onchange="saveAutoRefreshInterval()">
+              <option value="3600000">La fiecare oră</option>
+              <option value="1800000">La 30 minute</option>
+              <option value="900000">La 15 minute</option>
+              <option value="300000">La 5 minute</option>
+            </select>
+          </div>
+          <div style="font-size:12px;color:var(--tl)">Ultima actualizare: <strong id="last-refresh-ts">—</strong></div>
+        </div>
+        <h3 style="font-family:'Cinzel',serif;font-size:15px;color:var(--v);margin-bottom:16px">Ultimele 5 Comenzi</h3>
           <div class="table-wrap"><table class="admin-table"><thead><tr><th>ID</th><th>Client</th><th>Total</th><th>Status</th><th>Data</th></tr></thead><tbody id="recent-orders-tbody"></tbody></table></div>
         </div>
         <div class="admin-section" id="admin-orders">
@@ -882,6 +896,18 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:48px 24px 24px;m
             <div style="display:flex;gap:10px;align-items:center"><button class="btn-primary" onclick="saveEmailConfig()">💾 Salvează</button><button class="btn-secondary" onclick="testEmail()">🧪 Test email</button></div>
             <div id="email-test-result" style="margin-top:10px;font-size:13px"></div>
           </div>
+          <div class="admin-form" style="margin-top:20px">
+            <h3>📧 Trimitere Newsletter Manual</h3>
+            <p style="font-size:13px;color:var(--tm);margin-bottom:16px">Trimite un email manual tuturor abonaților la newsletter. Newsletter-ul se trimite și automat când adaugi un anunț nou sau un produs nou.</p>
+            <div class="form-group"><label class="form-label">Subiect email</label><input type="text" class="form-input" id="nl-subject" placeholder="ex: 🎄 Program slujbe de Crăciun"></div>
+            <div class="form-group"><label class="form-label">Conținut mesaj</label><textarea class="admin-textarea" id="nl-body" style="min-height:120px" placeholder="Mesajul care va fi trimis abonaților..."></textarea></div>
+            <div style="display:flex;gap:10px;align-items:center">
+              <button class="btn-primary" onclick="sendManualNewsletter()">📧 Trimite newsletter</button>
+              <span id="nl-status" style="font-size:13px"></span>
+            </div>
+          </div>
+          <div style="display:none"><!-- placeholder --></div>
+          </div>
         </div>
         <div class="admin-section" id="admin-faq-admin">
           <div class="admin-section-title">❓ FAQ</div>
@@ -920,9 +946,10 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:48px 24px 24px;m
   <div class="footer-grid">
     <div class="footer-col">
       <h4>✝ Parohia Stornești</h4>
-      <p>Stornești,Strada Sfânta Treime, jud. Iași</p>
-      <p>Tel: 0743609099</p>
+      <p>Stornești, jud. Iași</p>
+      <p>Tel: 0740 000 000</p>
       <p>irimia.teodor.17@gmail.com</p>
+      <p style="margin-top:8px"></p>
     </div>
     <div class="footer-col">
       <h4>Navigare Rapidă</h4>
@@ -940,11 +967,7 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:48px 24px 24px;m
         <li><a href="#" onclick="navigateTo('gdpr')">Politica de Confidențialitate</a></li>
         <li><a href="#" onclick="navigateTo('terms')">Termeni și Condiții</a></li>
       </ul>
-      <div class="footer-legal-box" style="margin-top:10px">CIF: RO12345678
-        <br> Cont parohie:</br>
-        <br>Parohia Stornești </br>
-<br>IBAN RO58BRDE240SV79376812400 (RON)</br>
-<br>BRD-GSG | SWIFT BRDEROBU</br></div>
+      <div class="footer-legal-box" style="margin-top:10px">CIF: RO12345678<br>IBAN: RO49 AAAA 0000 0000 0000 0001<br>Banca Transilvania</div>
       <div class="footer-anpc">⚖️ ANPC: <a href="https://anpc.ro" target="_blank">anpc.ro</a> | 021 9551</div>
       <div style="margin-top:8px;font-size:12px;color:rgba(255,255,255,.5)"><a href="https://anaf.ro" target="_blank" style="color:rgba(255,255,255,.5)">ANAF: anaf.ro</a></div>
     </div>
@@ -1116,8 +1139,8 @@ window.addEventListener('load',()=>{if(!localStorage.getItem('gdprAccepted'))set
 // COUNTDOWN
 function updateCountdown(){const t=new Date('2025-05-29T00:00:00'),now=new Date(),b=document.getElementById('countdown-banner');if(!b)return;if(now>=t){b.textContent='✝ HRISTOS A ÎNVIAT! ADEVĂRAT A ÎNVIAT! ✝';b.classList.add('risen');}else{const d=t-now,dd=Math.floor(d/86400000),hh=Math.floor((d%86400000)/3600000),mm=Math.floor((d%3600000)/60000),ss=Math.floor((d%60000)/1000);b.textContent=`✝ Înălțare: ${dd}z ${hh}h ${mm}m ${ss}s ✝`;}}
 updateCountdown();setInterval(updateCountdown,1000);
-function silentRefresh(){if(currentPage==='acasa')loadHomePage();if(currentPage==='anunturi')loadAnnouncements();if(currentPage==='magazin')loadProducts();if(currentPage==='audio')loadAudio();if(currentPage==='faq')loadFaq();toast('Actualizat','info');}
-setInterval(silentRefresh,300000);
+function silentRefresh(){if(currentPage==="acasa")loadHomePage();else if(currentPage==="anunturi")loadAnnouncements();else if(currentPage==="magazin")loadProducts();else if(currentPage==="audio")loadAudio();else if(currentPage==="faq")loadFaq();else if(currentPage==="cart")renderCart();else if(currentPage==="cont")loadAccountPage();else if(currentPage==="admin")loadAdminDashboard();toast("✅ Date actualizate","success");}
+
 
 // VALIDATION
 const RX={name:/^[a-zA-ZăâîșțĂÂÎȘȚ\s\-']{3,}$/,phone:/^(\+4|0)[0-9]{9}$/,email:/^[^\s@]+@[^\s@]+\.[^\s@]+$/,zip:/^([0-9]{6})?$/,required:/\S+/};
@@ -1160,7 +1183,8 @@ function toggleSaint(){const c=document.getElementById('saint-card'),h=document.
 
 // ANNOUNCEMENTS
 async function loadAnnouncements(){const g=document.getElementById('announcements-grid');g.innerHTML='<div class="loading"><div class="spinner"></div></div>';try{const s=await db.collection('announcements').orderBy('createdAt','desc').get();allAnnouncements=s.docs.map(d=>({id:d.id,...d.data()}));}catch(e){try{const s=await db.collection('announcements').get();allAnnouncements=s.docs.map(d=>({id:d.id,...d.data()}));}catch(e2){g.innerHTML='<p>Eroare.</p>';return;}}await loadAnnouncementFilters();renderAnnouncements();}
-async function loadAnnouncementFilters(){try{const s=await db.collection('categories').where('type','==','announcements').get();const custom=s.docs.map(d=>d.data().name),fb=document.getElementById('ann-filters');fb.querySelectorAll('.custom-filter').forEach(el=>el.remove());custom.forEach(name=>{const btn=document.createElement('button');btn.className='filter-btn custom-filter';btn.textContent=name;btn.onclick=()=>filterAnnouncements(name.toLowerCase(),btn);fb.appendChild(btn);});}catch(e){}}
+async function loadAnnouncementFilters(){try{const s=await db.collection('categories').where('type','==','announcements').get();const custom=s.docs.map(d=>d.data().name);const fb=document.getElementById('ann-filters');fb.querySelectorAll('.custom-filter').forEach(el=>el.remove());custom.forEach(name=>{// Only add if not already a default button
+const exists=Array.from(fb.querySelectorAll('.filter-btn')).some(b=>b.textContent.toLowerCase()===name.toLowerCase());if(!exists){const btn=document.createElement('button');btn.className='filter-btn custom-filter';btn.textContent=name;btn.onclick=()=>filterAnnouncements(name.toLowerCase(),btn);fb.appendChild(btn);}});}catch(e){}}
 function filterAnnouncements(t,btn){currentAnnFilter=t;document.querySelectorAll('#ann-filters .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderAnnouncements();}
 function renderAnnouncements(){const g=document.getElementById('announcements-grid');let items=allAnnouncements;if(currentAnnFilter!=='all')items=items.filter(i=>(i.type||'').toLowerCase()===currentAnnFilter);if(!items.length){g.innerHTML='<div class="empty-state"><div class="empty-icon">📢</div><p>Niciun anunț</p></div>';return;}g.innerHTML=items.map(ann=>{const hasImgs=ann.images&&ann.images.length>0;const carouselId='car-'+ann.id;return`<div class="announcement-card ${ann.type==='urgent'?'urgent':''} fade-in" onclick='openAnnouncementModal(${JSON.stringify(ann).replace(/'/g,"&#39;")})'>
 ${hasImgs?`<div class="ann-carousel" id="${carouselId}">${ann.images.map((img,i)=>`<img src="${img}" class="${i===0?'active':''}" alt="">`).join('')}${ann.images.length>1?`<button class="ann-carousel-btn ann-carousel-prev" onclick="carouselPrev(event,'${carouselId}')">◀</button><button class="ann-carousel-btn ann-carousel-next" onclick="carouselNext(event,'${carouselId}')">▶</button><div class="ann-carousel-dots">${ann.images.map((_,i)=>`<button class="ann-carousel-dot ${i===0?'active':''}" onclick="carouselGo(event,'${carouselId}',${i})"></button>`).join('')}</div>`:''}</div>`:''}
@@ -1347,7 +1371,152 @@ async function deleteCategory(id){if(!confirm('Ștergi categoria?'))return;await
 async function seedDataIfEmpty(){try{const s=await db.collection('products').limit(1).get();if(!s.empty)return;const TS=firebase.firestore.FieldValue.serverTimestamp();const prods=[{name:'Icoană Maica Domnului',price:45,stock:20,badge:'NOU',soldCount:0,rating:5,reviewCount:1,category:'Icoane',shortDesc:'Icoană pictată manual, 20×30cm',description:'Icoană autentică pictată pe lemn de tei.',images:['https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400'],createdAt:TS},{name:'Lumânări de Paști',price:12,oldPrice:15,stock:100,badge:'REDUCERE',soldCount:45,rating:4.5,reviewCount:8,category:'Lumânări',shortDesc:'Lumânări din ceară naturală, set 10 buc',description:'Lumânări 100% ceară de albine, parfumate.',images:['https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=400'],createdAt:TS},{name:'Sfânta Scriptură',price:65,stock:15,badge:'POPULAR',soldCount:30,rating:5,reviewCount:12,category:'Cărți',shortDesc:'Biblia Ortodoxă, ediție ilustrată',description:'Sfânta Scriptură versiunea ortodoxă.',images:['https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400'],createdAt:TS},{name:'Tămâie Arabă Premium',price:18,stock:50,soldCount:60,rating:4.8,reviewCount:15,category:'Tămâie',shortDesc:'Tămâie autentică din Ierusalim 200g',description:'Tămâie arabă naturală adusă din Țara Sfântă.',images:['https://images.unsplash.com/photo-1574126154517-d1e0d89ef734?w=400'],createdAt:TS},{name:'Crucifix din Lemn',price:35,stock:25,badge:'NOU',soldCount:10,rating:4.9,reviewCount:5,category:'Cruci',shortDesc:'Cruce din stejar sculptat, 30cm',description:'Cruce ortodoxă din stejar masiv.',images:['https://images.unsplash.com/photo-1595831377240-49f41f3dc2ea?w=400'],createdAt:TS},{name:'Agheasmatar Argint',price:85,stock:8,soldCount:5,rating:5,reviewCount:3,category:'Obiecte sfinte',shortDesc:'Agheasmatar din argint 925, 200ml',description:'Agheasmatar din argint 925 cu ornamente.',images:['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400'],createdAt:TS}];for(const p of prods)await db.collection('products').add(p);const anns=[{title:'Schimbarea programului de Paști',type:'urgent',content:'Vă aducem la cunoștință că în Săptămâna Patimilor programul slujbelor va fi modificat.',images:[],createdAt:TS},{title:'Tabăra de Vară 2025',type:'activitate',content:'Parohia organizează tabăra de vară pentru copii 7-14 ani. Perioada: 15-25 iulie 2025.',images:[],createdAt:TS},{title:'Sfânta Liturghie arhierească',type:'slujba',content:'De Buna Vestire va fi săvârșită Sfânta Liturghie arhierească. Toți credincioșii sunt invitați.',images:[],createdAt:TS}];for(const a of anns)await db.collection('announcements').add(a);const transports=[{name:'Curier rapid',type:'Curier rapid',cost:15,description:'Livrare 24h',clientChoice:true,createdAt:TS},{name:'Poșta Română',type:'Poșta Română',cost:8,description:'2-5 zile',clientChoice:true,createdAt:TS},{name:'Ridicare personală',type:'Ridicare personală',cost:0,description:'Gratuit de la parohie',clientChoice:true,createdAt:TS}];for(const t of transports)await db.collection('transport').add(t);const faqs=[{question:'Cum pot plăti o comandă?',answer:'Ramburs la livrare sau transfer bancar.',order:1,createdAt:TS},{question:'Pot returna un produs?',answer:'Da, în 14 zile de la primire.',order:2,createdAt:TS},{question:'Cât durează livrarea?',answer:'Curier 24h, Poșta 2-5 zile.',order:3,createdAt:TS},{question:'Cum rezerv un produs?',answer:'Prin butonul Rezervă din pagina produsului.',order:4,createdAt:TS},{question:'Produsele sunt binecuvântate?',answer:'Da, toate obiectele sunt binecuvântate înainte de vânzare.',order:5,createdAt:TS}];for(const f of faqs)await db.collection('faq').add(f);const sched=[{day:'Luni–Vineri',name:'Utrenie',time:'08:00',location:'Biserică',type:'weekly',createdAt:TS},{day:'Luni–Vineri',name:'Vecernie',time:'17:00',location:'Biserică',type:'weekly',createdAt:TS},{day:'Sâmbătă',name:'Vecernie și Acatist',time:'17:00',location:'Biserică',type:'weekly',createdAt:TS},{day:'Duminică',name:'Utrenie',time:'08:30',location:'Biserică',type:'sunday',createdAt:TS},{day:'Duminică',name:'Sfânta Liturghie',time:'10:00',location:'Biserică',type:'sunday',createdAt:TS},{day:'Sărbători',name:'Sfânta Liturghie',time:'09:00',location:'Biserică',type:'holiday',createdAt:TS}];for(const s of sched)await db.collection('schedule').add(s);console.log('✅ Seed data adăugat!');}catch(e){console.log('Seed skip:',e.message);}}
 
 // INIT
-document.addEventListener('DOMContentLoaded',()=>{updateCartBadge();loadHomePage();loadEmailConfigSettings();seedDataIfEmpty();});
+document.addEventListener('DOMContentLoaded',()=>{updateCartBadge();loadHomePage();loadEmailConfigSettings();seedDataIfEmpty();loadSiteConfig();const ts=new Date().toLocaleTimeString('ro-RO');const el=document.getElementById('last-refresh-ts');if(el)el.textContent=ts;});
+async function sendManualNewsletter() {
+  const subject = document.getElementById('nl-subject').value.trim();
+  const body = document.getElementById('nl-body').value.trim();
+  const status = document.getElementById('nl-status');
+  if (!subject || !body) { toast('Completați subiectul și conținutul!', 'warning'); return; }
+  status.textContent = '⏳ Se trimite...';
+  await sendNewsletterToSubscribers(subject, body);
+  status.textContent = '✅ Trimis!';
+  setTimeout(() => { status.textContent = ''; }, 4000);
+}
+
+// ============================================================
+// AUTO REFRESH - every hour, stays on current page
+// ============================================================
+let autoRefreshInterval = null;
+function startAutoRefresh(intervalMs) {
+  if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+  autoRefreshInterval = setInterval(() => {
+    silentRefresh();
+    const ts = new Date().toLocaleTimeString('ro-RO');
+    const el = document.getElementById('last-refresh-ts');
+    if (el) el.textContent = ts;
+  }, intervalMs);
+}
+// Start auto-refresh every 60 min by default
+startAutoRefresh(60 * 60 * 1000);
+
+// ============================================================
+// ADMIN REFRESH CONTROL
+// ============================================================
+function adminManualRefresh() {
+  silentRefresh();
+  toast('✅ Toate datele au fost actualizate!', 'success');
+  const el = document.getElementById('last-refresh-ts');
+  if (el) el.textContent = new Date().toLocaleTimeString('ro-RO');
+}
+
+async function saveAutoRefreshInterval() {
+  const val = parseInt(document.getElementById('auto-refresh-select').value);
+  startAutoRefresh(val);
+  try {
+    await db.collection('settings').doc('siteConfig').set({ autoRefreshMs: val, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    toast('Interval actualizare salvat!', 'success');
+  } catch(e) {}
+}
+
+async function loadSiteConfig() {
+  try {
+    const s = await db.collection('settings').doc('siteConfig').get();
+    if (s.exists && s.data().autoRefreshMs) {
+      const ms = s.data().autoRefreshMs;
+      startAutoRefresh(ms);
+      const sel = document.getElementById('auto-refresh-select');
+      if (sel) sel.value = ms;
+    }
+  } catch(e) {}
+}
+
+// ============================================================
+// NEWSLETTER - send email to all subscribers on new content
+// ============================================================
+async function sendNewsletterToSubscribers(subject, bodyText) {
+  if (!emailConfig.publicKey || !emailConfig.serviceId || !emailConfig.templateConfirm) {
+    return;
+  }
+  try {
+    // Get all newsletter subscribers
+    const snap = await db.collection('users').where('newsletter', '==', true).get();
+    const subscribers = snap.docs.map(d => d.data());
+    if (!subscribers.length) return;
+    
+    emailjs.init(emailConfig.publicKey);
+    let sent = 0;
+    for (const user of subscribers) {
+      if (!user.email) continue;
+      try {
+        await emailjs.send(emailConfig.serviceId, emailConfig.templateConfirm, {
+          to_name: user.name || 'Credincios',
+          to_email: user.email,
+          order_id: 'NEWSLETTER',
+          total: '—',
+          products_list: bodyText,
+          payment_method: subject,
+          status: 'Newsletter Parohia Stornești'
+        });
+        sent++;
+        await new Promise(r => setTimeout(r, 300)); // avoid rate limit
+      } catch(e) {}
+    }
+    toast(`Newsletter trimis la ${sent} abonați!`, 'success');
+  } catch(e) {
+    toast('Eroare newsletter: ' + e.message, 'error');
+  }
+}
+
+// Patch saveProduct to send newsletter
+const _origSaveProduct = saveProduct;
+saveProduct = async function() {
+  const id = document.getElementById('edit-product-id').value;
+  const name = document.getElementById('p-name').value.trim();
+  const isNew = !id;
+  await _origSaveProduct();
+  if (isNew && name) {
+    const price = document.getElementById('p-price').value;
+    await sendNewsletterToSubscribers(
+      '🛍️ Produs nou în Magazinul Parohial',
+      `A fost adăugat un produs nou: "${name}" la prețul de ${price} lei.
+
+Vizitați magazinul: https://parohia-stornesti.ro`
+    );
+  }
+};
+
+// Patch saveAnnouncement to send newsletter
+const _origSaveAnn = saveAnnouncement;
+saveAnnouncement = async function() {
+  const id = document.getElementById('edit-ann-id').value;
+  const title = document.getElementById('a-title').value.trim();
+  const content = document.getElementById('a-content').value.trim();
+  const isNew = !id;
+  await _origSaveAnn();
+  if (isNew && title) {
+    await sendNewsletterToSubscribers(
+      '📢 Anunț nou: ' + title,
+      title + '\n\n' + content.substring(0, 300) + (content.length > 300 ? '...' : '')
+    );
+  }
+};
+
+// ============================================================
+// AUDIO TIMING - make timing always visible
+// ============================================================
+// Patch updatePlayer to ensure timing is always shown
+const _origUpdatePlayer = updatePlayer;
+updatePlayer = function(idx) {
+  _origUpdatePlayer(idx);
+  const audio = document.getElementById('paudio-' + idx);
+  const time = document.getElementById('ptime-' + idx);
+  if (audio && time && audio.duration) {
+    time.style.display = '';
+  }
+};
+
+// loadSiteConfig called from main DOMContentLoaded
+
 </script>
 </body>
 </html>
