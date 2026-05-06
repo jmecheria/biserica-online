@@ -192,22 +192,28 @@ body{font-family:'Lato',sans-serif;background:var(--cr);color:var(--td);min-heig
 .audio-meta{flex:1}
 .audio-title{font-family:'Cinzel',serif;font-size:15px;font-weight:700;color:var(--v);margin-bottom:4px}
 .audio-info{font-size:12px;color:var(--tl);display:flex;gap:12px;flex-wrap:wrap}
-
-/* UNIFIED AUDIO PLAYER */
-.unified-player{background:var(--cr);border-radius:var(--rs);margin-top:10px;overflow:hidden}
-.player-media{width:100%;aspect-ratio:16/9;background:#000;display:none;position:relative}
-.player-media.show{display:block}
-.player-media iframe{width:100%;height:100%;border:none}
-.player-media .yt-thumb{width:100%;height:100%;object-fit:cover;display:block}
-.player-controls{display:flex;align-items:center;gap:12px;padding:12px}
+/* YT Player */
+.yt-player-wrap{margin-top:10px;border-radius:var(--rs);overflow:hidden}
+.yt-thumb-container{position:relative;width:100%;aspect-ratio:16/9;cursor:pointer;background:#000;border-radius:var(--rs);overflow:hidden}
+.yt-thumb-container img{width:100%;height:100%;object-fit:cover;transition:opacity .3s}
+.yt-thumb-container:hover img{opacity:.8}
+.yt-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.yt-play-circle{width:56px;height:56px;border-radius:50%;background:#ff0000;display:flex;align-items:center;justify-content:center;color:white;font-size:20px;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:transform .2s}
+.yt-thumb-container:hover .yt-play-circle{transform:scale(1.1)}
+.yt-label{background:rgba(0,0,0,.6);color:white;font-size:12px;padding:4px 12px;border-radius:12px;font-family:'Cinzel',serif}
+.yt-iframe-wrap iframe{width:100%;aspect-ratio:16/9;border:none;border-radius:var(--rs)}
+/* MP3 Player */
+.mp3-player-wrap{background:var(--cr);border-radius:var(--rs);padding:12px;margin-top:10px}
+.player-controls{display:flex;align-items:center;gap:12px}
 .mp3-play-btn{width:42px;height:42px;border-radius:50%;background:var(--v);border:none;color:white;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--tr);flex-shrink:0}
 .mp3-play-btn:hover{background:var(--vl);transform:scale(1.05)}
-.player-progress-wrap{flex:1;display:flex;flex-direction:column;gap:4px}
-.player-progress-bar{width:100%;height:5px;background:rgba(107,26,46,.15);border-radius:3px;cursor:pointer;position:relative;overflow:hidden}
+.player-progress-wrap{flex:1;display:flex;flex-direction:column;gap:6px}
+.player-progress-bar{width:100%;height:5px;background:rgba(107,26,46,.15);border-radius:3px;cursor:pointer;overflow:hidden}
 .player-progress-fill{height:100%;background:var(--v);border-radius:3px;width:0%;transition:width .1s linear}
-.player-time{font-size:11px;color:var(--tl);font-family:'Cinzel',serif;letter-spacing:.5px;min-width:90px}
-.player-show-video-btn{background:rgba(107,26,46,.1);border:none;color:var(--v);font-size:11px;padding:4px 10px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;white-space:nowrap;transition:var(--tr)}
-.player-show-video-btn:hover{background:var(--v);color:white}
+.player-time{font-size:11px;color:var(--tl);font-family:'Cinzel',serif;letter-spacing:.5px}
+
+
+/* Unified player CSS replaced by new YT/MP3 separate CSS */
 
 /* UPLOAD ZONE */
 .upload-zone{border:2px dashed rgba(107,26,46,.3);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:var(--tr);margin-bottom:10px}
@@ -721,7 +727,20 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:48px 24px 24px;m
     <div id="tab-orders"><div id="orders-list"><div class="loading"><div class="spinner"></div></div></div></div>
     <div id="tab-reservations" style="display:none"><div id="reservations-list"></div></div>
     <div id="tab-profile" style="display:none">
-      <div class="newsletter-banner" id="newsletter-banner"><p>📧 Abonează-te! Primești 5% reducere la fiecare comandă.</p><button class="btn-primary" onclick="subscribeNewsletter()">Abonează-mă</button></div>
+      <div id="newsletter-banner">
+        <div style="background:linear-gradient(135deg,var(--g),#b8860b);border-radius:var(--r);padding:20px;margin-bottom:24px">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+            <div>
+              <p style="color:var(--vd);font-weight:700;font-family:'Cinzel',serif;font-size:14px;margin-bottom:4px">📧 Newsletter Parohia Stornești</p>
+              <p style="font-size:13px;color:var(--vd);opacity:.85">Primești emailuri cu anunțuri noi și produse noi. <strong>Beneficiezi de 5% reducere la fiecare comandă!</strong></p>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn-primary" onclick="subscribeNewsletter()" style="background:var(--v)">✅ Abonează-mă</button>
+              <button class="btn-secondary" onclick="skipNewsletter()" style="background:rgba(255,255,255,.3);border-color:transparent;color:var(--vd);font-size:11px">Nu, mulțumesc</button>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="admin-form"><h3>Datele Mele</h3>
         <div class="admin-form-grid">
           <div class="form-group"><label class="form-label">Nume complet</label><input type="text" class="form-input" id="profile-name" oninput="validateField(this,'name')"><div class="field-error" id="err-profile-name"></div></div>
@@ -1013,6 +1032,16 @@ footer{background:var(--vd);color:rgba(255,255,255,.75);padding:48px 24px 24px;m
         <div class="form-group"><label class="form-label">Email *</label><input type="email" class="form-input" id="reg-email" oninput="validateField(this,'email')"><div class="field-error" id="err-reg-email"></div></div>
         <div class="form-group"><label class="form-label">Telefon *</label><input type="tel" class="form-input" id="reg-phone" oninput="validateField(this,'phone')"><div class="field-error" id="err-reg-phone"></div></div>
         <div class="form-group"><label class="form-label">Parolă (min 6 caractere) *</label><input type="password" class="form-input" id="reg-pass"></div>
+        <div style="background:var(--cr);border-radius:var(--rs);padding:14px;margin-bottom:14px;border:1px solid rgba(107,26,46,.1)">
+          <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:var(--tm)">
+            <input type="checkbox" id="reg-newsletter" style="width:16px;height:16px;margin-top:2px;accent-color:var(--v);flex-shrink:0">
+            <span>
+              <strong style="font-family:'Cinzel',serif;font-size:12px;color:var(--v)">📧 Abonare Newsletter</strong><br>
+              Doresc să primesc emailuri cu anunțuri noi și produse noi din magazinul parohiei.
+              <span style="color:var(--g);font-weight:700"> → Beneficiez de 5% reducere la fiecare comandă!</span>
+            </span>
+          </label>
+        </div>
         <div id="reg-err" style="color:#e74c3c;font-size:12px;margin-bottom:10px;display:none"></div>
         <button class="btn-primary" style="width:100%" onclick="registerEmail()">Creează cont</button>
       </div>
@@ -1144,9 +1173,9 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.mo
 // AUTH
 auth.onAuthStateChanged(u=>{currentUser=u;const ab=document.getElementById('admin-btn'),mb=document.getElementById('mobile-admin-btn'),ub=document.getElementById('user-btn');if(u){if(ub)ub.textContent='👤';if(u.email===ADMIN){if(ab)ab.style.display='';if(mb)mb.style.display='';}loadUserProfile();}else{if(ub)ub.textContent='🔓';if(ab)ab.style.display='none';if(mb)mb.style.display='none';}if(currentPage==='cont')loadAccountPage();if(currentPage==='admin')initAdmin();});
 function openAuthOrAccount(){if(currentUser)navigateTo('cont');else openModal('modal-auth');}
-async function signInEmail(){const e=document.getElementById('login-email').value.trim(),p=document.getElementById('login-pass').value,err=document.getElementById('login-err');try{await auth.signInWithEmailAndPassword(e,p);closeModal('modal-auth');toast('Autentificat!','success');navigateTo('cont');}catch(x){err.textContent='Email sau parolă incorectă.';err.style.display='';}}
-async function signInGoogle(){try{const r=await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());const u=r.user,ref=db.collection('users').doc(u.uid),s=await ref.get();if(!s.exists)await ref.set({name:u.displayName||'',email:u.email,phone:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),newsletter:false,gdprAccepted:true});closeModal('modal-auth');toast('Bine ai venit!','success');navigateTo('cont');}catch(x){toast('Eroare Google: '+x.message,'error');}}
-async function registerEmail(){const name=document.getElementById('reg-name').value.trim(),email=document.getElementById('reg-email').value.trim(),phone=document.getElementById('reg-phone').value.trim(),pass=document.getElementById('reg-pass').value,err=document.getElementById('reg-err');err.style.display='none';if(!validateVal(name,'name')||!validateVal(email,'email')||!validateVal(phone,'phone')){err.textContent='Corectați câmpurile.';err.style.display='';return;}if(pass.length<6){err.textContent='Parola min 6 caractere.';err.style.display='';return;}try{const r=await auth.createUserWithEmailAndPassword(email,pass);await r.user.updateProfile({displayName:name});await db.collection('users').doc(r.user.uid).set({name,email,phone,createdAt:firebase.firestore.FieldValue.serverTimestamp(),newsletter:false,gdprAccepted:true});closeModal('modal-auth');toast('Cont creat!','success');navigateTo('cont');}catch(x){err.textContent=x.message;err.style.display='';}}
+async function signInEmail(){const e=document.getElementById('login-email').value.trim(),p=document.getElementById('login-pass').value,err=document.getElementById('login-err');try{await auth.signInWithEmailAndPassword(e,p);closeModal('modal-auth');toast('Autentificat!','success');const redirect=sessionStorage.getItem('afterLogin');if(redirect){sessionStorage.removeItem('afterLogin');navigateTo(redirect);}else{navigateTo('cont');}}catch(x){err.textContent='Email sau parolă incorectă.';err.style.display='';}}
+async function signInGoogle(){try{const r=await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());const u=r.user,ref=db.collection('users').doc(u.uid),s=await ref.get();if(!s.exists)await ref.set({name:u.displayName||'',email:u.email,phone:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),newsletter:false,gdprAccepted:true});closeModal('modal-auth');toast('Bine ai venit!','success');const redirect=sessionStorage.getItem('afterLogin');if(redirect){sessionStorage.removeItem('afterLogin');navigateTo(redirect);}else{navigateTo('cont');}}}catch(x){toast('Eroare Google: '+x.message,'error');}}
+async function registerEmail(){const name=document.getElementById('reg-name').value.trim(),email=document.getElementById('reg-email').value.trim(),phone=document.getElementById('reg-phone').value.trim(),pass=document.getElementById('reg-pass').value,err=document.getElementById('reg-err');err.style.display='none';if(!validateVal(name,'name')||!validateVal(email,'email')||!validateVal(phone,'phone')){err.textContent='Corectați câmpurile.';err.style.display='';return;}if(pass.length<6){err.textContent='Parola min 6 caractere.';err.style.display='';return;}const wantsNewsletter=document.getElementById('reg-newsletter')?.checked||false;try{const r=await auth.createUserWithEmailAndPassword(email,pass);await r.user.updateProfile({displayName:name});await db.collection('users').doc(r.user.uid).set({name,email,phone,createdAt:firebase.firestore.FieldValue.serverTimestamp(),newsletter:wantsNewsletter,gdprAccepted:true});closeModal('modal-auth');if(wantsNewsletter){toast('Cont creat! Ești abonat la newsletter — beneficiezi de 5% reducere! 🎉','success');}else{toast('Cont creat cu succes!','success');}const redirect=sessionStorage.getItem('afterLogin');if(redirect){sessionStorage.removeItem('afterLogin');navigateTo(redirect);}else{navigateTo('cont');}}catch(x){err.textContent=x.message;err.style.display='';}}
 async function signOutUser(){await auth.signOut();toast('Deconectat.','info');navigateTo('acasa');}
 function switchAuthTab(t,btn){document.querySelectorAll('.auth-tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.getElementById('auth-login').style.display=t==='login'?'':'none';document.getElementById('auth-register').style.display=t==='register'?'':'none';}
 function acceptGdpr(){localStorage.setItem('gdprAccepted','1');document.getElementById('gdpr-first-modal').style.display='none';}
@@ -1167,7 +1196,25 @@ function validateField(inp,t){const v=inp.value.trim(),eid='err-'+inp.id,eel=doc
 // CART
 function saveCart(){localStorage.setItem('cart',JSON.stringify(cart));updateCartBadge();}
 function updateCartBadge(){const cnt=cart.reduce((s,i)=>s+i.qty,0),tot=cart.reduce((s,i)=>s+i.qty*i.price,0),b=document.getElementById('cart-badge');if(b){b.textContent=cnt;b.style.display=cnt>0?'':'none';}const tl=document.getElementById('cart-total-label');if(tl)tl.textContent=tot.toFixed(2)+' lei';}
-async function addToCart(prod,qty=1){const snap=await db.collection('products').doc(prod.id).get();if(!snap.exists)return;const d=snap.data(),inCart=(cart.find(i=>i.id===prod.id)||{qty:0}).qty;if(d.stock<inCart+qty){toast(`Stoc insuficient! Disponibil: ${d.stock-inCart}`,'error');return;}await db.collection('products').doc(prod.id).update({stock:firebase.firestore.FieldValue.increment(-qty)});const idx=cart.findIndex(i=>i.id===prod.id);if(idx>-1)cart[idx].qty+=qty;else cart.push({id:prod.id,name:prod.name,price:prod.price,img:prod.images?.[0]||'',qty});saveCart();toast(`„${prod.name}" adăugat!`,'success');loadProducts();}
+async function addToCart(prod,qty=1){
+  // Check stock from Firestore
+  try{
+    const snap=await db.collection('products').doc(prod.id).get();
+    if(!snap.exists)return;
+    const d=snap.data(),inCart=(cart.find(i=>i.id===prod.id)||{qty:0}).qty;
+    if(d.stock<inCart+qty){toast(`Stoc insuficient! Disponibil: ${Math.max(0,d.stock-inCart)}`,'error');return;}
+    // Save stock info locally for validation
+    prod._stockAvailable=d.stock;
+  }catch(e){/* if offline, proceed anyway */}
+  
+  const idx=cart.findIndex(i=>i.id===prod.id);
+  if(idx>-1)cart[idx].qty+=qty;
+  else cart.push({id:prod.id,name:prod.name,price:prod.price,img:prod.images?.[0]||'',qty,category:prod.category||''});
+  saveCart();
+  toast(`„${prod.name}" adăugat în coș!`,'success');
+  // Refresh product display without full reload
+  renderProducts();
+}
 function openCart(){navigateTo('cart');}
 function renderCart(){const el=document.getElementById('cart-items-list');if(!el)return;if(cart.length===0){el.innerHTML='<div class="empty-state"><div class="empty-icon">🛒</div><p>Coșul este gol</p></div>';const cs=document.getElementById('cart-summary');if(cs)cs.innerHTML='';const cb=document.getElementById('checkout-btn');if(cb)cb.disabled=true;return;}const cb=document.getElementById('checkout-btn');if(cb)cb.disabled=false;el.innerHTML=cart.map((item,idx)=>`<div class="cart-item"><div class="cart-item-img">${item.img?`<img src="${item.img}" alt="">`:'🕯'}</div><div><div class="cart-item-name">${item.name}</div><div class="cart-item-price">${item.price.toFixed(2)} lei/buc</div><div class="qty-control" style="margin-top:6px;display:inline-flex"><button class="qty-btn" onclick="changeCartQty(${idx},-1)">−</button><input type="number" class="qty-input" value="${item.qty}" min="1" onchange="setCartQty(${idx},this.value)"><button class="qty-btn" onclick="changeCartQty(${idx},1)">+</button></div></div><div class="cart-item-total">${(item.qty*item.price).toFixed(2)} lei</div><button class="btn-remove" onclick="removeFromCart(${idx})">✕</button></div>`).join('');renderCartSummary();}
 function renderCartSummary(){const sub=cart.reduce((s,i)=>s+i.qty*i.price,0),disc=appliedCoupon?sub*appliedCoupon.discount/100:0,tot=sub-disc,el=document.getElementById('cart-summary');if(el)el.innerHTML=`<div class="summary-row"><span>Subtotal</span><span>${sub.toFixed(2)} lei</span></div>${appliedCoupon?`<div class="summary-row" style="color:var(--ok)"><span>Reducere −${appliedCoupon.discount}%</span><span>−${disc.toFixed(2)} lei</span></div>`:''}<div class="summary-row total"><span>TOTAL</span><span>${tot.toFixed(2)} lei</span></div>`;}
@@ -1175,7 +1222,18 @@ function changeCartQty(i,d){cart[i].qty=Math.max(1,cart[i].qty+d);saveCart();ren
 function setCartQty(i,v){cart[i].qty=Math.max(1,parseInt(v)||1);saveCart();renderCart();}
 function removeFromCart(i){cart.splice(i,1);saveCart();renderCart();}
 async function applyCoupon(){const code=document.getElementById('coupon-input').value.trim().toUpperCase(),msg=document.getElementById('coupon-msg');if(!code){msg.textContent='';return;}try{const s=await db.collection('coupons').where('code','==',code).get();if(s.empty){msg.style.color='#e74c3c';msg.textContent='Cod invalid.';return;}const d=s.docs[0].data(),now=new Date();if(d.expiresAt&&d.expiresAt.toDate()<now){msg.style.color='#e74c3c';msg.textContent='Cupon expirat.';return;}if(d.maxUses&&d.usedCount>=d.maxUses){msg.style.color='#e74c3c';msg.textContent='Cupon epuizat.';return;}appliedCoupon={id:s.docs[0].id,code,discount:d.discount};msg.style.color='var(--ok)';msg.textContent=`✅ Aplicat: −${d.discount}%`;renderCartSummary();}catch(e){msg.style.color='#e74c3c';msg.textContent='Eroare.';}}
-function goToCheckout(){if(cart.length===0){toast('Coșul este gol!','warning');return;}navigateTo('checkout');}
+function goToCheckout(){
+  if(cart.length===0){toast('Coșul este gol!','warning');return;}
+  if(!currentUser){
+    // Show login modal with message
+    toast('Autentifică-te pentru a finaliza comanda!','info');
+    // Set redirect after login
+    sessionStorage.setItem('afterLogin','checkout');
+    openModal('modal-auth');
+    return;
+  }
+  navigateTo('checkout');
+}
 // CHECKOUT
 async function initCheckout(){renderCheckoutItems();if(currentUser){try{const s=await db.collection('users').doc(currentUser.uid).get();if(s.exists){const d=s.data();const f=id=>document.getElementById(id);['co-name','co-email','co-phone','co-addr','co-city','co-county'].forEach(id=>{if(f(id))f(id).value='';});if(f('co-name'))f('co-name').value=d.name||'';if(f('co-email'))f('co-email').value=d.email||'';if(f('co-phone'))f('co-phone').value=d.phone||'';if(f('co-addr'))f('co-addr').value=d.address||'';if(f('co-city'))f('co-city').value=d.city||'';if(f('co-county'))f('co-county').value=d.county||'';}}catch(e){}}try{const s=await db.collection('transport').get();allTransport=s.docs.map(d=>({id:d.id,...d.data()}));let opts=allTransport.filter(t=>t.clientChoice);if(!opts.length)opts=allTransport;const el=document.getElementById('transport-options');if(!opts.length){el.innerHTML='<p style="font-size:13px;color:var(--tl)">Transportul va fi stabilit de parohie.</p>';}else{el.innerHTML=opts.map(t=>`<div class="transport-option" id="topt-${t.id}" onclick="selectTransport('${t.id}')"><div><div class="transport-name">${t.name}</div><div class="transport-desc">${t.description||''}</div></div><span class="transport-cost">${parseFloat(t.cost||0).toFixed(2)} lei</span></div>`).join('');selectTransport(opts[0].id);}}catch(e){}updateCheckoutTotal();}
 function renderCheckoutItems(){const el=document.getElementById('checkout-items-list');if(el)el.innerHTML=cart.map(i=>`<div class="checkout-item"><span class="item-name">${i.name}</span><span class="item-qty">×${i.qty}</span><span class="item-price">${(i.qty*i.price).toFixed(2)} lei</span></div>`).join('');updateCheckoutTotal();}
@@ -1183,7 +1241,13 @@ function selectTransport(id){selectedTransportId=id;document.querySelectorAll('.
 function selectPayment(m){selectedPayment=m;document.getElementById('pay-ramburs').classList.toggle('selected',m==='ramburs');document.getElementById('pay-transfer').classList.toggle('selected',m==='transfer');document.getElementById('transfer-info').style.display=m==='transfer'?'':'none';}
 function toggleDiffAddr(){document.getElementById('diff-addr-section').style.display=document.getElementById('diff-addr').checked?'':'none';}
 function updateCheckoutTotal(){const sub=cart.reduce((s,i)=>s+i.qty*i.price,0),disc=appliedCoupon?sub*appliedCoupon.discount/100:0,t=allTransport.find(t=>t.id===selectedTransportId),tr=t?parseFloat(t.cost||0):0,tot=sub-disc+tr;const f=id=>document.getElementById(id);if(f('co-subtotal'))f('co-subtotal').textContent=sub.toFixed(2)+' lei';if(f('co-discount-row'))f('co-discount-row').style.display=appliedCoupon?'':'none';if(appliedCoupon&&f('co-discount'))f('co-discount').textContent='−'+disc.toFixed(2)+' lei';if(f('co-transport-cost'))f('co-transport-cost').textContent=tr>0?tr.toFixed(2)+' lei':'Gratuit';if(f('co-total'))f('co-total').textContent=tot.toFixed(2)+' lei';}
-async function placeOrder(){const gdpr=document.getElementById('co-gdpr');if(!gdpr.checked){const w=document.getElementById('gdpr-check-wrap');w.classList.add('error');setTimeout(()=>w.classList.remove('error'),1500);w.scrollIntoView({behavior:'smooth',block:'center'});toast('Acceptați GDPR!','error');return;}let ok=true;[{id:'co-name',t:'name'},{id:'co-email',t:'email'},{id:'co-phone',t:'phone'},{id:'co-addr',t:'required'},{id:'co-city',t:'required'}].forEach(f=>{const el=document.getElementById(f.id);if(el&&!validateField(el,f.t))ok=false;});if(!ok){toast('Corectați câmpurile!','error');return;}const t=allTransport.find(x=>x.id===selectedTransportId),tc=t?parseFloat(t.cost||0):0,sub=cart.reduce((s,i)=>s+i.qty*i.price,0),disc=appliedCoupon?sub*appliedCoupon.discount/100:0,tot=sub-disc+tc;const g=id=>document.getElementById(id)?.value?.trim()||'';const ord={userId:currentUser?currentUser.uid:null,name:g('co-name'),email:g('co-email'),phone:g('co-phone'),address:g('co-addr'),city:g('co-city'),county:g('co-county'),zip:g('co-zip'),notes:g('co-notes'),items:cart.map(i=>({productId:i.id,productName:i.name,qty:i.qty,price:i.price,total:i.qty*i.price})),subtotal:sub,discountCode:appliedCoupon?appliedCoupon.code:null,discountAmount:disc,transportId:selectedTransportId,transportName:t?t.name:'',transport:tc,total:tot,paymentMethod:selectedPayment,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()};try{const ref=await db.collection('orders').add(ord);for(const item of cart)await db.collection('products').doc(item.id).update({soldCount:firebase.firestore.FieldValue.increment(item.qty)});if(appliedCoupon)await db.collection('coupons').doc(appliedCoupon.id).update({usedCount:firebase.firestore.FieldValue.increment(1)});await db.collection('emailQueue').add({orderId:ref.id,type:'confirm',email:ord.email,createdAt:firebase.firestore.FieldValue.serverTimestamp()});sendOrderEmail(ref.id,ord);cart=[];appliedCoupon=null;saveCart();document.getElementById('success-order-num').textContent='#'+ref.id.substring(0,8).toUpperCase();navigateTo('success');let c=7;const iv=setInterval(()=>{c--;const el=document.getElementById('redirect-count');if(el)el.textContent=c;if(c<=0){clearInterval(iv);navigateTo('cont');}},1000);}catch(e){toast('Eroare: '+e.message,'error');}}
+async function placeOrder(){const gdpr=document.getElementById('co-gdpr');if(!gdpr.checked){const w=document.getElementById('gdpr-check-wrap');w.classList.add('error');setTimeout(()=>w.classList.remove('error'),1500);w.scrollIntoView({behavior:'smooth',block:'center'});toast('Acceptați GDPR!','error');return;}let ok=true;[{id:'co-name',t:'name'},{id:'co-email',t:'email'},{id:'co-phone',t:'phone'},{id:'co-addr',t:'required'},{id:'co-city',t:'required'}].forEach(f=>{const el=document.getElementById(f.id);if(el&&!validateField(el,f.t))ok=false;});if(!ok){toast('Corectați câmpurile!','error');return;}const t=allTransport.find(x=>x.id===selectedTransportId),tc=t?parseFloat(t.cost||0):0,sub=cart.reduce((s,i)=>s+i.qty*i.price,0),disc=appliedCoupon?sub*appliedCoupon.discount/100:0,tot=sub-disc+tc;const g=id=>document.getElementById(id)?.value?.trim()||'';const ord={userId:currentUser?currentUser.uid:null,name:g('co-name'),email:g('co-email'),phone:g('co-phone'),address:g('co-addr'),city:g('co-city'),county:g('co-county'),zip:g('co-zip'),notes:g('co-notes'),items:cart.map(i=>({productId:i.id,productName:i.name,qty:i.qty,price:i.price,total:i.qty*i.price})),subtotal:sub,discountCode:appliedCoupon?appliedCoupon.code:null,discountAmount:disc,transportId:selectedTransportId,transportName:t?t.name:'',transport:tc,total:tot,paymentMethod:selectedPayment,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()};try{const ref=await db.collection('orders').add(ord);for(const item of cart){
+  // Decrement stock + increment soldCount at order time
+  await db.collection('products').doc(item.id).update({
+    stock:firebase.firestore.FieldValue.increment(-item.qty),
+    soldCount:firebase.firestore.FieldValue.increment(item.qty)
+  });
+}if(appliedCoupon)await db.collection('coupons').doc(appliedCoupon.id).update({usedCount:firebase.firestore.FieldValue.increment(1)});await db.collection('emailQueue').add({orderId:ref.id,type:'confirm',email:ord.email,createdAt:firebase.firestore.FieldValue.serverTimestamp()});sendOrderEmail(ref.id,ord);cart=[];appliedCoupon=null;saveCart();document.getElementById('success-order-num').textContent='#'+ref.id.substring(0,8).toUpperCase();navigateTo('success');let c=7;const iv=setInterval(()=>{c--;const el=document.getElementById('redirect-count');if(el)el.textContent=c;if(c<=0){clearInterval(iv);navigateTo('cont');}},1000);}catch(e){toast('Eroare: '+e.message,'error');}}
 async function sendOrderEmail(id,d){if(!emailConfig.publicKey||!emailConfig.serviceId)return;try{emailjs.init(emailConfig.publicKey);if(emailConfig.templateConfirm)await emailjs.send(emailConfig.serviceId,emailConfig.templateConfirm,{to_name:d.name,to_email:d.email,order_id:id.substring(0,8).toUpperCase(),total:d.total.toFixed(2)+' lei',products_list:d.items.map(i=>`${i.productName} x${i.qty}=${i.total.toFixed(2)} lei`).join('\n'),payment_method:d.paymentMethod,status:'În așteptare'});}catch(e){}}
 // HOME
 async function loadHomePage(){loadSchedule();loadUrgentAnnouncements();loadHighlights();loadSaintDay();}
@@ -1247,14 +1311,82 @@ async function submitReview(){if(!currentUser){toast('Autentifică-te!','warning
 function openReservation(){if(!currentProductModal)return;openProductReserve(currentProductModal);closeModal('modal-product');}
 async function submitReservation(){if(!validateField(document.getElementById('res-name'),'name'))return;if(!validateField(document.getElementById('res-phone'),'phone'))return;try{await db.collection('reservations').add({productId:currentResProduct?.id||'',productName:document.getElementById('res-product').value,qty:parseInt(document.getElementById('res-qty').value)||1,name:document.getElementById('res-name').value.trim(),phone:document.getElementById('res-phone').value.trim(),pickupDate:document.getElementById('res-date').value,msg:document.getElementById('res-msg').value.trim(),userId:currentUser?currentUser.uid:null,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()});toast('Rezervare trimisă!','success');closeModal('modal-reservation');}catch(e){toast('Eroare: '+e.message,'error');}}
 // AUDIO - unified player: play button + progress bar, video appears when playing
-async function loadAudio(){const el=document.getElementById('audio-list');el.innerHTML='<div class="loading"><div class="spinner"></div></div>';try{const s=await db.collection('audio').orderBy('createdAt','desc').get();allAudioData=s.docs.map(d=>({id:d.id,...d.data()}));}catch(e){try{const s=await db.collection('audio').get();allAudioData=s.docs.map(d=>({id:d.id,...d.data()}));}catch(e2){el.innerHTML='<p>Eroare.</p>';return;}}if(!allAudioData.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">🎵</div><p>Nicio înregistrare</p></div>';return;}el.innerHTML=allAudioData.map((a,idx)=>{const isYT=isYouTube(a.url),ytId=isYT?getYTId(a.url):'',src=a.base64||(a.url&&!isYT?convertDropbox(a.url):'');return`<div class="audio-card fade-in"><div class="audio-header"><div class="audio-icon ${isYT?'youtube':'mp3'}">${isYT?'📺':'🎵'}</div><div class="audio-meta"><div class="audio-title">${a.title||''}</div><div class="audio-info">${a.category?`<span class="type-badge badge-slujba">${a.category}</span>`:''} ${a.author?`<span>👤 ${a.author}</span>`:''} <span>📅 ${formatDate(a.createdAt)}</span></div>${a.description?`<p style="font-size:12px;color:var(--tm);margin-top:4px">${a.description}</p>`:''}</div></div>
-<div class="unified-player"><div class="player-media" id="pmedia-${idx}"></div>
-<div class="player-controls"><button class="mp3-play-btn" id="pbtn-${idx}" onclick="togglePlayer(${idx},'${isYT?'youtube':'mp3'}','${isYT?ytId:src.replace(/'/g,"&#39;")}')">▶</button><div class="player-progress-wrap"><div class="player-progress-bar" id="pbar-${idx}" onclick="seekPlayer(event,${idx})"><div class="player-progress-fill" id="pfill-${idx}"></div></div><div class="player-time" id="ptime-${idx}">0:00 / 0:00</div></div>${isYT?`<button class="player-show-video-btn" id="pvbtn-${idx}" onclick="toggleVideoPanel(${idx})">📺 Video</button>`:''}</div></div>
-${!isYT&&src?`<audio id="paudio-${idx}" src="${src}" ontimeupdate="updatePlayer(${idx})" onloadedmetadata="updatePlayer(${idx})" onended="playerEnded(${idx})" preload="none"></audio>`:`<div id="paudio-${idx}" style="display:none" data-ytid="${ytId}"></div>`}
-</div>`;}).join('');}
+async function loadAudio(){const el=document.getElementById('audio-list');el.innerHTML='<div class="loading"><div class="spinner"></div></div>';try{const s=await db.collection('audio').orderBy('createdAt','desc').get();allAudioData=s.docs.map(d=>({id:d.id,...d.data()}));}catch(e){try{const s=await db.collection('audio').get();allAudioData=s.docs.map(d=>({id:d.id,...d.data()}));}catch(e2){el.innerHTML='<p>Eroare.</p>';return;}}if(!allAudioData.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">🎵</div><p>Nicio înregistrare</p></div>';return;}el.innerHTML=allAudioData.map((a,idx)=>{const isYT=isYouTube(a.url),ytId=isYT?getYTId(a.url):'',src=!isYT?convertDropbox(a.url||''):'';return`<div class="audio-card fade-in">
+<div class="audio-header">
+  <div class="audio-icon ${isYT?'youtube':'mp3'}">${isYT?'📺':'🎵'}</div>
+  <div class="audio-meta">
+    <div class="audio-title">${a.title||''}</div>
+    <div class="audio-info">
+      ${a.category?`<span class="type-badge badge-slujba">${a.category}</span>`:''}
+      ${a.author?`<span>👤 ${a.author}</span>`:''}
+      <span>📅 ${formatDate(a.createdAt)}</span>
+    </div>
+    ${a.description?`<p style="font-size:12px;color:var(--tm);margin-top:4px">${a.description}</p>`:''}
+  </div>
+</div>
+${isYT?`
+<div class="yt-player-wrap" id="ytw-${idx}">
+  <div class="yt-thumb-container" id="yt-thumb-${idx}" onclick="loadYTPlayer(${idx},'${ytId}')">
+    <img src="https://img.youtube.com/vi/${ytId}/hqdefault.jpg" alt="${a.title||''}" style="width:100%;height:100%;object-fit:cover">
+    <div class="yt-overlay">
+      <div class="yt-play-circle">▶</div>
+      <div class="yt-label">Click pentru a reda</div>
+    </div>
+  </div>
+  <div class="yt-iframe-wrap" id="yt-iframe-${idx}" style="display:none"></div>
+</div>`:`
+<div class="mp3-player-wrap">
+  <audio id="paudio-${idx}" src="${src}" ontimeupdate="updatePlayer(${idx})" onloadedmetadata="updatePlayer(${idx})" onended="playerEnded(${idx})" preload="none"></audio>
+  <div class="player-controls">
+    <button class="mp3-play-btn" id="pbtn-${idx}" onclick="toggleMp3(${idx})">▶</button>
+    <div class="player-progress-wrap">
+      <div class="player-progress-bar" id="pbar-${idx}" onclick="seekPlayer(event,${idx})">
+        <div class="player-progress-fill" id="pfill-${idx}"></div>
+      </div>
+      <div class="player-time" id="ptime-${idx}">0:00 / 0:00</div>
+    </div>
+  </div>
+</div>`}
+</div>`}).join('');}
 
 function isYouTube(u){return u&&(u.includes('youtube.com')||u.includes('youtu.be'));}
 function getYTId(u){const m=u.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);return m?m[1]:'';}
+
+// Load YouTube iframe on click
+function loadYTPlayer(idx,ytId){
+  const thumb=document.getElementById('yt-thumb-'+idx);
+  const iframeWrap=document.getElementById('yt-iframe-'+idx);
+  if(!thumb||!iframeWrap)return;
+  thumb.style.display='none';
+  iframeWrap.style.display='';
+  iframeWrap.innerHTML=`<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+}
+
+// MP3 play/pause toggle
+function toggleMp3(idx){
+  const audio=document.getElementById('paudio-'+idx);
+  const btn=document.getElementById('pbtn-'+idx);
+  if(!audio)return;
+  // Stop all other audios
+  if(activeAudioEl&&activeAudioEl!==audio){
+    activeAudioEl.pause();
+    const oi=activeAudioEl.dataset.pidx;
+    const ob=document.getElementById('pbtn-'+oi);
+    if(ob)ob.textContent='▶';
+  }
+  audio.dataset.pidx=idx;
+  if(audio.paused){
+    audio.play().catch(err=>{
+      toast('Nu s-a putut reda. Verificați URL-ul sau permisiunile (CORS).','error');
+      console.error('Audio error:',err);
+    });
+    btn.textContent='⏸';
+    activeAudioEl=audio;
+  } else {
+    audio.pause();
+    btn.textContent='▶';
+  }
+}
 function convertDropbox(u){if(!u)return'';
 // Dropbox
 if(u.includes('dropbox.com'))return u.replace('www.dropbox.com','dl.dropboxusercontent.com').replace('dl=0','dl=1');
@@ -1263,11 +1395,9 @@ if(u.includes('drive.google.com/file/d/')){const m=u.match(/\/d\/([a-zA-Z0-9_-]+
 if(u.includes('drive.google.com/open?id=')){const m=u.match(/id=([a-zA-Z0-9_-]+)/);if(m)return`https://drive.google.com/uc?export=download&id=${m[1]}`;}
 return u;}
 
-function togglePlayer(idx,type,src){const btn=document.getElementById('pbtn-'+idx),media=document.getElementById('pmedia-'+idx);if(type==='youtube'){const pm=document.getElementById('pmedia-'+idx);const showing=pm.classList.contains('show');if(!showing){pm.classList.add('show');pm.innerHTML=`<iframe src="https://www.youtube.com/embed/${src}?autoplay=1&enablejsapi=1" frameborder="0" allowfullscreen allow="autoplay"></iframe>`;btn.textContent='⏸';}else{pm.classList.remove('show');pm.innerHTML='';btn.textContent='▶';}}else{const audio=document.getElementById('paudio-'+idx);if(!audio)return;// Stop all other audios
-if(activeAudioEl&&activeAudioEl!==audio){activeAudioEl.pause();const oi=activeAudioEl.dataset.pidx;const ob=document.getElementById('pbtn-'+oi);if(ob)ob.textContent='▶';const om=document.getElementById('pmedia-'+oi);if(om){om.classList.remove('show');om.innerHTML='';}}
-audio.dataset.pidx=idx;if(audio.paused){audio.play().catch(err=>{toast('Nu s-a putut reda. Verificați URL-ul sau permisiunile fișierului.','error');console.error('Audio error:',err);});btn.textContent='⏸';activeAudioEl=audio;}else{audio.pause();btn.textContent='▶';}}}
+// togglePlayer replaced by loadYTPlayer + toggleMp3
 
-function toggleVideoPanel(idx){const media=document.getElementById('pmedia-'+idx),audio=document.getElementById('paudio-'+idx),ytId=audio?audio.dataset.ytid:'';if(media.classList.contains('show')){media.classList.remove('show');media.innerHTML='';}else{media.classList.add('show');if(ytId){media.innerHTML=`<img class="yt-thumb" src="https://img.youtube.com/vi/${ytId}/hqdefault.jpg" alt="">`;}}  }
+// toggleVideoPanel replaced by loadYTPlayer
 
 function updatePlayer(idx){const audio=document.getElementById('paudio-'+idx);if(!audio)return;const fill=document.getElementById('pfill-'+idx),time=document.getElementById('ptime-'+idx),pct=audio.duration?(audio.currentTime/audio.duration)*100:0;if(fill)fill.style.width=pct+'%';if(time)time.textContent=`${fmtTime(audio.currentTime)} / ${fmtTime(audio.duration||0)}`;}
 function seekPlayer(e,idx){const audio=document.getElementById('paudio-'+idx),bar=document.getElementById('pbar-'+idx);if(!audio||!bar||!audio.duration)return;audio.currentTime=((e.clientX-bar.getBoundingClientRect().left)/bar.offsetWidth)*audio.duration;}
@@ -1292,7 +1422,9 @@ async function cancelReservation(id){if(!confirm('Anulezi?'))return;await db.col
 async function loadProfile(){if(!currentUser)return;try{const s=await db.collection('users').doc(currentUser.uid).get();if(s.exists){const d=s.data();document.getElementById('profile-name').value=d.name||'';document.getElementById('profile-email').value=d.email||'';document.getElementById('profile-phone').value=d.phone||'';document.getElementById('profile-addr').value=d.address||'';document.getElementById('profile-city').value=d.city||'';document.getElementById('profile-county').value=d.county||'';const nb=document.getElementById('newsletter-banner');if(d.newsletter&&nb)nb.innerHTML='<p style="color:var(--vd)">✅ Ești abonat! 5% reducere la fiecare comandă.</p>';}}catch(e){}}
 async function loadUserProfile(){if(!currentUser)return;try{const s=await db.collection('users').doc(currentUser.uid).get();if(s.exists){const d=s.data();const f=id=>document.getElementById(id);if(f('co-name'))f('co-name').value=d.name||'';if(f('co-email'))f('co-email').value=d.email||'';if(f('co-phone'))f('co-phone').value=d.phone||'';}}catch(e){}}
 async function saveProfile(){if(!currentUser)return;if(!validateField(document.getElementById('profile-name'),'name'))return;const data={name:document.getElementById('profile-name').value.trim(),phone:document.getElementById('profile-phone').value.trim(),address:document.getElementById('profile-addr').value.trim(),city:document.getElementById('profile-city').value.trim(),county:document.getElementById('profile-county').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};try{await db.collection('users').doc(currentUser.uid).update(data);await currentUser.updateProfile({displayName:data.name});toast('Profil salvat!','success');}catch(e){toast('Eroare: '+e.message,'error');}}
-async function subscribeNewsletter(){if(!currentUser)return;await db.collection('users').doc(currentUser.uid).update({newsletter:true});const nb=document.getElementById('newsletter-banner');if(nb)nb.innerHTML='<p style="color:var(--vd)">✅ Abonat! 5% reducere la fiecare comandă.</p>';toast('Abonat!','success');}
+async function subscribeNewsletter(){if(!currentUser)return;await db.collection('users').doc(currentUser.uid).update({newsletter:true});const nb=document.getElementById('newsletter-banner');if(nb)nb.innerHTML=`<div style="background:rgba(39,174,96,.1);border:1px solid rgba(39,174,96,.3);border-radius:var(--r);padding:16px;margin-bottom:24px;display:flex;align-items:center;gap:12px"><span style="font-size:24px">✅</span><div><p style="font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--ok)">Ești abonat la newsletter!</p><p style="font-size:12px;color:var(--tm)">Vei primi emailuri cu noutăți și beneficiezi de <strong>5% reducere</strong> la fiecare comandă.</p></div><button class="btn-secondary" onclick="unsubscribeNewsletter()" style="margin-left:auto;font-size:11px">Dezabonare</button></div>`;toast('Abonat! 5% reducere activă 🎉','success');}
+async function unsubscribeNewsletter(){if(!currentUser)return;if(!confirm('Ești sigur că vrei să te dezabonezi? Vei pierde reducerea de 5%.'))return;await db.collection('users').doc(currentUser.uid).update({newsletter:false});toast('Dezabonat.','info');loadProfile();}
+function skipNewsletter(){const nb=document.getElementById('newsletter-banner');if(nb)nb.innerHTML=`<div style="background:var(--cd);border-radius:var(--r);padding:12px 16px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center"><p style="font-size:12px;color:var(--tl)">Nu ești abonat la newsletter. <a href="#" onclick="loadProfile()" style="color:var(--v)">Abonează-te</a> pentru 5% reducere.</p></div>`;sessionStorage.setItem('nl-skipped','1');}
 
 // HELPERS
 function formatDate(ts){if(!ts)return'';const d=ts.toDate?ts.toDate():(ts.seconds?new Date(ts.seconds*1000):new Date(ts));return d.toLocaleDateString('ro-RO',{day:'2-digit',month:'2-digit',year:'numeric'});}
@@ -1466,20 +1598,27 @@ async function loadSiteConfig() {
 // NEWSLETTER - send email to all subscribers on new content
 // ============================================================
 async function sendNewsletterToSubscribers(subject, bodyText) {
-  if (!emailConfig.publicKey || !emailConfig.serviceId || !emailConfig.templateConfirm) {
-    return;
+  if (!emailConfig.publicKey || !emailConfig.serviceId) {
+    console.warn('EmailJS not configured');
+    return 0;
   }
   try {
-    // Get all newsletter subscribers
-    const snap = await db.collection('users').where('newsletter', '==', true).get();
-    const subscribers = snap.docs.map(d => d.data());
-    if (!subscribers.length) return;
-    
     emailjs.init(emailConfig.publicKey);
     const nlTemplate = emailConfig.templateNewsletter || emailConfig.templateConfirm;
-    let sent = 0;
+    if (!nlTemplate) { console.warn('No newsletter template'); return 0; }
+
+    // Get ALL users then filter client-side (avoids Firestore index issues)
+    const snap = await db.collection('users').get();
+    const subscribers = snap.docs.map(d => d.data()).filter(u => u.newsletter === true && u.email);
+    
+    console.log('Newsletter subscribers found:', subscribers.length);
+    if (!subscribers.length) {
+      toast('Niciun abonat la newsletter!', 'warning');
+      return 0;
+    }
+
+    let sent = 0, failed = 0;
     for (const user of subscribers) {
-      if (!user.email) continue;
       try {
         await emailjs.send(emailConfig.serviceId, nlTemplate, {
           to_name: user.name || 'Credincios',
@@ -1491,12 +1630,21 @@ async function sendNewsletterToSubscribers(subject, bodyText) {
           status: 'Newsletter Parohia Stornești'
         });
         sent++;
-        await new Promise(r => setTimeout(r, 300)); // avoid rate limit
-      } catch(e) {}
+        await new Promise(r => setTimeout(r, 400));
+      } catch(e) {
+        console.error('Failed to send to', user.email, e);
+        failed++;
+      }
     }
-    toast(`Newsletter trimis la ${sent} abonați!`, 'success');
+    const msg = failed > 0
+      ? `Newsletter trimis la ${sent} abonați (${failed} erori)`
+      : `Newsletter trimis la ${sent} abonați!`;
+    toast(msg, sent > 0 ? 'success' : 'warning');
+    return sent;
   } catch(e) {
     toast('Eroare newsletter: ' + e.message, 'error');
+    console.error('Newsletter error:', e);
+    return 0;
   }
 }
 
