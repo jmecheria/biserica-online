@@ -1174,7 +1174,7 @@ document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.mo
 auth.onAuthStateChanged(u=>{currentUser=u;const ab=document.getElementById('admin-btn'),mb=document.getElementById('mobile-admin-btn'),ub=document.getElementById('user-btn');if(u){if(ub)ub.textContent='👤';if(u.email===ADMIN){if(ab)ab.style.display='';if(mb)mb.style.display='';}loadUserProfile();}else{if(ub)ub.textContent='🔓';if(ab)ab.style.display='none';if(mb)mb.style.display='none';}if(currentPage==='cont')loadAccountPage();if(currentPage==='admin')initAdmin();});
 function openAuthOrAccount(){if(currentUser)navigateTo('cont');else openModal('modal-auth');}
 async function signInEmail(){const e=document.getElementById('login-email').value.trim(),p=document.getElementById('login-pass').value,err=document.getElementById('login-err');try{await auth.signInWithEmailAndPassword(e,p);closeModal('modal-auth');toast('Autentificat!','success');const redirect=sessionStorage.getItem('afterLogin');if(redirect){sessionStorage.removeItem('afterLogin');navigateTo(redirect);}else{navigateTo('cont');}}catch(x){err.textContent='Email sau parolă incorectă.';err.style.display='';}}
-async function signInGoogle(){try{const r=await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());const u=r.user,ref=db.collection('users').doc(u.uid),s=await ref.get();if(!s.exists)await ref.set({name:u.displayName||'',email:u.email,phone:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),newsletter:false,gdprAccepted:true});closeModal('modal-auth');toast('Bine ai venit!','success');const redirect=sessionStorage.getItem('afterLogin');if(redirect){sessionStorage.removeItem('afterLogin');navigateTo(redirect);}else{navigateTo('cont');}}}catch(x){toast('Eroare Google: '+x.message,'error');}}
+async function signInGoogle(){try{const r=await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());const u=r.user,ref=db.collection('users').doc(u.uid),s=await ref.get();if(!s.exists)await ref.set({name:u.displayName||'',email:u.email,phone:'',createdAt:firebase.firestore.FieldValue.serverTimestamp(),newsletter:false,gdprAccepted:true});closeModal('modal-auth');toast('Bine ai venit!','success');const redirect=sessionStorage.getItem('afterLogin');if(redirect){sessionStorage.removeItem('afterLogin');navigateTo(redirect);}else{navigateTo('cont');}}catch(x){toast('Eroare Google: '+x.message,'error');}}
 async function registerEmail(){const name=document.getElementById('reg-name').value.trim(),email=document.getElementById('reg-email').value.trim(),phone=document.getElementById('reg-phone').value.trim(),pass=document.getElementById('reg-pass').value,err=document.getElementById('reg-err');err.style.display='none';if(!validateVal(name,'name')||!validateVal(email,'email')||!validateVal(phone,'phone')){err.textContent='Corectați câmpurile.';err.style.display='';return;}if(pass.length<6){err.textContent='Parola min 6 caractere.';err.style.display='';return;}const wantsNewsletter=document.getElementById('reg-newsletter')?.checked||false;try{const r=await auth.createUserWithEmailAndPassword(email,pass);await r.user.updateProfile({displayName:name});await db.collection('users').doc(r.user.uid).set({name,email,phone,createdAt:firebase.firestore.FieldValue.serverTimestamp(),newsletter:wantsNewsletter,gdprAccepted:true});closeModal('modal-auth');if(wantsNewsletter){toast('Cont creat! Ești abonat la newsletter — beneficiezi de 5% reducere! 🎉','success');}else{toast('Cont creat cu succes!','success');}const redirect=sessionStorage.getItem('afterLogin');if(redirect){sessionStorage.removeItem('afterLogin');navigateTo(redirect);}else{navigateTo('cont');}}catch(x){err.textContent=x.message;err.style.display='';}}
 async function signOutUser(){await auth.signOut();toast('Deconectat.','info');navigateTo('acasa');}
 function switchAuthTab(t,btn){document.querySelectorAll('.auth-tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.getElementById('auth-login').style.display=t==='login'?'':'none';document.getElementById('auth-register').style.display=t==='register'?'':'none';}
@@ -1535,7 +1535,7 @@ async function deleteCategory(id){if(!confirm('Ștergi categoria?'))return;await
 async function seedDataIfEmpty(){try{const s=await db.collection('products').limit(1).get();if(!s.empty)return;const TS=firebase.firestore.FieldValue.serverTimestamp();const prods=[{name:'Icoană Maica Domnului',price:45,stock:20,badge:'NOU',soldCount:0,rating:5,reviewCount:1,category:'Icoane',shortDesc:'Icoană pictată manual, 20×30cm',description:'Icoană autentică pictată pe lemn de tei.',images:['https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400'],createdAt:TS},{name:'Lumânări de Paști',price:12,oldPrice:15,stock:100,badge:'REDUCERE',soldCount:45,rating:4.5,reviewCount:8,category:'Lumânări',shortDesc:'Lumânări din ceară naturală, set 10 buc',description:'Lumânări 100% ceară de albine, parfumate.',images:['https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=400'],createdAt:TS},{name:'Sfânta Scriptură',price:65,stock:15,badge:'POPULAR',soldCount:30,rating:5,reviewCount:12,category:'Cărți',shortDesc:'Biblia Ortodoxă, ediție ilustrată',description:'Sfânta Scriptură versiunea ortodoxă.',images:['https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400'],createdAt:TS},{name:'Tămâie Arabă Premium',price:18,stock:50,soldCount:60,rating:4.8,reviewCount:15,category:'Tămâie',shortDesc:'Tămâie autentică din Ierusalim 200g',description:'Tămâie arabă naturală adusă din Țara Sfântă.',images:['https://images.unsplash.com/photo-1574126154517-d1e0d89ef734?w=400'],createdAt:TS},{name:'Crucifix din Lemn',price:35,stock:25,badge:'NOU',soldCount:10,rating:4.9,reviewCount:5,category:'Cruci',shortDesc:'Cruce din stejar sculptat, 30cm',description:'Cruce ortodoxă din stejar masiv.',images:['https://images.unsplash.com/photo-1595831377240-49f41f3dc2ea?w=400'],createdAt:TS},{name:'Agheasmatar Argint',price:85,stock:8,soldCount:5,rating:5,reviewCount:3,category:'Obiecte sfinte',shortDesc:'Agheasmatar din argint 925, 200ml',description:'Agheasmatar din argint 925 cu ornamente.',images:['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400'],createdAt:TS}];for(const p of prods)await db.collection('products').add(p);const anns=[{title:'Schimbarea programului de Paști',type:'urgent',content:'Vă aducem la cunoștință că în Săptămâna Patimilor programul slujbelor va fi modificat.',images:[],createdAt:TS},{title:'Tabăra de Vară 2025',type:'activitate',content:'Parohia organizează tabăra de vară pentru copii 7-14 ani. Perioada: 15-25 iulie 2025.',images:[],createdAt:TS},{title:'Sfânta Liturghie arhierească',type:'slujba',content:'De Buna Vestire va fi săvârșită Sfânta Liturghie arhierească. Toți credincioșii sunt invitați.',images:[],createdAt:TS}];for(const a of anns)await db.collection('announcements').add(a);const transports=[{name:'Curier rapid',type:'Curier rapid',cost:15,description:'Livrare 24h',clientChoice:true,createdAt:TS},{name:'Poșta Română',type:'Poșta Română',cost:8,description:'2-5 zile',clientChoice:true,createdAt:TS},{name:'Ridicare personală',type:'Ridicare personală',cost:0,description:'Gratuit de la parohie',clientChoice:true,createdAt:TS}];for(const t of transports)await db.collection('transport').add(t);const faqs=[{question:'Cum pot plăti o comandă?',answer:'Ramburs la livrare sau transfer bancar.',order:1,createdAt:TS},{question:'Pot returna un produs?',answer:'Da, în 14 zile de la primire.',order:2,createdAt:TS},{question:'Cât durează livrarea?',answer:'Curier 24h, Poșta 2-5 zile.',order:3,createdAt:TS},{question:'Cum rezerv un produs?',answer:'Prin butonul Rezervă din pagina produsului.',order:4,createdAt:TS},{question:'Produsele sunt binecuvântate?',answer:'Da, toate obiectele sunt binecuvântate înainte de vânzare.',order:5,createdAt:TS}];for(const f of faqs)await db.collection('faq').add(f);const sched=[{day:'Luni–Vineri',name:'Utrenie',time:'08:00',location:'Biserică',type:'weekly',createdAt:TS},{day:'Luni–Vineri',name:'Vecernie',time:'17:00',location:'Biserică',type:'weekly',createdAt:TS},{day:'Sâmbătă',name:'Vecernie și Acatist',time:'17:00',location:'Biserică',type:'weekly',createdAt:TS},{day:'Duminică',name:'Utrenie',time:'08:30',location:'Biserică',type:'sunday',createdAt:TS},{day:'Duminică',name:'Sfânta Liturghie',time:'10:00',location:'Biserică',type:'sunday',createdAt:TS},{day:'Sărbători',name:'Sfânta Liturghie',time:'09:00',location:'Biserică',type:'holiday',createdAt:TS}];for(const s of sched)await db.collection('schedule').add(s);console.log('✅ Seed data adăugat!');}catch(e){console.log('Seed skip:',e.message);}}
 
 // INIT
-document.addEventListener('DOMContentLoaded',()=>{updateCartBadge();loadHomePage();loadEmailConfigSettings();seedDataIfEmpty();loadSiteConfig();const ts=new Date().toLocaleTimeString('ro-RO');const el=document.getElementById('last-refresh-ts');if(el)el.textContent=ts;});
+document.addEventListener('DOMContentLoaded',()=>{updateCartBadge();loadHomePage();loadEmailConfigSettings();seedDataIfEmpty();loadSiteConfig();applyNewsletterPatches();const ts=new Date().toLocaleTimeString('ro-RO');const el=document.getElementById('last-refresh-ts');if(el)el.textContent=ts;});
 async function sendManualNewsletter() {
   const subject = document.getElementById('nl-subject').value.trim();
   const body = document.getElementById('nl-body').value.trim();
@@ -1648,53 +1648,35 @@ async function sendNewsletterToSubscribers(subject, bodyText) {
   }
 }
 
-// Patch saveProduct to send newsletter
-const _origSaveProduct = saveProduct;
-saveProduct = async function() {
-  const id = document.getElementById('edit-product-id').value;
-  const name = document.getElementById('p-name').value.trim();
-  const isNew = !id;
-  await _origSaveProduct();
-  if (isNew && name) {
-    const price = document.getElementById('p-price').value;
-    await sendNewsletterToSubscribers(
-      '🛍️ Produs nou în Magazinul Parohial',
-      `A fost adăugat un produs nou: "${name}" la prețul de ${price} lei.
-
-Vizitați magazinul: https://parohia-stornesti.ro`
-    );
-  }
-};
-
-// Patch saveAnnouncement to send newsletter
-const _origSaveAnn = saveAnnouncement;
-saveAnnouncement = async function() {
-  const id = document.getElementById('edit-ann-id').value;
-  const title = document.getElementById('a-title').value.trim();
-  const content = document.getElementById('a-content').value.trim();
-  const isNew = !id;
-  await _origSaveAnn();
-  if (isNew && title) {
-    await sendNewsletterToSubscribers(
-      '📢 Anunț nou: ' + title,
-      title + '\n\n' + content.substring(0, 300) + (content.length > 300 ? '...' : '')
-    );
-  }
-};
+function applyNewsletterPatches() {
+  const _origSaveProduct = saveProduct;
+  saveProduct = async function() {
+    const id = document.getElementById('edit-product-id').value;
+    const name = document.getElementById('p-name').value.trim();
+    const isNew = !id;
+    await _origSaveProduct();
+    if (isNew && name) {
+      const price = document.getElementById('p-price')?.value || '';
+      await sendNewsletterToSubscribers('🛍️ Produs nou în Magazinul Parohial','A fost adăugat un produs nou: "'+name+'" la prețul de '+price+' lei.');
+    }
+  };
+  const _origSaveAnn = saveAnnouncement;
+  saveAnnouncement = async function() {
+    const id = document.getElementById('edit-ann-id').value;
+    const title = document.getElementById('a-title').value.trim();
+    const body = document.getElementById('a-content').value.trim();
+    const isNew = !id;
+    await _origSaveAnn();
+    if (isNew && title) {
+      await sendNewsletterToSubscribers('📢 Anunț nou: '+title, title+'\n\n'+body.substring(0,300));
+    }
+  };
+}
 
 // ============================================================
 // AUDIO TIMING - make timing always visible
 // ============================================================
-// Patch updatePlayer to ensure timing is always shown
-const _origUpdatePlayer = updatePlayer;
-updatePlayer = function(idx) {
-  _origUpdatePlayer(idx);
-  const audio = document.getElementById('paudio-' + idx);
-  const time = document.getElementById('ptime-' + idx);
-  if (audio && time && audio.duration) {
-    time.style.display = '';
-  }
-};
+// updatePlayer timing is handled natively - no patch needed
 
 // loadSiteConfig called from main DOMContentLoaded
 
