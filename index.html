@@ -320,6 +320,12 @@ footer{background:var(--vd);color:rgba(255,255,255,.8);padding:48px 22px 24px;bo
   </div>
   <div id="uw"></div>
   <div class="wrap sb">
+    <div id="svr" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start">
+      <div id="saw"><div class="ld"><div class="loader"></div></div></div>
+      <div id="vaw"><div class="ld"><div class="loader"></div></div></div>
+    </div>
+  </div>
+  <div class="wrap sb">
     <div class="stit">Program Slujbe</div>
     <div class="ftabs" id="scht">
       <button class="ft on" data-f="all">Toate</button>
@@ -331,18 +337,12 @@ footer{background:var(--vd);color:rgba(255,255,255,.8);padding:48px 22px 24px;bo
   </div>
   <div class="wrap sb">
     <div class="stit">Noutati</div>
-    <div class="cgrid" id="hlg"></div>
-  </div>
-  <div class="wrap sb">
-    <div id="svr" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start">
-      <div id="saw"><div class="ld"><div class="loader"></div></div></div>
-      <div id="vaw"><div class="ld"><div class="loader"></div></div></div>
-    </div>
+    <div class="cgrid" id="hlg" style="justify-items:center"></div>
   </div>
   <div class="wrap sb">
     <div class="stit">Informatii</div>
     <div class="icards">
-      <div class="icard"><span class="ic">&#128205;</span><h4>Locatie</h4><p>Stornești, jud. Iași<br><a href="https://maps.google.com/?q=Stornesti,Iasi" target="_blank">Vedere harta</a></p></div>
+      <div class="icard"><span class="ic">&#128205;</span><h4>Locatie</h4><p>Strada Sfânta Treime nr.1<br>Stornești, jud. Iași<br><a href="https://maps.google.com/?q=Stornesti,Iasi" target="_blank">Vedere harta</a></p></div>
       <div class="icard"><span class="ic">&#128222;</span><h4>Contact</h4><p>Tel: <a href="tel:0743600900">0743 600 900</a><br><a href="mailto:parohiastornesti@gmail.com">parohiastornesti@gmail.com</a></p></div>
       <div class="icard"><span class="ic">&#10013;</span><h4>Sfinte Taine</h4><p>Botez, Cununie, Inmormantare, Maslu - contactati preotul paroh.</p></div>
       <div class="icard"><span class="ic">&#129309;</span><h4>Voluntariat</h4><p>Alatura-te echipei. <a href="mailto:parohiastornesti@gmail.com">Contacteaza-ne</a></p></div>
@@ -430,7 +430,7 @@ footer{background:var(--vd);color:rgba(255,255,255,.8);padding:48px 22px 24px;bo
     <h1>Termeni si Conditii</h1>
     <h2>1. Preturi</h2><p>In lei RON. Ne rezervam dreptul de modificare.</p>
     <h2>2. Comenzi</h2><p>Confirmare prin email.</p>
-    <h2>3. Plata</h2><p>Ramburs sau transfer: IBAN RO49 AAAA..., Banca Transilvania.</p>
+    <h2>3. Plata</h2><p>Ramburs sau transfer: IBAN RO58BRDE240SV79376812400 (RON), BRD-GSG | SWIFT BRDEROBU, Parohia Stornești.</p>
     <h2>4. Livrare</h2><p>2-5 zile lucratoare.</p>
     <h2>5. Retururi</h2><p>14 zile. parohiastornesti@gmail.com.</p>
     <h2>6. Litigii</h2><p>ANPC: anpc.ro, 021 9551 | ANAF: anaf.ro.</p>
@@ -490,10 +490,9 @@ footer{background:var(--vd);color:rgba(255,255,255,.8);padding:48px 22px 24px;bo
   <div class="fg2">
     <div class="fc">
       <h4>Parohia Stornesti</h4>
-      <p>Stornești, jud. Iași</p>
+      <p>Strada Sfânta Treime nr.1, Stornești, jud. Iași</p>
       <a href="tel:0743600900">0743 600 900</a>
       <a href="mailto:parohiastornesti@gmail.com">parohiastornesti@gmail.com</a>
-      <p>CIF: RO12345678</p>
     </div>
     <div class="fc">
       <h4>Navigare</h4>
@@ -507,7 +506,7 @@ footer{background:var(--vd);color:rgba(255,255,255,.8);padding:48px 22px 24px;bo
       <h4>Informatii Legale</h4>
       <a href="#" onclick="go('gdpr');return false">Politica GDPR</a>
       <a href="#" onclick="go('terms');return false">Termeni si Conditii</a>
-      <p>IBAN: RO49 AAAA..., Banca Transilvania</p>
+      <p>IBAN: RO58BRDE240SV79376812400 (RON) | BRD-GSG</p>
       <a href="https://anpc.ro" target="_blank">ANPC (021 9551)</a>
       <a href="https://anaf.ro" target="_blank">ANAF</a>
     </div>
@@ -663,7 +662,20 @@ async function ldUrg(){
   try{
     var sn=await getDocs(query(collection(db,'announcements'),where('type','==','urgent')));
     var el=document.getElementById('uw');if(!el)return;
-    el.innerHTML=!sn.empty?'<div class="urg-ban"><span>!</span><strong>ANUNT URGENT:</strong> '+esc(sn.docs[0].data().title)+'</div>':'';
+    var oneMonthAgo=new Date();oneMonthAgo.setMonth(oneMonthAgo.getMonth()-1);
+    var urgents=sn.docs.map(function(d){return Object.assign({id:d.id},d.data());}).filter(function(a){
+      if(!a.createdAt)return true;
+      var dt=a.createdAt.toDate?a.createdAt.toDate():new Date(a.createdAt);
+      return dt>=oneMonthAgo;
+    });
+    if(!urgents.length){el.innerHTML='';return;}
+    el.innerHTML=urgents.map(function(a){
+      return'<div class="urg-ban" style="cursor:pointer" onclick="showAnnM(\''+a.id+'\')">'+
+        '<span style="font-size:1.2rem">&#9888;</span>'+
+        '<div style="flex:1"><strong>ANUNT URGENT:</strong> '+esc(a.title)+'</div>'+
+        '<span style="font-size:.7rem;opacity:.8">Click pentru detalii &rarr;</span>'+
+        '</div>';
+    }).join('');
   }catch(e){}
 }
 
@@ -696,26 +708,33 @@ document.getElementById('scht').addEventListener('click',function(e){
 async function ldHL(){
   var el=document.getElementById('hlg');if(!el)return;
   try{
-    var a=null,p=null;
+    var annsHL=[],prodsHL=[];
     try{
-      var res=await Promise.all([getDocs(query(collection(db,'announcements'),orderBy('createdAt','desc'),limit(1))),getDocs(query(collection(db,'products'),orderBy('soldCount','desc'),limit(1)))]);
-      if(!res[0].empty)a=Object.assign({id:res[0].docs[0].id},res[0].docs[0].data());
-      if(!res[1].empty)p=Object.assign({id:res[1].docs[0].id},res[1].docs[0].data());
+      var res=await Promise.all([
+        getDocs(query(collection(db,'announcements'),orderBy('createdAt','desc'),limit(3))),
+        getDocs(query(collection(db,'products'),orderBy('soldCount','desc'),limit(3)))
+      ]);
+      annsHL=res[0].docs.map(function(d){return Object.assign({id:d.id},d.data());});
+      prodsHL=res[1].docs.map(function(d){return Object.assign({id:d.id},d.data());});
     }catch(e){
       try{
         var res2=await Promise.all([getDocs(collection(db,'announcements')),getDocs(collection(db,'products'))]);
-        if(!res2[0].empty)a=Object.assign({id:res2[0].docs[0].id},res2[0].docs[0].data());
-        if(!res2[1].empty)p=Object.assign({id:res2[1].docs[0].id},res2[1].docs[0].data());
+        annsHL=res2[0].docs.slice(0,3).map(function(d){return Object.assign({id:d.id},d.data());});
+        prodsHL=res2[1].docs.slice(0,3).map(function(d){return Object.assign({id:d.id},d.data());});
       }catch(e2){}
     }
     var h='';
-    if(a)h+='<div class="card" onclick="showAnnM(\''+a.id+'\')">'+
-      (a.images&&a.images[0]?'<img class="cimg" src="'+a.images[0]+'" loading="lazy" alt="">':'<div class="cimg" style="display:flex;align-items:center;justify-content:center;font-size:2rem">Ann</div>')+
-      '<div class="cb"><span class="badge bv">'+esc(a.type||'Anunt')+'</span><h3>'+esc(a.title)+'</h3><p>'+esc((a.content||'').substring(0,100))+'...</p><div class="cm">'+fd(a.createdAt)+'</div></div></div>';
-    if(p)h+='<div class="card" onclick="openPM(\''+p.id+'\')">'+
-      (p.images&&p.images[0]?'<img class="cimg" src="'+p.images[0]+'" loading="lazy" alt="">':'<div class="cimg" style="display:flex;align-items:center;justify-content:center;font-size:2rem">Prod</div>')+
-      '<div class="cb"><span class="badge bg">Popular</span><h3>'+esc(p.name)+'</h3><p>'+esc((p.shortDesc||'').substring(0,100))+'</p><div class="price">'+fpv(p.price)+'</div></div></div>';
-    el.innerHTML=h||'<p style="color:var(--tl);text-align:center;padding:18px">Nicio noutate.</p>';
+    annsHL.forEach(function(a){
+      h+='<div class="card" onclick="showAnnM(\''+a.id+'\')">'+
+        (a.images&&a.images[0]?'<img class="cimg" src="'+a.images[0]+'" loading="lazy" alt="">':'<div class="cimg" style="display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:var(--v)">&#128226;</div>')+
+        '<div class="cb"><span class="badge '+(a.type==='urgent'?'br':'bv')+'">'+esc(a.type||'Anunt')+'</span><h3>'+esc(a.title)+'</h3><p>'+esc((a.content||'').substring(0,100))+(a.content&&a.content.length>100?'...':'')+'</p><div class="cm">'+fd(a.createdAt)+'</div></div></div>';
+    });
+    prodsHL.forEach(function(p){
+      h+='<div class="card" onclick="openPM(\''+p.id+'\')">'+
+        (p.images&&p.images[0]?'<img class="cimg" src="'+p.images[0]+'" loading="lazy" alt="">':'<div class="cimg" style="display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:var(--v)">&#128329;</div>')+
+        '<div class="cb"><span class="badge bg">Popular</span><h3>'+esc(p.name)+'</h3><p>'+esc((p.shortDesc||'').substring(0,100))+'</p><div class="price">'+fpv(p.price)+'</div></div></div>';
+    });
+    el.innerHTML=h||'<p style="color:var(--tl);text-align:center;padding:18px;width:100%">Nicio noutate.</p>';
   }catch(e){}
 }
 
@@ -1052,16 +1071,48 @@ async function ldAudio(){
       catch(e){var sn2=await getDocs(collection(db,'audio'));auds=sn2.docs.map(function(d){return Object.assign({id:d.id},d.data());});}
     }
     if(!auds.length){el.innerHTML='<p style="text-align:center;padding:38px;color:var(--tl)">Nicio inregistrare audio.</p>';return;}
-    el.innerHTML=auds.map(function(a){
-      return'<div class="acard"><div class="ahdr"><div class="aic">M</div>'+
-        '<div class="ain"><h3>'+esc(a.title)+'</h3>'+
-        '<p><span class="badge bv">'+esc(a.category||'Audio')+'</span> '+esc(a.author||'')+' | '+fd(a.createdAt)+(a.duration?' | '+esc(a.duration):'')+'</p>'+
-        (a.description?'<p style="font-size:.76rem;margin-top:3px;color:var(--tm)">'+esc(a.description)+'</p>':'')+
-        '</div></div>'+bPlayer(a)+'</div>';
-    }).join('');
+    // Build category tabs
+    var cats=['Toate',...new Set(auds.map(function(a){return a.category;}).filter(Boolean))];
+    var tabsH='<div class="ftabs" id="audt" style="margin-bottom:18px">'+cats.map(function(c,i){return'<button class="ft'+(i===0?' on':'')+'" onclick="filtAud(\''+esc(c)+'\',this)">'+esc(c)+'</button>';}).join('')+'</div>';
+    el.innerHTML=tabsH+'<div id="aud-list"></div>';
+    rndrAud('Toate');
     initAP();
   }catch(e){el.innerHTML='<p style="text-align:center;padding:38px;color:var(--r)">Eroare: '+e.message+'</p>';}
 }
+
+window.filtAud=function(cat,btn){
+  document.querySelectorAll('#audt .ft').forEach(function(x){x.classList.remove('on');});btn.classList.add('on');
+  rndrAud(cat);
+};
+
+function rndrAud(cat){
+  var el=document.getElementById('aud-list');if(!el)return;
+  var it=cat==='Toate'?auds:auds.filter(function(a){return(a.category||'')===(cat);});
+  el.innerHTML=it.map(function(a){
+    var isYt=(a.url||'').includes('youtube')||(a.url||'').includes('youtu.be');
+    return'<div class="acard">'+
+      '<div class="ahdr" style="cursor:'+(isYt?'pointer':'default')+'" onclick="'+(isYt?'tgAudPlayer(\'apl-'+a.id+'\')':'')+'" >'+
+      '<div class="aic">&#127925;</div>'+
+      '<div class="ain" style="flex:1">'+
+        '<h3>'+esc(a.title)+'</h3>'+
+        '<p>'+
+          '<span class="badge bv" style="margin-right:6px">'+esc(a.category||'Audio')+'</span>'+
+          (a.author?'<span style="margin-right:6px">'+esc(a.author)+'</span>':'')+'<span style="color:var(--tl)">'+fd(a.createdAt)+(a.duration?' &bull; '+esc(a.duration):'')+'</span>'+
+        '</p>'+
+        (a.description?'<p style="font-size:.76rem;margin-top:4px;color:var(--tm)">'+esc(a.description)+'</p>':'')+
+      '</div>'+
+      (isYt?'<span style="font-size:.7rem;color:var(--g);cursor:pointer" onclick="tgAudPlayer(\'apl-'+a.id+'\')">&#9654; Redare</span>':'')+
+      '</div>'+
+      '<div id="apl-'+a.id+'" style="margin-top:8px;'+(isYt?'display:none':'')+'">'+bPlayer(a)+'</div>'+
+    '</div>';
+  }).join('');
+  initAP();
+}
+
+window.tgAudPlayer=function(id){
+  var el=document.getElementById(id);if(!el)return;
+  el.style.display=el.style.display==='none'?'block':'none';
+};
 
 function ytID(u){var m=u.match(/(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/i);return m?m[1]:null;}
 function bPlayer(a){
@@ -1083,7 +1134,7 @@ window.togAP=function(btn){
 };
 window.seekAP=function(w,e){var au=w.closest('.aplr')?w.closest('.aplr').querySelector('audio'):null;if(!au||!au.duration)return;var r=w.getBoundingClientRect();au.currentTime=((e.clientX-r.left)/r.width)*au.duration;};
 
-var DFAQ=[{q:'Care sunt orele biroului parohial?',a:'Luni-Vineri, 9:00-17:00. Tel: 0743 600 900.'},{q:'Cum solicit o cununie religioasa?',a:'Contactati preotul cu cel putin 3 luni inainte. Necesari: acte stare civila, botez si spovedanie.'},{q:'Ce acte sunt necesare pentru botez?',a:'Certificat nastere copil, buletine nasi, certificat casatorie parinti (daca aplicabil), cerere scrisa.'},{q:'Cum pot dona parohiei?',a:'Cutia milei din biserica, transfer bancar IBAN: RO49 AAAA... (Banca Transilvania), sau magazinul online.'},{q:'Ce produse se vand in magazin?',a:'Lumanari, icoane, carti de rugaciuni, ulei sfant, tamaie. Veniturile merg la intretinerea bisericii.'},{q:'Cum ascult predicile online?',a:'Sectiunea Audio din meniu contine toate inregistrarile.'},{q:'Exista catehizare pentru copii?',a:'Da, Sambata 10:00-12:00 in sala parohiala.'},{q:'Cum ma inscriu ca voluntar?',a:'Biroul parohial sau parohiastornesti@gmail.com.'},{q:'Ce inseamna Sfanta Treime?',a:'Un singur Dumnezeu in trei Persoane: Tatal, Fiul si Duhul Sfant.'},{q:'Cum primesc anunturi despre activitati?',a:'Abonati-va la newsletter la crearea contului sau din sectiunea Profilul Meu.'}];
+var DFAQ=[{q:'Care sunt orele biroului parohial?',a:'Luni-Vineri, 9:00-17:00. Tel: 0743 600 900.'},{q:'Cum solicit o cununie religioasa?',a:'Contactati preotul cu cel putin 3 luni inainte. Necesari: acte stare civila, botez si spovedanie.'},{q:'Ce acte sunt necesare pentru botez?',a:'Certificat nastere copil, buletine nasi, certificat casatorie parinti (daca aplicabil), cerere scrisa.'},{q:'Cum pot dona parohiei?',a:'Cutia milei din biserica, transfer bancar IBAN: RO58BRDE240SV79376812400 (RON), BRD-GSG, sau magazinul online.'},{q:'Ce produse se vand in magazin?',a:'Lumanari, icoane, carti de rugaciuni, ulei sfant, tamaie. Veniturile merg la intretinerea bisericii.'},{q:'Cum ascult predicile online?',a:'Sectiunea Audio din meniu contine toate inregistrarile.'},{q:'Exista catehizare pentru copii?',a:'Da, Sambata 10:00-12:00 in sala parohiala.'},{q:'Cum ma inscriu ca voluntar?',a:'Biroul parohial sau parohiastornesti@gmail.com.'},{q:'Ce inseamna Sfanta Treime?',a:'Un singur Dumnezeu in trei Persoane: Tatal, Fiul si Duhul Sfant.'},{q:'Cum primesc anunturi despre activitati?',a:'Abonati-va la newsletter la crearea contului sau din sectiunea Profilul Meu.'}];
 
 async function ldFaq(){
   var el=document.getElementById('fl');if(!el)return;
@@ -1229,7 +1280,7 @@ async function ldCo(){
     (tr.length?'<div class="ac2"><h3>Transport</h3>'+tr.map(function(t){return'<div class="po2" id="tr-'+t.id+'" onclick="selTr(\''+t.id+'\','+(t.cost||0)+',this)"><h4>'+esc(t.name)+'</h4><p>'+esc(t.description||'')+' &mdash; <strong>'+(t.cost?fpv(t.cost):'Gratuit')+'</strong></p></div>';}).join('')+'</div>':'<div class="ac2"><p style="color:var(--tm);font-size:.83rem">Costul transportului va fi stabilit de parohie.</p></div>')+
     '<div class="ac2"><h3>Metoda de plata</h3>'+
     '<div class="po2 on" id="py-cod" onclick="selPay(\'cod\',this)"><h4>&#128181; Ramburs la livrare</h4><p>Plata la primire.</p></div>'+
-    '<div class="po2" id="py-bnk" onclick="selPay(\'bank\',this)"><h4>&#127984; Transfer bancar</h4><p>IBAN: RO49 AAAA... | Banca Transilvania | Parohia Stornesti</p></div></div>'+
+    '<div class="po2" id="py-bnk" onclick="selPay(\'bank\',this)"><h4>&#127984; Transfer bancar</h4><p>IBAN: RO58BRDE240SV79376812400 (RON) | BRD-GSG | SWIFT BRDEROBU | Parohia Stornești</p></div></div>'+
     '<div class="ac2"><label class="chk"><input type="checkbox" id="cgd"><span>Accept <a href="#" onclick="go(\'gdpr\');return false" style="color:var(--v);font-weight:700">Politica GDPR</a> si <a href="#" onclick="go(\'terms\');return false" style="color:var(--v);font-weight:700">Termenii</a>. *</span></label>'+
     '<button class="btn bp" style="width:100%;margin-top:14px;padding:13px" onclick="placeOrd()">Plaseaza Comanda</button></div>'+
     '</div>'+
@@ -1286,11 +1337,71 @@ async function sndNL(s,c){
     var sn=await getDocs(collection(db,'users'));
     var subs=sn.docs.map(function(d){return d.data();}).filter(function(u){return u.newsletter===true&&u.email;});
     for(var i=0;i<subs.length;i++){
-      await fetch('https://api.emailjs.com/api/v1.0/email/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service_id:ejc.serviceId,template_id:ejc.templateNewsletter,user_id:ejc.publicKey,template_params:{to_name:subs[i].name||subs[i].email,to_email:subs[i].email,subject:s,content:c}})});
+      // Use new email template format: title=s, from_name=Parohia Stornesti, from_email=parohiastornesti@gmail.com, message=c
+      await fetch('https://api.emailjs.com/api/v1.0/email/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service_id:ejc.serviceId,template_id:ejc.templateNewsletter,user_id:ejc.publicKey,template_params:{title:s,from_name:'Parohia Stornești',from_email:'parohiastornesti@gmail.com',message:c,to_name:subs[i].name||subs[i].email,to_email:subs[i].email,subject:s,content:c}})});
       if(i<subs.length-1)await new Promise(function(r){setTimeout(r,400);});
     }
     return subs.length;
   }catch(e){return 0;}
+}
+
+// Orthodox saints calendar 2025 - main saints per day
+window.seedSaints=async function seedSaints(){
+  try{
+    var existing=await getDocs(collection(db,'saintDays'));
+    if(existing.size>50)return; // already seeded
+    var saints=[
+      // January
+      {d:'2025-01-01',name:'Sfântul Vasile cel Mare',shortDesc:'Arhiepiscopul Cezareei Capadociei, mare teolog și filantrop.',fullDesc:'Sfântul Vasile cel Mare (330-379) a fost arhiepiscopul Cezareei Capadociei, unul dintre cei mai mari Sfinți Părinți ai Bisericii. A organizat viața monahală, a elaborat Sfânta Liturghie care îi poartă numele și a întemeiat spitale și case pentru săraci.',verse:'Cel ce are milă de sărac împrumută pe Domnul.',verseRef:'Pilde 19:17'},
+      {d:'2025-01-06',name:'Botezul Domnului (Boboteaza)',shortDesc:'Teofania - arătarea Sfintei Treimi la Iordanul lui Ioan.',fullDesc:'Sărbătoarea Botezului Domnului, numită și Teofanie sau Epifanie. La această zi, Iisus Hristos a fost botezat de Ioan în apa Iordanului, iar Sfânta Treime s-a arătat: Tatăl cu glas din cer, Fiul botezat în apă, Duhul Sfânt coborând ca un porumb.',verse:'Tu ești Fiul Meu Cel iubit, întru Tine am binevoit.',verseRef:'Luca 3:22'},
+      {d:'2025-01-07',name:'Sfântul Ioan Botezătorul',shortDesc:'Înaintemergătorul și Botezătorul Domnului.',fullDesc:'Sfântul Ioan Botezătorul este cinstit a doua zi după Bobotează. El a pregătit calea Mântuitorului, predicând pocăința și botezând cu apă în Iordan. A fost ucis din porunca lui Irod Antipa.',verse:'Pocăiți-vă, că s-a apropiat Împărăția cerurilor.',verseRef:'Matei 3:2'},
+      {d:'2025-01-17',name:'Cuviosul Antonie cel Mare',shortDesc:'Părintele monahismului creștin.',fullDesc:'Sfântul Antonie cel Mare (251-356) este considerat părintele monahismului. S-a retras în pustia Egiptului, trăind o viață de rugăciune, post și luptă cu ispitele. Viața sa a fost scrisă de Sfântul Atanasie cel Mare.',verse:'Dacă vrei să fii desăvârșit, mergi, vinde averea ta, dă-o săracilor.',verseRef:'Matei 19:21'},
+      {d:'2025-01-20',name:'Sfântul Eftimie cel Mare',shortDesc:'Mare pustnic și organizator al vieții monahale în Palestina.',fullDesc:'Sfântul Eftimie cel Mare (377-473) a trăit aproape o sută de ani în pustia Iudeei, devenind unul dintre cei mai mari organizatori ai vieții monahale din Palestina.',verse:'Cel ce rabdă până la sfârșit, acela se va mântui.',verseRef:'Matei 10:22'},
+      {d:'2025-01-30',name:'Sfinții Trei Ierarhi',shortDesc:'Vasile cel Mare, Grigorie Teologul și Ioan Gură de Aur.',fullDesc:'Praznicul Sfinților Trei Ierarhi comemorează pe cei trei mari dascăli ai Bisericii: Vasile cel Mare, Grigorie Teologul și Ioan Gură de Aur, a căror contribuție la teologia ortodoxă este neprețuită.',verse:'Drepții vor străluci ca soarele în Împărăția Tatălui lor.',verseRef:'Matei 13:43'},
+      // February
+      {d:'2025-02-02',name:'Întâmpinarea Domnului',shortDesc:'Aducerea lui Iisus la Templu, la 40 de zile de la naștere.',fullDesc:'Sărbătoarea Întâmpinării Domnului, când Iisus a fost adus la Templu la 40 de zile de la Naștere. Dreptul Simeon l-a primit în brațe, rostind: „Acum slobozește pe robul Tău, Stăpâne".',verse:'Acum slobozești pe robul Tău, Stăpâne, după cuvântul Tău, în pace.',verseRef:'Luca 2:29'},
+      {d:'2025-02-10',name:'Sfântul Haralambie',shortDesc:'Mucenic din Magnesia, ocrotitor împotriva ciumei.',fullDesc:'Sfântul Haralambie a trăit în secolul al II-lea și a murit mucenic la vârsta de 113 ani. Este considerat ocrotitor împotriva bolilor și al morții grabnice.',verse:'Eu sunt Învierea și Viața; cel ce crede în Mine, chiar dacă va muri, va trăi.',verseRef:'Ioan 11:25'},
+      {d:'2025-02-24',name:'Aflarea Capului Sfântului Ioan Botezătorul',shortDesc:'Prima aflare a capului Sfântului Ioan.',fullDesc:'Sărbătoarea amintirii primei și a doua aflări ale capului Sfântului Ioan Botezătorul. Capul sfântului a fost ascuns și aflat de mai multe ori de-a lungul istoriei.',verse:'El trebuie să crească, iar eu să mă micșorez.',verseRef:'Ioan 3:30'},
+      // March
+      {d:'2025-03-09',name:'Sfinții 40 de Mucenici din Sevastia',shortDesc:'Soldați creștini martirizați în lacul înghețat din Sevastia.',fullDesc:'Cei 40 de mucenici din Sevastia erau soldați romani care au refuzat să se lepede de credința creștină. Aruncați într-un lac înghețat, au rămas tari în credință și au primit cununa muceniciei.',verse:'Fiți credincioși până la moarte și vă voi da cununa vieții.',verseRef:'Apocalipsa 2:10'},
+      {d:'2025-03-25',name:'Buna Vestire',shortDesc:'Vestea adusă de Arhanghelul Gavriil Fecioarei Maria.',fullDesc:'Sărbătoarea Bunei Vestiri comemorează momentul când Arhanghelul Gavriil i-a vestit Fecioarei Maria că va naște pe Fiul lui Dumnezeu. Bucurați-vă, ceea ce ești plină de dar!',verse:'Bucură-te, ceea ce ești plină de dar, Domnul este cu tine.',verseRef:'Luca 1:28'},
+      // April
+      {d:'2025-04-23',name:'Sfântul Mare Mucenic Gheorghe',shortDesc:'Purtătorul de biruință, ocrotitor al ostașilor și agricultorilor.',fullDesc:'Sfântul Gheorghe a trăit în secolul al III-lea și a suferit mucenicia sub împăratul Dioclețian. Este reprezentat ucigând balaurul, simbol al biruinței binelui asupra răului.',verse:'Dacă grăuntele de grâu, căzând în pământ, nu va muri, rămâne singur.',verseRef:'Ioan 12:24'},
+      // May
+      {d:'2025-05-01',name:'Sfântul Profet Ieremia',shortDesc:'Profetul plângerii, autor al Plângerilor.',fullDesc:'Sfântul Profet Ieremia a trăit în secolul VII-VI î.Hr. și a profețit căderea Ierusalimului. Autorul cărții Ieremia și al Plângerilor, el a plâns pentru păcatele poporului.',verse:'Eu știu planurile pe care le am cu privire la voi, zice Domnul.',verseRef:'Ieremia 29:11'},
+      {d:'2025-05-06',name:'Dreptul Iov, mult pătimitorul',shortDesc:'Modelul de răbdare și credință în suferință.',fullDesc:'Dreptul Iov a suferit mari încercări - și-a pierdut averea, copiii și sănătatea - dar a rămas credincios lui Dumnezeu. Viața sa este modelul răbdării creștine în suferință.',verse:'Gol am ieșit din pântecele mamei mele și gol mă voi întoarce.',verseRef:'Iov 1:21'},
+      {d:'2025-05-21',name:'Sfinții Împărați Constantin și Elena',shortDesc:'Împăratul care a emis Edictul de la Milano, și mama sa.',fullDesc:'Sfântul Împărat Constantin cel Mare a emis Edictul de la Milano (313), care a acordat libertate creștinilor. Mama sa, Sfânta Elena, a găsit Sfânta Cruce în Ierusalim.',verse:'Prin aceasta vor cunoaște toți că sunteți ucenicii Mei.',verseRef:'Ioan 13:35'},
+      // June
+      {d:'2025-06-24',name:'Nașterea Sfântului Ioan Botezătorul',shortDesc:'Nașterea Înaintemergătorului Domnului.',fullDesc:'Sfântul Ioan Botezătorul s-a născut cu șase luni înaintea Mântuitorului. Tatăl său, Zaharia, a rostit celebra rugăciune Benedictus la nașterea fiului său.',verse:'Tu, pruncule, prooroc al Celui Preaînalt te vei chema.',verseRef:'Luca 1:76'},
+      {d:'2025-06-29',name:'Sfinții Apostoli Petru și Pavel',shortDesc:'Apostolii care au întemeiat Biserica la Roma.',fullDesc:'Sfântul Apostol Petru a condus Biserica primară și a murit răstignit cu capul în jos la Roma. Sfântul Pavel, apostolul neamurilor, a parcurs trei călătorii misionare și a scris 14 epistole.',verse:'Tu ești Hristos, Fiul lui Dumnezeu celui viu.',verseRef:'Matei 16:16'},
+      // July
+      {d:'2025-07-20',name:'Sfântul Proroc Ilie Tesviteanul',shortDesc:'Marele proroc al Vechiului Testament, ocrotitor al aviatorilor.',fullDesc:'Sfântul Ilie Tesviteanul a trăit în secolul IX î.Hr. și s-a înălțat la cer în car de foc. A combătut idolatria lui Baali și a arătat puterea lui Dumnezeu pe Muntele Carmel.',verse:'Cât timp vă veți tot împărți între două idei? Dacă Domnul este Dumnezeu, urmați-L pe El!',verseRef:'1 Regi 18:21'},
+      // August
+      {d:'2025-08-06',name:'Schimbarea la Față a Domnului',shortDesc:'Hristos s-a arătat în slavă pe Muntele Tabor.',fullDesc:'Sărbătoarea Schimbării la Față comemorează momentul când Iisus s-a transfigurat pe Muntele Tabor, față înaintea ucenicilor Petru, Iacov și Ioan. Fața Sa a strălucit ca soarele.',verse:'Acesta este Fiul Meu iubit, în Care am binevoit; pe El ascultați-L!',verseRef:'Matei 17:5'},
+      {d:'2025-08-15',name:'Adormirea Maicii Domnului',shortDesc:'Cel mai mare praznic închinat Fecioarei Maria.',fullDesc:'Adormirea Maicii Domnului este cel mai important praznic închinat Fecioarei Maria. Aceasta a adormit în Domnul înconjurată de Sfinții Apostoli și a fost înviată și înălțată la ceruri cu trup și suflet.',verse:'Iată roaba Domnului. Fie mie după cuvântul tău!',verseRef:'Luca 1:38'},
+      // September
+      {d:'2025-09-08',name:'Nașterea Maicii Domnului',shortDesc:'Nașterea Fecioarei Maria din Ioachim și Ana.',fullDesc:'Fecioara Maria s-a născut din părinții Ioachim și Ana, după îndelungate rugăciuni. Nașterea ei este pregătire pentru Întruparea Fiului lui Dumnezeu.',verse:'Slăvită sunt lucruri spuse despre tine, cetate a lui Dumnezeu.',verseRef:'Psalmul 86:3'},
+      {d:'2025-09-14',name:'Înălțarea Sfintei Cruci',shortDesc:'Aflarea și înălțarea Sfintei Cruci de Sfânta Elena.',fullDesc:'Sărbătoarea comemorează aflarea Sfintei Cruci de Sfânta Împărăteasă Elena în Ierusalim (326) și înălțarea ei de Patriarhul Macarie al Ierusalimului.',verse:'Iar eu, când Mă voi înălța de pe pământ, îi voi trage pe toți la Mine.',verseRef:'Ioan 12:32'},
+      // October
+      {d:'2025-10-14',name:'Cuvioasa Parascheva',shortDesc:'Ocrotitoarea Moldovei, ale cărei moaște se află la Iași.',fullDesc:'Sfânta Parascheva s-a născut în secolul X în Tracia. A dus o viață de ascultare și rugăciune. Moaștele ei se află la Catedrala Mitropolitană din Iași și sunt venerate de mii de pelerini.',verse:'Cel ce va pierde sufletul său pentru Mine îl va afla.',verseRef:'Matei 16:25'},
+      {d:'2025-10-26',name:'Sfântul Mare Mucenic Dimitrie Izvorâtorul de Mir',shortDesc:'Mucenic din Salonic, ocrotitor al ostașilor.',fullDesc:'Sfântul Dimitrie a trăit în Salonic și a suferit mucenicia în jurul anului 306. Din mormântul său izvorăște mir cu putere tămăduitoare. Este ocrotitor al ostașilor.',verse:'Unde voi fi eu, acolo va fi și slujitorul Meu.',verseRef:'Ioan 12:26'},
+      // November
+      {d:'2025-11-08',name:'Soborul Sfântului Arhanghel Mihail',shortDesc:'Prăznuirea tuturor îngerilor în frunte cu Mihail și Gavriil.',fullDesc:'Praznicul îngerilor și arhanghelilor, în frunte cu Sfântul Arhanghel Mihail, conducătorul oștilor cerești. Mihail înseamnă „Cine este ca Dumnezeu".',verse:'Și va porunci îngerilor Săi să te păzească în toate căile tale.',verseRef:'Psalmul 90:11'},
+      {d:'2025-11-21',name:'Intrarea în Biserică a Maicii Domnului',shortDesc:'Fecioara Maria adusă la Templu la vârsta de 3 ani.',fullDesc:'La vârsta de 3 ani, Fecioara Maria a fost adusă de părinții ei la Templul din Ierusalim, unde a rămas până la 12 ani, crescând în rugăciune și curăție.',verse:'Fecioarele aduse cu bucurie și veselie vor intra în palatele împărătești.',verseRef:'Psalmul 44:16'},
+      {d:'2025-11-30',name:'Sfântul Apostol Andrei',shortDesc:'Primul chemat, Ocrotitorul României.',fullDesc:'Sfântul Apostol Andrei este fratele lui Petru și primul chemat de Iisus. A propovăduit Evanghelia în Sciția Mică (teritoriul actual al Dobrogei) și este ocrotitorul României.',verse:'Am găsit pe Mesia, care se tâlcuiește Hristos.',verseRef:'Ioan 1:41'},
+      // December
+      {d:'2025-12-06',name:'Sfântul Ierarh Nicolae',shortDesc:'Arhiepiscopul Mirelor Lichiei, marele milostiv.',fullDesc:'Sfântul Nicolae a trăit în secolul IV și a fost arhiepiscopul Mirelor Lichiei. Cunoscut pentru milostenia sa față de săraci, a ajutat în taină trei fete sărace cu zestre.',verse:'Căci flămând am fost și Mi-ați dat de mâncat.',verseRef:'Matei 25:35'},
+      {d:'2025-12-25',name:'Nașterea Domnului Iisus Hristos',shortDesc:'Crăciunul - Întruparea Fiului lui Dumnezeu.',fullDesc:'Marea Sărbătoare a Nașterii Mântuitorului Iisus Hristos. Dumnezeu S-a întrupat din Fecioara Maria pentru mântuirea lumii. Îngerii au vestit păstorilor: „Slavă întru cei de sus lui Dumnezeu și pe pământ pace, între oameni bunăvoire!"',verse:'Căci atât de mult a iubit Dumnezeu lumea, încât pe Fiul Său Cel Unul-Născut L-a dat.',verseRef:'Ioan 3:16'},
+      {d:'2025-12-27',name:'Sfântul Apostol și Evanghelist Ioan Teologul',shortDesc:'Ucenicul iubit, autorul Evangheliei a IV-a.',fullDesc:'Sfântul Ioan Teologul era fratele lui Iacov și a fost cel mai iubit ucenic al lui Iisus. A scris a IV-a Evanghelie, trei Epistole și Apocalipsa.',verse:'Dumnezeu este iubire și cel ce rămâne în iubire rămâne în Dumnezeu.',verseRef:'1 Ioan 4:16'},
+    ];
+    var batch=[];
+    for(var s of saints){
+      var k=s.d;delete s.d;
+      batch.push(setDoc(doc(db,'saintDays',k),s,{merge:true}));
+      if(batch.length>=10){await Promise.all(batch);batch=[];}
+    }
+    if(batch.length)await Promise.all(batch);
+  }catch(e){console.warn('Saints seeding error:',e);}
 }
 
 async function seedAll(){
@@ -1299,6 +1410,7 @@ async function seedAll(){
   try{var fs=await getDocs(collection(db,'faq'));if(!fs.size)for(var f of DFAQ)await addDoc(collection(db,'faq'),{question:f.q,answer:f.a,order:DFAQ.indexOf(f)});}catch(e){}
   var TD=[{name:'Ridicare personala',type:'pickup',cost:0,description:'De la sediul parohiei',clientChoice:true},{name:'Curierat rapid',type:'courier',cost:25,description:'1-2 zile lucratoare',clientChoice:true},{name:'Curierat standard',type:'courier',cost:15,description:'3-5 zile lucratoare',clientChoice:true}];
   try{var ts=await getDocs(collection(db,'transport'));if(!ts.size)for(var t of TD)await addDoc(collection(db,'transport'),t);}catch(e){}
+  await window.seedSaints();
 }
 
 async function seedProds(){
@@ -1420,8 +1532,8 @@ window.proPro=function(id){
   var o=_aO.find(function(x){return x.id===id;});if(!o)return;
   var w=window.open('','_blank');
   w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Factura Proforma</title><style>body{font-family:Georgia,serif;max-width:680px;margin:38px auto;color:#333}h1{color:#6B1A2E;text-align:center}table{width:100%;border-collapse:collapse;margin:18px 0}th,td{padding:9px;border:1px solid #ddd;text-align:left}th{background:#f5f5f5}.ft{font-style:italic;color:#888;text-align:center;margin-top:28px;border-top:1px solid #eee;padding-top:14px}</style></head><body>'+
-    '<h1>Factura Proforma</h1><p><strong>Parohia Stornesti</strong> | CIF: RO12345678</p>'+
-    '<p>IBAN: RO49 AAAA... | Banca Transilvania | Stornesti, jud. Iasi | Tel: 0743 600 900</p><hr>'+
+    '<h1>Factura Proforma</h1><p><strong>Parohia Stornesti</strong></p>'+
+    '<p>IBAN: RO58BRDE240SV79376812400 (RON) | BRD-GSG | SWIFT BRDEROBU | Strada Sfanta Treime nr.1, Stornesti, jud. Iasi | Tel: 0743 600 900</p><hr>'+
     '<p><strong>Client:</strong> '+esc(o.userName)+' | '+esc(o.phone)+'</p>'+
     '<p><strong>Nr:</strong> #'+id.substring(0,8).toUpperCase()+' | <strong>Data:</strong> '+fd(o.createdAt)+'</p>'+
     '<table><thead><tr><th>Produs</th><th>Cant.</th><th>Pret unit.</th><th>Total</th></tr></thead><tbody>'+
@@ -1735,6 +1847,8 @@ function aSnt(){
     getDocs(collection(db,'saintDays')).then(function(sn){sn.docs.forEach(function(d2){var el=document.getElementById('cd-'+d2.id);if(el&&!el.classList.contains('td2'))el.classList.add('hd');});}).catch(function(){});
   }
   m.innerHTML='<h2 style="font-family:Cinzel,serif;color:var(--v);margin-bottom:22px">Calendar Sfinti</h2>'+
+    '<div class="ac2" style="background:rgba(201,168,76,.07);border:1.5px solid var(--g);margin-bottom:14px"><p style="font-size:.8rem;color:var(--tm);margin-bottom:9px">Calendarul ortodox 2025 poate fi populat automat cu sfintii principali. Zilele cu sfinti sunt marcate cu fundal colorat.</p>'+
+    '<button class="btn bg2" onclick="seedSaints().then(function(){toast(\'Sfinti populati!\',\'success\');aSnt();})">&#10013; Populeaza Sfinti 2025</button></div>'+
     '<div class="ac2"><div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">'+
     '<button class="btn bs" onclick="calN(-1)">Inapoi</button>'+
     '<span id="cal-mo" style="font-family:Cinzel,serif;font-size:.96rem;font-weight:700;color:var(--v)"></span>'+
