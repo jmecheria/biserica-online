@@ -1091,7 +1091,7 @@ function rndrAud(cat){
   el.innerHTML=it.map(function(a){
     var isYt=(a.url||'').includes('youtube')||(a.url||'').includes('youtu.be');
     return'<div class="acard">'+
-      '<div class="ahdr" style="cursor:'+(isYt?'pointer':'default')+'" onclick="'+(isYt?'tgAudPlayer(\'apl-'+a.id+'\')':'')+'" >'+
+      '<div class="ahdr">'+
       '<div class="aic">&#127925;</div>'+
       '<div class="ain" style="flex:1">'+
         '<h3>'+esc(a.title)+'</h3>'+
@@ -1101,14 +1101,30 @@ function rndrAud(cat){
         '</p>'+
         (a.description?'<p style="font-size:.76rem;margin-top:4px;color:var(--tm)">'+esc(a.description)+'</p>':'')+
       '</div>'+
-      (isYt?'<span style="font-size:.7rem;color:var(--g);cursor:pointer" onclick="tgAudPlayer(\'apl-'+a.id+'\')">&#9654; Redare</span>':'')+
+      '<button class="btn bp bsm" id="btn-'+a.id+'" onclick="startYT(\''+a.id+'\',\''+esc(a.url||'')+'\',this,'+isYt+')" style="white-space:nowrap;flex-shrink:0">'+
+        '&#9654; Apasă pentru redare'+
+      '</button>'+
       '</div>'+
-      '<div id="apl-'+a.id+'" style="margin-top:8px;'+(isYt?'display:none':'')+'">'+bPlayer(a)+'</div>'+
+      '<div id="apl-'+a.id+'" style="margin-top:8px;display:none">'+bPlayer(a)+'</div>'+
     '</div>';
   }).join('');
   initAP();
 }
 
+window.startYT=function(id,url,btn,isYt){
+  var pl=document.getElementById('apl-'+id);if(!pl)return;
+  pl.style.display='block';
+  if(btn)btn.style.display='none';
+  // For mp3/audio files, auto-start playback
+  if(!isYt){
+    var au=pl.querySelector('audio');
+    if(au){
+      au.play().catch(function(){});
+      var pb2=pl.querySelector('.pb2');
+      if(pb2)pb2.innerHTML='\u23f8';
+    }
+  }
+};
 window.tgAudPlayer=function(id){
   var el=document.getElementById(id);if(!el)return;
   el.style.display=el.style.display==='none'?'block':'none';
@@ -1329,7 +1345,30 @@ window.placeOrd=async function(){
 async function ldEJC(){try{var sn=await getDoc(doc(db,'settings','emailjs'));if(sn.exists())ejc=sn.data();}catch(e){}}
 async function sndOrdEm(id,od){
   if(!ejc.publicKey||!ejc.serviceId||!ejc.templateConfirmare)return;
-  try{await fetch('https://api.emailjs.com/api/v1.0/email/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service_id:ejc.serviceId,template_id:ejc.templateConfirmare,user_id:ejc.publicKey,template_params:{to_name:od.userName,to_email:od.userEmail,order_id:id.substring(0,8).toUpperCase(),total:fpv(od.total),products_list:od.items.map(function(i){return i.name+' x'+i.qty;}).join(', '),payment_method:od.paymentMethod}})});}catch(e){}
+  var msg='Comanda #'+id.substring(0,8).toUpperCase()+'\n\n'+
+    'Produse: '+od.items.map(function(i){return i.name+' x'+i.qty+' = '+fpv(i.price*i.qty);}).join(', ')+'\n'+
+    'Total: '+fpv(od.total)+'\n'+
+    'Metoda plata: '+od.paymentMethod+'\n'+
+    'Adresa livrare: '+od.address+', '+od.city+(od.county?', '+od.county:'');
+  try{
+    await fetch('https://api.emailjs.com/api/v1.0/email/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      service_id:ejc.serviceId,
+      template_id:ejc.templateConfirmare,
+      user_id:ejc.publicKey,
+      template_params:{
+        to_name:od.userName,
+        to_email:od.userEmail,
+        title:'Confirmare Comanda #'+id.substring(0,8).toUpperCase(),
+        from_name:'Parohia Stornești',
+        from_email:'parohiastornesti@gmail.com',
+        message:msg,
+        order_id:id.substring(0,8).toUpperCase(),
+        total:fpv(od.total),
+        products_list:od.items.map(function(i){return i.name+' x'+i.qty;}).join(', '),
+        payment_method:od.paymentMethod
+      }
+    })});
+  }catch(e){}
 }
 async function sndNL(s,c){
   if(!ejc.publicKey||!ejc.serviceId||!ejc.templateNewsletter)return 0;
@@ -1349,50 +1388,58 @@ async function sndNL(s,c){
 window.seedSaints=async function seedSaints(){
   try{
     var existing=await getDocs(collection(db,'saintDays'));
-    if(existing.size>50)return; // already seeded
+    // Check if 2026 is already seeded
+    var has2026=existing.docs.some(function(d){return d.id.startsWith('2026');});
+    if(has2026)return;
     var saints=[
-      // January
-      {d:'2025-01-01',name:'Sfântul Vasile cel Mare',shortDesc:'Arhiepiscopul Cezareei Capadociei, mare teolog și filantrop.',fullDesc:'Sfântul Vasile cel Mare (330-379) a fost arhiepiscopul Cezareei Capadociei, unul dintre cei mai mari Sfinți Părinți ai Bisericii. A organizat viața monahală, a elaborat Sfânta Liturghie care îi poartă numele și a întemeiat spitale și case pentru săraci.',verse:'Cel ce are milă de sărac împrumută pe Domnul.',verseRef:'Pilde 19:17'},
-      {d:'2025-01-06',name:'Botezul Domnului (Boboteaza)',shortDesc:'Teofania - arătarea Sfintei Treimi la Iordanul lui Ioan.',fullDesc:'Sărbătoarea Botezului Domnului, numită și Teofanie sau Epifanie. La această zi, Iisus Hristos a fost botezat de Ioan în apa Iordanului, iar Sfânta Treime s-a arătat: Tatăl cu glas din cer, Fiul botezat în apă, Duhul Sfânt coborând ca un porumb.',verse:'Tu ești Fiul Meu Cel iubit, întru Tine am binevoit.',verseRef:'Luca 3:22'},
-      {d:'2025-01-07',name:'Sfântul Ioan Botezătorul',shortDesc:'Înaintemergătorul și Botezătorul Domnului.',fullDesc:'Sfântul Ioan Botezătorul este cinstit a doua zi după Bobotează. El a pregătit calea Mântuitorului, predicând pocăința și botezând cu apă în Iordan. A fost ucis din porunca lui Irod Antipa.',verse:'Pocăiți-vă, că s-a apropiat Împărăția cerurilor.',verseRef:'Matei 3:2'},
-      {d:'2025-01-17',name:'Cuviosul Antonie cel Mare',shortDesc:'Părintele monahismului creștin.',fullDesc:'Sfântul Antonie cel Mare (251-356) este considerat părintele monahismului. S-a retras în pustia Egiptului, trăind o viață de rugăciune, post și luptă cu ispitele. Viața sa a fost scrisă de Sfântul Atanasie cel Mare.',verse:'Dacă vrei să fii desăvârșit, mergi, vinde averea ta, dă-o săracilor.',verseRef:'Matei 19:21'},
-      {d:'2025-01-20',name:'Sfântul Eftimie cel Mare',shortDesc:'Mare pustnic și organizator al vieții monahale în Palestina.',fullDesc:'Sfântul Eftimie cel Mare (377-473) a trăit aproape o sută de ani în pustia Iudeei, devenind unul dintre cei mai mari organizatori ai vieții monahale din Palestina.',verse:'Cel ce rabdă până la sfârșit, acela se va mântui.',verseRef:'Matei 10:22'},
-      {d:'2025-01-30',name:'Sfinții Trei Ierarhi',shortDesc:'Vasile cel Mare, Grigorie Teologul și Ioan Gură de Aur.',fullDesc:'Praznicul Sfinților Trei Ierarhi comemorează pe cei trei mari dascăli ai Bisericii: Vasile cel Mare, Grigorie Teologul și Ioan Gură de Aur, a căror contribuție la teologia ortodoxă este neprețuită.',verse:'Drepții vor străluci ca soarele în Împărăția Tatălui lor.',verseRef:'Matei 13:43'},
-      // February
-      {d:'2025-02-02',name:'Întâmpinarea Domnului',shortDesc:'Aducerea lui Iisus la Templu, la 40 de zile de la naștere.',fullDesc:'Sărbătoarea Întâmpinării Domnului, când Iisus a fost adus la Templu la 40 de zile de la Naștere. Dreptul Simeon l-a primit în brațe, rostind: „Acum slobozește pe robul Tău, Stăpâne".',verse:'Acum slobozești pe robul Tău, Stăpâne, după cuvântul Tău, în pace.',verseRef:'Luca 2:29'},
-      {d:'2025-02-10',name:'Sfântul Haralambie',shortDesc:'Mucenic din Magnesia, ocrotitor împotriva ciumei.',fullDesc:'Sfântul Haralambie a trăit în secolul al II-lea și a murit mucenic la vârsta de 113 ani. Este considerat ocrotitor împotriva bolilor și al morții grabnice.',verse:'Eu sunt Învierea și Viața; cel ce crede în Mine, chiar dacă va muri, va trăi.',verseRef:'Ioan 11:25'},
-      {d:'2025-02-24',name:'Aflarea Capului Sfântului Ioan Botezătorul',shortDesc:'Prima aflare a capului Sfântului Ioan.',fullDesc:'Sărbătoarea amintirii primei și a doua aflări ale capului Sfântului Ioan Botezătorul. Capul sfântului a fost ascuns și aflat de mai multe ori de-a lungul istoriei.',verse:'El trebuie să crească, iar eu să mă micșorez.',verseRef:'Ioan 3:30'},
-      // March
-      {d:'2025-03-09',name:'Sfinții 40 de Mucenici din Sevastia',shortDesc:'Soldați creștini martirizați în lacul înghețat din Sevastia.',fullDesc:'Cei 40 de mucenici din Sevastia erau soldați romani care au refuzat să se lepede de credința creștină. Aruncați într-un lac înghețat, au rămas tari în credință și au primit cununa muceniciei.',verse:'Fiți credincioși până la moarte și vă voi da cununa vieții.',verseRef:'Apocalipsa 2:10'},
-      {d:'2025-03-25',name:'Buna Vestire',shortDesc:'Vestea adusă de Arhanghelul Gavriil Fecioarei Maria.',fullDesc:'Sărbătoarea Bunei Vestiri comemorează momentul când Arhanghelul Gavriil i-a vestit Fecioarei Maria că va naște pe Fiul lui Dumnezeu. Bucurați-vă, ceea ce ești plină de dar!',verse:'Bucură-te, ceea ce ești plină de dar, Domnul este cu tine.',verseRef:'Luca 1:28'},
-      // April
-      {d:'2025-04-23',name:'Sfântul Mare Mucenic Gheorghe',shortDesc:'Purtătorul de biruință, ocrotitor al ostașilor și agricultorilor.',fullDesc:'Sfântul Gheorghe a trăit în secolul al III-lea și a suferit mucenicia sub împăratul Dioclețian. Este reprezentat ucigând balaurul, simbol al biruinței binelui asupra răului.',verse:'Dacă grăuntele de grâu, căzând în pământ, nu va muri, rămâne singur.',verseRef:'Ioan 12:24'},
-      // May
-      {d:'2025-05-01',name:'Sfântul Profet Ieremia',shortDesc:'Profetul plângerii, autor al Plângerilor.',fullDesc:'Sfântul Profet Ieremia a trăit în secolul VII-VI î.Hr. și a profețit căderea Ierusalimului. Autorul cărții Ieremia și al Plângerilor, el a plâns pentru păcatele poporului.',verse:'Eu știu planurile pe care le am cu privire la voi, zice Domnul.',verseRef:'Ieremia 29:11'},
-      {d:'2025-05-06',name:'Dreptul Iov, mult pătimitorul',shortDesc:'Modelul de răbdare și credință în suferință.',fullDesc:'Dreptul Iov a suferit mari încercări - și-a pierdut averea, copiii și sănătatea - dar a rămas credincios lui Dumnezeu. Viața sa este modelul răbdării creștine în suferință.',verse:'Gol am ieșit din pântecele mamei mele și gol mă voi întoarce.',verseRef:'Iov 1:21'},
-      {d:'2025-05-21',name:'Sfinții Împărați Constantin și Elena',shortDesc:'Împăratul care a emis Edictul de la Milano, și mama sa.',fullDesc:'Sfântul Împărat Constantin cel Mare a emis Edictul de la Milano (313), care a acordat libertate creștinilor. Mama sa, Sfânta Elena, a găsit Sfânta Cruce în Ierusalim.',verse:'Prin aceasta vor cunoaște toți că sunteți ucenicii Mei.',verseRef:'Ioan 13:35'},
-      // June
-      {d:'2025-06-24',name:'Nașterea Sfântului Ioan Botezătorul',shortDesc:'Nașterea Înaintemergătorului Domnului.',fullDesc:'Sfântul Ioan Botezătorul s-a născut cu șase luni înaintea Mântuitorului. Tatăl său, Zaharia, a rostit celebra rugăciune Benedictus la nașterea fiului său.',verse:'Tu, pruncule, prooroc al Celui Preaînalt te vei chema.',verseRef:'Luca 1:76'},
-      {d:'2025-06-29',name:'Sfinții Apostoli Petru și Pavel',shortDesc:'Apostolii care au întemeiat Biserica la Roma.',fullDesc:'Sfântul Apostol Petru a condus Biserica primară și a murit răstignit cu capul în jos la Roma. Sfântul Pavel, apostolul neamurilor, a parcurs trei călătorii misionare și a scris 14 epistole.',verse:'Tu ești Hristos, Fiul lui Dumnezeu celui viu.',verseRef:'Matei 16:16'},
-      // July
-      {d:'2025-07-20',name:'Sfântul Proroc Ilie Tesviteanul',shortDesc:'Marele proroc al Vechiului Testament, ocrotitor al aviatorilor.',fullDesc:'Sfântul Ilie Tesviteanul a trăit în secolul IX î.Hr. și s-a înălțat la cer în car de foc. A combătut idolatria lui Baali și a arătat puterea lui Dumnezeu pe Muntele Carmel.',verse:'Cât timp vă veți tot împărți între două idei? Dacă Domnul este Dumnezeu, urmați-L pe El!',verseRef:'1 Regi 18:21'},
-      // August
-      {d:'2025-08-06',name:'Schimbarea la Față a Domnului',shortDesc:'Hristos s-a arătat în slavă pe Muntele Tabor.',fullDesc:'Sărbătoarea Schimbării la Față comemorează momentul când Iisus s-a transfigurat pe Muntele Tabor, față înaintea ucenicilor Petru, Iacov și Ioan. Fața Sa a strălucit ca soarele.',verse:'Acesta este Fiul Meu iubit, în Care am binevoit; pe El ascultați-L!',verseRef:'Matei 17:5'},
-      {d:'2025-08-15',name:'Adormirea Maicii Domnului',shortDesc:'Cel mai mare praznic închinat Fecioarei Maria.',fullDesc:'Adormirea Maicii Domnului este cel mai important praznic închinat Fecioarei Maria. Aceasta a adormit în Domnul înconjurată de Sfinții Apostoli și a fost înviată și înălțată la ceruri cu trup și suflet.',verse:'Iată roaba Domnului. Fie mie după cuvântul tău!',verseRef:'Luca 1:38'},
-      // September
-      {d:'2025-09-08',name:'Nașterea Maicii Domnului',shortDesc:'Nașterea Fecioarei Maria din Ioachim și Ana.',fullDesc:'Fecioara Maria s-a născut din părinții Ioachim și Ana, după îndelungate rugăciuni. Nașterea ei este pregătire pentru Întruparea Fiului lui Dumnezeu.',verse:'Slăvită sunt lucruri spuse despre tine, cetate a lui Dumnezeu.',verseRef:'Psalmul 86:3'},
-      {d:'2025-09-14',name:'Înălțarea Sfintei Cruci',shortDesc:'Aflarea și înălțarea Sfintei Cruci de Sfânta Elena.',fullDesc:'Sărbătoarea comemorează aflarea Sfintei Cruci de Sfânta Împărăteasă Elena în Ierusalim (326) și înălțarea ei de Patriarhul Macarie al Ierusalimului.',verse:'Iar eu, când Mă voi înălța de pe pământ, îi voi trage pe toți la Mine.',verseRef:'Ioan 12:32'},
-      // October
-      {d:'2025-10-14',name:'Cuvioasa Parascheva',shortDesc:'Ocrotitoarea Moldovei, ale cărei moaște se află la Iași.',fullDesc:'Sfânta Parascheva s-a născut în secolul X în Tracia. A dus o viață de ascultare și rugăciune. Moaștele ei se află la Catedrala Mitropolitană din Iași și sunt venerate de mii de pelerini.',verse:'Cel ce va pierde sufletul său pentru Mine îl va afla.',verseRef:'Matei 16:25'},
-      {d:'2025-10-26',name:'Sfântul Mare Mucenic Dimitrie Izvorâtorul de Mir',shortDesc:'Mucenic din Salonic, ocrotitor al ostașilor.',fullDesc:'Sfântul Dimitrie a trăit în Salonic și a suferit mucenicia în jurul anului 306. Din mormântul său izvorăște mir cu putere tămăduitoare. Este ocrotitor al ostașilor.',verse:'Unde voi fi eu, acolo va fi și slujitorul Meu.',verseRef:'Ioan 12:26'},
-      // November
-      {d:'2025-11-08',name:'Soborul Sfântului Arhanghel Mihail',shortDesc:'Prăznuirea tuturor îngerilor în frunte cu Mihail și Gavriil.',fullDesc:'Praznicul îngerilor și arhanghelilor, în frunte cu Sfântul Arhanghel Mihail, conducătorul oștilor cerești. Mihail înseamnă „Cine este ca Dumnezeu".',verse:'Și va porunci îngerilor Săi să te păzească în toate căile tale.',verseRef:'Psalmul 90:11'},
-      {d:'2025-11-21',name:'Intrarea în Biserică a Maicii Domnului',shortDesc:'Fecioara Maria adusă la Templu la vârsta de 3 ani.',fullDesc:'La vârsta de 3 ani, Fecioara Maria a fost adusă de părinții ei la Templul din Ierusalim, unde a rămas până la 12 ani, crescând în rugăciune și curăție.',verse:'Fecioarele aduse cu bucurie și veselie vor intra în palatele împărătești.',verseRef:'Psalmul 44:16'},
-      {d:'2025-11-30',name:'Sfântul Apostol Andrei',shortDesc:'Primul chemat, Ocrotitorul României.',fullDesc:'Sfântul Apostol Andrei este fratele lui Petru și primul chemat de Iisus. A propovăduit Evanghelia în Sciția Mică (teritoriul actual al Dobrogei) și este ocrotitorul României.',verse:'Am găsit pe Mesia, care se tâlcuiește Hristos.',verseRef:'Ioan 1:41'},
-      // December
-      {d:'2025-12-06',name:'Sfântul Ierarh Nicolae',shortDesc:'Arhiepiscopul Mirelor Lichiei, marele milostiv.',fullDesc:'Sfântul Nicolae a trăit în secolul IV și a fost arhiepiscopul Mirelor Lichiei. Cunoscut pentru milostenia sa față de săraci, a ajutat în taină trei fete sărace cu zestre.',verse:'Căci flămând am fost și Mi-ați dat de mâncat.',verseRef:'Matei 25:35'},
-      {d:'2025-12-25',name:'Nașterea Domnului Iisus Hristos',shortDesc:'Crăciunul - Întruparea Fiului lui Dumnezeu.',fullDesc:'Marea Sărbătoare a Nașterii Mântuitorului Iisus Hristos. Dumnezeu S-a întrupat din Fecioara Maria pentru mântuirea lumii. Îngerii au vestit păstorilor: „Slavă întru cei de sus lui Dumnezeu și pe pământ pace, între oameni bunăvoire!"',verse:'Căci atât de mult a iubit Dumnezeu lumea, încât pe Fiul Său Cel Unul-Născut L-a dat.',verseRef:'Ioan 3:16'},
-      {d:'2025-12-27',name:'Sfântul Apostol și Evanghelist Ioan Teologul',shortDesc:'Ucenicul iubit, autorul Evangheliei a IV-a.',fullDesc:'Sfântul Ioan Teologul era fratele lui Iacov și a fost cel mai iubit ucenic al lui Iisus. A scris a IV-a Evanghelie, trei Epistole și Apocalipsa.',verse:'Dumnezeu este iubire și cel ce rămâne în iubire rămâne în Dumnezeu.',verseRef:'1 Ioan 4:16'},
+      // Ianuarie 2026
+      {d:'2026-01-01',name:'Sfântul Vasile cel Mare',shortDesc:'Arhiepiscopul Cezareei Capadociei, mare teolog și filantrop.',fullDesc:'Sfântul Vasile cel Mare (330-379) a fost arhiepiscopul Cezareei Capadociei, unul dintre cei mai mari Sfinți Părinți ai Bisericii. A organizat viața monahală, a elaborat Sfânta Liturghie care îi poartă numele și a întemeiat spitale și case pentru săraci.',verse:'Cel ce are milă de sărac împrumută pe Domnul.',verseRef:'Pilde 19:17'},
+      {d:'2026-01-06',name:'Botezul Domnului (Boboteaza)',shortDesc:'Teofania — arătarea Sfintei Treimi la Iordanul lui Ioan.',fullDesc:'Sărbătoarea Botezului Domnului, numită și Teofanie sau Epifanie. La această zi, Iisus Hristos a fost botezat de Ioan în apa Iordanului, iar Sfânta Treime S-a arătat: Tatăl cu glas din cer, Fiul botezat în apă, Duhul Sfânt coborând ca un porumb.',verse:'Tu ești Fiul Meu Cel iubit, întru Tine am binevoit.',verseRef:'Luca 3:22'},
+      {d:'2026-01-07',name:'Soborul Sfântului Ioan Botezătorul',shortDesc:'Înaintemergătorul și Botezătorul Domnului, cinstit a doua zi după Bobotează.',fullDesc:'Sfântul Ioan Botezătorul a pregătit calea Mântuitorului, predicând pocăința și botezând cu apă în Iordan. A fost ucis din porunca lui Irod Antipa, după ce mustruse adulterul acestuia.',verse:'Pocăiți-vă, că s-a apropiat Împărăția cerurilor.',verseRef:'Matei 3:2'},
+      {d:'2026-01-17',name:'Cuviosul Antonie cel Mare',shortDesc:'Părintele monahismului creștin.',fullDesc:'Sfântul Antonie cel Mare (251-356) este considerat părintele monahismului. S-a retras în pustia Egiptului, trăind o viață de rugăciune, post și luptă cu ispitele demonice. Viața sa a fost scrisă de Sfântul Atanasie cel Mare.',verse:'Dacă vrei să fii desăvârșit, mergi, vinde averea ta, dă-o săracilor.',verseRef:'Matei 19:21'},
+      {d:'2026-01-18',name:'Sfinții Atanasie și Chiril, Patriarhi ai Alexandriei',shortDesc:'Apărătorii Ortodoxiei împotriva arianismului.',fullDesc:'Sfântul Atanasie cel Mare (296-373) a apărat dreapta credință la Sinodul I Ecumenic de la Niceea, combătând erezia ariană. Sfântul Chiril al Alexandriei (376-444) a apărat titlul de Theotokos (Născătoare de Dumnezeu) pentru Fecioara Maria.',verse:'Cel ce va mărturisi pentru Mine înaintea oamenilor, și Eu voi mărturisi pentru el.',verseRef:'Matei 10:32'},
+      {d:'2026-01-20',name:'Sfântul Eftimie cel Mare',shortDesc:'Mare pustnic și organizator al vieții monahale în Palestina.',fullDesc:'Sfântul Eftimie cel Mare (377-473) a trăit aproape o sută de ani în pustia Iudeei. Prin viața sa exemplară a atras mulți ucenici și a organizat viața monahală în Palestina.',verse:'Cel ce rabdă până la sfârșit, acela se va mântui.',verseRef:'Matei 10:22'},
+      {d:'2026-01-30',name:'Sfinții Trei Ierarhi',shortDesc:'Vasile cel Mare, Grigorie Teologul și Ioan Gură de Aur.',fullDesc:'Praznicul Sfinților Trei Ierarhi comemorează pe cei trei mari dascăli ai Bisericii: Vasile cel Mare, Grigorie Teologul și Ioan Gură de Aur. Contribuția lor la teologia și cultura ortodoxă este neprețuită și de neînlocuit.',verse:'Drepții vor străluci ca soarele în Împărăția Tatălui lor.',verseRef:'Matei 13:43'},
+      // Februarie 2026
+      {d:'2026-02-02',name:'Întâmpinarea Domnului',shortDesc:'Aducerea lui Iisus la Templu la 40 de zile de la Naștere.',fullDesc:'Sărbătoarea Întâmpinării Domnului comemorează momentul când pruncul Iisus a fost adus la Templul din Ierusalim. Dreptul Simeon L-a primit în brațe, rostind: „Acum slobozește pe robul Tău, Stăpâne". Prorociță Ana L-a recunoscut ca Mântuitor.',verse:'Acum slobozești pe robul Tău, Stăpâne, după cuvântul Tău, în pace.',verseRef:'Luca 2:29'},
+      {d:'2026-02-10',name:'Sfântul Haralambie',shortDesc:'Mucenic din Magnesia, ocrotitor împotriva bolilor.',fullDesc:'Sfântul Haralambie a trăit în secolul al II-lea și a murit mucenic la vârsta de 113 ani. Este considerat ocrotitor împotriva ciumei și bolilor grabnice. Credincioșii îl prăznuiesc cu multă evlavie.',verse:'Eu sunt Învierea și Viața; cel ce crede în Mine, chiar dacă va muri, va trăi.',verseRef:'Ioan 11:25'},
+      {d:'2026-02-24',name:'Aflarea Capului Sfântului Ioan Botezătorul',shortDesc:'Prima și a doua aflare a cinstitului cap al Sfântului Ioan.',fullDesc:'Capul Sfântului Ioan Botezătorul a fost ascuns în Emesa după tăierea sa, iar ulterior a fost aflat de două ori în mod providențial. Această sărbătoare comemorează aceste două aflări și cinstirea capului mucenicului.',verse:'El trebuie să crească, iar eu să mă micșorez.',verseRef:'Ioan 3:30'},
+      // Martie 2026
+      {d:'2026-03-09',name:'Sfinții 40 de Mucenici din Sevastia',shortDesc:'Soldați creștini martirizați în lacul înghețat.',fullDesc:'Cei 40 de mucenici din Sevastia erau soldați romani din legiunea „Fulminata" care au refuzat să se lepede de credința creștină sub împăratul Liciniu. Au fost aruncați într-un lac înghețat, dar au rămas tari, primind cununa muceniciei.',verse:'Fiți credincioși până la moarte și vă voi da cununa vieții.',verseRef:'Apocalipsa 2:10'},
+      {d:'2026-03-25',name:'Buna Vestire',shortDesc:'Vestea adusă de Arhanghelul Gavriil Fecioarei Maria.',fullDesc:'Sărbătoarea Bunei Vestiri comemorează momentul când Arhanghelul Gavriil i-a vestit Fecioarei Maria: „Vei lua în pântece și vei naște Fiu și vei chema numele Lui Iisus." Fecioara Maria a răspuns: „Iată roaba Domnului, fie mie după cuvântul tău."',verse:'Bucură-te, ceea ce ești plină de dar, Domnul este cu tine.',verseRef:'Luca 1:28'},
+      // Aprilie 2026
+      {d:'2026-04-12',name:'Duminica Floriilor',shortDesc:'Intrarea Triumfală a Domnului în Ierusalim.',fullDesc:'Duminica Floriilor sau Duminica Stâlpărilor comemorează intrarea triumfală a lui Iisus Hristos în Ierusalim, cu o săptămână înainte de Paști. Mulțimile L-au întâmpinat cu ramuri de palmier și strigând: „Osana întru cei de sus!"',verse:'Binecuvântat este Cel ce vine întru numele Domnului!',verseRef:'Ioan 12:13'},
+      {d:'2026-04-19',name:'Sfintele Paști — Învierea Domnului',shortDesc:'Cea mai mare sărbătoare creștină — Învierea lui Hristos.',fullDesc:'Sfintele Paști este sărbătoarea centrală a creștinismului. Iisus Hristos a murit pe Cruce și a Înviat a treia zi, biruind moartea și deschizând calea mântuirii. Învierea Sa este temelia credinței creștine și garanția învierii noastre.',verse:'Eu sunt Învierea și Viața. Cel ce crede în Mine, chiar dacă va muri, va trăi.',verseRef:'Ioan 11:25'},
+      {d:'2026-04-23',name:'Sfântul Mare Mucenic Gheorghe, Purtătorul de Biruință',shortDesc:'Ocrotitor al ostașilor și agricultorilor.',fullDesc:'Sfântul Gheorghe a trăit în secolul al III-lea și a suferit mucenicia sub împăratul Dioclețian. Imaginea sa ucigând balaurul este simbolul biruinței binelui asupra răului și al credinței asupra fricii.',verse:'Dacă grăuntele de grâu, căzând în pământ, nu va muri, rămâne singur.',verseRef:'Ioan 12:24'},
+      // Mai 2026
+      {d:'2026-05-06',name:'Dreptul Iov, mult-pătimitorul',shortDesc:'Modelul răbdării și credinței în suferință.',fullDesc:'Dreptul Iov a suferit mari încercări — și-a pierdut averea, copiii și sănătatea — dar a rămas credincios lui Dumnezeu, neblestemând și neacuzând. Viața sa este icoana răbdării creștine și a credinței nestrămutate.',verse:'Gol am ieșit din pântecele mamei mele și gol mă voi întoarce. Fie numele Domnului binecuvântat!',verseRef:'Iov 1:21'},
+      {d:'2026-05-21',name:'Sfinții Împărați Constantin și Elena',shortDesc:'Împăratul libertății creștinilor și mama sa, aflătoarea Sfintei Cruci.',fullDesc:'Sfântul Constantin cel Mare a emis Edictul de la Milano (313), acordând libertate creștinilor în Imperiul Roman. Mama sa, Sfânta Elena, a mers în Ierusalim și a aflat Sfânta Cruce pe care a fost răstignit Hristos.',verse:'Prin aceasta vor cunoaște toți că sunteți ucenicii Mei, dacă veți avea dragoste unii față de alții.',verseRef:'Ioan 13:35'},
+      {d:'2026-05-28',name:'Înălțarea Domnului',shortDesc:'Înălțarea lui Hristos la cer, la 40 de zile după Înviere.',fullDesc:'La 40 de zile după Sfintele Paști, Iisus Hristos S-a înălțat la cer din Muntele Măslinilor, în văzul ucenicilor. Înainte de înălțare le-a dat porunca misiunii: „Mergând, învățați toate neamurile."',verse:'Și iată, Eu sunt cu voi în toate zilele, până la sfârșitul veacului.',verseRef:'Matei 28:20'},
+      // Iunie 2026
+      {d:'2026-06-07',name:'Rusaliile — Pogorârea Sfântului Duh',shortDesc:'Pogorârea Sfântului Duh peste Apostoli, nașterea Bisericii.',fullDesc:'La 50 de zile după Paști, Sfântul Duh S-a pogorât ca limbi de foc peste Apostolii adunați în Ierusalim. Aceasta este ziua de naștere a Bisericii creștine. Apostolii au început să vorbească în limbi și să propovăduiască.',verse:'Vântul suflă unde voiește și tu auzi glasul lui, dar nu știi de unde vine.',verseRef:'Ioan 3:8'},
+      {d:'2026-06-24',name:'Nașterea Sfântului Ioan Botezătorul',shortDesc:'Nașterea Înaintemergătorului Domnului din Zaharia și Elisabeta.',fullDesc:'Sfântul Ioan Botezătorul s-a născut cu șase luni înaintea Mântuitorului. Tatăl său Zaharia, preot la Templu, a rostit la nașterea fiului său imnul „Benedictus": „Binecuvântat este Domnul Dumnezeul lui Israel."',verse:'Tu, pruncule, prooroc al Celui Preaînalt te vei chema; căci vei merge înaintea feței Domnului.',verseRef:'Luca 1:76'},
+      {d:'2026-06-29',name:'Sfinții Apostoli Petru și Pavel',shortDesc:'Corifei ai Apostolilor, întemeietorii Bisericii la Roma.',fullDesc:'Sfântul Petru, pescarul din Galileea, a condus Biserica primară și a murit răstignit cu capul în jos la Roma. Sfântul Pavel, „Apostolul neamurilor", a parcurs trei călătorii misionare prin lumea greco-romană și a scris 14 epistole.',verse:'Tu ești Hristosul, Fiul lui Dumnezeu Celui viu.',verseRef:'Matei 16:16'},
+      // Iulie 2026
+      {d:'2026-07-20',name:'Sfântul Proroc Ilie Tesviteanul',shortDesc:'Marele prooroc al Vechiului Testament, luat la cer în car de foc.',fullDesc:'Sfântul Ilie Tesviteanul a trăit în Israelul secolului IX î.Hr. și a combătut idolatria lui Baal pe Muntele Carmel, unde a coborât foc din cer. A fost luat la cer în car de foc. Este ocrotitor al aviatorilor și al celor care cer ploaie.',verse:'Cât timp vă veți tot împărți între două idei? Dacă Domnul este Dumnezeu, urmați-L pe El!',verseRef:'1 Regi 18:21'},
+      {d:'2026-07-27',name:'Sfântul Mare Mucenic Pantelimon',shortDesc:'Doctorul fără de arginți, ocrotitor al bolnavilor.',fullDesc:'Sfântul Pantelimon a fost medic în Nicomidia în secolul al IV-lea și tămăduia bolnavii în numele lui Iisus Hristos, fără să ceară plată. A murit mucenic sub împăratul Maximian.',verse:'Tămăduiți pe cei bolnavi, înviați pe cei morți, curățiți pe leproși; dați fără plată, fiindcă fără plată ați primit.',verseRef:'Matei 10:8'},
+      // August 2026
+      {d:'2026-08-06',name:'Schimbarea la Față a Domnului',shortDesc:'Hristos S-a arătat în slavă pe Muntele Tabor.',fullDesc:'Sărbătoarea Schimbării la Față comemorează momentul când Iisus S-a transfigurat pe Muntele Tabor, în fața ucenicilor Petru, Iacov și Ioan. Fața Sa a strălucit ca soarele, iar veșmintele Sale au devenit albe ca lumina. Moise și Ilie au apărut lângă El.',verse:'Acesta este Fiul Meu iubit, în Care am binevoit; pe El ascultați-L!',verseRef:'Matei 17:5'},
+      {d:'2026-08-15',name:'Adormirea Maicii Domnului',shortDesc:'Cel mai mare praznic închinat Preasfintei Născătoare de Dumnezeu.',fullDesc:'Adormirea Maicii Domnului este praznicul cel mai important închinat Fecioarei Maria. Aceasta a adormit în pace, înconjurată de Sfinții Apostoli aduși în mod minunat. A treia zi Apostolul Toma a deschis mormântul și nu a găsit trupul, căci Fecioara a fost înviată și înălțată la ceruri.',verse:'Iată roaba Domnului. Fie mie după cuvântul tău!',verseRef:'Luca 1:38'},
+      // Septembrie 2026
+      {d:'2026-09-08',name:'Nașterea Maicii Domnului',shortDesc:'Nașterea Fecioarei Maria din drepții Ioachim și Ana.',fullDesc:'Fecioara Maria s-a născut din bătrânii Ioachim și Ana, după ani de rugăciune și post. Nașterea ei a fost pregătire pentru marea taină a Întrupării Fiului lui Dumnezeu. La trei ani a fost adusă la Templul din Ierusalim.',verse:'Slăvite lucruri s-au grăit despre tine, cetate a lui Dumnezeu!',verseRef:'Psalmul 86:3'},
+      {d:'2026-09-14',name:'Înălțarea Sfintei Cruci',shortDesc:'Aflarea și înălțarea Sfintei Cruci de Sfânta Împărăteasă Elena.',fullDesc:'În 326 d.Hr., Sfânta Elena a găsit în Ierusalim Sfânta Cruce pe care a fost răstignit Iisus. Patriarhul Macarie al Ierusalimului a înălțat Crucea în văzul poporului, iar credincioșii răspundeau: „Doamne, miluiește!"',verse:'Iar eu, când Mă voi înălța de pe pământ, îi voi trage pe toți la Mine.',verseRef:'Ioan 12:32'},
+      // Octombrie 2026
+      {d:'2026-10-14',name:'Cuvioasa Parascheva de la Iași',shortDesc:'Ocrotitoarea Moldovei, moaștele sale la Catedrala din Iași.',fullDesc:'Sfânta Parascheva s-a născut în secolul X în Epivata, Tracia. A trăit o viață de sfântă ascetă în deșert. Moaștele ei se află la Catedrala Mitropolitană din Iași și sunt venerate anual de sute de mii de pelerini.',verse:'Cel ce va pierde sufletul său pentru Mine îl va afla.',verseRef:'Matei 16:25'},
+      {d:'2026-10-26',name:'Sfântul Mare Mucenic Dimitrie, Izvorâtorul de Mir',shortDesc:'Mucenic din Salonic, din al cărui mormânt izvorăște mir sfânt.',fullDesc:'Sfântul Dimitrie a trăit în Salonic la cumpăna secolelor III-IV și a suferit mucenicia în jurul anului 306. Considerat ocrotitor al Salonicului și al ostașilor, din mormântul său izvorăște un mir cu putere tămăduitoare.',verse:'Unde voi fi eu, acolo va fi și slujitorul Meu.',verseRef:'Ioan 12:26'},
+      // Noiembrie 2026
+      {d:'2026-11-08',name:'Soborul Sfinților Arhangheli Mihail și Gavriil',shortDesc:'Prăznuirea tuturor îngerilor în frunte cu Mihail și Gavriil.',fullDesc:'Praznicul tuturor îngerilor și arhanghelilor, în frunte cu Sfântul Arhanghel Mihail, căpetenia oștilor cerești, și Gavriil, vestitorul Bunei Vestiri. Mihail înseamnă „Cine este ca Dumnezeu", iar Gavriil înseamnă „Bărbatul lui Dumnezeu".',verse:'Și va porunci îngerilor Săi să te păzească în toate căile tale.',verseRef:'Psalmul 90:11'},
+      {d:'2026-11-21',name:'Intrarea în Biserică a Maicii Domnului',shortDesc:'Fecioara Maria adusă la Templu la vârsta de 3 ani.',fullDesc:'La vârsta de 3 ani, Fecioara Maria a fost adusă de drepții Ioachim și Ana la Templul din Ierusalim, unde a rămas până la vârsta de 12 ani, crescând în rugăciune, curăție și apropierea lui Dumnezeu.',verse:'Fecioarele aduse cu bucurie și veselie vor intra în palatele împărătești.',verseRef:'Psalmul 44:16'},
+      {d:'2026-11-30',name:'Sfântul Apostol Andrei, Cel Întâi Chemat',shortDesc:'Ocrotitorul României, primul chemat de Iisus.',fullDesc:'Sfântul Apostol Andrei, fratele lui Petru, a fost primul chemat de Iisus lângă Iordan. A propovăduit Evanghelia în Sciția Mică — teritoriul Dobrogei de astăzi — și este considerat Ocrotitorul României. A murit răstignit pe o cruce în formă de X.',verse:'Am găsit pe Mesia, care se tâlcuiește Hristos.',verseRef:'Ioan 1:41'},
+      // Decembrie 2026
+      {d:'2026-12-06',name:'Sfântul Ierarh Nicolae, Arhiepiscopul Mirelor Lichiei',shortDesc:'Marele făcător de minuni și ocrotitor al celor în nevoi.',fullDesc:'Sfântul Nicolae (270-343) a fost arhiepiscopul Mirelor Lichiei. Renumit pentru milostenia sa față de săraci, a ajutat în taină trei fete sărace cu zestre pentru căsătorie. A participat la Sinodul I Ecumenic de la Niceea (325).',verse:'Căci flămând am fost și Mi-ați dat de mâncat; însetat am fost și Mi-ați dat să beau.',verseRef:'Matei 25:35'},
+      {d:'2026-12-20',name:'Sfântul Ignatie Teoforul, Episcopul Antiohiei',shortDesc:'Ucenic al Apostolilor, martir la Roma, autorul epistolelor despre Euharistie.',fullDesc:'Sfântul Ignatie (35-108) a fost al treilea episcop al Antiohiei și ucenic al Sfântului Ioan Evanghelistul. A murit mucenic la Roma, aruncat la lei. Epistolele sale sunt primele documente care vorbesc despre Euharistie și ierarhia Bisericii.',verse:'Eu sunt grâul lui Dumnezeu și sunt măcinat de dinții fiarelor, ca să fiu pâine curată a lui Hristos.',verseRef:'Sfântul Ignatie, Epistola către romani'},
+      {d:'2026-12-25',name:'Nașterea Domnului Iisus Hristos — Crăciunul',shortDesc:'Marea sărbătoare a Întrupării Fiului lui Dumnezeu.',fullDesc:'Crăciunul este sărbătoarea Întrupării lui Dumnezeu: Fiul lui Dumnezeu S-a născut din Fecioara Maria în Betleem, în ieslea săracă. Îngerii au vestit păstorilor: „Slavă întru cei de sus lui Dumnezeu și pe pământ pace, între oameni bunăvoire!" Magii din Răsărit au adus daruri.',verse:'Căci atât de mult a iubit Dumnezeu lumea, încât pe Fiul Său Cel Unul-Născut L-a dat.',verseRef:'Ioan 3:16'},
+      {d:'2026-12-27',name:'Sfântul Apostol și Evanghelist Ioan Teologul',shortDesc:'Ucenicul iubit al lui Hristos, autorul Evangheliei a IV-a și al Apocalipsei.',fullDesc:'Sfântul Ioan Teologul, fiul lui Zevedeu, era fratele lui Iacov. A fost cel mai iubit ucenic al lui Iisus, singurul apostol prezent la Răstignire. A scris a IV-a Evanghelie, trei Epistole și Apocalipsa. A adormit la adânci bătrânețe în Efes.',verse:'Dumnezeu este iubire și cel ce rămâne în iubire rămâne în Dumnezeu și Dumnezeu rămâne în el.',verseRef:'1 Ioan 4:16'},
     ];
     var batch=[];
     for(var s of saints){
@@ -1401,8 +1448,9 @@ window.seedSaints=async function seedSaints(){
       if(batch.length>=10){await Promise.all(batch);batch=[];}
     }
     if(batch.length)await Promise.all(batch);
+    toast('Calendar 2026 populat cu succes!','success');
   }catch(e){console.warn('Saints seeding error:',e);}
-}
+};
 
 async function seedAll(){
   var SD=[{day:'Duminica',service:'Sfanta Liturghie',time:'09:00',location:'Biserica',type:'sunday'},{day:'Duminica',service:'Vecernie',time:'17:00',location:'Biserica',type:'sunday'},{day:'Miercuri',service:'Acatistul Maicii Domnului',time:'18:00',location:'Biserica',type:'weekly'},{day:'Vineri',service:'Paraclisul',time:'18:00',location:'Biserica',type:'weekly'},{day:'Sambata',service:'Panihida',time:'11:00',location:'Cimitir',type:'weekly'},{day:'1 Ianuarie',service:'Sfantul Vasile',time:'09:00',location:'Biserica',type:'holiday'}];
@@ -1510,7 +1558,25 @@ async function aOrds(){
 window.updOS=async function(id,st,em,nm){
   await updateDoc(doc(db,'orders',id),{status:st}).catch(function(){});
   toast('Status actualizat.','success');
-  if(ejc.publicKey&&ejc.templateStatus&&em){try{await fetch('https://api.emailjs.com/api/v1.0/email/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service_id:ejc.serviceId,template_id:ejc.templateStatus,user_id:ejc.publicKey,template_params:{to_name:nm,to_email:em,order_id:id.substring(0,8).toUpperCase(),status:st}})});}catch(e){}}
+  if(ejc.publicKey&&ejc.templateStatus&&em){
+    try{
+      await fetch('https://api.emailjs.com/api/v1.0/email/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        service_id:ejc.serviceId,
+        template_id:ejc.templateStatus,
+        user_id:ejc.publicKey,
+        template_params:{
+          to_name:nm,
+          to_email:em,
+          title:'Actualizare Comanda #'+id.substring(0,8).toUpperCase(),
+          from_name:'Parohia Stornești',
+          from_email:'parohiastornesti@gmail.com',
+          message:'Comanda dvs. #'+id.substring(0,8).toUpperCase()+' a fost actualizata. Noul status: '+st,
+          order_id:id.substring(0,8).toUpperCase(),
+          status:st
+        }
+      })});
+    }catch(e){}
+  }
 };
 window.delO=async function(id){if(!confirm('Stergeti comanda?'))return;await deleteDoc(doc(db,'orders',id)).catch(function(){});toast('Sters.','success');aOrds();};
 window.showOD=function(id){
@@ -1545,11 +1611,16 @@ window.proPro=function(id){
   w.document.close();
 };
 
-function aProds(){
+async function aProds(){
   var m=document.getElementById('adm');
+  var prodCats=[];
+  try{var csnP=await getDocs(query(collection(db,'categories'),where('type','==','products')));prodCats=csnP.docs.map(function(d){return d.data().name;});}catch(e){}
+  if(!prodCats.length)prodCats=[...new Set(prods.map(function(p){return p.category;}).filter(Boolean))];
+  var prodCatOpts='<option value="">-- Alege --</option>'+prodCats.map(function(c){return'<option value="'+esc(c)+'">'+esc(c)+'</option>';}).join('');
+
   m.innerHTML='<h2 style="font-family:Cinzel,serif;color:var(--v);margin-bottom:22px">Produse</h2>'+
-    '<div class="ac2"><h3>Adauga / Editeaza</h3><input type="hidden" id="p-ei">'+
-    '<div class="ag2"><div class="fg"><label>Denumire *</label><input type="text" id="p-n" placeholder="Lumanare..."></div><div class="fg"><label>Categorie</label><input type="text" id="p-c" list="p-cl" placeholder="Lumanari"><datalist id="p-cl"></datalist></div></div>'+
+    '<div class="ac2"><h3 id="p-form-title">Adauga / Editeaza</h3><input type="hidden" id="p-ei">'+
+    '<div class="ag2"><div class="fg"><label>Denumire *</label><input type="text" id="p-n" placeholder="Lumanare..."></div><div class="fg"><label>Categorie</label><select id="p-c">'+prodCatOpts+'</select></div></div>'+
     '<div class="ag2"><div class="fg"><label>Pret (lei) *</label><input type="number" id="p-pr" min="0" step=".01" placeholder="25.00"></div><div class="fg"><label>Pret vechi (lei)</label><input type="number" id="p-op" min="0" step=".01" placeholder="30.00"></div></div>'+
     '<div class="ag2"><div class="fg"><label>Stoc *</label><input type="number" id="p-st" min="0" placeholder="50"></div><div class="fg"><label>Badge</label><input type="text" id="p-bd" placeholder="Popular"></div></div>'+
     '<div class="fg"><label>Info transport</label><input type="text" id="p-tr" placeholder="La parohie sau curierat."></div>'+
@@ -1560,14 +1631,6 @@ function aProds(){
     '<div class="ipl" id="p-imgs"></div>'+
     '<button class="btn bp" onclick="svProd()">Salveaza</button> <button class="btn bs" onclick="rstProd()">Reset</button></div>'+
     '<div class="ac2" style="overflow-x:auto"><h3>Produse existente</h3><div id="p-tbl"><div class="ld"><div class="loader"></div></div></div></div>';
-  getDocs(query(collection(db,'categories'),where('type','==','products'))).then(function(sn){
-    var dl=document.getElementById('p-cl');if(!dl)return;
-    sn.docs.forEach(function(d){var o=document.createElement('option');o.value=d.data().name;dl.appendChild(o);});
-  }).catch(function(){
-    var cats=[...new Set(prods.map(function(p){return p.category;}).filter(Boolean))];
-    var dl=document.getElementById('p-cl');if(!dl)return;
-    cats.forEach(function(c){var o=document.createElement('option');o.value=c;dl.appendChild(o);});
-  });
   aImgs=[];ldPT();
 }
 async function ldPT(){
@@ -1592,87 +1655,196 @@ window.rmImg=function(i){aImgs[i]=null;document.querySelectorAll('.ip').forEach(
 window.svProd=async function(){
   var n=document.getElementById('p-n')?.value.trim(),pr=parseFloat(document.getElementById('p-pr')?.value),st=parseInt(document.getElementById('p-st')?.value)||0;
   if(!n||isNaN(pr)){toast('Completati denumirea si pretul.','error');return;}
-  var imgs=aImgs.filter(Boolean);
-  var d={name:n,price:pr,oldPrice:parseFloat(document.getElementById('p-op')?.value)||null,stock:st,category:document.getElementById('p-c')?.value.trim(),badge:document.getElementById('p-bd')?.value.trim(),transport:document.getElementById('p-tr')?.value.trim(),shortDesc:document.getElementById('p-sd')?.value.trim(),fullDesc:document.getElementById('p-fd')?.value.trim(),images:imgs};
+  var newImgs=aImgs.filter(Boolean);
+  var ei=document.getElementById('p-ei')?.value;
+  // If editing and no new images uploaded, keep old images
+  var d={name:n,price:pr,oldPrice:parseFloat(document.getElementById('p-op')?.value)||null,stock:st,category:document.getElementById('p-c')?.value,badge:document.getElementById('p-bd')?.value.trim(),transport:document.getElementById('p-tr')?.value.trim(),shortDesc:document.getElementById('p-sd')?.value.trim(),fullDesc:document.getElementById('p-fd')?.value.trim()};
+  if(newImgs.length)d.images=newImgs;
   try{
-    var ei=document.getElementById('p-ei')?.value;
-    if(ei){await updateDoc(doc(db,'products',ei),d);toast('Produs actualizat!','success');}
-    else{d.soldCount=0;d.rating=0;await addDoc(collection(db,'products'),d);await sndNL('Produs nou: '+n,'Produs nou in magazin: '+n+' la pretul de '+fpv(pr));toast('Produs adaugat!','success');}
+    if(ei){
+      await updateDoc(doc(db,'products',ei),d);
+      toast('Produs actualizat!','success');
+    }else{
+      d.images=newImgs;d.soldCount=0;d.rating=0;
+      await addDoc(collection(db,'products'),d);
+      await sndNL('Produs nou: '+n,'Produs nou in magazin: '+n+' la pretul de '+fpv(pr));
+      toast('Produs adaugat!','success');
+    }
     prods=[];rstProd();ldPT();
   }catch(e){toast('Eroare: '+e.message,'error');}
 };
 window.edProd=async function(id){
   var sn=await getDoc(doc(db,'products',id));if(!sn.exists())return;var p=sn.data();
   document.getElementById('p-ei').value=id;
-  [['p-n',p.name],['p-pr',p.price],['p-op',p.oldPrice],['p-st',p.stock],['p-c',p.category],['p-bd',p.badge],['p-tr',p.transport],['p-sd',p.shortDesc],['p-fd',p.fullDesc]].forEach(function(kv){var e=document.getElementById(kv[0]);if(e)e.value=kv[1]||'';});
+  [['p-n',p.name],['p-pr',p.price],['p-op',p.oldPrice],['p-st',p.stock],['p-bd',p.badge],['p-tr',p.transport],['p-sd',p.shortDesc],['p-fd',p.fullDesc]].forEach(function(kv){var e=document.getElementById(kv[0]);if(e)e.value=kv[1]||'';});
+  // Category select — add option if not present
+  var sel=document.getElementById('p-c');
+  if(sel&&p.category){
+    if(!Array.from(sel.options).find(function(o){return o.value===p.category;})){
+      var opt=document.createElement('option');opt.value=p.category;opt.textContent=p.category;sel.appendChild(opt);
+    }
+    sel.value=p.category;
+  }
   aImgs=(p.images||[]).slice();
   var l=document.getElementById('p-imgs');if(l)l.innerHTML=(p.images||[]).map(function(i,n){return'<div class="ip"><img src="'+i+'"><button class="rm" onclick="rmImg('+n+')">X</button></div>';}).join('');
+  var h=document.getElementById('p-form-title');if(h)h.textContent='Editeaza: '+esc(p.name);
   window.scrollTo({top:0,behavior:'smooth'});
 };
-window.rstProd=function(){['p-ei','p-n','p-pr','p-op','p-st','p-c','p-bd','p-tr','p-sd','p-fd'].forEach(function(k){var e=document.getElementById(k);if(e)e.value='';});aImgs=[];var l=document.getElementById('p-imgs');if(l)l.innerHTML='';};
+window.rstProd=function(){
+  document.getElementById('p-ei').value='';
+  ['p-n','p-pr','p-op','p-st','p-bd','p-tr','p-sd','p-fd'].forEach(function(k){var e=document.getElementById(k);if(e)e.value='';});
+  var s=document.getElementById('p-c');if(s)s.value='';
+  aImgs=[];var l=document.getElementById('p-imgs');if(l)l.innerHTML='';
+  var h=document.getElementById('p-form-title');if(h)h.textContent='Adauga / Editeaza';
+};
 window.delProd=async function(id){if(!confirm('Stergeti produsul?'))return;await deleteDoc(doc(db,'products',id));prods=prods.filter(function(p){return p.id!==id;});toast('Produs sters.','success');ldPT();};
 
-function aAnns(){
+async function aAnns(){
   var m=document.getElementById('adm');
+  // Load categories from Firestore
+  var annCats=[];
+  try{var csnA=await getDocs(query(collection(db,'categories'),where('type','==','announcements')));annCats=csnA.docs.map(function(d){return d.data().name;});}catch(e){}
+  // Fallback built-in types
+  var builtIn=['anunt','urgent','service'];
+  var allTypes=[...new Set([...builtIn,...annCats])];
+  var typeOpts=allTypes.map(function(t){return'<option value="'+esc(t)+'">'+esc(t)+'</option>';}).join('');
+
   m.innerHTML='<h2 style="font-family:Cinzel,serif;color:var(--v);margin-bottom:22px">Anunturi</h2>'+
-    '<div class="ac2"><h3>Adauga anunt</h3>'+
+    '<div class="ac2"><h3 id="an-form-title">Adauga anunt</h3><input type="hidden" id="an-ei">'+
     '<div class="ag2"><div class="fg"><label>Titlu *</label><input type="text" id="an-t" placeholder="Titlul anuntului"></div>'+
-    '<div class="fg"><label>Tip</label><select id="an-tp"><option value="anunt">Anunt</option><option value="urgent">Urgent</option><option value="service">Slujba</option></select></div></div>'+
+    '<div class="fg"><label>Tip / Categorie</label><select id="an-tp">'+typeOpts+'</select></div></div>'+
     '<div class="fg"><label>Continut *</label><textarea id="an-c" placeholder="Continut anunt..."></textarea></div>'+
-    '<div class="dz" onclick="document.getElementById(\'an-fi\').click()" ondragover="event.preventDefault();this.classList.add(\'drag\')" ondragleave="this.classList.remove(\'drag\')" ondrop="hDr(event,\'an\')"><p>Imagini (vor aparea ca carusel)</p></div>'+
+    '<div class="dz" onclick="document.getElementById(\'an-fi\').click()" ondragover="event.preventDefault();this.classList.add(\'drag\')" ondragleave="this.classList.remove(\'drag\')" ondrop="hDr(event,\'an\')"><p>Drag & drop imagini sau click (compresie auto 800px)</p></div>'+
     '<input type="file" id="an-fi" multiple accept="image/*" style="display:none" onchange="hFI(this,\'an\')">'+
     '<div class="ipl" id="an-imgs"></div>'+
-    '<button class="btn bp" onclick="svAnn()">Salveaza</button></div>'+
+    '<button class="btn bp" onclick="svAnn()">Salveaza</button> <button class="btn bs" onclick="rstAnn()">Reset</button></div>'+
     '<div class="ac2" style="overflow-x:auto"><h3>Anunturi existente</h3><div id="an-tbl"><div class="ld"><div class="loader"></div></div></div></div>';
   aImgs=[];ldAT();
 }
 async function ldAT(){
   var el=document.getElementById('an-tbl');if(!el)return;
   var sn=await getDocs(collection(db,'announcements')).catch(function(){return{docs:[]};});
-  var anns2=sn.docs.map(function(d){return Object.assign({id:d.id},d.data());});
+  var anns2=sn.docs.map(function(d){return Object.assign({id:d.id},d.data());}).sort(function(a,b){return(b.createdAt?.toMillis?.()??0)-(a.createdAt?.toMillis?.()??0);});
   el.innerHTML='<table class="at2"><thead><tr><th>Titlu</th><th>Tip</th><th>Data</th><th>Actiuni</th></tr></thead><tbody>'+
-    anns2.map(function(a){return'<tr><td>'+esc(a.title)+'</td><td><span class="badge '+(a.type==='urgent'?'br':'bv')+'">'+esc(a.type||'')+'</span></td><td>'+fd(a.createdAt)+'</td><td><button class="btn bd bsm" onclick="delAnn(\''+a.id+'\')">X</button></td></tr>';}).join('')+
+    anns2.map(function(a){return'<tr>'+
+      '<td>'+esc(a.title)+'</td>'+
+      '<td><span class="badge '+(a.type==='urgent'?'br':'bv')+'">'+esc(a.type||'')+'</span></td>'+
+      '<td>'+fd(a.createdAt)+'</td>'+
+      '<td style="display:flex;gap:5px">'+
+        '<button class="btn bs bsm" onclick="edAnn(\''+a.id+'\')">Edit</button>'+
+        '<button class="btn bd bsm" onclick="delAnn(\''+a.id+'\')">X</button>'+
+      '</td>'+
+    '</tr>';}).join('')+
     '</tbody></table>';
 }
 window.svAnn=async function(){
   var t=document.getElementById('an-t')?.value.trim(),c=document.getElementById('an-c')?.value.trim();
   if(!t||!c){toast('Completati titlul si continutul.','error');return;}
   var imgs=aImgs.filter(Boolean);
+  var ei=document.getElementById('an-ei')?.value;
   try{
-    await addDoc(collection(db,'announcements'),{title:t,content:c,type:document.getElementById('an-tp')?.value,images:imgs,createdAt:serverTimestamp()});
-    await sndNL('Anunt nou: '+t,c);toast('Anunt adaugat!','success');
-    anns=[];document.getElementById('an-t').value='';document.getElementById('an-c').value='';aImgs=[];var l=document.getElementById('an-imgs');if(l)l.innerHTML='';ldAT();
+    if(ei){
+      var upd={title:t,content:c,type:document.getElementById('an-tp')?.value};
+      if(imgs.length)upd.images=imgs;
+      await updateDoc(doc(db,'announcements',ei),upd);
+      toast('Anunt actualizat!','success');
+    }else{
+      await addDoc(collection(db,'announcements'),{title:t,content:c,type:document.getElementById('an-tp')?.value,images:imgs,createdAt:serverTimestamp()});
+      await sndNL('Anunt nou: '+t,c);toast('Anunt adaugat!','success');
+    }
+    anns=[];rstAnn();ldAT();
   }catch(e){toast('Eroare: '+e.message,'error');}
+};
+window.rstAnn=function(){
+  document.getElementById('an-ei').value='';
+  document.getElementById('an-t').value='';
+  document.getElementById('an-c').value='';
+  aImgs=[];var l=document.getElementById('an-imgs');if(l)l.innerHTML='';
+  var h=document.getElementById('an-form-title');if(h)h.textContent='Adauga anunt';
+};
+window.edAnn=async function(id){
+  var sn=await getDoc(doc(db,'announcements',id));if(!sn.exists())return;
+  var a=sn.data();
+  document.getElementById('an-ei').value=id;
+  document.getElementById('an-t').value=a.title||'';
+  document.getElementById('an-c').value=a.content||'';
+  var sel=document.getElementById('an-tp');if(sel){sel.value=a.type||'anunt';if(!sel.value)sel.value='anunt';}
+  aImgs=(a.images||[]).slice();
+  var l=document.getElementById('an-imgs');
+  if(l)l.innerHTML=(a.images||[]).map(function(img,n){return'<div class="ip"><img src="'+img+'"><button class="rm" onclick="rmImg('+n+')">X</button></div>';}).join('');
+  var h=document.getElementById('an-form-title');if(h)h.textContent='Editeaza anunt';
+  window.scrollTo({top:0,behavior:'smooth'});
 };
 window.delAnn=async function(id){if(!confirm('Stergeti anuntul?'))return;await deleteDoc(doc(db,'announcements',id));anns=[];toast('Sters.','success');ldAT();};
 
-function aAud(){
+async function aAud(){
   var m=document.getElementById('adm');
+  var audCats=[];
+  try{var csnAu=await getDocs(query(collection(db,'categories'),where('type','==','audio')));audCats=csnAu.docs.map(function(d){return d.data().name;});}catch(e){}
+  var audTypeOpts=(audCats.length?audCats:['Predici','Cantari','Acatiste','Paraclise']).map(function(c){return'<option value="'+esc(c)+'">'+esc(c)+'</option>';}).join('');
+
   m.innerHTML='<h2 style="font-family:Cinzel,serif;color:var(--v);margin-bottom:22px">Audio</h2>'+
-    '<div class="ac2" style="background:rgba(201,168,76,.07);border:1.5px solid var(--g);margin-bottom:22px"><p style="font-size:.8rem;color:var(--tm)"><strong>URL-uri suportate:</strong> Dropbox (dl=0 in dl=1), Google Drive link direct, .mp3/.wav sau YouTube (player embedded).</p></div>'+
-    '<div class="ac2"><h3>Adauga inregistrare</h3>'+
-    '<div class="ag2"><div class="fg"><label>Titlu *</label><input type="text" id="au-t" placeholder="Predica..."></div><div class="fg"><label>Autor</label><input type="text" id="au-a" placeholder="Pr. Ioan Popescu"></div></div>'+
-    '<div class="ag2"><div class="fg"><label>Categorie</label><input type="text" id="au-c" list="au-cl" placeholder="Predici"><datalist id="au-cl"></datalist></div><div class="fg"><label>Durata (ex: 32:14)</label><input type="text" id="au-d" placeholder="32:14"></div></div>'+
+    '<div class="ac2" style="background:rgba(201,168,76,.07);border:1.5px solid var(--g);margin-bottom:22px"><p style="font-size:.8rem;color:var(--tm)"><strong>URL-uri suportate:</strong> Dropbox (dl=0 → dl=1), Google Drive link direct, .mp3/.wav sau YouTube (player embedded).</p></div>'+
+    '<div class="ac2"><h3 id="au-form-title">Adauga inregistrare</h3><input type="hidden" id="au-ei">'+
+    '<div class="ag2"><div class="fg"><label>Titlu *</label><input type="text" id="au-t" placeholder="Predica duminicala..."></div><div class="fg"><label>Autor</label><input type="text" id="au-a" placeholder="Pr. Ioan Popescu"></div></div>'+
+    '<div class="ag2"><div class="fg"><label>Categorie</label><select id="au-c"><option value="">-- Alege --</option>'+audTypeOpts+'</select></div><div class="fg"><label>Durata (ex: 32:14)</label><input type="text" id="au-d" placeholder="32:14"></div></div>'+
     '<div class="fg"><label>URL Audio/YouTube *</label><input type="text" id="au-u" placeholder="https://..."></div>'+
     '<div class="fg"><label>Descriere</label><textarea id="au-ds" placeholder="Scurta descriere..."></textarea></div>'+
-    '<button class="btn bp" onclick="svAud()">Salveaza</button></div>'+
+    '<button class="btn bp" onclick="svAud()">Salveaza</button> <button class="btn bs" onclick="rstAud()">Reset</button></div>'+
     '<div class="ac2" style="overflow-x:auto"><h3>Inregistrari existente</h3><div id="au-tbl"><div class="ld"><div class="loader"></div></div></div></div>';
-  getDocs(query(collection(db,'categories'),where('type','==','audio'))).then(function(sn){var dl=document.getElementById('au-cl');if(dl)sn.docs.forEach(function(d){var o=document.createElement('option');o.value=d.data().name;dl.appendChild(o);});}).catch(function(){});
   ldAuT();
 }
 async function ldAuT(){
   var el=document.getElementById('au-tbl');if(!el)return;
   var sn=await getDocs(collection(db,'audio')).catch(function(){return{docs:[]};});
-  var auds2=sn.docs.map(function(d){return Object.assign({id:d.id},d.data());});
-  el.innerHTML='<table class="at2"><thead><tr><th></th><th>Titlu</th><th>Autor</th><th>Categorie</th><th>Data</th><th>Actiuni</th></tr></thead><tbody>'+
-    auds2.map(function(a){return'<tr><td>M</td><td>'+esc(a.title)+'</td><td>'+esc(a.author||'-')+'</td><td><span class="badge bv">'+esc(a.category||'-')+'</span></td><td>'+fd(a.createdAt)+'</td><td><button class="btn bd bsm" onclick="delAud(\''+a.id+'\')">X</button></td></tr>';}).join('')+
+  var auds2=sn.docs.map(function(d){return Object.assign({id:d.id},d.data());}).sort(function(a,b){return(b.createdAt?.toMillis?.()??0)-(a.createdAt?.toMillis?.()??0);});
+  el.innerHTML='<table class="at2"><thead><tr><th>Titlu</th><th>Autor</th><th>Categorie</th><th>Data</th><th>Actiuni</th></tr></thead><tbody>'+
+    auds2.map(function(a){return'<tr>'+
+      '<td>'+esc(a.title)+'</td><td>'+esc(a.author||'-')+'</td>'+
+      '<td><span class="badge bv">'+esc(a.category||'-')+'</span></td>'+
+      '<td>'+fd(a.createdAt)+'</td>'+
+      '<td style="display:flex;gap:5px">'+
+        '<button class="btn bs bsm" onclick="edAud(\''+a.id+'\')">Edit</button>'+
+        '<button class="btn bd bsm" onclick="delAud(\''+a.id+'\')">X</button>'+
+      '</td></tr>';}).join('')+
     '</tbody></table>';
 }
 window.svAud=async function(){
   var t=document.getElementById('au-t')?.value.trim(),u=document.getElementById('au-u')?.value.trim();
   if(!t||!u){toast('Titlul si URL-ul sunt obligatorii.','error');return;}
-  await addDoc(collection(db,'audio'),{title:t,url:u,author:document.getElementById('au-a')?.value.trim(),category:document.getElementById('au-c')?.value.trim(),duration:document.getElementById('au-d')?.value.trim(),description:document.getElementById('au-ds')?.value.trim(),createdAt:serverTimestamp()});
-  toast('Inregistrare adaugata!','success');auds=[];['au-t','au-u','au-a','au-c','au-d','au-ds'].forEach(function(k){var e=document.getElementById(k);if(e)e.value='';});ldAuT();
+  var d={title:t,url:u,author:document.getElementById('au-a')?.value.trim(),category:document.getElementById('au-c')?.value,duration:document.getElementById('au-d')?.value.trim(),description:document.getElementById('au-ds')?.value.trim()};
+  var ei=document.getElementById('au-ei')?.value;
+  try{
+    if(ei){await updateDoc(doc(db,'audio',ei),d);toast('Inregistrare actualizata!','success');}
+    else{d.createdAt=serverTimestamp();await addDoc(collection(db,'audio'),d);toast('Inregistrare adaugata!','success');}
+    auds=[];rstAud();ldAuT();
+  }catch(e){toast('Eroare: '+e.message,'error');}
+};
+window.rstAud=function(){
+  document.getElementById('au-ei').value='';
+  ['au-t','au-u','au-a','au-d','au-ds'].forEach(function(k){var e=document.getElementById(k);if(e)e.value='';});
+  var s=document.getElementById('au-c');if(s)s.value='';
+  var h=document.getElementById('au-form-title');if(h)h.textContent='Adauga inregistrare';
+};
+window.edAud=async function(id){
+  var sn=await getDoc(doc(db,'audio',id));if(!sn.exists())return;
+  var a=sn.data();
+  document.getElementById('au-ei').value=id;
+  document.getElementById('au-t').value=a.title||'';
+  document.getElementById('au-u').value=a.url||'';
+  document.getElementById('au-a').value=a.author||'';
+  document.getElementById('au-d').value=a.duration||'';
+  document.getElementById('au-ds').value=a.description||'';
+  var sel=document.getElementById('au-c');
+  if(sel){
+    // Add option if not present
+    if(a.category&&!Array.from(sel.options).find(function(o){return o.value===a.category;})){
+      var opt=document.createElement('option');opt.value=a.category;opt.textContent=a.category;sel.appendChild(opt);
+    }
+    sel.value=a.category||'';
+  }
+  var h=document.getElementById('au-form-title');if(h)h.textContent='Editeaza inregistrare';
+  window.scrollTo({top:0,behavior:'smooth'});
 };
 window.delAud=async function(id){if(!confirm('Stergeti?'))return;await deleteDoc(doc(db,'audio',id));auds=[];toast('Sters.','success');ldAuT();};
 
@@ -1756,33 +1928,129 @@ window.delTr2=async function(id){if(!confirm('Stergeti?'))return;await deleteDoc
 async function aEm(){
   var m=document.getElementById('adm');
   m.innerHTML='<h2 style="font-family:Cinzel,serif;color:var(--v);margin-bottom:22px">Configurare EmailJS</h2>'+
+
     '<div class="ac2"><h3>Configurare API</h3>'+
-    '<div class="ag2"><div class="fg"><label>Public Key</label><input type="text" id="ej-pk" value="'+esc(ejc.publicKey||'')+'" placeholder="user_..."></div><div class="fg"><label>Service ID</label><input type="text" id="ej-si" value="'+esc(ejc.serviceId||'')+'" placeholder="service_..."></div></div>'+
-    '<div class="ag2"><div class="fg"><label>Template Confirmare Comanda</label><input type="text" id="ej-tc" value="'+esc(ejc.templateConfirmare||'')+'" placeholder="template_..."></div><div class="fg"><label>Template Actualizare Status</label><input type="text" id="ej-ts2" value="'+esc(ejc.templateStatus||'')+'" placeholder="template_..."></div></div>'+
-    '<div class="fg"><label>Template Newsletter</label><input type="text" id="ej-tn" value="'+esc(ejc.templateNewsletter||'')+'" placeholder="template_..."></div>'+
-    '<div class="fg"><label>Email administrator</label><input type="email" id="ej-ae" value="'+esc(ejc.adminEmail||ADMIN)+'" placeholder="'+ADMIN+'"></div>'+
-    '<div style="padding:11px;background:var(--c);border-radius:8px;font-size:.76rem;color:var(--tm);margin-bottom:14px">'+
-    'Variabile: {{to_name}}, {{to_email}}, {{order_id}}, {{total}}, {{products_list}}, {{payment_method}}, {{status}}, {{subject}}, {{content}}'+
+    '<div class="ag2">'+
+      '<div class="fg"><label>Public Key</label><input type="text" id="ej-pk" value="'+esc(ejc.publicKey||'')+'" placeholder="user_..."></div>'+
+      '<div class="fg"><label>Service ID</label><input type="text" id="ej-si" value="'+esc(ejc.serviceId||'')+'" placeholder="service_..."></div>'+
     '</div>'+
-    '<button class="btn bp" onclick="svEJ()">Salveaza configurarea</button> <button class="btn bs" onclick="tstEJ()">Trimite test</button></div>'+
+    '<div class="ag2">'+
+      '<div class="fg"><label>Template — Confirmare Comanda</label><input type="text" id="ej-tc" value="'+esc(ejc.templateConfirmare||'')+'" placeholder="template_..."></div>'+
+      '<div class="fg"><label>Template — Actualizare Status Comanda</label><input type="text" id="ej-ts2" value="'+esc(ejc.templateStatus||'')+'" placeholder="template_..."></div>'+
+    '</div>'+
+    '<div class="fg"><label>Template — Newsletter / Anunturi</label><input type="text" id="ej-tn" value="'+esc(ejc.templateNewsletter||'')+'" placeholder="template_..."></div>'+
+    '<div class="fg"><label>Email administrator (pentru teste)</label><input type="email" id="ej-ae" value="'+esc(ejc.adminEmail||ADMIN)+'" placeholder="'+ADMIN+'"></div>'+
+    '<button class="btn bp" onclick="svEJ()">Salveaza configurarea</button> <button class="btn bs" style="margin-left:8px" onclick="tstEJ()">Trimite email test</button>'+
+    '</div>'+
+
+    // Variables reference
+    '<div class="ac2" style="background:rgba(201,168,76,.07);border:1.5px solid var(--g)">'+
+    '<h3>Variabile disponibile per template</h3>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px">'+
+
+    '<div style="background:var(--w);border-radius:9px;padding:13px;border:1px solid var(--cd)">'+
+    '<strong style="font-family:Cinzel,serif;font-size:.76rem;color:var(--v);display:block;margin-bottom:8px">&#128230; Confirmare Comanda</strong>'+
+    '<code style="font-size:.72rem;line-height:2;display:block;color:var(--td)">'+
+    '{{to_name}} — numele clientului<br>'+
+    '{{to_email}} — emailul clientului<br>'+
+    '{{title}} — "Confirmare Comanda"<br>'+
+    '{{from_name}} — Parohia Stornești<br>'+
+    '{{from_email}} — parohiastornesti@gmail.com<br>'+
+    '{{message}} — detalii comanda complete<br>'+
+    '{{order_id}} — ID scurt comanda<br>'+
+    '{{total}} — valoare totala<br>'+
+    '{{products_list}} — lista produse<br>'+
+    '{{payment_method}} — metoda plata'+
+    '</code></div>'+
+
+    '<div style="background:var(--w);border-radius:9px;padding:13px;border:1px solid var(--cd)">'+
+    '<strong style="font-family:Cinzel,serif;font-size:.76rem;color:var(--v);display:block;margin-bottom:8px">&#128228; Newsletter & Anunturi</strong>'+
+    '<code style="font-size:.72rem;line-height:2;display:block;color:var(--td)">'+
+    '{{to_name}} — numele abonatului<br>'+
+    '{{to_email}} — emailul abonatului<br>'+
+    '{{title}} — subiectul mesajului<br>'+
+    '{{from_name}} — Parohia Stornești<br>'+
+    '{{from_email}} — parohiastornesti@gmail.com<br>'+
+    '{{message}} — continutul mesajului<br>'+
+    '{{subject}} — același cu title<br>'+
+    '{{content}} — același cu message'+
+    '</code></div>'+
+
+    '<div style="background:var(--w);border-radius:9px;padding:13px;border:1px solid var(--cd)">'+
+    '<strong style="font-family:Cinzel,serif;font-size:.76rem;color:var(--v);display:block;margin-bottom:8px">&#128260; Actualizare Status</strong>'+
+    '<code style="font-size:.72rem;line-height:2;display:block;color:var(--td)">'+
+    '{{to_name}} — numele clientului<br>'+
+    '{{to_email}} — emailul clientului<br>'+
+    '{{title}} — "Actualizare Comanda"<br>'+
+    '{{from_name}} — Parohia Stornești<br>'+
+    '{{from_email}} — parohiastornesti@gmail.com<br>'+
+    '{{message}} — descriere status<br>'+
+    '{{order_id}} — ID scurt comanda<br>'+
+    '{{status}} — noul status'+
+    '</code></div>'+
+
+    '<div style="background:var(--w);border-radius:9px;padding:13px;border:1px solid var(--cd)">'+
+    '<strong style="font-family:Cinzel,serif;font-size:.76rem;color:var(--v);display:block;margin-bottom:8px">&#128203; HTML Template EmailJS</strong>'+
+    '<code style="font-size:.68rem;line-height:1.7;display:block;color:var(--td);word-break:break-all">'+
+    'Subiect EmailJS: <em>{{title}}</em><br><br>'+
+    'Body folosit de tine:<br>'+
+    '&lt;h2&gt;{{title}}&lt;/h2&gt;<br>'+
+    '&lt;p&gt;Nume: {{from_name}}&lt;/p&gt;<br>'+
+    '&lt;p&gt;Email: {{from_email}}&lt;/p&gt;<br>'+
+    '&lt;div&gt;{{message}}&lt;/div&gt;'+
+    '</code></div>'+
+    '</div></div>'+
+
+    // Newsletter manual
     '<div class="ac2"><h3>Newsletter Manual</h3>'+
     '<div class="fg"><label>Subiect</label><input type="text" id="nl-s" placeholder="Veste buna din parohie..."></div>'+
-    '<div class="fg"><label>Continut</label><textarea id="nl-c" placeholder="Dragi credinciosi..."></textarea></div>'+
-    '<button class="btn bp" onclick="sndMNL()">Trimite la toti abonati</button></div>';
+    '<div class="fg"><label>Continut mesaj</label><textarea id="nl-c" placeholder="Dragi credinciosi..."></textarea></div>'+
+    '<button class="btn bp" onclick="sndMNL()">&#128228; Trimite la toti abonati</button></div>';
 }
+
 window.svEJ=async function(){
-  var c={publicKey:document.getElementById('ej-pk')?.value.trim(),serviceId:document.getElementById('ej-si')?.value.trim(),templateConfirmare:document.getElementById('ej-tc')?.value.trim(),templateStatus:document.getElementById('ej-ts2')?.value.trim(),templateNewsletter:document.getElementById('ej-tn')?.value.trim(),adminEmail:document.getElementById('ej-ae')?.value.trim()};
-  await setDoc(doc(db,'settings','emailjs'),c).catch(function(){});ejc=c;toast('Configurare salvata!','success');
+  var c={
+    publicKey:document.getElementById('ej-pk')?.value.trim(),
+    serviceId:document.getElementById('ej-si')?.value.trim(),
+    templateConfirmare:document.getElementById('ej-tc')?.value.trim(),
+    templateStatus:document.getElementById('ej-ts2')?.value.trim(),
+    templateNewsletter:document.getElementById('ej-tn')?.value.trim(),
+    adminEmail:document.getElementById('ej-ae')?.value.trim()
+  };
+  await setDoc(doc(db,'settings','emailjs'),c).catch(function(){});
+  ejc=c;toast('Configurare salvata!','success');
 };
+
 window.tstEJ=async function(){
   if(!ejc.publicKey){toast('Configurati EmailJS mai intai.','error');return;}
-  try{await fetch('https://api.emailjs.com/api/v1.0/email/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service_id:ejc.serviceId,template_id:ejc.templateConfirmare,user_id:ejc.publicKey,template_params:{to_name:'Administrator',to_email:ejc.adminEmail||ADMIN,order_id:'TEST123',total:'0 lei',products_list:'Test produs',payment_method:'Ramburs'}})});toast('Email test trimis!','success');}
-  catch(e){toast('Eroare: '+e.message,'error');}
+  try{
+    await fetch('https://api.emailjs.com/api/v1.0/email/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      service_id:ejc.serviceId,
+      template_id:ejc.templateConfirmare,
+      user_id:ejc.publicKey,
+      template_params:{
+        to_name:'Administrator',
+        to_email:ejc.adminEmail||ADMIN,
+        title:'Test Confirmare Comanda',
+        from_name:'Parohia Stornești',
+        from_email:'parohiastornesti@gmail.com',
+        message:'Aceasta este o comanda test. Produse: Lumanare x1. Total: 25.00 lei.',
+        order_id:'TEST001',
+        total:'25.00 lei',
+        products_list:'Lumanare Pascala x1',
+        payment_method:'Ramburs'
+      }
+    })});
+    toast('Email test trimis la '+esc(ejc.adminEmail||ADMIN)+'!','success');
+  }catch(e){toast('Eroare trimitere: '+e.message,'error');}
 };
+
 window.sndMNL=async function(){
   var s=document.getElementById('nl-s')?.value.trim(),c=document.getElementById('nl-c')?.value.trim();
   if(!s||!c){toast('Completati subiectul si continutul.','error');return;}
-  toast('Se trimite...','info');var n=await sndNL(s,c);toast('Newsletter trimis la '+n+' abonati!','success');
+  toast('Se trimite newsletter...','info');
+  var n=await sndNL(s,c);
+  toast('Newsletter trimis la '+n+' abonati!','success');
 };
 
 async function aFaq(){
