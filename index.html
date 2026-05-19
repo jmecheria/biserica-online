@@ -44,10 +44,10 @@ body{font-family:'Lato',sans-serif;background:var(--c);color:var(--td);min-heigh
 #mc{min-height:calc(100vh - 100px);padding-bottom:60px}
 .pg{display:none}.pg.on{display:block;animation:fadeIn .35s ease}
 #pg-admin{display:none}
-.hero{background:linear-gradient(135deg,var(--vd),var(--v) 50%,#7a2030);min-height:74vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 24px;position:relative;overflow:hidden}
-.hcr{font-size:4rem;color:var(--g);animation:float 3.5s ease-in-out infinite;margin-bottom:14px;display:block;text-shadow:0 0 30px rgba(201,168,76,.5);font-style:normal}
-.hero h1{font-family:'Cinzel',serif;font-size:clamp(1.5rem,5vw,3rem);color:var(--w);font-weight:900;letter-spacing:.05em;margin-bottom:8px}
-.hero h2{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(.95rem,2.5vw,1.45rem);color:var(--gl);margin-bottom:18px}
+.hero{background:linear-gradient(135deg,var(--vd),var(--v) 50%,#7a2030);min-height:46vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:36px 24px;position:relative;overflow:hidden}
+.hcr{font-size:2.6rem;color:var(--g);animation:float 3.5s ease-in-out infinite;margin-bottom:10px;display:block;text-shadow:0 0 30px rgba(201,168,76,.5);font-style:normal}
+.hero h1{font-family:'Cinzel',serif;font-size:clamp(1.3rem,4vw,2.2rem);color:var(--w);font-weight:900;letter-spacing:.05em;margin-bottom:6px}
+.hero h2{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(.88rem,2vw,1.2rem);color:var(--gl);margin-bottom:14px}
 .hero-q{font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(255,255,255,.75);font-size:.98rem;max-width:500px;margin-bottom:22px}
 .hia{font-family:'Cinzel',serif;font-weight:900;font-size:clamp(1rem,3vw,1.7rem);color:var(--g);animation:glow 2s ease-in-out infinite;letter-spacing:.1em}
 .qbs{display:flex;flex-wrap:wrap;gap:11px;justify-content:center;padding:28px 20px;max-width:860px;margin:0 auto}
@@ -301,15 +301,14 @@ footer{background:var(--vd);color:rgba(255,255,255,.8);padding:48px 22px 24px;bo
   <a onclick="go('faq');closeMM()">FAQ</a>
   <a onclick="go('acc');closeMM()">Contul Meu</a>
 </div>
-<div id="cban"><span id="cbt" class="glw">† HRISTOS A ÎNVIAT! ADEVĂRAT A ÎNVIAT! †</span></div>
+<div id="cban"><span id="cbt" class="glw">† „Eu sunt Calea, Adevărul și Viața." — Ioan 14:6 †</span></div>
 <div id="mc">
 <div id="pg-home" class="pg on">
   <div class="hero">
     <span class="hcr">&#10013;</span>
     <h1>Parohia Stornești</h1>
     <h2>Biserica Sfânta Treime</h2>
-    <p class="hero-q">Eu sunt Invierea si Viata. Cel ce crede in Mine, chiar daca va muri, va trai. - Ioan 11:25</p>
-    <div class="hia">&#9768; HRISTOS A ÎNVIAT! ADEVĂRAT A ÎNVIAT! &#9768;</div>
+    <p class="hero-q" id="hero-verse">„Eu sunt Calea, Adevărul și Viața." — Ioan 14:6</p>
   </div>
   <div class="qbs">
     <div class="qb" onclick="go('ann')"><span class="ic">&#128226;</span><span>Anunturi</span></div>
@@ -647,13 +646,55 @@ onAuthStateChanged(auth,async function(u){
   }
 });
 
-(function tick(){
-  var t=new Date('2025-05-29'),n=new Date(),d=t-n,el=document.getElementById('cbt');
-  if(!el){setTimeout(tick,1000);return;}
-  if(d<=0){el.textContent='† HRISTOS A ÎNVIAT! ADEVĂRAT A ÎNVIAT! †';return;}
-  var dy=Math.floor(d/86400000),hr=Math.floor((d%86400000)/3600000),mn=Math.floor((d%3600000)/60000),sc=Math.floor((d%60000)/1000);
-  el.textContent='† HRISTOS A ÎNVIAT! †  |  Înălțare: '+dy+'z '+hr+'h '+mn+'m '+sc+'s';
-  setTimeout(tick,1000);
+// Rotating Bible verses — banner top + hero
+var HERO_VERSES=[
+  {t:'„Eu sunt Calea, Adevărul și Viața."',r:'Ioan 14:6'},
+  {t:'„Dumnezeu este dragoste."',r:'1 Ioan 4:8'},
+  {t:'„Căutați mai întâi Împărăția lui Dumnezeu."',r:'Matei 6:33'},
+  {t:'„Eu sunt Învierea și Viața."',r:'Ioan 11:25'},
+  {t:'„Bucurați-vă pururea întru Domnul."',r:'Filipeni 4:4'},
+  {t:'„Iată, stau la ușă și bat."',r:'Apocalipsa 3:20'},
+  {t:'„Cel ce crede în Mine are viață veșnică."',r:'Ioan 6:47'},
+  {t:'„Doamne, buzele mele vei deschide."',r:'Psalmul 50:17'},
+  {t:'„Doamne, Dumnezeul nostru, cât de minunat este numele Tău."',r:'Psalmul 8:1'},
+  {t:'„Veniți la Mine toți cei osteniți și împovărați."',r:'Matei 11:28'},
+];
+var BANNER_VERSES=[
+  '† „Eu sunt Calea, Adevărul și Viața." — Ioan 14:6 †',
+  '† „Dumnezeu este dragoste." — 1 Ioan 4:8 †',
+  '† „Bucurați-vă pururea întru Domnul." — Filipeni 4:4 †',
+  '† „Eu sunt Învierea și Viața." — Ioan 11:25 †',
+  '† „Iată, stau la ușă și bat." — Apocalipsa 3:20 †',
+  '† „Veniți la Mine toți cei osteniți și împovărați." — Matei 11:28 †',
+];
+(function initVerses(){
+  var hi=0,bi=0;
+  // Hero verse — change every 7s with fade
+  function rotHero(){
+    var el=document.getElementById('hero-verse');if(!el)return;
+    hi=(hi+1)%HERO_VERSES.length;
+    el.style.opacity='0';
+    setTimeout(function(){
+      el.textContent=HERO_VERSES[hi].t+' — '+HERO_VERSES[hi].r;
+      el.style.opacity='1';
+    },500);
+  }
+  // Banner verse — change every 9s
+  function rotBanner(){
+    var el=document.getElementById('cbt');if(!el)return;
+    bi=(bi+1)%BANNER_VERSES.length;
+    el.style.opacity='0';
+    setTimeout(function(){el.textContent=BANNER_VERSES[bi];el.style.opacity='1';},400);
+  }
+  // Set initial
+  setTimeout(function(){
+    var hv=document.getElementById('hero-verse');
+    if(hv){hv.textContent=HERO_VERSES[0].t+' — '+HERO_VERSES[0].r;hv.style.transition='opacity .5s ease';}
+    var cb=document.getElementById('cbt');
+    if(cb){cb.textContent=BANNER_VERSES[0];cb.style.transition='opacity .4s ease';}
+  },100);
+  setInterval(rotHero,7000);
+  setInterval(rotBanner,9000);
 })();
 
 async function ldHome(){ldUrg();ldSch();ldHL();ldSaint();}
@@ -1387,10 +1428,6 @@ async function sndNL(s,c){
 // Orthodox saints calendar 2025 - main saints per day
 window.seedSaints=async function seedSaints(){
   try{
-    var existing=await getDocs(collection(db,'saintDays'));
-    // Check if 2026 is already seeded
-    var has2026=existing.docs.some(function(d){return d.id.startsWith('2026');});
-    if(has2026)return;
     var saints=[
       // Ianuarie 2026
       {d:'2026-01-01',name:'Sfântul Vasile cel Mare',shortDesc:'Arhiepiscopul Cezareei Capadociei, mare teolog și filantrop.',fullDesc:'Sfântul Vasile cel Mare (330-379) a fost arhiepiscopul Cezareei Capadociei, unul dintre cei mai mari Sfinți Părinți ai Bisericii. A organizat viața monahală, a elaborat Sfânta Liturghie care îi poartă numele și a întemeiat spitale și case pentru săraci.',verse:'Cel ce are milă de sărac împrumută pe Domnul.',verseRef:'Pilde 19:17'},
@@ -2220,97 +2257,43 @@ window.svSD=async function(k){
 async function aCats(){
   var m=document.getElementById('adm');
 
-  // Predefined defaults per type
-  var DEFAULTS={
-    products:['Lumanari','Icoane','Carti','Tamaie','Ulei','Cruci','Metanii','Diverse'],
-    announcements:['anunt','urgent','service','pastoral','comunitate','sarbatoare'],
-    audio:['Predici','Cantari','Acatiste','Paraclise','Liturghie','Conferinte']
-  };
-
-  // Load from Firestore
   var sn=await getDocs(collection(db,'categories')).catch(function(){return{docs:[]};});
   var cats=sn.docs.map(function(d){return Object.assign({id:d.id},d.data());});
-
-  // Also detect categories already used in products/announcements/audio
-  var usedP=[...new Set(prods.map(function(p){return p.category;}).filter(Boolean))];
-  var usedA=[];
-  try{var asnAll=await getDocs(collection(db,'announcements'));usedA=[...new Set(asnAll.docs.map(function(d){return d.data().type;}).filter(Boolean))];}catch(e){}
-  var usedAu=[];
-  try{var auAll=await getDocs(collection(db,'audio'));usedAu=[...new Set(auAll.docs.map(function(d){return d.data().category;}).filter(Boolean))];}catch(e){}
-
   function byCat(t){return cats.filter(function(c){return c.type===t;});}
-  function inFirestore(t,name){return cats.some(function(c){return c.type===t&&c.name===name;});}
 
-  async function seedDefaults(t){
-    var toAdd=DEFAULTS[t].filter(function(n){return!inFirestore(t,n);});
-    if(!toAdd.length){toast('Toate categoriile predefinite există deja!','info');return;}
-    for(var nm of toAdd)await addDoc(collection(db,'categories'),{type:t,name:nm});
-    toast('Adăugate '+toAdd.length+' categorii în Firestore!','success');aCats();
-  }
-  window._seedDefCats=seedDefaults;
-
-  // Detect used but not in Firestore
-  function notInFS(t,arr){return arr.filter(function(n){return n&&!inFirestore(t,n);});}
-  var missingP=notInFS('products',usedP);
-  var missingA=notInFS('announcements',usedA);
-  var missingAu=notInFS('audio',usedAu);
-
-  function pan(t,title,defaults,missing){
+  function pan(t,title){
     var existing=byCat(t);
-    var missingHtml=missing.length?
-      '<div style="margin-bottom:9px;padding:9px;background:rgba(201,168,76,.1);border-radius:8px;border:1px solid rgba(201,168,76,.3)">'+
-      '<p style="font-size:.72rem;color:var(--tm);margin-bottom:6px">&#9888; Categorii folosite dar neînregistrate: '+
-      missing.map(function(n){return'<strong>'+esc(n)+'</strong>';}).join(', ')+'</p>'+
-      '<button class="btn bg2 bsm" onclick="addMissing(\''+t+'\','+JSON.stringify(missing).replace(/"/g,'&quot;')+')">+ Adaugă-le în Firestore</button>'+
-      '</div>':'';
     return'<div class="ac2"><h3>'+title+
-      ' <span style="font-size:.72rem;font-weight:400;color:var(--tl)">('+existing.length+' în Firestore)</span></h3>'+
-      missingHtml+
-      '<div style="display:flex;gap:7px;margin-bottom:9px">'+
-      '<input type="text" id="cni-'+t+'" placeholder="Categorie nouă..." style="flex:1;padding:8px 12px;border:1.5px solid var(--cd);border-radius:8px;outline:none;font-size:.83rem">'+
-      '<button class="btn bp" onclick="addCat(\''+t+'\')">+ Adaugă</button>'+
-      '<button class="btn bs" onclick="window._seedDefCats(\''+t+'\')" title="Adaugă categoriile predefinite">&#128230; Predefinite</button>'+
+      ' <span style="font-size:.72rem;font-weight:400;color:var(--tl)">('+existing.length+')</span></h3>'+
+      '<div style="display:flex;gap:7px;margin-bottom:11px">'+
+        '<input type="text" id="cni-'+t+'" placeholder="Categorie nouă..." style="flex:1;padding:8px 12px;border:1.5px solid var(--cd);border-radius:8px;outline:none;font-size:.83rem">'+
+        '<button class="btn bp" onclick="addCat(\''+t+'\')">+ Adaugă</button>'+
       '</div>'+
-      '<div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:7px">'+
-      existing.map(function(c){
-        return'<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(107,26,46,.1);padding:4px 12px;border-radius:20px;font-size:.76rem;border:1px solid rgba(107,26,46,.15)">'+
-          esc(c.name)+
-          '<button onclick="delCat(\''+c.id+'\')" style="background:none;border:none;color:var(--r);cursor:pointer;font-size:.78rem;line-height:1;padding:0 2px" title="Șterge">&#10005;</button>'+
-        '</span>';
-      }).join('')+
-      (existing.length===0?'<p style="color:var(--tl);font-size:.8rem;padding:4px">Nicio categorie în Firestore.</p>':'')+
-      '</div>'+
-      '<details style="margin-top:6px"><summary style="font-size:.72rem;color:var(--tl);cursor:pointer">Categorii predefinite disponibile</summary>'+
-      '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:7px">'+
-      defaults.map(function(n){
-        var exists=inFirestore(t,n);
-        return'<span style="padding:3px 10px;border-radius:20px;font-size:.7rem;background:'+(exists?'rgba(39,174,96,.12)':'rgba(107,26,46,.06)')+';color:'+(exists?'var(--gr)':'var(--tl)')+';border:1px solid '+(exists?'rgba(39,174,96,.3)':'var(--cd)')+'">'+
-          (exists?'&#10003; ':'')+esc(n)+'</span>';
-      }).join('')+
-      '</div></details>'+
-      '</div>';
+      '<div style="display:flex;flex-wrap:wrap;gap:7px">'+
+        existing.map(function(c){
+          return'<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(107,26,46,.1);padding:4px 12px;border-radius:20px;font-size:.76rem;border:1px solid rgba(107,26,46,.15)">'+
+            esc(c.name)+
+            '<button onclick="delCat(\''+c.id+'\')" style="background:none;border:none;color:var(--r);cursor:pointer;font-size:.8rem;line-height:1;padding:0 2px">&#10005;</button>'+
+          '</span>';
+        }).join('')+
+        (existing.length===0?'<p style="color:var(--tl);font-size:.8rem">Nicio categorie adăugată.</p>':'')+
+      '</div></div>';
   }
 
   m.innerHTML='<h2 style="font-family:Cinzel,serif;color:var(--v);margin-bottom:22px">Categorii</h2>'+
-    pan('products','Categorii Produse',DEFAULTS.products,missingP)+
-    pan('announcements','Tipuri Anunțuri',DEFAULTS.announcements,missingA)+
-    pan('audio','Categorii Audio',DEFAULTS.audio,missingAu);
+    pan('products','Categorii Produse')+
+    pan('announcements','Tipuri Anunțuri')+
+    pan('audio','Categorii Audio');
 }
-
-window.addMissing=async function(t,arr){
-  for(var nm of arr)await addDoc(collection(db,'categories'),{type:t,name:nm}).catch(function(){});
-  toast('Categorii adăugate!','success');aCats();
-};
 window.addCat=async function(t){
   var inp=document.getElementById('cni-'+t),nm=inp?inp.value.trim():'';
-  if(!nm){toast('Scrieti o categorie.','error');return;}
-  // Check duplicate
+  if(!nm){toast('Scrieți o categorie.','error');return;}
   var sn=await getDocs(query(collection(db,'categories'),where('type','==',t),where('name','==',nm))).catch(function(){return{empty:false};});
   if(!sn.empty){toast('Categoria există deja.','error');return;}
   await addDoc(collection(db,'categories'),{type:t,name:nm});
-  toast('Categorie adaugata!','success');inp.value='';aCats();
+  toast('Categorie adăugată!','success');inp.value='';aCats();
 };
-window.delCat=async function(id){if(!confirm('Stergeti categoria?'))return;await deleteDoc(doc(db,'categories',id));toast('Sters.','success');aCats();};
+window.delCat=async function(id){if(!confirm('Ștergeți categoria?'))return;await deleteDoc(doc(db,'categories',id));toast('Șters.','success');aCats();};
 
 setupAR();ldEJC();updC();ldHome();
 </script>
