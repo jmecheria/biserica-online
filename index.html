@@ -2358,6 +2358,7 @@ async function loadSiteVerses(){
 }
 
 
+async function aCats(){
   var m=document.getElementById('adm');
 
   var sn=await getDocs(collection(db,'categories')).catch(function(){return{docs:[]};});
