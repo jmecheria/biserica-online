@@ -79,7 +79,7 @@ body{font-family:'Lato',sans-serif;background:var(--c);color:var(--td);min-heigh
 .sch td{padding:11px 14px;border-bottom:1px solid var(--cd);font-size:.86rem;background:var(--w);transition:background .2s}
 .sch tr:hover td{background:rgba(107,26,46,.04)}.sch tr:last-child td{border-bottom:none}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
-.card{background:var(--w);border-radius:var(--rad);overflow:hidden;box-shadow:var(--s);transition:var(--t);cursor:pointer;border:1.5px solid transparent}
+.card{background:var(--w);border-radius:var(--rad);overflow:hidden;box-shadow:var(--s);transition:var(--t);cursor:pointer;border:1.5px solid transparent;display:flex;flex-direction:column}
 .card:hover{transform:translateY(-4px);box-shadow:var(--sm);border-color:rgba(107,26,46,.15)}
 .cimg{width:100%;height:175px;object-fit:cover;display:block;background:var(--cd)}
 .ccar{width:100%;height:195px;position:relative;overflow:hidden;background:var(--cd)}
@@ -90,7 +90,7 @@ body{font-family:'Lato',sans-serif;background:var(--c);color:var(--td);min-heigh
 .cdts{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);display:flex;gap:4px;z-index:2}
 .cdts span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);cursor:pointer}
 .cdts span.on{background:#fff}
-.cb{padding:14px}
+.cb{padding:14px;flex:1;display:flex;flex-direction:column}
 .cb h3{font-family:'Cinzel',serif;font-size:.88rem;font-weight:700;color:var(--v);margin:7px 0 5px;line-height:1.4}
 .cb p{font-size:.8rem;color:var(--tm);line-height:1.55}.cm{font-size:.7rem;color:var(--tl);margin-top:7px}
 .uc{border-left:4px solid var(--r)}
@@ -266,7 +266,7 @@ footer{background:var(--vd);color:rgba(255,255,255,.8);padding:48px 22px 24px;bo
 .gb2 h3{font-family:'Cinzel',serif;font-size:1.05rem;color:var(--v);margin-bottom:9px}
 .gb2 p{font-size:.83rem;color:var(--tm);line-height:1.6;margin-bottom:16px}
 .ga{display:flex;gap:11px;flex-wrap:wrap}
-@media(max-width:680px){#svr{grid-template-columns:1fr!important}}@media(max-width:740px){.cgrid{grid-template-columns:1fr}.col{grid-template-columns:1fr}.aly{flex-direction:column}.asb{width:100%;height:auto;position:relative;top:0;padding:8px;display:flex;flex-wrap:wrap;gap:3px}.asb .alo{display:none}.an{border-left:none;border-bottom:2px solid transparent;padding:5px 9px;font-size:.7rem}.an.on{border-bottom-color:var(--g);border-left:none}.am{padding:14px}.sg{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:680px){#svr{grid-template-columns:1fr!important}#hlg{grid-template-columns:1fr!important}}@media(max-width:900px){#hlg{grid-template-columns:repeat(2,1fr)!important}}@media(max-width:740px){.cgrid{grid-template-columns:1fr}.col{grid-template-columns:1fr}.aly{flex-direction:column}.asb{width:100%;height:auto;position:relative;top:0;padding:8px;display:flex;flex-wrap:wrap;gap:3px}.asb .alo{display:none}.an{border-left:none;border-bottom:2px solid transparent;padding:5px 9px;font-size:.7rem}.an.on{border-bottom-color:var(--g);border-left:none}.am{padding:14px}.sg{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -336,7 +336,7 @@ footer{background:var(--vd);color:rgba(255,255,255,.8);padding:48px 22px 24px;bo
   </div>
   <div class="wrap sb">
     <div class="stit">Noutati</div>
-    <div class="cgrid" id="hlg" style="justify-items:center"></div>
+    <div id="hlg" style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px"></div>
   </div>
   <div class="wrap sb">
     <div class="stit">Informatii</div>
@@ -453,6 +453,7 @@ footer{background:var(--vd);color:rgba(255,255,255,.8);padding:48px 22px 24px;bo
       <div class="an" onclick="sa('sch')">Slujbe</div>
       <div class="an" onclick="sa('snt')">Sfinti</div>
       <div class="an" onclick="sa('cats')">Categorii</div>
+      <div class="an" onclick="sa('vers')">Versete</div>
     </aside>
     <main class="am" id="adm"></main>
   </div>
@@ -749,33 +750,45 @@ document.getElementById('scht').addEventListener('click',function(e){
 async function ldHL(){
   var el=document.getElementById('hlg');if(!el)return;
   try{
-    var annsHL=[],prodsHL=[];
+    var items=[];
     try{
       var res=await Promise.all([
-        getDocs(query(collection(db,'announcements'),orderBy('createdAt','desc'),limit(3))),
-        getDocs(query(collection(db,'products'),orderBy('soldCount','desc'),limit(3)))
+        getDocs(query(collection(db,'announcements'),orderBy('createdAt','desc'),limit(2))),
+        getDocs(query(collection(db,'products'),orderBy('soldCount','desc'),limit(1)))
       ]);
-      annsHL=res[0].docs.map(function(d){return Object.assign({id:d.id},d.data());});
-      prodsHL=res[1].docs.map(function(d){return Object.assign({id:d.id},d.data());});
+      res[0].docs.forEach(function(d){items.push({type:'ann',data:Object.assign({id:d.id},d.data())});});
+      res[1].docs.forEach(function(d){items.push({type:'prod',data:Object.assign({id:d.id},d.data())});});
     }catch(e){
       try{
         var res2=await Promise.all([getDocs(collection(db,'announcements')),getDocs(collection(db,'products'))]);
-        annsHL=res2[0].docs.slice(0,3).map(function(d){return Object.assign({id:d.id},d.data());});
-        prodsHL=res2[1].docs.slice(0,3).map(function(d){return Object.assign({id:d.id},d.data());});
+        res2[0].docs.slice(0,2).forEach(function(d){items.push({type:'ann',data:Object.assign({id:d.id},d.data())});});
+        res2[1].docs.slice(0,1).forEach(function(d){items.push({type:'prod',data:Object.assign({id:d.id},d.data())});});
       }catch(e2){}
     }
-    var h='';
-    annsHL.forEach(function(a){
-      h+='<div class="card" onclick="showAnnM(\''+a.id+'\')">'+
-        (a.images&&a.images[0]?'<img class="cimg" src="'+a.images[0]+'" loading="lazy" alt="">':'<div class="cimg" style="display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:var(--v)">&#128226;</div>')+
-        '<div class="cb"><span class="badge '+(a.type==='urgent'?'br':'bv')+'">'+esc(a.type||'Anunt')+'</span><h3>'+esc(a.title)+'</h3><p>'+esc((a.content||'').substring(0,100))+(a.content&&a.content.length>100?'...':'')+'</p><div class="cm">'+fd(a.createdAt)+'</div></div></div>';
-    });
-    prodsHL.forEach(function(p){
-      h+='<div class="card" onclick="openPM(\''+p.id+'\')">'+
-        (p.images&&p.images[0]?'<img class="cimg" src="'+p.images[0]+'" loading="lazy" alt="">':'<div class="cimg" style="display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:var(--v)">&#128329;</div>')+
-        '<div class="cb"><span class="badge bg">Popular</span><h3>'+esc(p.name)+'</h3><p>'+esc((p.shortDesc||'').substring(0,100))+'</p><div class="price">'+fpv(p.price)+'</div></div></div>';
-    });
-    el.innerHTML=h||'<p style="color:var(--tl);text-align:center;padding:18px;width:100%">Nicio noutate.</p>';
+    if(!items.length){el.innerHTML='<p style="color:var(--tl);text-align:center;padding:18px;grid-column:1/-1">Nicio noutate.</p>';return;}
+    el.innerHTML=items.map(function(it){
+      if(it.type==='ann'){
+        var a=it.data;
+        return'<div class="card" onclick="showAnnM(\''+a.id+'\')">'+
+          (a.images&&a.images[0]?'<img class="cimg" src="'+a.images[0]+'" loading="lazy" alt="">':'<div class="cimg" style="display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:var(--v);background:var(--cd)">&#128226;</div>')+
+          '<div class="cb">'+
+            '<span class="badge '+(a.type==='urgent'?'br':'bv')+'" style="align-self:flex-start">'+esc(a.type||'Anunt')+'</span>'+
+            '<h3>'+esc(a.title)+'</h3>'+
+            '<p style="flex:1">'+esc((a.content||'').substring(0,90))+(a.content&&a.content.length>90?'...':'')+'</p>'+
+            '<div class="cm">'+fd(a.createdAt)+'</div>'+
+          '</div></div>';
+      }else{
+        var p=it.data;
+        return'<div class="card" onclick="openPM(\''+p.id+'\')">'+
+          (p.images&&p.images[0]?'<img class="cimg" src="'+p.images[0]+'" loading="lazy" alt="">':'<div class="cimg" style="display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:var(--v);background:var(--cd)">&#128329;</div>')+
+          '<div class="cb">'+
+            '<span class="badge bg" style="align-self:flex-start">Popular</span>'+
+            '<h3>'+esc(p.name)+'</h3>'+
+            '<p style="flex:1">'+esc((p.shortDesc||'').substring(0,90))+'</p>'+
+            '<div class="price" style="margin-top:auto;padding-top:7px">'+fpv(p.price)+'</div>'+
+          '</div></div>';
+      }
+    }).join('');
   }catch(e){}
 }
 
@@ -1451,9 +1464,9 @@ window.seedSaints=async function seedSaints(){
       // Mai 2026
       {d:'2026-05-06',name:'Dreptul Iov, mult-pătimitorul',shortDesc:'Modelul răbdării și credinței în suferință.',fullDesc:'Dreptul Iov a suferit mari încercări — și-a pierdut averea, copiii și sănătatea — dar a rămas credincios lui Dumnezeu, neblestemând și neacuzând. Viața sa este icoana răbdării creștine și a credinței nestrămutate.',verse:'Gol am ieșit din pântecele mamei mele și gol mă voi întoarce. Fie numele Domnului binecuvântat!',verseRef:'Iov 1:21'},
       {d:'2026-05-21',name:'Sfinții Împărați Constantin și Elena',shortDesc:'Împăratul libertății creștinilor și mama sa, aflătoarea Sfintei Cruci.',fullDesc:'Sfântul Constantin cel Mare a emis Edictul de la Milano (313), acordând libertate creștinilor în Imperiul Roman. Mama sa, Sfânta Elena, a mers în Ierusalim și a aflat Sfânta Cruce pe care a fost răstignit Hristos.',verse:'Prin aceasta vor cunoaște toți că sunteți ucenicii Mei, dacă veți avea dragoste unii față de alții.',verseRef:'Ioan 13:35'},
-      {d:'2026-05-28',name:'Înălțarea Domnului',shortDesc:'Înălțarea lui Hristos la cer, la 40 de zile după Înviere.',fullDesc:'La 40 de zile după Sfintele Paști, Iisus Hristos S-a înălțat la cer din Muntele Măslinilor, în văzul ucenicilor. Înainte de înălțare le-a dat porunca misiunii: „Mergând, învățați toate neamurile."',verse:'Și iată, Eu sunt cu voi în toate zilele, până la sfârșitul veacului.',verseRef:'Matei 28:20'},
+      {d:'2026-05-28',name:'Înălțarea Domnului',shortDesc:'Înălțarea lui Hristos la cer, la 40 de zile după Înviere.',fullDesc:'La 40 de zile după Sfintele Paști (19 apr + 40 = 28 mai), Iisus Hristos S-a înălțat la cer din Muntele Măslinilor, în văzul ucenicilor. Înainte de înălțare le-a dat porunca misiunii: „Mergând, învățați toate neamurile."',verse:'Și iată, Eu sunt cu voi în toate zilele, până la sfârșitul veacului.',verseRef:'Matei 28:20'},
       // Iunie 2026
-      {d:'2026-06-07',name:'Rusaliile — Pogorârea Sfântului Duh',shortDesc:'Pogorârea Sfântului Duh peste Apostoli, nașterea Bisericii.',fullDesc:'La 50 de zile după Paști, Sfântul Duh S-a pogorât ca limbi de foc peste Apostolii adunați în Ierusalim. Aceasta este ziua de naștere a Bisericii creștine. Apostolii au început să vorbească în limbi și să propovăduiască.',verse:'Vântul suflă unde voiește și tu auzi glasul lui, dar nu știi de unde vine.',verseRef:'Ioan 3:8'},
+      {d:'2026-06-07',name:'Rusaliile — Pogorârea Sfântului Duh',shortDesc:'Pogorârea Sfântului Duh peste Apostoli — nașterea Bisericii.',fullDesc:'La 50 de zile după Paști (19 apr + 50 = 7 iun), Sfântul Duh S-a pogorât ca limbi de foc peste Apostolii adunați în Ierusalim. Aceasta este ziua de naștere a Bisericii creștine.',verse:'Vântul suflă unde voiește și tu auzi glasul lui, dar nu știi de unde vine.',verseRef:'Ioan 3:8'},
       {d:'2026-06-24',name:'Nașterea Sfântului Ioan Botezătorul',shortDesc:'Nașterea Înaintemergătorului Domnului din Zaharia și Elisabeta.',fullDesc:'Sfântul Ioan Botezătorul s-a născut cu șase luni înaintea Mântuitorului. Tatăl său Zaharia, preot la Templu, a rostit la nașterea fiului său imnul „Benedictus": „Binecuvântat este Domnul Dumnezeul lui Israel."',verse:'Tu, pruncule, prooroc al Celui Preaînalt te vei chema; căci vei merge înaintea feței Domnului.',verseRef:'Luca 1:76'},
       {d:'2026-06-29',name:'Sfinții Apostoli Petru și Pavel',shortDesc:'Corifei ai Apostolilor, întemeietorii Bisericii la Roma.',fullDesc:'Sfântul Petru, pescarul din Galileea, a condus Biserica primară și a murit răstignit cu capul în jos la Roma. Sfântul Pavel, „Apostolul neamurilor", a parcurs trei călătorii misionare prin lumea greco-romană și a scris 14 epistole.',verse:'Tu ești Hristosul, Fiul lui Dumnezeu Celui viu.',verseRef:'Matei 16:16'},
       // Iulie 2026
@@ -1527,7 +1540,7 @@ window.sa=async function(sec){
   var m=document.getElementById('adm');
   m.innerHTML='<div class="ld"><div class="loader"></div></div>';
   await ldEJC();
-  var fns={dash:aDash,ords:aOrds,prods:aProds,anns:aAnns,aud:aAud,custs:aCusts,res:aRes,coup:aCoup,tr:aTr,em:aEm,faqA:aFaq,sch:aSch,snt:aSnt,cats:aCats};
+  var fns={dash:aDash,ords:aOrds,prods:aProds,anns:aAnns,aud:aAud,custs:aCusts,res:aRes,coup:aCoup,tr:aTr,em:aEm,faqA:aFaq,sch:aSch,snt:aSnt,cats:aCats,vers:aVers};
   if(fns[sec])await fns[sec]();
 };
 
@@ -1988,129 +2001,85 @@ window.delTr2=async function(id){if(!confirm('Stergeti?'))return;await deleteDoc
 async function aEm(){
   var m=document.getElementById('adm');
   m.innerHTML='<h2 style="font-family:Cinzel,serif;color:var(--v);margin-bottom:22px">Configurare EmailJS</h2>'+
-
+    '<div class="ac2" style="background:rgba(201,168,76,.07);border:1.5px solid var(--g);margin-bottom:14px">'+
+    '<p style="font-size:.8rem;color:var(--tm)">Contul EmailJS gratuit permite <strong>2 template-uri</strong>. Unul pentru comenzi (confirmare + actualizare status), unul pentru newsletter.</p></div>'+
     '<div class="ac2"><h3>Configurare API</h3>'+
     '<div class="ag2">'+
       '<div class="fg"><label>Public Key</label><input type="text" id="ej-pk" value="'+esc(ejc.publicKey||'')+'" placeholder="user_..."></div>'+
       '<div class="fg"><label>Service ID</label><input type="text" id="ej-si" value="'+esc(ejc.serviceId||'')+'" placeholder="service_..."></div>'+
     '</div>'+
     '<div class="ag2">'+
-      '<div class="fg"><label>Template — Confirmare Comanda</label><input type="text" id="ej-tc" value="'+esc(ejc.templateConfirmare||'')+'" placeholder="template_..."></div>'+
-      '<div class="fg"><label>Template — Actualizare Status Comanda</label><input type="text" id="ej-ts2" value="'+esc(ejc.templateStatus||'')+'" placeholder="template_..."></div>'+
+      '<div class="fg"><label>Template 1 — Comenzi</label>'+
+        '<input type="text" id="ej-tc" value="'+esc(ejc.templateConfirmare||'')+'" placeholder="template_...">'+
+        '<small style="color:var(--tl);font-size:.7rem">Folosit pentru confirmare comandă și actualizare status.</small>'+
+      '</div>'+
+      '<div class="fg"><label>Template 2 — Newsletter</label>'+
+        '<input type="text" id="ej-tn" value="'+esc(ejc.templateNewsletter||'')+'" placeholder="template_...">'+
+        '<small style="color:var(--tl);font-size:.7rem">Folosit pentru newsletter și anunțuri noi.</small>'+
+      '</div>'+
     '</div>'+
-    '<div class="fg"><label>Template — Newsletter / Anunturi</label><input type="text" id="ej-tn" value="'+esc(ejc.templateNewsletter||'')+'" placeholder="template_..."></div>'+
-    '<div class="fg"><label>Email administrator (pentru teste)</label><input type="email" id="ej-ae" value="'+esc(ejc.adminEmail||ADMIN)+'" placeholder="'+ADMIN+'"></div>'+
-    '<button class="btn bp" onclick="svEJ()">Salveaza configurarea</button> <button class="btn bs" style="margin-left:8px" onclick="tstEJ()">Trimite email test</button>'+
+    '<div class="fg"><label>Email administrator (pentru teste)</label><input type="email" id="ej-ae" value="'+esc(ejc.adminEmail||ADMIN)+'"></div>'+
+    '<button class="btn bp" onclick="svEJ()">Salvează configurarea</button> <button class="btn bs" style="margin-left:8px" onclick="tstEJ()">Trimite email test</button>'+
     '</div>'+
-
-    // Variables reference
-    '<div class="ac2" style="background:rgba(201,168,76,.07);border:1.5px solid var(--g)">'+
-    '<h3>Variabile disponibile per template</h3>'+
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px">'+
-
-    '<div style="background:var(--w);border-radius:9px;padding:13px;border:1px solid var(--cd)">'+
-    '<strong style="font-family:Cinzel,serif;font-size:.76rem;color:var(--v);display:block;margin-bottom:8px">&#128230; Confirmare Comanda</strong>'+
-    '<code style="font-size:.72rem;line-height:2;display:block;color:var(--td)">'+
-    '{{to_name}} — numele clientului<br>'+
-    '{{to_email}} — emailul clientului<br>'+
-    '{{title}} — "Confirmare Comanda"<br>'+
-    '{{from_name}} — Parohia Stornești<br>'+
-    '{{from_email}} — parohiastornesti@gmail.com<br>'+
-    '{{message}} — detalii comanda complete<br>'+
-    '{{order_id}} — ID scurt comanda<br>'+
-    '{{total}} — valoare totala<br>'+
-    '{{products_list}} — lista produse<br>'+
-    '{{payment_method}} — metoda plata'+
-    '</code></div>'+
-
-    '<div style="background:var(--w);border-radius:9px;padding:13px;border:1px solid var(--cd)">'+
-    '<strong style="font-family:Cinzel,serif;font-size:.76rem;color:var(--v);display:block;margin-bottom:8px">&#128228; Newsletter & Anunturi</strong>'+
-    '<code style="font-size:.72rem;line-height:2;display:block;color:var(--td)">'+
-    '{{to_name}} — numele abonatului<br>'+
-    '{{to_email}} — emailul abonatului<br>'+
-    '{{title}} — subiectul mesajului<br>'+
-    '{{from_name}} — Parohia Stornești<br>'+
-    '{{from_email}} — parohiastornesti@gmail.com<br>'+
-    '{{message}} — continutul mesajului<br>'+
-    '{{subject}} — același cu title<br>'+
-    '{{content}} — același cu message'+
-    '</code></div>'+
-
-    '<div style="background:var(--w);border-radius:9px;padding:13px;border:1px solid var(--cd)">'+
-    '<strong style="font-family:Cinzel,serif;font-size:.76rem;color:var(--v);display:block;margin-bottom:8px">&#128260; Actualizare Status</strong>'+
-    '<code style="font-size:.72rem;line-height:2;display:block;color:var(--td)">'+
-    '{{to_name}} — numele clientului<br>'+
-    '{{to_email}} — emailul clientului<br>'+
-    '{{title}} — "Actualizare Comanda"<br>'+
-    '{{from_name}} — Parohia Stornești<br>'+
-    '{{from_email}} — parohiastornesti@gmail.com<br>'+
-    '{{message}} — descriere status<br>'+
-    '{{order_id}} — ID scurt comanda<br>'+
-    '{{status}} — noul status'+
-    '</code></div>'+
-
-    '<div style="background:var(--w);border-radius:9px;padding:13px;border:1px solid var(--cd)">'+
-    '<strong style="font-family:Cinzel,serif;font-size:.76rem;color:var(--v);display:block;margin-bottom:8px">&#128203; HTML Template EmailJS</strong>'+
-    '<code style="font-size:.68rem;line-height:1.7;display:block;color:var(--td);word-break:break-all">'+
-    'Subiect EmailJS: <em>{{title}}</em><br><br>'+
-    'Body folosit de tine:<br>'+
-    '&lt;h2&gt;{{title}}&lt;/h2&gt;<br>'+
-    '&lt;p&gt;Nume: {{from_name}}&lt;/p&gt;<br>'+
-    '&lt;p&gt;Email: {{from_email}}&lt;/p&gt;<br>'+
-    '&lt;div&gt;{{message}}&lt;/div&gt;'+
-    '</code></div>'+
+    '<div class="ac2" style="background:var(--c)">'+
+    '<h3 style="margin-bottom:12px">Variabile template</h3>'+
+    '<div class="ag2">'+
+      '<div style="background:var(--w);border-radius:9px;padding:13px;border:1px solid var(--cd)">'+
+        '<strong style="font-family:Cinzel,serif;font-size:.76rem;color:var(--v);display:block;margin-bottom:8px">&#128230; Template 1 — Comenzi</strong>'+
+        '<code style="font-size:.72rem;line-height:2;display:block;color:var(--td)">'+
+          '{{title}} — subiectul mesajului<br>'+
+          '{{from_name}} — Parohia Stornești<br>'+
+          '{{from_email}} — parohiastornesti@gmail.com<br>'+
+          '{{to_name}} — numele clientului<br>'+
+          '{{to_email}} — emailul clientului<br>'+
+          '{{message}} — detalii complete'+
+        '</code>'+
+      '</div>'+
+      '<div style="background:var(--w);border-radius:9px;padding:13px;border:1px solid var(--cd)">'+
+        '<strong style="font-family:Cinzel,serif;font-size:.76rem;color:var(--v);display:block;margin-bottom:8px">&#128228; Template 2 — Newsletter</strong>'+
+        '<code style="font-size:.72rem;line-height:2;display:block;color:var(--td)">'+
+          '{{title}} — subiectul mesajului<br>'+
+          '{{from_name}} — Parohia Stornești<br>'+
+          '{{from_email}} — parohiastornesti@gmail.com<br>'+
+          '{{to_name}} — numele abonatului<br>'+
+          '{{to_email}} — emailul abonatului<br>'+
+          '{{message}} — conținutul mesajului'+
+        '</code>'+
+      '</div>'+
     '</div></div>'+
-
-    // Newsletter manual
     '<div class="ac2"><h3>Newsletter Manual</h3>'+
     '<div class="fg"><label>Subiect</label><input type="text" id="nl-s" placeholder="Veste buna din parohie..."></div>'+
-    '<div class="fg"><label>Continut mesaj</label><textarea id="nl-c" placeholder="Dragi credinciosi..."></textarea></div>'+
-    '<button class="btn bp" onclick="sndMNL()">&#128228; Trimite la toti abonati</button></div>';
+    '<div class="fg"><label>Conținut mesaj</label><textarea id="nl-c" placeholder="Dragi credincioși..."></textarea></div>'+
+    '<button class="btn bp" onclick="sndMNL()">&#128228; Trimite la toți abonații</button></div>';
 }
-
 window.svEJ=async function(){
   var c={
     publicKey:document.getElementById('ej-pk')?.value.trim(),
     serviceId:document.getElementById('ej-si')?.value.trim(),
     templateConfirmare:document.getElementById('ej-tc')?.value.trim(),
-    templateStatus:document.getElementById('ej-ts2')?.value.trim(),
+    templateStatus:document.getElementById('ej-tc')?.value.trim(), // same template for both
     templateNewsletter:document.getElementById('ej-tn')?.value.trim(),
     adminEmail:document.getElementById('ej-ae')?.value.trim()
   };
   await setDoc(doc(db,'settings','emailjs'),c).catch(function(){});
-  ejc=c;toast('Configurare salvata!','success');
+  ejc=c;toast('Configurare salvată!','success');
 };
-
 window.tstEJ=async function(){
-  if(!ejc.publicKey){toast('Configurati EmailJS mai intai.','error');return;}
+  if(!ejc.publicKey){toast('Configurați EmailJS mai întâi.','error');return;}
   try{
     await fetch('https://api.emailjs.com/api/v1.0/email/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-      service_id:ejc.serviceId,
-      template_id:ejc.templateConfirmare,
-      user_id:ejc.publicKey,
-      template_params:{
-        to_name:'Administrator',
-        to_email:ejc.adminEmail||ADMIN,
-        title:'Test Confirmare Comanda',
-        from_name:'Parohia Stornești',
-        from_email:'parohiastornesti@gmail.com',
-        message:'Aceasta este o comanda test. Produse: Lumanare x1. Total: 25.00 lei.',
-        order_id:'TEST001',
-        total:'25.00 lei',
-        products_list:'Lumanare Pascala x1',
-        payment_method:'Ramburs'
-      }
+      service_id:ejc.serviceId,template_id:ejc.templateConfirmare,user_id:ejc.publicKey,
+      template_params:{title:'Test Email Parohie',from_name:'Parohia Stornești',from_email:'parohiastornesti@gmail.com',to_name:'Administrator',to_email:ejc.adminEmail||ADMIN,message:'Acesta este un email de test. Configurarea funcționează corect.'}
     })});
     toast('Email test trimis la '+esc(ejc.adminEmail||ADMIN)+'!','success');
-  }catch(e){toast('Eroare trimitere: '+e.message,'error');}
+  }catch(e){toast('Eroare: '+e.message,'error');}
 };
-
 window.sndMNL=async function(){
   var s=document.getElementById('nl-s')?.value.trim(),c=document.getElementById('nl-c')?.value.trim();
-  if(!s||!c){toast('Completati subiectul si continutul.','error');return;}
+  if(!s||!c){toast('Completați subiectul și conținutul.','error');return;}
   toast('Se trimite newsletter...','info');
   var n=await sndNL(s,c);
-  toast('Newsletter trimis la '+n+' abonati!','success');
+  toast('Newsletter trimis la '+n+' abonați!','success');
 };
 
 async function aFaq(){
@@ -2188,20 +2157,57 @@ async function aSch(){
   var sn=await getDocs(collection(db,'schedule')).catch(function(){return{docs:[]};});
   var ss=sn.docs.map(function(d){return Object.assign({id:d.id},d.data());});
   m.innerHTML='<h2 style="font-family:Cinzel,serif;color:var(--v);margin-bottom:22px">Program Slujbe</h2>'+
-    '<div class="ac2"><h3>Adauga slujba</h3>'+
+    '<div class="ac2"><h3 id="sc-ft">Adaugă slujbă</h3><input type="hidden" id="sc-ei">'+
     '<div class="ag2"><div class="fg"><label>Zi *</label><input type="text" id="sc-d" placeholder="Duminica / 1 Ianuarie"></div><div class="fg"><label>Slujba *</label><input type="text" id="sc-s" placeholder="Sfanta Liturghie"></div></div>'+
     '<div class="ag2"><div class="fg"><label>Ora *</label><input type="time" id="sc-t"></div><div class="fg"><label>Loc</label><input type="text" id="sc-l" placeholder="Biserica"></div></div>'+
-    '<div class="fg"><label>Tip</label><select id="sc-tp"><option value="weekly">Saptamanal</option><option value="sunday">Duminica</option><option value="holiday">Sarbatori</option><option value="weekly+sunday">Saptamanal+Duminica</option></select></div>'+
-    '<button class="btn bp" onclick="svSch()">Salveaza</button></div>'+
-    '<div class="ac2" style="overflow-x:auto"><table class="at2"><thead><tr><th>Zi</th><th>Slujba</th><th>Ora</th><th>Loc</th><th>Tip</th><th>Actiuni</th></tr></thead><tbody>'+
-    ss.map(function(s){return'<tr><td>'+esc(s.day)+'</td><td>'+esc(s.service)+'</td><td>'+esc(s.time)+'</td><td>'+esc(s.location||'-')+'</td><td><span class="badge bv">'+esc(s.type||'')+'</span></td><td><button class="btn bd bsm" onclick="delSch(\''+s.id+'\')">X</button></td></tr>';}).join('')+
+    '<div class="fg"><label>Tip</label><select id="sc-tp">'+
+      '<option value="weekly">Saptamanal</option>'+
+      '<option value="sunday">Duminica</option>'+
+      '<option value="holiday">Sarbatori</option>'+
+      '<option value="weekly+sunday">Saptamanal+Duminica</option>'+
+    '</select></div>'+
+    '<button class="btn bp" onclick="svSch()">Salvează</button> <button class="btn bs" onclick="rstSch()">Reset</button></div>'+
+    '<div class="ac2" style="overflow-x:auto"><table class="at2"><thead><tr><th>Zi</th><th>Slujba</th><th>Ora</th><th>Loc</th><th>Tip</th><th>Acțiuni</th></tr></thead><tbody>'+
+    ss.map(function(s){
+      return'<tr>'+
+        '<td>'+esc(s.day)+'</td>'+
+        '<td><strong>'+esc(s.service)+'</strong></td>'+
+        '<td>'+esc(s.time)+'</td>'+
+        '<td>'+esc(s.location||'-')+'</td>'+
+        '<td><span class="badge bv">'+esc(s.type||'')+'</span></td>'+
+        '<td style="display:flex;gap:5px">'+
+          '<button class="btn bs bsm" onclick="edSch(\''+s.id+'\',\''+esc(s.day)+'\',\''+esc(s.service)+'\',\''+esc(s.time)+'\',\''+esc(s.location||'Biserica')+'\',\''+esc(s.type||'weekly')+'\')">Edit</button>'+
+          '<button class="btn bd bsm" onclick="delSch(\''+s.id+'\')">X</button>'+
+        '</td>'+
+      '</tr>';
+    }).join('')+
     '</tbody></table></div>';
 }
 window.svSch=async function(){
   var d=document.getElementById('sc-d')?.value.trim(),s=document.getElementById('sc-s')?.value.trim(),t=document.getElementById('sc-t')?.value;
   if(!d||!s||!t){toast('Completati campurile obligatorii.','error');return;}
-  await addDoc(collection(db,'schedule'),{day:d,service:s,time:t,location:document.getElementById('sc-l')?.value.trim()||'Biserica',type:document.getElementById('sc-tp')?.value});
-  toast('Slujba adaugata!','success');sched=[];aSch();
+  var ei=document.getElementById('sc-ei')?.value;
+  var data={day:d,service:s,time:t,location:document.getElementById('sc-l')?.value.trim()||'Biserica',type:document.getElementById('sc-tp')?.value};
+  if(ei){await updateDoc(doc(db,'schedule',ei),data);toast('Slujba actualizata!','success');}
+  else{await addDoc(collection(db,'schedule'),data);toast('Slujba adaugata!','success');}
+  sched=[];rstSch();aSch();
+};
+window.rstSch=function(){
+  document.getElementById('sc-ei').value='';
+  ['sc-d','sc-s','sc-l'].forEach(function(k){var e=document.getElementById(k);if(e)e.value='';});
+  var t=document.getElementById('sc-t');if(t)t.value='';
+  var tp=document.getElementById('sc-tp');if(tp)tp.value='weekly';
+  var h=document.getElementById('sc-ft');if(h)h.textContent='Adaugă slujbă';
+};
+window.edSch=function(id,day,service,time,loc,type){
+  document.getElementById('sc-ei').value=id;
+  document.getElementById('sc-d').value=day;
+  document.getElementById('sc-s').value=service;
+  document.getElementById('sc-t').value=time;
+  document.getElementById('sc-l').value=loc;
+  document.getElementById('sc-tp').value=type;
+  var h=document.getElementById('sc-ft');if(h)h.textContent='Editează slujbă';
+  window.scrollTo({top:0,behavior:'smooth'});
 };
 window.delSch=async function(id){if(!confirm('Stergeti?'))return;await deleteDoc(doc(db,'schedule',id));sched=[];toast('Sters.','success');aSch();};
 
@@ -2254,7 +2260,104 @@ window.svSD=async function(k){
   var el=document.getElementById('cd-'+k);if(el&&!el.classList.contains('td2'))el.classList.add('hd');
 };
 
-async function aCats(){
+async function aVers(){
+  var m=document.getElementById('adm');
+  // Load from Firestore
+  var vs=[];
+  try{var vsn=await getDocs(query(collection(db,'siteVerses'),orderBy('order','asc')));vs=vsn.docs.map(function(d){return Object.assign({id:d.id},d.data());});}
+  catch(e){try{var vsn2=await getDocs(collection(db,'siteVerses'));vs=vsn2.docs.map(function(d){return Object.assign({id:d.id},d.data());});}catch(e2){}}
+
+  m.innerHTML='<h2 style="font-family:Cinzel,serif;color:var(--v);margin-bottom:22px">Versete Pagina Principală</h2>'+
+    '<div class="ac2" style="background:rgba(201,168,76,.07);border:1.5px solid var(--g);margin-bottom:14px">'+
+    '<p style="font-size:.8rem;color:var(--tm);margin-bottom:9px">Versetele de aici apar rotativ pe pagina acasă (banner sus + hero). Dacă nu există versete în Firestore, se folosesc cele predefinite din cod.</p>'+
+    '<button class="btn bg2" onclick="seedVerses()">&#128196; Populează versete predefinite</button></div>'+
+    '<div class="ac2"><h3 id="vf-title">Adaugă verset</h3><input type="hidden" id="vf-ei">'+
+    '<div class="fg"><label>Verset *</label><input type="text" id="vf-t" placeholder="„Eu sunt Calea, Adevărul și Viața.""></div>'+
+    '<div class="fg"><label>Referință biblică *</label><input type="text" id="vf-r" placeholder="Ioan 14:6"></div>'+
+    '<button class="btn bp" onclick="svVers()">Salvează</button> <button class="btn bs" onclick="rstVers()">Reset</button></div>'+
+    '<div class="ac2" style="overflow-x:auto">'+
+    '<h3>Versete existente <span style="font-size:.72rem;font-weight:400;color:var(--tl)">('+vs.length+')</span></h3>'+
+    (vs.length?
+      '<table class="at2"><thead><tr><th>#</th><th>Verset</th><th>Referință</th><th>Acțiuni</th></tr></thead><tbody>'+
+      vs.map(function(v,i){
+        return'<tr>'+
+          '<td>'+(i+1)+'</td>'+
+          '<td style="max-width:280px;font-family:Cormorant Garamond,serif;font-style:italic">'+esc(v.text||v.t||'')+'</td>'+
+          '<td style="white-space:nowrap"><strong>'+esc(v.ref||v.r||'')+'</strong></td>'+
+          '<td style="display:flex;gap:5px">'+
+            '<button class="btn bs bsm" onclick="edVers(\''+v.id+'\',\''+esc(v.text||v.t||'')+'\',\''+esc(v.ref||v.r||'')+'\')">Edit</button>'+
+            '<button class="btn bd bsm" onclick="delVers(\''+v.id+'\')">X</button>'+
+          '</td></tr>';
+      }).join('')+'</tbody></table>'
+    :'<p style="color:var(--tl);font-size:.8rem">Niciun verset adăugat — se folosesc cele predefinite.</p>')+
+    '</div>';
+}
+window.seedVerses=async function(){
+  var defaults=[
+    {text:'„Eu sunt Calea, Adevărul și Viața."',ref:'Ioan 14:6',order:0},
+    {text:'„Dumnezeu este dragoste."',ref:'1 Ioan 4:8',order:1},
+    {text:'„Căutați mai întâi Împărăția lui Dumnezeu."',ref:'Matei 6:33',order:2},
+    {text:'„Eu sunt Învierea și Viața."',ref:'Ioan 11:25',order:3},
+    {text:'„Bucurați-vă pururea întru Domnul."',ref:'Filipeni 4:4',order:4},
+    {text:'„Iată, stau la ușă și bat."',ref:'Apocalipsa 3:20',order:5},
+    {text:'„Cel ce crede în Mine are viață veșnică."',ref:'Ioan 6:47',order:6},
+    {text:'„Veniți la Mine toți cei osteniți și împovărați."',ref:'Matei 11:28',order:7},
+    {text:'„Doamne, buzele mele vei deschide."',ref:'Psalmul 50:17',order:8},
+    {text:'„Dumnezeul meu, Dumnezeul meu, pentru ce m-ai părăsit?"',ref:'Psalmul 21:1',order:9},
+  ];
+  var existing=await getDocs(collection(db,'siteVerses')).catch(function(){return{docs:[]};});
+  var existingTexts=existing.docs.map(function(d){return(d.data().text||'').toLowerCase();});
+  var toAdd=defaults.filter(function(v){return!existingTexts.includes(v.text.toLowerCase());});
+  if(!toAdd.length){toast('Versetele predefinite există deja!','info');return;}
+  for(var v of toAdd)await addDoc(collection(db,'siteVerses'),v);
+  toast('Adăugate '+toAdd.length+' versete!','success');aVers();
+  // Reload in page
+  loadSiteVerses();
+};
+window.svVers=async function(){
+  var t=document.getElementById('vf-t')?.value.trim(),r=document.getElementById('vf-r')?.value.trim();
+  if(!t||!r){toast('Completați versetul și referința.','error');return;}
+  var ei=document.getElementById('vf-ei')?.value;
+  if(ei){
+    await updateDoc(doc(db,'siteVerses',ei),{text:t,ref:r}).catch(function(){});
+    toast('Verset actualizat!','success');
+  }else{
+    var cnt=await getDocs(collection(db,'siteVerses')).catch(function(){return{docs:[]};});
+    await addDoc(collection(db,'siteVerses'),{text:t,ref:r,order:cnt.docs.length});
+    toast('Verset adăugat!','success');
+  }
+  rstVers();aVers();loadSiteVerses();
+};
+window.rstVers=function(){
+  document.getElementById('vf-ei').value='';
+  document.getElementById('vf-t').value='';
+  document.getElementById('vf-r').value='';
+  var h=document.getElementById('vf-title');if(h)h.textContent='Adaugă verset';
+};
+window.edVers=function(id,t,r){
+  document.getElementById('vf-ei').value=id;
+  document.getElementById('vf-t').value=t;
+  document.getElementById('vf-r').value=r;
+  var h=document.getElementById('vf-title');if(h)h.textContent='Editează verset';
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+window.delVers=async function(id){
+  if(!confirm('Ștergeți versetul?'))return;
+  await deleteDoc(doc(db,'siteVerses',id));
+  toast('Șters.','success');aVers();loadSiteVerses();
+};
+// Load verses from Firestore into the rotating arrays
+async function loadSiteVerses(){
+  try{
+    var vsn=await getDocs(query(collection(db,'siteVerses'),orderBy('order','asc')));
+    if(vsn.empty)return; // keep defaults
+    var loaded=vsn.docs.map(function(d){return d.data();});
+    HERO_VERSES=loaded.map(function(v){return{t:v.text||v.t,r:v.ref||v.r};});
+    BANNER_VERSES=loaded.map(function(v){return'† '+( v.text||v.t)+' — '+(v.ref||v.r)+' †';});
+  }catch(e){}
+}
+
+
   var m=document.getElementById('adm');
 
   var sn=await getDocs(collection(db,'categories')).catch(function(){return{docs:[]};});
@@ -2295,7 +2398,7 @@ window.addCat=async function(t){
 };
 window.delCat=async function(id){if(!confirm('Ștergeți categoria?'))return;await deleteDoc(doc(db,'categories',id));toast('Șters.','success');aCats();};
 
-setupAR();ldEJC();updC();ldHome();
+setupAR();ldEJC();updC();ldHome();loadSiteVerses();
 </script>
 </body>
 </html>
