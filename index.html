@@ -217,7 +217,7 @@ body{font-family:'Lato',sans-serif;background:var(--c);color:var(--td);min-heigh
 /* ── MODAL ── */
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1400;display:none;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(3px)}
 .ov.on{display:flex}
-.mdl{background:var(--w);border-radius:18px;max-width:600px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.35);animation:fadeIn .3s ease}
+.mdl{background:var(--w);border-radius:18px;max-width:700px;width:100%;max-height:94vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.35);animation:fadeIn .3s ease}
 .mhdr{background:linear-gradient(135deg,var(--vd),var(--v));color:var(--w);padding:18px 22px;display:flex;justify-content:space-between;align-items:center;border-radius:17px 17px 0 0;font-family:'Cinzel',serif;font-size:.94rem;font-weight:700}
 .mbd{padding:24px}
 .xb{background:none;border:none;color:rgba(255,255,255,.75);font-size:1.2rem;cursor:pointer;transition:var(--t);padding:2px 6px;border-radius:6px}
@@ -730,7 +730,7 @@ window.refreshAll=function(){prods=[];anns=[];auds=[];faqs=[];sched=[];toast('Da
 window.toggleMM=function(){document.getElementById('mm').classList.toggle('open');};
 window.closeMM=function(){document.getElementById('mm').classList.remove('open');};
 window.showModal=function(t,h){document.getElementById('mt').textContent=t;document.getElementById('mb').innerHTML=h;document.getElementById('ov').classList.add('on');};
-window.closeModal=function(e){if(e&&e.target!==document.getElementById('ov'))return;document.getElementById('ov').classList.remove('on');};
+window.closeModal=function(e){if(e&&e.target!==document.getElementById('ov'))return;document.getElementById('ov').classList.remove('on');var mdl=document.getElementById('mdl');if(mdl)mdl.style.maxWidth='';};
 window.accGDPR=function(){localStorage.setItem('gA','1');document.getElementById('gm').classList.remove('on');};
 window.closeGM=function(){document.getElementById('gm').classList.remove('on');};
 if(!localStorage.getItem('gA'))setTimeout(function(){document.getElementById('gm').classList.add('on');},900);
@@ -1102,16 +1102,43 @@ window.showAnnM=async function(id){
   if(!a)return;
   var imgs=a.images||[],h='';
   if(imgs.length){
-    h+='<div class="mc2" id="mc2-'+id+'">'+imgs.map(function(i,n){return'<img src="'+i+'" class="'+(n===0?'on':'')+'" loading="lazy" alt="">';}).join('');
-    if(imgs.length>1)h+='<div style="position:absolute;bottom:9px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:5">'+imgs.map(function(_,n){return'<span onclick="mCS2(\''+id+'\','+n+')" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,'+(n===0?'1':'.5')+');cursor:pointer"></span>';}).join('')+'</div>';
+    h+='<div class="mc2" id="mc2-'+id+'" style="height:260px">'+
+      imgs.map(function(i,n){return'<img src="'+i+'" class="'+(n===0?'on':'')+'" loading="lazy" alt="" style="cursor:zoom-in" onclick="openLightbox(\''+i+'\')">';}).join('');
+    if(imgs.length>1){
+      h+='<div style="position:absolute;bottom:9px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:5">'+
+        imgs.map(function(_,n){return'<span onclick="mCS2(\''+id+'\','+n+')" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,'+(n===0?'1':'.5')+');cursor:pointer;transition:transform .2s"></span>';}).join('')+
+        '</div>';
+      h+='<div style="position:absolute;top:50%;transform:translateY(-50%);width:100%;display:flex;justify-content:space-between;padding:0 8px;z-index:5">'+
+        '<button onclick="mAnnPrev(\''+id+'\')" style="background:rgba(74,16,32,.7);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem">&#8249;</button>'+
+        '<button onclick="mAnnNext(\''+id+'\','+imgs.length+')" style="background:rgba(74,16,32,.7);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem">&#8250;</button>'+
+        '</div>';
+    }
     h+='</div>';
+    if(imgs.length>1){
+      h+='<div style="display:flex;gap:6px;margin:8px 0;overflow-x:auto;padding-bottom:4px">'+
+        imgs.map(function(img,n){
+          return'<img src="'+img+'" onclick="mCS2(\''+id+'\','+n+');openLightbox(\''+img+'\')" '+
+            'style="width:60px;height:60px;object-fit:cover;border-radius:7px;cursor:pointer;flex-shrink:0;border:2px solid '+(n===0?'var(--v)':'var(--cd)')+'">'; 
+        }).join('')+
+        '</div>';
+    }
   }
   h+='<span class="badge '+(a.type==='urgent'?'br':'bv')+'" style="margin-bottom:7px;display:inline-block">'+esc(a.type||'')+'</span>';
   h+='<div class="cm" style="margin-bottom:11px">'+fd(a.createdAt)+'</div>';
-  h+='<div style="font-size:.88rem;line-height:1.8">'+(a.content||'').replace(/\n/g,'<br>')+'</div>';
-  window.showModal(a.title||'Anunt',h);
+  h+='<div style="font-size:.88rem;line-height:1.85;color:var(--td)">'+(a.content||'').replace(/\n/g,'<br>')+'</div>';
+  window.showModal(a.title||'Anunț',h);
 };
-window.mCS2=function(id,i){var c=document.getElementById('mc2-'+id);if(!c)return;c.querySelectorAll('img').forEach(function(x,n){x.classList.toggle('on',n===i);});};
+window.mAnnPrev=function(id){var c=document.getElementById('mc2-'+id);if(!c)return;var imgs=c.querySelectorAll('img');var cur=Array.from(imgs).findIndex(function(i){return i.classList.contains('on');});var next=(cur-1+imgs.length)%imgs.length;imgs.forEach(function(i){i.classList.remove('on');});imgs[next].classList.add('on');};
+window.mAnnNext=function(id,len){var c=document.getElementById('mc2-'+id);if(!c)return;var imgs=c.querySelectorAll('img');var cur=Array.from(imgs).findIndex(function(i){return i.classList.contains('on');});var next=(cur+1)%len;imgs.forEach(function(i){i.classList.remove('on');});imgs[next].classList.add('on');};
+window.mCS2=function(id,i){
+  var c=document.getElementById('mc2-'+id);if(!c)return;
+  c.querySelectorAll('img').forEach(function(x,n){x.classList.toggle('on',n===i);});
+  // update thumbnails border
+  var thumbs=c.nextElementSibling;
+  if(thumbs&&thumbs.tagName==='DIV'){
+    thumbs.querySelectorAll('img').forEach(function(t,n){t.style.border='2px solid '+(n===i?'var(--v)':'var(--cd)');});
+  }
+};
 
 async function ldShop(){
   var el=document.getElementById('pg2');if(!el)return;
@@ -1271,13 +1298,27 @@ window.openPM=async function(id){
     rh=rn.docs.map(function(r){var d=r.data();return'<div style="padding:11px 0;border-bottom:1px solid var(--cd)"><strong style="font-size:.78rem">'+esc(d.userName||'Anonim')+'</strong> <span style="color:var(--g);font-size:.78rem">'+strs(d.rating)+'</span><p style="font-size:.79rem;color:var(--tm);margin-top:3px">'+esc(d.comment)+'</p><div style="font-size:.7rem;color:var(--tl)">'+fd(d.createdAt)+'</div></div>';}).join('')||'<p style="color:var(--tl);font-size:.8rem">Nicio recenzie.</p>';
   }catch(e){rh='';}
   var ins=(p.stock||0)>0;
-  var h='<div class="mc2" id="pmc">'+
-    (imgs.length?imgs.map(function(i,n){return'<img src="'+i+'" class="'+(n===0?'on':'')+'" loading="lazy" alt="">';}).join(''):'<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;color:var(--cd)">Prod</div>')+
-    (imgs.length>1?
-      '<div style="position:absolute;bottom:9px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:5">'+imgs.map(function(_,i){return'<span onclick="pmS('+i+')" style="width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,'+(i===0?'1':'.5')+');cursor:pointer"></span>';}).join('')+'</div>'+
-      '<div style="position:absolute;top:50%;transform:translateY(-50%);width:100%;display:flex;justify-content:space-between;padding:0 7px;z-index:5"><button onclick="pmSt(-1)" style="background:rgba(107,26,46,.7);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer">\u2039</button><button onclick="pmSt(1,'+imgs.length+')" style="background:rgba(107,26,46,.7);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer">\u203a</button></div>'
-    :'')+
-    '</div>';
+  var imgSection='';
+  if(imgs.length){
+    imgSection='<div class="mc2" id="pmc" style="height:300px;cursor:zoom-in" onclick="openLightbox(this.querySelector(\'.on\').src)">'+
+      imgs.map(function(i,n){return'<img src="'+i+'" class="'+(n===0?'on':'')+'" loading="lazy" alt="">';}).join('');
+    if(imgs.length>1){
+      imgSection+='<div style="position:absolute;bottom:9px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:5">'+
+        imgs.map(function(_,i){return'<span onclick="pmS('+i+');event.stopPropagation()" style="width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,'+(i===0?'1':'.5')+');cursor:pointer"></span>';}).join('')+'</div>';
+      imgSection+='<div style="position:absolute;top:50%;transform:translateY(-50%);width:100%;display:flex;justify-content:space-between;padding:0 7px;z-index:5">'+
+        '<button onclick="pmSt(-1);event.stopPropagation()" style="background:rgba(74,16,32,.7);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer">&#8249;</button>'+
+        '<button onclick="pmSt(1,'+imgs.length+');event.stopPropagation()" style="background:rgba(74,16,32,.7);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer">&#8250;</button></div>';
+    }
+    imgSection+='</div>';
+    if(imgs.length>1){
+      imgSection+='<div style="display:flex;gap:6px;margin:8px 0 12px;overflow-x:auto;padding-bottom:4px" id="pm-thumbs">'+
+        imgs.map(function(img,n){
+          return'<img src="'+img+'" onclick="pmS('+n+')" '+
+            'style="width:64px;height:64px;object-fit:cover;border-radius:8px;cursor:pointer;flex-shrink:0;border:2px solid '+(n===0?'var(--v)':'var(--cd)')+';">';
+        }).join('')+'</div>';
+    }
+  }
+  var h=imgSection;
   h+='<div class="prow"><span class="price">'+fpv(p.price)+'</span>'+(p.oldPrice?'<span class="po">'+fpv(p.oldPrice)+'</span>':'')+'</div>';
   h+='<p style="font-size:.86rem;color:var(--tm);line-height:1.7;margin-bottom:11px">'+esc(p.fullDesc||p.shortDesc||'')+'</p>';
   if(p.transport)h+='<p style="font-size:.76rem;color:var(--tl);margin-bottom:8px">Transport: '+esc(p.transport)+'</p>';
@@ -1300,9 +1341,43 @@ window.openPM=async function(id){
 };
 
 window.addPM=function(id){var el=document.getElementById('pmq');window.addC(id,el?parseInt(el.textContent):1);window.closeModal();};
-window.pmS=function(i){window._pmI=i;var c=document.getElementById('pmc');if(!c)return;c.querySelectorAll('img').forEach(function(x,n){x.classList.toggle('on',n===i);});};
+window.pmS=function(i){
+  window._pmI=i;
+  var c=document.getElementById('pmc');if(!c)return;
+  c.querySelectorAll('img').forEach(function(x,n){x.classList.toggle('on',n===i);});
+  // dots
+  var dots=c.querySelectorAll('.cdts span, div[style*="border-radius:50%"]');
+  dots.forEach(function(s,n){if(s.style)s.style.background='rgba(255,255,255,'+(n===i?'1':'.5')+')';});
+  // thumbnails
+  var thumbs=document.getElementById('pm-thumbs');
+  if(thumbs)thumbs.querySelectorAll('img').forEach(function(t,n){t.style.border='2px solid '+(n===i?'var(--v)':'var(--cd)');});
+};
 window.pmSt=function(d,l){if(l===undefined)l=window._pmL||1;window.pmS(((window._pmI||0)+d+l)%l);};
 window.pmQ=function(d,mx){var el=document.getElementById('pmq');if(!el)return;el.textContent=Math.max(1,Math.min(parseInt(el.textContent)+d,mx||999));};
+
+// Lightbox — full screen image viewer
+window.openLightbox=function(src){
+  if(!src)return;
+  var lb=document.getElementById('lightbox');
+  if(!lb){
+    lb=document.createElement('div');
+    lb.id='lightbox';
+    lb.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:zoom-out;backdrop-filter:blur(4px)';
+    lb.onclick=function(){lb.style.display='none';};
+    var img=document.createElement('img');
+    img.id='lb-img';
+    img.style.cssText='max-width:94vw;max-height:90vh;object-fit:contain;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,.5)';
+    var closeBtn=document.createElement('button');
+    closeBtn.style.cssText='position:absolute;top:18px;right:20px;background:rgba(255,255,255,.15);border:none;color:#fff;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:1.3rem;display:flex;align-items:center;justify-content:center';
+    closeBtn.innerHTML='&#10005;';
+    closeBtn.onclick=function(e){e.stopPropagation();lb.style.display='none';};
+    lb.appendChild(img);
+    lb.appendChild(closeBtn);
+    document.body.appendChild(lb);
+  }
+  document.getElementById('lb-img').src=src;
+  lb.style.display='flex';
+};
 window._star=0;
 window.setStar=function(n){
   window._star=n;
@@ -2805,7 +2880,6 @@ function aSnt(){
   var m=document.getElementById('adm');
   var yr=new Date().getFullYear(),mo=new Date().getMonth();
 
-  // Fast color map
   var FAST_COLORS={
     'fish':  {bg:'rgba(33,150,243,.15)',border:'rgba(33,150,243,.5)',label:'Dezlegare pește',dot:'#2196F3'},
     'strict':  {bg:'rgba(156,39,176,.12)',border:'rgba(156,39,176,.4)',label:'Post strict',dot:'#9C27B0'},
@@ -2813,6 +2887,8 @@ function aSnt(){
     'wine_oil':{bg:'rgba(255,152,0,.15)',border:'rgba(255,152,0,.5)',label:'Dezlegare vin+ulei',dot:'#FF9800'},
     'full':    {bg:'rgba(192,57,43,.15)',border:'rgba(192,57,43,.5)',label:'Post negru',dot:'#c0392b'},
   };
+  var CROSS_COLORS={'red':'#c0392b','blue':'#2980b9','black':'#333'};
+  var CROSS_LABELS={'red':'✝ Cruce roșie (mucenic/praznic)','blue':'✝ Cruce albastră (praznic mediu)','black':'✝ Cruce neagră (post)'};
 
   // Build local fast map from seeded saints for quick lookup
   window._fastMap={};
@@ -2826,26 +2902,36 @@ function aSnt(){
       var k=y+'-'+String(mn+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
       var isT=d===today.getDate()&&mn===today.getMonth()&&y===today.getFullYear();
       var fst=window._fastMap[k];
-      var fcol=fst&&FAST_COLORS[fst];
-      var style=fcol?'style="background:'+fcol.bg+';border-color:'+fcol.border+'"':'';
-      var dot=fcol?'<span style="display:block;width:6px;height:6px;border-radius:50%;background:'+fcol.dot+';margin:1px auto 0"></span>':'';
+      var fc=fst&&FAST_COLORS[fst];
+      var style=fc?'style="background:'+fc.bg+';border-color:'+fc.border+'"':'';
+      var dot=fc?'<span style="display:block;width:6px;height:6px;border-radius:50%;background:'+fc.dot+';margin:1px auto 0"></span>':'';
       h+='<div class="cd'+(isT?' td2':'')+'" id="cd-'+k+'" '+style+' onclick="openSD(\''+k+'\')">'+d+dot+'</div>';
     }
     cb.innerHTML=h;document.getElementById('cal-mo').textContent=mns[mn]+' '+y;
     getDocs(collection(db,'saintDays')).then(function(sn){
       sn.docs.forEach(function(d2){
-        var f=d2.data().fast;
+        var sd=d2.data();
+        var f=sd.fast, cr=sd.cross;
         if(f)window._fastMap[d2.id]=f;
         var el=document.getElementById('cd-'+d2.id);
         if(el&&!el.classList.contains('td2')){
           var fc=f&&FAST_COLORS[f];
           if(fc){el.style.background=fc.bg;el.style.borderColor=fc.border;}
           else{el.classList.add('hd');}
-          // Add dot
-          if(fc&&!el.querySelector('span[style*="border-radius:50%"]')){
+          // Remove old dots
+          el.querySelectorAll('span').forEach(function(sp){sp.remove();});
+          // Fast dot
+          if(fc){
             var sp=document.createElement('span');
             sp.style.cssText='display:block;width:6px;height:6px;border-radius:50%;background:'+fc.dot+';margin:1px auto 0';
             el.appendChild(sp);
+          }
+          // Cross symbol
+          if(cr&&CROSS_COLORS[cr]){
+            var cx=document.createElement('span');
+            cx.style.cssText='display:block;font-size:.55rem;color:'+CROSS_COLORS[cr]+';line-height:1;text-align:center';
+            cx.textContent='✝';
+            el.insertBefore(cx,el.firstChild.nextSibling);
           }
         }
       });
@@ -2853,18 +2939,30 @@ function aSnt(){
   }
 
   var legend=Object.entries(FAST_COLORS).map(function(kv){
-    return'<span style="display:inline-flex;align-items:center;gap:5px;font-size:.7rem;margin-right:10px">'+
+    return'<span style="display:inline-flex;align-items:center;gap:5px;font-size:.7rem;margin-right:10px;margin-bottom:4px">'+
       '<span style="width:10px;height:10px;border-radius:50%;background:'+kv[1].dot+';flex-shrink:0"></span>'+
       kv[1].label+'</span>';
+  }).join('');
+  var crossLegend=Object.entries(CROSS_LABELS).map(function(kv){
+    return'<span style="display:inline-flex;align-items:center;gap:5px;font-size:.7rem;margin-right:10px;margin-bottom:4px">'+
+      '<span style="color:'+CROSS_COLORS[kv[0]]+';font-size:.9rem">✝</span>'+
+      kv[1].split('(')[1].replace(')','')+'</span>';
   }).join('');
 
   m.innerHTML='<h2 style="font-family:Cinzel,serif;color:var(--v);margin-bottom:22px">Calendar Sfinti</h2>'+
     '<div class="ac2" style="background:rgba(201,168,76,.07);border:1.5px solid var(--g);margin-bottom:14px">'+
     '<p style="font-size:.8rem;color:var(--tm);margin-bottom:9px">Populare automată calendar ortodox 2026 — 365 de sfinți cu dezlegări și posturi. Apasă pe orice zi pentru editare.</p>'+
-    '<button class="btn bg2" onclick="window.seedSaints().then(function(){aSnt();})">&#10013; Populează Sfinți 2026</button></div>'+
-    '<div class="ac2" style="margin-bottom:14px;padding:12px 16px"><div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center">'+
-    '<span style="font-size:.7rem;font-family:Cinzel,serif;color:var(--v);margin-right:8px;font-weight:700">Legenda:</span>'+
-    legend+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+    '<button class="btn bg2" onclick="window.seedSaints().then(function(){aSnt();})">&#10013; Populează Sfinți 2026</button>'+
+    '<button class="btn bd" onclick="window.delAllSaints()">🗑 Șterge toți sfinții</button>'+
+    '</div></div>'+
+    '<div class="ac2" style="margin-bottom:14px;padding:12px 16px">'+
+    '<div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-bottom:6px">'+
+    '<span style="font-size:.7rem;font-family:Cinzel,serif;color:var(--v);margin-right:8px;font-weight:700">Post/Dezlegare:</span>'+
+    legend+'</div>'+
+    '<div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center">'+
+    '<span style="font-size:.7rem;font-family:Cinzel,serif;color:var(--v);margin-right:8px;font-weight:700">Cruci:</span>'+
+    crossLegend+
     '<span style="display:inline-flex;align-items:center;gap:5px;font-size:.7rem">'+
     '<span style="width:10px;height:10px;border-radius:2px;background:rgba(107,26,46,.06);border:1px solid rgba(107,26,46,.25);flex-shrink:0"></span>Sfânt introdus</span>'+
     '</div></div>'+
@@ -2878,23 +2976,98 @@ function aSnt(){
   window.calN=function(d){window._calM+=d;if(window._calM<0){window._calM=11;window._calY--;}if(window._calM>11){window._calM=0;window._calY++;}renderCal(window._calY,window._calM);};
 }
 window.openSD=async function(k){
-  var d={name:'',shortDesc:'',fullDesc:'',verse:'',verseRef:''};
+  var d={name:'',shortDesc:'',fullDesc:'',verse:'',verseRef:'',fast:null,cross:null};
   try{var sn=await getDoc(doc(db,'saintDays',k));if(sn.exists())d=Object.assign(d,sn.data());}catch(e){}
-  window.showModal('Sfantul zilei - '+k,
-    '<div class="fg"><label>Numele sfantului *</label><input type="text" id="sd-n" value="'+esc(d.name)+'" placeholder="Sfantul Ioan"></div>'+
-    '<div class="fg"><label>Descriere scurta</label><input type="text" id="sd-s" value="'+esc(d.shortDesc)+'" placeholder="Scurt rezumat..."></div>'+
-    '<div class="fg"><label>Descriere completa</label><textarea id="sd-f" placeholder="Viata sfantului...">'+esc(d.fullDesc)+'</textarea></div>'+
-    '<div class="fg"><label>Versetul zilei</label><input type="text" id="sd-v" value="'+esc(d.verse)+'" placeholder="Citat biblic..."></div>'+
-    '<div class="fg"><label>Referinta biblica</label><input type="text" id="sd-r" value="'+esc(d.verseRef)+'" placeholder="Ioan 3:16"></div>'+
-    '<button class="btn bp" style="width:100%" onclick="svSD(\''+k+'\')">Salveaza</button>'
+
+  var FAST_OPTS=[
+    {v:'',label:'— Zi normală (fără indicație)'},
+    {v:'none',label:'🎉 Dezlegare deplină'},
+    {v:'fish',label:'🐟 Dezlegare la pește'},
+    {v:'wine_oil',label:'🍷 Dezlegare la vin și untdelemn'},
+    {v:'strict',label:'⚫ Post strict (fără ulei)'},
+    {v:'full',label:'⚫⚫ Post negru (ajun)'},
+  ];
+  var CROSS_OPTS=[
+    {v:'',label:'— Fără cruce specială'},
+    {v:'red',label:'✝ Cruce roșie (mucenic / praznic mare)'},
+    {v:'blue',label:'✝ Cruce albastră (praznic mediu)'},
+    {v:'black',label:'✝ Cruce neagră (post / zi de doliu)'},
+  ];
+
+  var fastSel=FAST_OPTS.map(function(o){
+    return'<option value="'+o.v+'"'+(d.fast===o.v||(!d.fast&&!o.v)?' selected':'')+'>'+o.label+'</option>';
+  }).join('');
+  var crossSel=CROSS_OPTS.map(function(o){
+    return'<option value="'+o.v+'"'+(d.cross===o.v||(!d.cross&&!o.v)?' selected':'')+'>'+o.label+'</option>';
+  }).join('');
+
+  // Wider modal via inline style on mdl
+  document.getElementById('mdl').style.maxWidth='720px';
+
+  window.showModal('✝ '+k+' — '+( d.name||'Sfântul zilei'),
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'+
+    '<div class="fg" style="grid-column:1/-1"><label>Numele sfântului *</label><input type="text" id="sd-n" value="'+esc(d.name)+'" placeholder="Sfântul Ioan..."></div>'+
+    '<div class="fg" style="grid-column:1/-1"><label>Descriere scurtă</label><input type="text" id="sd-s" value="'+esc(d.shortDesc)+'" placeholder="Scurt rezumat..."></div>'+
+    '<div class="fg" style="grid-column:1/-1"><label>Sinaxar (descriere completă)</label><textarea id="sd-f" style="min-height:130px">'+esc(d.fullDesc)+'</textarea></div>'+
+    '<div class="fg"><label>Verset biblic</label><input type="text" id="sd-v" value="'+esc(d.verse)+'" placeholder="Citat biblic..."></div>'+
+    '<div class="fg"><label>Referință biblică</label><input type="text" id="sd-r" value="'+esc(d.verseRef)+'" placeholder="Ioan 3:16"></div>'+
+    '<div class="fg"><label>Post / Dezlegare</label><select id="sd-fast" style="width:100%;padding:9px 13px;border:1.5px solid var(--cd);border-radius:9px;font-size:.85rem;outline:none">'+fastSel+'</select></div>'+
+    '<div class="fg"><label>Tip cruce (calendar)</label><select id="sd-cross" style="width:100%;padding:9px 13px;border:1.5px solid var(--cd);border-radius:9px;font-size:.85rem;outline:none">'+crossSel+'</select></div>'+
+    '</div>'+
+    '<div style="display:flex;gap:9px;margin-top:4px">'+
+    '<button class="btn bp" style="flex:1" onclick="svSD(\''+k+'\')">💾 Salvează</button>'+
+    (d.name?'<button class="btn bd" onclick="delSD(\''+k+'\')" title="Șterge intrarea din Firestore">🗑 Șterge</button>':'')+
+    '</div>'
   );
 };
 window.svSD=async function(k){
-  var d={name:document.getElementById('sd-n')?.value.trim(),shortDesc:document.getElementById('sd-s')?.value.trim(),fullDesc:document.getElementById('sd-f')?.value.trim(),verse:document.getElementById('sd-v')?.value.trim(),verseRef:document.getElementById('sd-r')?.value.trim()};
-  if(!d.name){toast('Completati numele sfantului.','error');return;}
+  var fastVal=document.getElementById('sd-fast')?.value||null;
+  var crossVal=document.getElementById('sd-cross')?.value||null;
+  var d={
+    name:document.getElementById('sd-n')?.value.trim(),
+    shortDesc:document.getElementById('sd-s')?.value.trim(),
+    fullDesc:document.getElementById('sd-f')?.value.trim(),
+    verse:document.getElementById('sd-v')?.value.trim(),
+    verseRef:document.getElementById('sd-r')?.value.trim(),
+    fast:fastVal||null,
+    cross:crossVal||null
+  };
+  if(!d.name){toast('Completați numele sfântului.','error');return;}
   await setDoc(doc(db,'saintDays',k),d,{merge:true}).catch(function(e){toast('Eroare: '+e.message,'error');return;});
-  toast('Sfantul zilei salvat!','success');window.closeModal();
-  var el=document.getElementById('cd-'+k);if(el&&!el.classList.contains('td2'))el.classList.add('hd');
+  toast('Sfântul zilei salvat!','success');
+  window.closeModal();
+  document.getElementById('mdl').style.maxWidth='';
+  // Update calendar cell
+  var el=document.getElementById('cd-'+k);
+  if(el&&!el.classList.contains('td2')){
+    var FAST_COLORS={fish:{bg:'rgba(33,150,243,.15)',border:'rgba(33,150,243,.5)',dot:'#2196F3'},strict:{bg:'rgba(156,39,176,.12)',border:'rgba(156,39,176,.4)',dot:'#9C27B0'},none:{bg:'rgba(39,174,96,.15)',border:'rgba(39,174,96,.5)',dot:'#27ae60'},wine_oil:{bg:'rgba(255,152,0,.15)',border:'rgba(255,152,0,.5)',dot:'#FF9800'},full:{bg:'rgba(192,57,43,.15)',border:'rgba(192,57,43,.5)',dot:'#c0392b'}};
+    var fc=d.fast&&FAST_COLORS[d.fast];
+    if(fc){el.style.background=fc.bg;el.style.borderColor=fc.border;}else{el.classList.add('hd');}
+  }
+};
+window.delSD=async function(k){
+  if(!confirm('Ștergeți sfântul din ziua '+k+'?\nAceasta elimină datele din Firestore.'))return;
+  await deleteDoc(doc(db,'saintDays',k)).catch(function(){});
+  toast('Intrare ștearsă.','success');
+  window.closeModal();
+  document.getElementById('mdl').style.maxWidth='';
+  var el=document.getElementById('cd-'+k);
+  if(el){el.style.background='';el.style.borderColor='';el.classList.remove('hd');}
+};
+window.delAllSaints=async function(){
+  if(!confirm('ATENȚIE: Ștergeți TOȚI sfinții din Firestore?\nDupă ștergere poți apăsa Populează pentru a re-adăuga.'))return;
+  try{
+    var all=await getDocs(collection(db,'saintDays'));
+    toast('Se șterg '+all.size+' intrări...','info');
+    var batch2=[];
+    for(var dd of all.docs){
+      batch2.push(deleteDoc(doc(db,'saintDays',dd.id)));
+      if(batch2.length>=20){await Promise.all(batch2);batch2=[];}
+    }
+    if(batch2.length)await Promise.all(batch2);
+    toast('Toți sfinții au fost șterși!','success');
+    aSnt();
+  }catch(e){toast('Eroare: '+e.message,'error');}
 };
 
 async function aVers(){
