@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Parohia Stornesti - Biserica Sfanta Treime</title>
+<meta name="description" content="Parohia Stornești, Biserica Sfânta Treime, jud. Iași — program slujbe, anunțuri, magazin parohial.">
+<meta name="theme-color" content="#4a1020">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Parohia Stornești">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
 :root{--v:#6B1A2E;--vd:#4a1020;--vl:#8B2A42;--c:#F8F3EC;--cd:#EDE5D8;--g:#C9A84C;--gl:#E8C86A;--w:#fff;--td:#1a0a10;--tm:#4a3040;--tl:#7a6070;--r:#c0392b;--gr:#27ae60;--s:0 4px 24px rgba(107,26,46,.12);--sm:0 12px 40px rgba(107,26,46,.2);--rad:14px;--t:all .3s ease}
@@ -357,6 +364,15 @@ footer{background:linear-gradient(180deg,var(--vd),#2a0810);color:rgba(255,255,2
 .pc .pi{height:190px}
 
 
+/* ── PWA ── */
+#pwa-install{display:none;position:fixed;bottom:80px;right:18px;z-index:8000;background:linear-gradient(135deg,var(--v),var(--vl));color:#fff;border:none;border-radius:50px;padding:11px 18px;font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(107,26,46,.4);transition:var(--t);align-items:center;gap:8px;letter-spacing:.04em}
+#pwa-install:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(107,26,46,.5)}
+#notif-banner{display:none;position:fixed;bottom:0;left:0;right:0;z-index:8500;background:linear-gradient(135deg,var(--vd),#3d0d1a);color:#fff;padding:14px 18px;border-top:2px solid rgba(201,168,76,.3);box-shadow:0 -4px 20px rgba(0,0,0,.3)}
+.nb-inner{max-width:600px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.nb-inner p{font-size:.82rem;flex:1;line-height:1.5;color:rgba(255,255,255,.9)}
+.nb-inner p strong{color:var(--gl);font-family:'Cinzel',serif}
+.nb-btns{display:flex;gap:8px;flex-shrink:0}
+
 @media(max-width:480px){
   .qb{min-width:calc(50% - 8px);max-width:calc(50% - 8px);padding:14px 10px}
   .qb .ic{font-size:1.5rem}
@@ -596,6 +612,7 @@ footer{background:linear-gradient(180deg,var(--vd),#2a0810);color:rgba(255,255,2
       <div class="an" onclick="sa('snt')">Sfinti</div>
       <div class="an" onclick="sa('cats')">Categorii</div>
       <div class="an" onclick="sa('vers')">Versete</div>
+      <div class="an" onclick="sa('push')">🔔 Notificări</div>
     </aside>
     <main class="am" id="adm"></main>
   </div>
@@ -627,6 +644,19 @@ footer{background:linear-gradient(180deg,var(--vd),#2a0810);color:rgba(255,255,2
     </div>
   </div>
 </div>
+<button id="pwa-install" onclick="pwInstall()">📲 Instalează aplicația</button>
+
+<div id="notif-banner">
+  <div class="nb-inner">
+    <div style="font-size:1.4rem">🔔</div>
+    <p><strong>Notificări Parohie</strong><br>Dorești să primești notificări despre anunțuri și slujbe de la Parohia Stornești?</p>
+    <div class="nb-btns">
+      <button class="btn bp bsm" onclick="acceptNotif()">Da, accept</button>
+      <button class="btn bs bsm" onclick="denyNotif()">Nu, mulțumesc</button>
+    </div>
+  </div>
+</div>
+
 <div id="tc"></div>
 <footer>
   <div class="fg2">
@@ -990,29 +1020,38 @@ async function ldSaint(){
   var key=new Date().toISOString().split('T')[0];
   var sw=document.getElementById('saw'),vw=document.getElementById('vaw');
   function vFall(){var v=FV[new Date().getDay()];return'<div class="vc"><p>'+esc(v.t)+'</p><div class="vr">'+esc(v.r)+'</div></div>';}
-  var FAST_LABELS={
-    'fish':'🐟 Dezlegare la pește',
-    'strict':'⚫ Post strict',
-    'none':'🎉 Dezlegare deplină',
-    'wine_oil':'🍷 Dezlegare la vin și untdelemn',
-    'full':'⚫ Post negru (ajun)',
+  var FAST_INFO={
+    'fish':  {label:'Dezlegare la pește',icon:'🐟',color:'#2196F3',bg:'rgba(33,150,243,.2)'},
+    'strict':{label:'Post strict',icon:'⚫',color:'#9C27B0',bg:'rgba(156,39,176,.2)'},
+    'none':  {label:'Dezlegare deplină 🗺️',icon:'🎉',color:'#27ae60',bg:'rgba(39,174,96,.2)'},
+    'wine_oil':{label:'Dezlegare vin & untdelemn',icon:'🍷',color:'#FF9800',bg:'rgba(255,152,0,.2)'},
+    'full':  {label:'Post negru',icon:'🕯️',color:'#c0392b',bg:'rgba(192,57,43,.2)'},
   };
+  var CROSS_COLORS={'red':'#e74c3c','blue':'#2980b9','black':'rgba(255,255,255,.6)'};
   try{
     var sn=await getDoc(doc(db,'saintDays',key));
     if(sn.exists()){
       var s=sn.data();
-      var fastBadge='';
-      if(s.fast&&FAST_LABELS[s.fast]){
-        var fc={fish:'#2196F3',strict:'#9C27B0',none:'#27ae60',wine_oil:'#FF9800',full:'#c0392b'};
-        fastBadge='<div style="margin-top:10px;display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:3px 12px;font-size:.72rem;font-family:Cinzel,serif">'+FAST_LABELS[s.fast]+'</div>';
+      // Cross symbol with color
+      var crossHtml='';
+      if(s.cross&&CROSS_COLORS[s.cross]){
+        crossHtml='<span style="font-size:1.4rem;color:'+CROSS_COLORS[s.cross]+';text-shadow:0 0 8px '+CROSS_COLORS[s.cross]+'88;margin-right:8px">✝</span>';
       }
-      if(sw)sw.innerHTML='<div class="sc" onclick="var sf=this.querySelector(\'.sf\');sf.style.display=sf.style.display===\'none\'?\'block\':\'none\'">'+
-        '<h3>✝ Sfântul Zilei</h3>'+
-        '<p style="margin-bottom:6px"><strong style="font-size:1rem">'+esc(s.name||'')+'</strong></p>'+
-        '<p style="font-size:.82rem;color:rgba(255,255,255,.85)">'+esc(s.shortDesc||'')+'</p>'+
+      // Fast badge
+      var fastBadge='';
+      if(s.fast&&FAST_INFO[s.fast]){
+        var fi=FAST_INFO[s.fast];
+        fastBadge='<div style="margin-top:10px;display:inline-flex;align-items:center;gap:6px;background:'+fi.bg+';border:1px solid '+fi.color+'44;border-radius:20px;padding:5px 14px;font-size:.73rem;font-family:Cinzel,serif;color:#fff">'+fi.icon+' '+fi.label+'</div>';
+      }
+      // Sinaxar modal button
+      var sinaxarBtn='<button onclick="showSinaxar(\''+esc(s.name||'')+'\',\''+esc(s.fullDesc||'')+'\',\''+esc(s.verse||'')+'\',\''+esc(s.verseRef||'')+'\')" style="margin-top:11px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:#fff;padding:6px 14px;border-radius:20px;cursor:pointer;font-family:Cinzel,serif;font-size:.69rem;letter-spacing:.04em">📖 Sinaxar complet</button>';
+      if(sw)sw.innerHTML='<div class="sc">'+
+        '<h3>'+crossHtml+'Sfântul Zilei</h3>'+
+        '<p style="margin-bottom:5px"><strong style="font-size:1rem">'+esc(s.name||'')+'</strong></p>'+
+        '<p style="font-size:.81rem;color:rgba(255,255,255,.85);line-height:1.5">'+esc(s.shortDesc||'')+'</p>'+
         fastBadge+
-        '<div class="sf" style="display:none;margin-top:11px;font-size:.79rem;color:rgba(255,255,255,.82);line-height:1.7">'+esc(s.fullDesc||'')+'</div>'+
-        '<div style="margin-top:9px;font-size:.68rem;color:var(--gl);opacity:.8">Apasă pentru detalii ↓</div></div>';
+        (s.fullDesc?sinaxarBtn:'')+
+        '</div>';
       if(vw)vw.innerHTML=s.verse?'<div class="vc"><p>'+esc(s.verse)+'</p><div class="vr">'+esc(s.verseRef||'')+'</div></div>':vFall();
     }else{
       if(sw)sw.innerHTML='<div class="sc"><h3>✝ Sfântul Zilei</h3><p style="color:rgba(255,255,255,.7)">Date neadăugate pentru această zi.</p></div>';
@@ -1023,6 +1062,14 @@ async function ldSaint(){
     if(vw)vw.innerHTML=vFall();
   }
 }
+
+window.showSinaxar=function(name,fullDesc,verse,verseRef){
+  document.getElementById('mdl').style.maxWidth='680px';
+  window.showModal('✝ '+name,
+    '<div style="font-size:.88rem;line-height:1.9;color:var(--td);margin-bottom:16px">'+esc(fullDesc).replace(/\n/g,'<br>')+'</div>'+
+    (verse?'<div class="vc" style="margin-top:0"><p>'+esc(verse)+'</p><div class="vr">'+esc(verseRef)+'</div></div>':'')
+  );
+};
 
 function bCar(imgs,id){
   if(!imgs||!imgs.length)return'<div style="width:100%;height:190px;display:flex;align-items:center;justify-content:center;font-size:2.8rem;background:linear-gradient(135deg,var(--c),var(--cd));color:var(--v)">&#128226;</div>';
@@ -2205,7 +2252,7 @@ window.sa=async function(sec){
   var m=document.getElementById('adm');
   m.innerHTML='<div class="ld"><div class="loader"></div></div>';
   await ldEJC();
-  var fns={dash:aDash,ords:aOrds,prods:aProds,anns:aAnns,aud:aAud,custs:aCusts,res:aRes,coup:aCoup,tr:aTr,em:aEm,faqA:aFaq,sch:aSch,snt:aSnt,cats:aCats,vers:aVers};
+  var fns={dash:aDash,ords:aOrds,prods:aProds,anns:aAnns,aud:aAud,custs:aCusts,res:aRes,coup:aCoup,tr:aTr,em:aEm,faqA:aFaq,sch:aSch,snt:aSnt,cats:aCats,vers:aVers,push:aPush};
   if(fns[sec])await fns[sec]();
 };
 
@@ -3208,6 +3255,199 @@ window.addCat=async function(t){
   toast('Categorie adăugată!','success');inp.value='';aCats();
 };
 window.delCat=async function(id){if(!confirm('Ștergeți categoria?'))return;await deleteDoc(doc(db,'categories',id));toast('Șters.','success');aCats();};
+
+// ═══════════════ PWA ═══════════════
+var _deferredPrompt=null;
+
+// Listen for install prompt
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault();
+  _deferredPrompt=e;
+  var btn=document.getElementById('pwa-install');
+  if(btn){btn.style.display='flex';}
+});
+
+// Hide install button after install
+window.addEventListener('appinstalled',function(){
+  var btn=document.getElementById('pwa-install');
+  if(btn)btn.style.display='none';
+  _deferredPrompt=null;
+  toast('Aplicația a fost instalată cu succes! 📲','success');
+});
+
+window.pwInstall=async function(){
+  if(!_deferredPrompt)return;
+  _deferredPrompt.prompt();
+  var result=await _deferredPrompt.userChoice;
+  if(result.outcome==='accepted'){
+    toast('Se instalează aplicația...','info');
+  }
+  _deferredPrompt=null;
+  var btn=document.getElementById('pwa-install');
+  if(btn)btn.style.display='none';
+};
+
+// Register service worker
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').then(function(reg){
+    console.log('SW registered:', reg.scope);
+    // Check for notification permission
+    if('Notification' in window && Notification.permission==='default'){
+      // Show banner after 3 seconds if not dismissed
+      var dismissed=localStorage.getItem('notif_dismissed');
+      if(!dismissed){
+        setTimeout(function(){
+          var banner=document.getElementById('notif-banner');
+          if(banner)banner.style.display='block';
+        },3000);
+      }
+    }
+  }).catch(function(e){console.log('SW error:',e);});
+}
+
+window.acceptNotif=async function(){
+  var banner=document.getElementById('notif-banner');
+  if(banner)banner.style.display='none';
+  if(!('Notification' in window)){toast('Notificările nu sunt suportate pe acest dispozitiv.','error');return;}
+  var perm=await Notification.requestPermission();
+  if(perm==='granted'){
+    localStorage.setItem('notif_accepted','1');
+    toast('Notificările au fost activate! 🔔','success');
+    // Subscribe to push if SW available
+    if('serviceWorker' in navigator){
+      try{
+        var reg=await navigator.serviceWorker.ready;
+        // Store subscription in Firestore
+        var sub=await reg.pushManager.subscribe({
+          userVisibleOnly:true,
+          applicationServerKey:urlBase64ToUint8Array('BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjZkkhTD-W_sKL1F8GTMqfJCRpBZU')
+        }).catch(function(){return null;});
+        if(sub&&CU){
+          await updateDoc(doc(db,'users',CU.uid),{pushSub:JSON.stringify(sub)}).catch(function(){});
+        }
+      }catch(e){console.log('Push sub error:',e);}
+    }
+  }else{
+    localStorage.setItem('notif_dismissed','1');
+    toast('Notificările au fost refuzate.','info');
+  }
+};
+
+window.denyNotif=function(){
+  var banner=document.getElementById('notif-banner');
+  if(banner)banner.style.display='none';
+  localStorage.setItem('notif_dismissed','1');
+};
+
+function urlBase64ToUint8Array(base64String){
+  var padding='='.repeat((4-base64String.length%4)%4);
+  var base64=(base64String+padding).replace(/-/g,'+').replace(/_/g,'/');
+  var rawData=window.atob(base64);
+  var outputArray=new Uint8Array(rawData.length);
+  for(var i=0;i<rawData.length;++i)outputArray[i]=rawData.charCodeAt(i);
+  return outputArray;
+}
+
+
+// ═══ ADMIN PUSH NOTIFICATIONS ═══
+async function aPush(){
+  var m=document.getElementById('adm');
+  var subCount=0;
+  try{
+    var usersSnap=await getDocs(collection(db,'users'));
+    subCount=usersSnap.docs.filter(function(d){return d.data().pushSub;}).length;
+  }catch(e){}
+  var jobs=[];
+  try{
+    var jobsSnap=await getDocs(query(collection(db,'pushJobs'),orderBy('createdAt','desc'),limit(10)));
+    jobs=jobsSnap.docs.map(function(d){return Object.assign({id:d.id},d.data());});
+  }catch(e){
+    try{var js2=await getDocs(collection(db,'pushJobs'));jobs=js2.docs.map(function(d){return Object.assign({id:d.id},d.data());});}catch(e2){}
+  }
+
+  m.innerHTML='<h2 style="font-family:Cinzel,serif;color:var(--v);margin-bottom:22px">🔔 Notificări Push</h2>'+
+
+  '<div class="ac2" style="background:rgba(201,168,76,.07);border:1.5px solid var(--g);margin-bottom:18px">'+
+  '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">'+
+  '<div style="text-align:center;flex-shrink:0"><div style="font-family:Cinzel,serif;font-size:2.2rem;font-weight:700;color:var(--v)">'+subCount+'</div><div style="font-size:.7rem;color:var(--tl);font-family:Cinzel,serif">Abonați push</div></div>'+
+  '<div style="flex:1;font-size:.79rem;color:var(--tm);line-height:1.7">'+
+  'Notificările push ajung pe ecranul utilizatorilor care au instalat PWA și au acceptat notificările.<br>'+
+  '<strong style="color:var(--v)">Notă:</strong> Momentan funcționează notificările locale (când app e deschisă). Pentru push în background ai nevoie de Firebase Cloud Messaging sau server VAPID.'+
+  '</div></div></div>'+
+
+  '<div class="ac2"><h3>Trimite notificare</h3>'+
+  '<div class="fg"><label>Titlu *</label><input type="text" id="push-t" placeholder="Anunț important..."></div>'+
+  '<div class="fg"><label>Mesaj *</label><textarea id="push-b" placeholder="Textul notificării..." style="min-height:80px"></textarea></div>'+
+  '<div class="fg"><label>URL destinație</label><input type="text" id="push-u" value="/" placeholder="/"></div>'+
+  '<div style="display:flex;gap:9px;flex-wrap:wrap">'+
+  '<button class="btn bp" onclick="sendPushAdmin()">🔔 Trimite la toți ('+subCount+')</button>'+
+  '<button class="btn bs" onclick="testPushLocal()">🧪 Test pe acest dispozitiv</button>'+
+  '</div></div>'+
+
+  '<div class="ac2"><h3>📋 Configurare PWA & Push</h3>'+
+  '<div style="background:var(--c);border-radius:9px;padding:14px;font-size:.79rem;color:var(--tm);line-height:1.85">'+
+  '1. Fișierele <code style="background:var(--cd);padding:2px 6px;border-radius:4px">sw.js</code> și <code style="background:var(--cd);padding:2px 6px;border-radius:4px">manifest.json</code> trebuie în rădăcina site-ului (lângă index.html)<br>'+
+  '2. Iconițele <code style="background:var(--cd);padding:2px 6px;border-radius:4px">icon-192.png</code> și <code style="background:var(--cd);padding:2px 6px;border-radius:4px">icon-512.png</code> — adaugă manual o icoană a parohiei (cruce pe fundal roșu închis)<br>'+
+  '3. Site-ul trebuie pe <strong>HTTPS</strong> (Firebase Hosting — automat)<br>'+
+  '4. VAPID keys pentru push real: <a href="https://web-push-codelab.glitch.me/" target="_blank" style="color:var(--v);font-weight:700">web-push-codelab.glitch.me</a><br>'+
+  '5. Utilizatorii trebuie să apese "Instalează aplicația" și să accepte notificările'+
+  '</div></div>'+
+
+  (jobs.length?
+  '<div class="ac2" style="overflow-x:auto"><h3>Istoric notificări</h3>'+
+  '<table class="at2"><thead><tr><th>Titlu</th><th>Mesaj</th><th>Dest.</th><th>Status</th><th>Data</th></tr></thead><tbody>'+
+  jobs.map(function(j){return'<tr>'+
+    '<td><strong>'+esc(j.title||'-')+'</strong></td>'+
+    '<td style="font-size:.74rem;max-width:180px">'+esc((j.body||'').substring(0,50))+'</td>'+
+    '<td style="text-align:center;font-weight:700">'+( j.recipientCount||0)+'</td>'+
+    '<td><span class="badge '+(j.status==='sent'?'bn':'bg')+'">'+esc(j.status||'pending')+'</span></td>'+
+    '<td>'+fd(j.createdAt)+'</td>'+
+  '</tr>';}).join('')+'</tbody></table></div>':'');
+}
+
+window.sendPushAdmin=async function(){
+  var t=document.getElementById('push-t')?.value.trim();
+  var b=document.getElementById('push-b')?.value.trim();
+  var u=document.getElementById('push-u')?.value.trim()||'/';
+  if(!t||!b){toast('Completați titlul și mesajul.','error');return;}
+  await window.sendPushToAll(t,b,u);
+  document.getElementById('push-t').value='';
+  document.getElementById('push-b').value='';
+  setTimeout(function(){aPush();},1200);
+};
+
+window.testPushLocal=function(){
+  var t=document.getElementById('push-t')?.value.trim()||'Test Parohia Stornești';
+  var b=document.getElementById('push-b')?.value.trim()||'Aceasta este o notificare de test.';
+  if(Notification.permission==='granted'){
+    new Notification(t,{body:b,icon:'icon-192.png'});
+    toast('Notificare test afișată! 🔔','success');
+  }else if(Notification.permission==='default'){
+    Notification.requestPermission().then(function(p){
+      if(p==='granted'){new Notification(t,{body:b,icon:'icon-192.png'});toast('Notificare test afișată!','success');}
+      else toast('Notificările nu au fost acceptate.','error');
+    });
+  }else{
+    toast('Notificările sunt blocate în browser — verificați setările site-ului.','error');
+  }
+};
+
+window.sendPushToAll=async function(title,body,url){
+  if(!CU||CU.email!==ADMIN)return;
+  url=url||'/';
+  try{
+    var users=await getDocs(collection(db,'users'));
+    var subs=users.docs.map(function(d){return d.data();}).filter(function(u){return u.pushSub;});
+    await addDoc(collection(db,'pushJobs'),{
+      title:title,body:body,icon:'icon-192.png',url:url,
+      createdAt:serverTimestamp(),status:'pending',recipientCount:subs.length
+    });
+    if(Notification.permission==='granted'){
+      new Notification(title,{body:body,icon:'icon-192.png'});
+    }
+    toast('Notificare înregistrată pentru '+subs.length+' utilizatori! 🔔','success');
+  }catch(e){toast('Eroare: '+e.message,'error');}
+};
 
 setupAR();ldEJC();updC();ldHome();loadSiteVerses();
 </script>
