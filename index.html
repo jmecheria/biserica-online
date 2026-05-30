@@ -3602,80 +3602,107 @@ window.sendPushToAll=async function(title,body,url){
 };
 
 
-// ════════════ FUNCȚII NOI — definite înainte de a fi folosite ════════════
+
+// ════════════ FUNCȚII NOI ════════════
 
 // ── WISHLIST ──
 function _getWish(){try{return JSON.parse(localStorage.getItem('wl')||'[]');}catch(e){return[];}}
 function _saveWish(w){localStorage.setItem('wl',JSON.stringify(w));}
 window.isWish=function(id){return _getWish().includes(id);};
 window.tgWish=function(id,name){
-  var w=_getWish(),btn=document.getElementById('wb-'+id);
+  var w=_getWish();
+  var btn=document.getElementById('wb-'+id);
   if(w.includes(id)){
     _saveWish(w.filter(function(x){return x!==id;}));
-    if(btn)btn.textContent='🤍';
-    toast(esc(name)+' eliminat din favorite.','info');
+    if(btn)btn.textContent='\u{1F90D}';
+    toast((name||'Produsul')+' eliminat din favorite.','info');
   }else{
     w.push(id);_saveWish(w);
-    if(btn){btn.textContent='❤️';btn.classList.add('wbtn');}
-    toast(esc(name)+' adăugat la favorite! ❤️','success');
+    if(btn)btn.textContent='\u{2764}\u{FE0F}';
+    toast((name||'Produsul')+' adaugat la favorite!','success');
   }
 };
 window.openWishlist=function(){
   var w=_getWish();
+  var mb=document.getElementById('mb');
+  document.getElementById('mt').textContent='\u2764\uFE0F Favorite';
+  document.getElementById('ov').classList.add('on');
   if(!w.length){
-    window.showModal('❤️ Favorite',
-      '<div style="text-align:center;padding:36px">'+
-      '<div style="font-size:3rem;margin-bottom:12px">🤍</div>'+
-      '<p style="color:var(--tl)">Nu ai produse favorite încă.</p>'+
-      '<p style="color:var(--tl);font-size:.78rem;margin-top:6px">Apasă ❤️ pe orice produs.</p>'+
-      '<button class="btn bp" style="margin-top:14px" onclick="go('shop');closeModal()">Mergi la Magazin</button>'+
-      '</div>');
+    mb.innerHTML='<div style="text-align:center;padding:36px"><div style="font-size:3rem;margin-bottom:12px">\u{1F90D}</div><p style="color:var(--tl)">Nu ai produse favorite.</p></div>';
+    var btn=document.createElement('button');
+    btn.className='btn bp';btn.style.marginTop='14px';btn.textContent='Mergi la Magazin';
+    btn.onclick=function(){closeModal();go('shop');};
+    mb.appendChild(btn);
     return;
   }
   var items=w.map(function(id){return prods.find(function(x){return x.id===id;});}).filter(Boolean);
   if(!items.length){
-    window.showModal('❤️ Favorite',
-      '<p style="color:var(--tl);text-align:center;padding:24px">Deschide Magazinul pentru a vedea produsele favorite.</p>'+
-      '<button class="btn bp" style="width:100%" onclick="go('shop');closeModal()">Mergi la Magazin</button>');
+    mb.innerHTML='<p style="color:var(--tl);text-align:center;padding:24px">Deschide Magazinul pentru a vedea produsele favorite.</p>';
+    var btn2=document.createElement('button');
+    btn2.className='btn bp';btn2.style.width='100%';btn2.textContent='Mergi la Magazin';
+    btn2.onclick=function(){closeModal();go('shop');};
+    mb.appendChild(btn2);
     return;
   }
-  var h=items.map(function(p){
+  mb.innerHTML='';
+  items.forEach(function(p){
     var ins=(p.stock||0)>0;
-    return'<div style="display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--cd)">'+
-      (p.images&&p.images[0]?'<img src="'+p.images[0]+'" style="width:58px;height:58px;object-fit:cover;border-radius:8px;flex-shrink:0">':
-       '<div style="width:58px;height:58px;border-radius:8px;background:var(--cd);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem">&#128329;</div>')+
-      '<div style="flex:1;min-width:0">'+
-        '<div style="font-family:Cinzel,serif;font-size:.8rem;font-weight:700;color:var(--v);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" onclick="closeModal();setTimeout(function(){openPM(''+p.id+'')},120)">'+esc(p.name)+'</div>'+
-        '<div style="font-size:.88rem;font-weight:700;color:var(--v);margin-top:2px">'+fpv(p.price)+'</div>'+
-        '<div style="font-size:.68rem;color:'+(ins?'var(--gr)':'var(--r)')+';">'+(ins?'În stoc':'Epuizat')+'</div>'+
-      '</div>'+
-      '<div style="display:flex;flex-direction:column;gap:5px">'+
-        (ins?'<button class="btn bp bsm" onclick="addC(''+p.id+'');closeModal()">Adaugă</button>':'')+
-        '<button class="btn bd bsm" onclick="tgWish(''+p.id+'',''+esc(p.name)+'');openWishlist()">✕</button>'+
-      '</div>'+
-    '</div>';
-  }).join('');
-  window.showModal('❤️ Favorite ('+items.length+')',h);
+    var row=document.createElement('div');
+    row.style.cssText='display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--cd)';
+    var img=document.createElement('div');
+    img.style.cssText='width:58px;height:58px;border-radius:8px;flex-shrink:0;overflow:hidden;background:var(--cd)';
+    if(p.images&&p.images[0]){var i2=document.createElement('img');i2.src=p.images[0];i2.style.cssText='width:100%;height:100%;object-fit:cover';img.appendChild(i2);}
+    var info=document.createElement('div');
+    info.style.cssText='flex:1;min-width:0';
+    var nm=document.createElement('div');
+    nm.style.cssText='font-family:Cinzel,serif;font-size:.8rem;font-weight:700;color:var(--v);cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+    nm.textContent=p.name;
+    nm.onclick=(function(pid){return function(){closeModal();setTimeout(function(){openPM(pid);},120);};})(p.id);
+    var pr=document.createElement('div');
+    pr.style.cssText='font-size:.88rem;font-weight:700;color:var(--v);margin-top:2px';
+    pr.textContent=fpv(p.price);
+    var stk=document.createElement('div');
+    stk.style.cssText='font-size:.68rem;color:'+(ins?'var(--gr)':'var(--r)');
+    stk.textContent=ins?'In stoc':'Epuizat';
+    info.appendChild(nm);info.appendChild(pr);info.appendChild(stk);
+    var acts=document.createElement('div');
+    acts.style.cssText='display:flex;flex-direction:column;gap:5px';
+    if(ins){
+      var ab=document.createElement('button');
+      ab.className='btn bp bsm';ab.textContent='Adauga';
+      ab.onclick=(function(pid){return function(){addC(pid);closeModal();};})(p.id);
+      acts.appendChild(ab);
+    }
+    var rb=document.createElement('button');
+    rb.className='btn bd bsm';rb.textContent='X';
+    rb.onclick=(function(pid,pnm){return function(){tgWish(pid,pnm);openWishlist();};})(p.id,p.name);
+    acts.appendChild(rb);
+    row.appendChild(img);row.appendChild(info);row.appendChild(acts);
+    mb.appendChild(row);
+  });
 };
 
 // ── RECENTLY VIEWED ──
 function _trackView(id){
-  var rv=JSON.parse(localStorage.getItem('rv')||'[]').filter(function(x){return x!==id;});
-  rv.unshift(id);if(rv.length>6)rv=rv.slice(0,6);
-  localStorage.setItem('rv',JSON.stringify(rv));
+  try{
+    var rv=JSON.parse(localStorage.getItem('rv')||'[]').filter(function(x){return x!==id;});
+    rv.unshift(id);if(rv.length>6)rv=rv.slice(0,6);
+    localStorage.setItem('rv',JSON.stringify(rv));
+  }catch(e){}
 }
 window.showRecentViewed=function(){
-  var rv=JSON.parse(localStorage.getItem('rv')||'[]');
+  var rv=[];try{rv=JSON.parse(localStorage.getItem('rv')||'[]');}catch(e){}
   var el=document.getElementById('rv-section');
   var grid=document.getElementById('rv-grid');
-  if(!el||!grid||!rv.length||!prods.length){if(el)el.style.display='none';return;}
+  if(!el||!grid){return;}
+  if(!rv.length||!prods.length){el.style.display='none';return;}
   var items=rv.map(function(id){return prods.find(function(x){return x.id===id;});}).filter(Boolean);
   if(!items.length){el.style.display='none';return;}
   el.style.display='block';
   grid.innerHTML=items.map(function(p){
-    return'<div class="rv-item" onclick="setTimeout(function(){openPM(''+p.id+'')},50)">'+
-      (p.images&&p.images[0]?'<img src="'+p.images[0]+'" loading="lazy" alt="">':
-       '<div style="height:90px;background:var(--cd);display:flex;align-items:center;justify-content:center;font-size:1.8rem">&#128329;</div>')+
+    return '<div class="rv-item" onclick="openPM(\''+p.id+'\')">'+
+      (p.images&&p.images[0]?'<img src="'+p.images[0]+'" loading="lazy" alt="" onerror="this.style.display=\'none\'">':
+        '<div style="height:90px;background:var(--cd);display:flex;align-items:center;justify-content:center;font-size:1.8rem">&#128329;</div>')+
       '<div><div class="rv-name">'+esc(p.name)+'</div><div class="rv-price">'+fpv(p.price)+'</div></div>'+
     '</div>';
   }).join('');
@@ -3693,199 +3720,189 @@ window.filtFAQ=function(q){
 window.shrItem=function(title,text){
   if(navigator.share){navigator.share({title:title,text:text,url:window.location.href}).catch(function(){});}
   else if(navigator.clipboard){navigator.clipboard.writeText(window.location.href);toast('Link copiat!','success');}
+  else{toast('Copiati URL-ul din bara de adrese.','info');}
 };
 
-// ── BOTTOM NAV sync ──
+// ── BOTTOM NAV ──
 window._setBN=function(p){
   document.querySelectorAll('.bna').forEach(function(el){el.classList.remove('act');});
   var el=document.getElementById('bna-'+p);
   if(el)el.classList.add('act');
 };
 
-// Patch go() să actualizeze bottom nav — fără să-l redefinim, folosim DOMContentLoaded
-(function patchGo(){
+// Patch go() DUPA ce e definit — folosim setTimeout sa asteptam modulul
+(function tryPatchGo(){
+  if(!window.go){setTimeout(tryPatchGo,30);return;}
   var _orig=window.go;
-  if(!_orig){setTimeout(patchGo,50);return;}
   window.go=function(p){
     _orig(p);
     window._setBN(p);
-    var sttEl=document.getElementById('stt');
-    if(sttEl)sttEl.classList.remove('vis');
+    var s=document.getElementById('stt');if(s)s.classList.remove('vis');
   };
 })();
 
 // ── SCROLL TO TOP ──
 window.addEventListener('scroll',function(){
-  var btn=document.getElementById('stt');
-  if(btn)btn.classList.toggle('vis',window.scrollY>350);
+  var b=document.getElementById('stt');
+  if(b)b.classList.toggle('vis',window.scrollY>350);
 },{passive:true});
 
-// ── CART DOT ──
-var _origUpdC=window.updC;
-// updC e funcție locală în modul — o apelăm prin hook pe addC
-var _origAddC=window.addC;
-window.addC=async function(id,qty){
-  await _origAddC(id,qty);
-  // sync dot după ce coșul s-a actualizat
-  setTimeout(function(){
-    var cnt=JSON.parse(localStorage.getItem('cart')||'[]').reduce(function(s,i){return s+i.qty;},0);
-    var bd=document.getElementById('bnd-cart');
-    if(bd)bd.classList.toggle('on',cnt>0);
-    // bounce
-    var bnic=document.querySelector('#bna-cart .bnic');
-    if(bnic){bnic.classList.remove('crt-bnc');void bnic.offsetWidth;bnic.classList.add('crt-bnc');}
-  },100);
-};
-
-// ── URGENT DOT pe bottom nav ──
-function _checkUrgentDot(){
-  var bd=document.getElementById('bnd-ann');if(!bd)return;
-  var uw=document.getElementById('uw');
-  if(uw&&uw.children.length>0)bd.classList.add('on');
+// ── SYNC CART DOT ──
+function _syncCartDot(){
+  try{
+    var cnt=JSON.parse(localStorage.getItem('cart')||'[]').reduce(function(s,i){return s+(i.qty||0);},0);
+    var bd=document.getElementById('bnd-cart');if(bd)bd.classList.toggle('on',cnt>0);
+  }catch(e){}
 }
-setTimeout(_checkUrgentDot,2000);
+// Patch addC pentru bounce + dot
+(function tryPatchAddC(){
+  if(!window.addC){setTimeout(tryPatchAddC,30);return;}
+  var _origA=window.addC;
+  window.addC=async function(id,qty){
+    await _origA(id,qty);
+    setTimeout(function(){
+      _syncCartDot();
+      var bnic=document.querySelector('#bna-cart .bnic');
+      if(bnic){bnic.classList.remove('crt-bnc');void bnic.offsetWidth;bnic.classList.add('crt-bnc');}
+    },100);
+  };
+})();
+
+// Patch openPM pentru recently viewed
+(function tryPatchPM(){
+  if(!window.openPM){setTimeout(tryPatchPM,30);return;}
+  var _origPM=window.openPM;
+  window.openPM=async function(id){
+    _trackView(id);
+    return _origPM(id);
+  };
+})();
+
+// Patch rndrP pentru wishlist hearts
+(function tryPatchRndrP(){
+  if(!window.rndrP){setTimeout(tryPatchRndrP,30);return;}
+  var _origRP=window.rndrP;
+  window.rndrP=function(){
+    _origRP();
+    setTimeout(function(){
+      document.querySelectorAll('.pc .pb').forEach(function(pb){
+        if(pb.querySelector('.wbtn'))return;
+        var pnDiv=pb.querySelector('.pn');
+        if(!pnDiv)return;
+        var m=(pnDiv.getAttribute('onclick')||'').match(/openPM\('([^']+)'\)/);
+        if(!m)return;
+        var pid=m[1];
+        var btn=document.createElement('button');
+        btn.className='wbtn';btn.id='wb-'+pid;
+        btn.textContent=isWish(pid)?'\u2764\uFE0F':'\u{1F90D}';
+        btn.title='Favorite';
+        btn.onclick=function(e){
+          e.stopPropagation();
+          tgWish(pid,(prods.find(function(x){return x.id===pid;})||{}).name||'');
+        };
+        var wrap=document.createElement('div');
+        wrap.style.cssText='display:flex;justify-content:space-between;align-items:flex-start;gap:4px;margin-bottom:2px';
+        pnDiv.parentNode.insertBefore(wrap,pnDiv);
+        wrap.appendChild(pnDiv);
+        wrap.appendChild(btn);
+      });
+      showRecentViewed();
+    },50);
+  };
+})();
+
+// ── URGENT DOT ──
+function _checkUrgentDot(){
+  var uw=document.getElementById('uw');
+  var bd=document.getElementById('bnd-ann');
+  if(bd&&uw)bd.classList.toggle('on',uw.children.length>0);
+}
+setTimeout(_checkUrgentDot,2500);
 
 // ── GREETING ──
 (function(){
-  var ZILE=['Duminică','Luni','Marți','Miercuri','Joi','Vineri','Sâmbătă'];
-  var now=new Date(),zi=now.getDay(),h=now.getHours();
-  var salut=h<5?'Noapte bună ✝':h<12?'Bună dimineața ✝':h<18?'Bună ziua ✝':'Bună seara ✝';
-  var extra=zi===0?' · Duminică — Zi de sărbătoare':[3,5].includes(zi)?' · Zi de post':'';
-  var el=document.getElementById('hero-greeting');
-  if(el)el.textContent=salut+' · '+ZILE[zi]+extra;
+  var ZILE=['\u{44C}uminic\u{103}','Luni','Mar\u{21B}i','Miercuri','Joi','Vineri','S\u{E2}mb\u{103}t\u{103}'];
+  try{
+    var ZI=['\u0394uminicc\u0103','Luni','Mar\u021Bi','Miercuri','Joi','Vineri','S\u00E2mb\u0103t\u0103'];
+    var now=new Date(),zi=now.getDay(),h=now.getHours();
+    var salut=h<5?'Noapte buna':h<12?'Buna dimineata':h<18?'Buna ziua':'Buna seara';
+    var ZNUME=['Duminica','Luni','Marti','Miercuri','Joi','Vineri','Sambata'];
+    var extra=zi===0?' - Zi de sarbatoare':[3,5].includes(zi)?' - Zi de post':'';
+    var el=document.getElementById('hero-greeting');
+    if(el)el.textContent=salut+' - '+ZNUME[zi]+extra;
+  }catch(e){}
 })();
 
-// ── COUNTDOWN SĂRBĂTORI ──
+// ── COUNTDOWN ──
 (function(){
-  var FEASTS=[
-    {n:'Rusaliile',d:'2026-05-31'},{n:'Sfinții Petru și Pavel',d:'2026-06-29'},
-    {n:'Sf. Ilie Tesviteanul',d:'2026-07-20'},{n:'Sf. Pantelimon',d:'2026-07-27'},
-    {n:'Schimbarea la Față',d:'2026-08-06'},{n:'Adormirea Maicii Domnului',d:'2026-08-15'},
-    {n:'Tăierea Capului Sf. Ioan',d:'2026-08-29'},{n:'Nașterea Maicii Domnului',d:'2026-09-08'},
-    {n:'Înălțarea Sfintei Cruci',d:'2026-09-14'},{n:'Sf. Parascheva — Iași',d:'2026-10-14'},
-    {n:'Sf. Mare Mc. Dumitru',d:'2026-10-26'},{n:'Sfinții Arhangheli',d:'2026-11-08'},
-    {n:'Sf. Andrei — România',d:'2026-11-30'},{n:'Intrarea în Biserică',d:'2026-11-21'},
-    {n:'Sf. Nicolae',d:'2026-12-06'},{n:'Crăciunul',d:'2026-12-25'},
-    {n:'Botezul Domnului',d:'2027-01-06'},{n:'Sfinții Trei Ierarhi',d:'2027-01-30'},
-    {n:'Buna Vestire',d:'2027-03-25'},{n:'Sf. Gheorghe',d:'2027-04-23'},
+  var F=[
+    {n:'Rusaliile',d:'2026-05-31'},{n:'Sf. Petru si Pavel',d:'2026-06-29'},
+    {n:'Sf. Ilie',d:'2026-07-20'},{n:'Sf. Pantelimon',d:'2026-07-27'},
+    {n:'Schimbarea la Fata',d:'2026-08-06'},{n:'Adormirea Maicii Domnului',d:'2026-08-15'},
+    {n:'Nasterea Maicii Domnului',d:'2026-09-08'},{n:'Inaltarea Sf. Cruci',d:'2026-09-14'},
+    {n:'Sf. Parascheva - Iasi',d:'2026-10-14'},{n:'Sf. Dumitru',d:'2026-10-26'},
+    {n:'Sf. Arhangheli Mihail si Gavriil',d:'2026-11-08'},{n:'Sf. Andrei',d:'2026-11-30'},
+    {n:'Sf. Nicolae',d:'2026-12-06'},{n:'Craciunul',d:'2026-12-25'},
+    {n:'Botezul Domnului',d:'2027-01-06'},{n:'Sf. Ioan Gura de Aur',d:'2027-01-12'},
+    {n:'Sf. Trei Ierarhi',d:'2027-01-30'},{n:'Buna Vestire',d:'2027-03-25'},
   ];
   function tick(){
-    var now=new Date();
-    var next=FEASTS.map(function(f){
-      var d=new Date(f.d+'T00:00:00');
-      return{n:f.n,diff:d-now};
-    }).filter(function(f){return f.diff>0;}).sort(function(a,b){return a.diff-b.diff;})[0];
-    if(!next)return;
-    var d=next.diff,days=Math.floor(d/86400000),
-        hrs=Math.floor((d%86400000)/3600000),
-        mins=Math.floor((d%3600000)/60000),
-        secs=Math.floor((d%60000)/1000);
-    var fn=document.getElementById('feast-name'),nf=document.getElementById('next-feast');
-    if(fn)fn.textContent=next.n;
-    if(nf)nf.style.display='block';
-    var ids={z:days,h:hrs,m:mins,s:secs};
-    Object.keys(ids).forEach(function(k){
-      var el=document.getElementById('cd-'+k);
-      if(el)el.textContent=String(ids[k]).padStart(2,'0');
-    });
+    try{
+      var now=new Date();
+      var next=F.map(function(f){return{n:f.n,diff:new Date(f.d+'T00:00:00')-now};})
+               .filter(function(f){return f.diff>0;})
+               .sort(function(a,b){return a.diff-b.diff;})[0];
+      if(!next)return;
+      var diff=next.diff;
+      var days=Math.floor(diff/86400000);
+      var hrs=Math.floor((diff%86400000)/3600000);
+      var mins=Math.floor((diff%3600000)/60000);
+      var secs=Math.floor((diff%60000)/1000);
+      var fn=document.getElementById('feast-name');
+      var nf=document.getElementById('next-feast');
+      if(fn)fn.textContent=next.n;
+      if(nf)nf.style.display='block';
+      var map={z:days,h:hrs,m:mins,s:secs};
+      Object.keys(map).forEach(function(k){
+        var el=document.getElementById('cd-'+k);
+        if(el)el.textContent=String(map[k]).padStart(2,'0');
+      });
+    }catch(e){}
   }
   tick();setInterval(tick,1000);
 })();
 
-// ── TODAY în program slujbe ──
-// Patch ldSch să adauge clasa today-row
-var _origLdSch=window.ldSch;
-// ldSch e funcție internă async — nu o putem patch direct
-// Adăugăm un observer care adaugă clasa după render
-function _markTodayRow(){
-  var ZILE={Luni:1,'Marți':2,Miercuri:3,Joi:4,Vineri:5,'Sâmbătă':6,'Duminică':0,Duminica:0,Sambata:6,Marti:2};
+// ── TODAY in schedule ──
+var _schObs=new MutationObserver(function(){
+  var tbl=document.querySelector('#schw .sch');
+  if(!tbl)return;
+  var ZMAP={Luni:1,Marti:2,Miercuri:3,Joi:4,Vineri:5,Sambata:6,Duminica:0};
   var today=new Date().getDay();
-  document.querySelectorAll('.sch tbody tr').forEach(function(tr){
-    var td=tr.querySelector('td');
-    if(!td)return;
+  tbl.querySelectorAll('tbody tr').forEach(function(tr){
+    var td=tr.querySelector('td');if(!td)return;
     var zi=td.textContent.trim().split(' ')[0];
-    if(ZILE[zi]===today){
-      tr.classList.add('today-row');
-      if(!td.querySelector('.azi-badge')){
+    if(ZMAP[zi]===today){
+      tr.style.background='rgba(201,168,76,.08)';
+      if(!td.querySelector('.azi-b')){
         var b=document.createElement('span');
-        b.className='badge bg azi-badge';
-        b.style.cssText='font-size:.52rem;padding:1px 6px;margin-left:5px';
+        b.className='badge bg azi-b';
+        b.style.cssText='font-size:.52rem;padding:1px 5px;margin-left:5px';
         b.textContent='Azi';
         td.appendChild(b);
       }
     }
   });
-}
-// Observer pentru când tabelul se populează
-var _schObs=new MutationObserver(function(mutations){
-  mutations.forEach(function(m){
-    if(m.target.id==='schw'&&document.querySelector('.sch'))_markTodayRow();
-  });
 });
 setTimeout(function(){
   var schw=document.getElementById('schw');
   if(schw)_schObs.observe(schw,{childList:true,subtree:true});
-},500);
+},300);
 
-// ── SHARE pe anunțuri ──
-// Adăugăm buton Share în modala anunțului via observer pe ov
-document.addEventListener('click',function(e){
-  // Detectăm când s-a deschis modala unui anunț
-},false);
-
-// ── TRACK recently viewed în openPM ──
-var _origOpenPM=window.openPM;
-window.openPM=async function(id){
-  _trackView(id);
-  return _origOpenPM(id);
-};
-
-// ── WISHLIST buton în carduri produse ──
-// Se injectează în rndrP via patch
-var _origRndrP=window.rndrP;
-window.rndrP=function(){
-  _origRndrP();
-  // Adaugă buton ❤ după render
-  document.querySelectorAll('.pc .pb').forEach(function(pb){
-    var pnDiv=pb.querySelector('.pn');
-    if(!pnDiv||pb.querySelector('.wbtn'))return;
-    var id=pnDiv.getAttribute('onclick');
-    if(!id)return;
-    var m=id.match(/openPM\('([^']+)'\)/);
-    if(!m)return;
-    var pid=m[1];
-    var btn=document.createElement('button');
-    btn.className='wbtn';
-    btn.id='wb-'+pid;
-    btn.title='Favorite';
-    btn.textContent=isWish(pid)?'❤️':'🤍';
-    btn.onclick=function(e){e.stopPropagation();tgWish(pid,(prods.find(function(x){return x.id===pid;})||{}).name||'');};
-    // Wrap pn + btn
-    var wrap=document.createElement('div');
-    wrap.style.cssText='display:flex;justify-content:space-between;align-items:flex-start;gap:4px';
-    pnDiv.parentNode.insertBefore(wrap,pnDiv);
-    wrap.appendChild(pnDiv);
-    wrap.appendChild(btn);
-  });
-};
-
-// ── SKELETON pentru produse ──
-var _origLdShop=window.ldShop;
-// ldShop e async internă — injectăm skeleton via observer
-var _shopObs=new MutationObserver(function(){
-  if(document.getElementById('pg2')&&document.getElementById('pg2').querySelector('.pc')){
-    _shopObs.disconnect();
-  }
-});
-
-// ── INIT după încărcarea paginii ──
+// ── INIT ──
 setTimeout(function(){
-  // Sync cart dot la start
-  var cnt=JSON.parse(localStorage.getItem('cart')||'[]').reduce(function(s,i){return s+i.qty;},0);
-  var bd=document.getElementById('bnd-cart');if(bd)bd.classList.toggle('on',cnt>0);
-  // Set active bottom nav
+  _syncCartDot();
   window._setBN('home');
-},200);
+},300);
 
 
 (function(){try{var u=new URL(window.location.href);var p=u.searchParams.get('p');if(p&&['ann','shop','audio','faq','acc'].includes(p))setTimeout(function(){window.go(p);},400);}catch(e){}})();setupAR();ldEJC();updC();ldHome();loadSiteVerses();
