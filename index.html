@@ -657,7 +657,7 @@ footer{background:linear-gradient(180deg,var(--vd),#2a0810);color:rgba(255,255,2
   <div class="wrap sb">
     <div class="stit">Informatii</div>
     <div class="icards">
-      <div class="icard"><span class="ic">&#128205;</span><h4>Locatie</h4><p>Strada Sfânta Treime nr.1<br>Stornești, jud. Iași<br><a href="https://maps.google.com/?q=Stornesti,Iasi" target="_blank">Vedere harta</a></p></div>
+      <div class="icard"><span class="ic">&#128205;</span><h4>Locatie</h4><p>Strada Sfânta Treime nr.1<br>Stornești, jud. Iași<br><a href="https://www.google.com/maps/@47.1140344,27.1651247,47m/data=!3m1!1e3?entry=ttu&g_ep=EgoyMDI2MDUyNy4wIKXMDSoASAFQAw%3D%3D" target="_blank">Vedere harta</a></p></div>
       <div class="icard"><span class="ic">&#128222;</span><h4>Contact</h4><p>Tel: <a href="tel:0743600900">0743 600 900</a><br><a href="mailto:parohiastornesti@gmail.com">parohiastornesti@gmail.com</a></p></div>
       <div class="icard"><span class="ic">&#10013;</span><h4>Sfinte Taine</h4><p>Botez, Cununie, Inmormantare, Maslu - contactati preotul paroh.</p></div>
       <div class="icard"><span class="ic">&#129309;</span><h4>Voluntariat</h4><p>Alatura-te echipei. <a href="mailto:parohiastornesti@gmail.com">Contacteaza-ne</a></p></div>
@@ -3226,7 +3226,7 @@ window.openSD=async function(k){
 
   var FAST_OPTS=[
     {v:'',label:'— Zi normală (fără indicație)'},
-    {v:'none',label:'🎉 Dezlegare deplină'},
+    {v:'none',label:'🎉 Harți'},
     {v:'fish',label:'🐟 Dezlegare la pește'},
     {v:'wine_oil',label:'🍷 Dezlegare la vin și untdelemn'},
     {v:'strict',label:'⚫ Post strict (fără ulei)'},
@@ -3850,7 +3850,7 @@ setTimeout(_checkUrgentDot,2500);
   try{
     var now=new Date(),zi=now.getDay(),h=now.getHours();
     var ZN=['Duminică','Luni','Marți','Miercuri','Joi','Vineri','Sâmbătă'];
-    var salut=h<5?'Noapte bună †':h<12?'Bună dimineața †':h<18?'Bună ziua †':'Bună seara †';
+    var salut=h<5?'Noapte bună †':h<12?'Doamne ajută †':h<18?'Doamne ajută †':'Doamne ajută †';
     var extra=zi===0?' · Zi de sărbătoare':[3,5].includes(zi)?' · Zi de post':'';
     var el=document.getElementById('hero-greeting');
     if(el)el.textContent=salut+' · '+ZN[zi]+extra;
@@ -3941,7 +3941,7 @@ var _SC = {
 var _FAST = {
   fish:     {dot:'#2196F3', bg:'rgba(33,150,243,.12)', label:'Dezlegare pește 🐟'},
   strict:   {dot:'#9C27B0', bg:'rgba(156,39,176,.1)',  label:'Post strict ⚫'},
-  none:     {dot:'#27ae60', bg:'rgba(39,174,96,.12)',   label:'Dezlegare deplină 🎉'},
+  none:     {dot:'#27ae60', bg:'rgba(39,174,96,.12)',   label:'Harți🎉'},
   wine_oil: {dot:'#FF9800', bg:'rgba(255,152,0,.12)',   label:'Dezlegare vin și ulei 🍷'},
   full:     {dot:'#c0392b', bg:'rgba(192,57,43,.12)',   label:'Post negru 🕯️'}
 };
