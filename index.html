@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Parohia Stornesti - Biserica Sfanta Treime</title>
 <meta name="description" content="Parohia Stornești, Biserica Sfânta Treime, jud. Iași — program slujbe, anunțuri, magazin parohial.">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#4a1020">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1267,12 +1269,13 @@ window.openAuth=function(){
     '<div class="fg"><label>Email</label><input type="email" id="re"></div>'+
     '<div class="fg"><label>Parola</label><input type="password" id="rp" placeholder="Min 6 caractere"></div>'+
     '<label class="chk" style="margin-bottom:12px"><input type="checkbox" id="rnl"><span>Emailuri noutati &rarr; <strong>5% reducere</strong></span></label>'+
-    '<button class="btn bp" style="width:100%;margin-top:7px" onclick="rgE()">Creeaza cont</button></div>'
+    '<input type="text" id="hp-field" style="opacity:0;position:absolute;height:0;width:0;pointer-events:none" tabindex="-1" autocomplete="off">'+'<button class="btn bp" style="width:100%;margin-top:7px" onclick="rgE()">Creeaza cont</button></div>'
   );
 };
 window.swAt=function(t,el){document.querySelectorAll('.at').forEach(function(x){x.classList.remove('on');});el.classList.add('on');document.getElementById('lgf').style.display=t==='lg'?'block':'none';document.getElementById('rgf').style.display=t==='rg'?'block':'none';};
 window.lgE=async function(){try{await signInWithEmailAndPassword(auth,document.getElementById('le').value.trim(),document.getElementById('lp').value);window.closeModal();toast('Bun venit!','success');}catch(e){toast(e.message,'error');}};
 window.rgE=async function(){
+  var hp=document.getElementById('hp-field');if(hp&&hp.value){return;}
   var nm=document.getElementById('rn').value.trim(),em=document.getElementById('re').value.trim(),ps=document.getElementById('rp').value,nl=document.getElementById('rnl').checked;
   if(nm.length<3){toast('Nume min 3 caractere','error');return;}
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){toast('Email invalid','error');return;}
@@ -1938,7 +1941,7 @@ window.openRes=function(id){
     '<button class="btn bp" style="width:100%" onclick="subRes(\''+id+'\',\''+esc(p?p.name:'')+'\')">Confirma rezervarea</button>'
   );
 };
-window.subRes=async function(pid,pnm){
+window.subRes=async function(pid,pnm){if(!window._checkRateLimit('reservations',5)){return;}
   var n=document.getElementById('rn2')?.value.trim(),ph=document.getElementById('rph')?.value.trim(),d=document.getElementById('rd')?.value,q=parseInt(document.getElementById('rq')?.value)||1,m=document.getElementById('rm2')?.value.trim();
   if(!n||!ph||!d){toast('Completati campurile obligatorii.','error');return;}
   try{
@@ -2253,12 +2256,13 @@ window.selTr=function(id,cost,el){
   var tt=document.getElementById('ctot');if(tt&&window._co)tt.textContent=fpv(window._co.sub-window._co.nd-window._co.cd+cost);
 };
 window.placeOrd=async function(){
+  if(!window._checkRateLimit('orders',3)){return;}
   if(!document.getElementById('cgd')?.checked){toast('Acceptati termenii GDPR pentru a continua.','error');return;}
-  var n=document.getElementById('cn')?.value.trim(),ph=document.getElementById('cph')?.value.trim(),em=document.getElementById('cem')?.value.trim(),ad=document.getElementById('cad')?.value.trim(),ct=document.getElementById('cct')?.value.trim();
+  var n=san(document.getElementById('cn')?.value,100),ph=san(document.getElementById('cph')?.value,20),em=san(document.getElementById('cem')?.value,150),ad=san(document.getElementById('cad')?.value,200),ct=san(document.getElementById('cct')?.value,100);
   if(!n||!ph||!em||!ad||!ct){toast('Completati toate campurile obligatorii.','error');return;}
-  if(n.length<3){toast('Nume invalid (min 3 litere).','error');return;}
-  if(!/^(\+4|0)[0-9]{9}$/.test(ph)){toast('Telefon invalid (ex: 0740123456).','error');return;}
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){toast('Email invalid.','error');return;}
+  if(!isValidName(n)){toast('Nume invalid.','error');return;}
+  if(!isValidPhone(ph)){toast('Telefon invalid (ex: 0740123456).','error');return;}
+  if(!isValidEmail(em)){toast('Email invalid.','error');return;}
   try{
     var co=window._co||{};
     var tot=(co.sub||0)-(co.nd||0)-(co.cd||0)+(co.tc||0);
@@ -2318,7 +2322,7 @@ async function sndNL(s,c){
 }
 
 // Orthodox saints calendar 2025 - main saints per day
-window.seedSaints=async function seedSaints(){
+window.seedSaints=async function(){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}
   try{
     var saints=[
       {d:'2026-01-01',name:'Tăierea împrejur a Domnului; Sf. Vasile cel Mare',shortDesc:'Noul An Bisericesc. Sf. Vasile cel Mare, arhiepiscop al Cezareei.',fullDesc:'Tăierea împrejur a Pruncului Iisus la 8 zile de la Naștere. Sf. Vasile cel Mare (330-379), unul din Sfinții Trei Ierarhi, autorul Sfintei Liturghii, fondator de spitale și mănăstiri.',verse:'Cel ce are milă de sărac împrumută pe Domnul.',verseRef:'Pilde 19:17',fast:null},
@@ -2802,7 +2806,7 @@ async function aOrds(){
       '</tbody></table></div>';
   }catch(e){m.innerHTML='<p style="color:var(--r)">Eroare: '+e.message+'</p>';}
 }
-window.updOS=async function(id,st,em,nm){
+window.updOS=async function(id,st,em,nm){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}
   await updateDoc(doc(db,'orders',id),{status:st}).catch(function(){});
   toast('Status actualizat.','success');
   if(ejc.publicKey&&ejc.templateStatus&&em){
@@ -2825,7 +2829,7 @@ window.updOS=async function(id,st,em,nm){
     }catch(e){}
   }
 };
-window.delO=async function(id){if(!confirm('Ștergeți comanda #'+id.substring(0,8).toUpperCase()+'? IREVERSIBIL.'))return;await deleteDoc(doc(db,'orders',id)).catch(function(){});toast('Sters.','success');aOrds();};
+window.delO=async function(id){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}if(!confirm('Ștergeți comanda #'+id.substring(0,8).toUpperCase()+'? IREVERSIBIL.'))return;await deleteDoc(doc(db,'orders',id)).catch(function(){});toast('Sters.','success');aOrds();};
 window.showOD=function(id){
   var o=_aO.find(function(x){return x.id===id;});if(!o)return;
   window.showModal('Comanda #'+id.substring(0,8).toUpperCase(),
@@ -2910,7 +2914,7 @@ async function procF(files,t){
   }
 }
 window.rmImg=function(i){aImgs[i]=null;document.querySelectorAll('.ip').forEach(function(el,n){if(n===i)el.remove();});};
-window.svProd=async function(){
+window.svProd=async function(){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}
   var n=document.getElementById('p-n')?.value.trim(),pr=parseFloat(document.getElementById('p-pr')?.value),st=parseInt(document.getElementById('p-st')?.value)||0;
   if(!n||isNaN(pr)){toast('Completati denumirea si pretul.','error');return;}
   var newImgs=aImgs.filter(Boolean);
@@ -2955,7 +2959,7 @@ window.rstProd=function(){
   aImgs=[];var l=document.getElementById('p-imgs');if(l)l.innerHTML='';
   var h=document.getElementById('p-form-title');if(h)h.textContent='Adauga / Editeaza';
 };
-window.delProd=async function(id){if(!confirm('Ștergeți produsul? IREVERSIBIL.'))return;await deleteDoc(doc(db,'products',id));prods=prods.filter(function(p){return p.id!==id;});toast('Produs sters.','success');ldPT();};
+window.delProd=async function(id){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}if(!confirm('Ștergeți produsul? IREVERSIBIL.'))return;await deleteDoc(doc(db,'products',id));prods=prods.filter(function(p){return p.id!==id;});toast('Produs sters.','success');ldPT();};
 
 window.resetProd=async function(id,name){
   if(!confirm('Resetezi istoricul pentru "'+name+'"?\nAcest lucru va șterge:\n• Toate recenziile\n• Contorul de vânzări (soldCount → 0)\n• Ratingul (rating → 0)\n\nStocul și datele produsului rămân neschimbate.'))return;
@@ -3007,7 +3011,7 @@ async function ldAT(){
     '</tr>';}).join('')+
     '</tbody></table>';
 }
-window.svAnn=async function(){
+window.svAnn=async function(){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}
   var t=document.getElementById('an-t')?.value.trim(),c=document.getElementById('an-c')?.value.trim();
   if(!t||!c){toast('Completati titlul si continutul.','error');return;}
   var imgs=aImgs.filter(Boolean);
@@ -3045,7 +3049,7 @@ window.edAnn=async function(id){
   var h=document.getElementById('an-form-title');if(h)h.textContent='Editeaza anunt';
   window.scrollTo({top:0,behavior:'smooth'});
 };
-window.delAnn=async function(id){if(!confirm('Ștergeți anunțul? IREVERSIBIL.'))return;await deleteDoc(doc(db,'announcements',id));anns=[];toast('Sters.','success');ldAT();};
+window.delAnn=async function(id){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}if(!confirm('Ștergeți anunțul? IREVERSIBIL.'))return;await deleteDoc(doc(db,'announcements',id));anns=[];toast('Sters.','success');ldAT();};
 
 async function aAud(){
   var m=document.getElementById('adm');
@@ -3079,7 +3083,7 @@ async function ldAuT(){
       '</td></tr>';}).join('')+
     '</tbody></table>';
 }
-window.svAud=async function(){
+window.svAud=async function(){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}
   var t=document.getElementById('au-t')?.value.trim(),u=document.getElementById('au-u')?.value.trim();
   if(!t||!u){toast('Titlul si URL-ul sunt obligatorii.','error');return;}
   var d={title:t,url:u,author:document.getElementById('au-a')?.value.trim(),category:document.getElementById('au-c')?.value,duration:document.getElementById('au-d')?.value.trim(),description:document.getElementById('au-ds')?.value.trim()};
@@ -3116,7 +3120,7 @@ window.edAud=async function(id){
   var h=document.getElementById('au-form-title');if(h)h.textContent='Editeaza inregistrare';
   window.scrollTo({top:0,behavior:'smooth'});
 };
-window.delAud=async function(id){if(!confirm('Ștergeți înregistrarea? IREVERSIBIL.'))return;await deleteDoc(doc(db,'audio',id));auds=[];toast('Sters.','success');ldAuT();};
+window.delAud=async function(id){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}if(!confirm('Ștergeți înregistrarea? IREVERSIBIL.'))return;await deleteDoc(doc(db,'audio',id));auds=[];toast('Sters.','success');ldAuT();};
 
 async function aCusts(){
   var m=document.getElementById('adm');
@@ -3144,7 +3148,7 @@ function rndrRB(rs,f){
 }
 window.fRes=function(f,el){document.querySelectorAll('.ftabs .ft').forEach(function(x){x.classList.remove('on');});el.classList.add('on');var rb=document.getElementById('res-bd');if(rb)rb.innerHTML=rndrRB(_aRes,f);};
 window.updRS=async function(id,st){await updateDoc(doc(db,'reservations',id),{status:st}).catch(function(){});toast('Status actualizat.','success');};
-window.delRes2=async function(id){if(!confirm('Ștergeți rezervarea? IREVERSIBIL.'))return;await deleteDoc(doc(db,'reservations',id));toast('Sters.','success');aRes();};
+window.delRes2=async function(id){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}if(!confirm('Ștergeți rezervarea? IREVERSIBIL.'))return;await deleteDoc(doc(db,'reservations',id));toast('Sters.','success');aRes();};
 
 async function aCoup(){
   var m=document.getElementById('adm');
@@ -3165,14 +3169,14 @@ async function aCoup(){
     }).join('')+
     '</tbody></table></div>';
 }
-window.svCoup=async function(){
+window.svCoup=async function(){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}
   var c=document.getElementById('cp-c')?.value.trim().toUpperCase(),d=parseInt(document.getElementById('cp-d')?.value);
   if(!c||!d){toast('Completati codul si procentul.','error');return;}
   var ex=document.getElementById('cp-e')?.value,mx=parseInt(document.getElementById('cp-m')?.value)||null;
   await addDoc(collection(db,'coupons'),{code:c,discount:d,expiresAt:ex?new Date(ex):null,maxUses:mx,usedCount:0});
   toast('Cupon adaugat!','success');aCoup();
 };
-window.delCoup2=async function(id){if(!confirm('Ștergeți cuponul? Clienții cu codul salvat nu îl vor mai putea folosi. IREVERSIBIL.'))return;await deleteDoc(doc(db,'coupons',id));toast('Sters.','success');aCoup();};
+window.delCoup2=async function(id){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}if(!confirm('Ștergeți cuponul? Clienții cu codul salvat nu îl vor mai putea folosi. IREVERSIBIL.'))return;await deleteDoc(doc(db,'coupons',id));toast('Sters.','success');aCoup();};
 
 async function aTr(){
   var m=document.getElementById('adm');
@@ -3188,12 +3192,12 @@ async function aTr(){
     ts.map(function(t){return'<tr><td>'+esc(t.name)+'</td><td>'+esc(t.type||'-')+'</td><td>'+fpv(t.cost||0)+'</td><td>'+esc(t.description||'-')+'</td><td>'+(t.clientChoice?'Da':'Nu')+'</td><td><button class="btn bd bsm" onclick="delTr2(\''+t.id+'\')">X</button></td></tr>';}).join('')+
     '</tbody></table></div>';
 }
-window.svTr=async function(){
+window.svTr=async function(){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}
   var n=document.getElementById('tr-n')?.value.trim();if(!n){toast('Completati denumirea.','error');return;}
   await addDoc(collection(db,'transport'),{name:n,type:document.getElementById('tr-t')?.value.trim(),cost:parseFloat(document.getElementById('tr-c')?.value)||0,description:document.getElementById('tr-d')?.value.trim(),clientChoice:document.getElementById('tr-ch')?.checked});
   toast('Transport adaugat!','success');aTr();
 };
-window.delTr2=async function(id){if(!confirm('Ștergeți opțiunea de transport? IREVERSIBIL.'))return;await deleteDoc(doc(db,'transport',id));toast('Sters.','success');aTr();};
+window.delTr2=async function(id){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}if(!confirm('Ștergeți opțiunea de transport? IREVERSIBIL.'))return;await deleteDoc(doc(db,'transport',id));toast('Sters.','success');aTr();};
 
 async function aEm(){
   var m=document.getElementById('adm');
@@ -3320,7 +3324,7 @@ window.seedFAQ=async function(){
   for(var i=0;i<toAdd.length;i++)await addDoc(collection(db,'faq'),{question:toAdd[i].q,answer:toAdd[i].a,order:base+i,createdAt:serverTimestamp()});
   toast('Adăugate '+toAdd.length+' întrebări în Firestore!','success');faqs=[];aFaq();
 };
-window.svFaq=async function(){
+window.svFaq=async function(){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}
   var q=document.getElementById('fq-q')?.value.trim(),a=document.getElementById('fq-a')?.value.trim();
   if(!q||!a){toast('Completati intrebarea si raspunsul.','error');return;}
   var ei=document.getElementById('fq-ei')?.value;
@@ -3347,7 +3351,7 @@ window.edFaq=function(id,q,a){
   var h=document.getElementById('fq-form-title');if(h)h.textContent='Editează întrebare';
   window.scrollTo({top:0,behavior:'smooth'});
 };
-window.delFaq2=async function(id){if(!confirm('Ștergeți întrebarea? IREVERSIBIL.'))return;await deleteDoc(doc(db,'faq',id));faqs=[];toast('Sters.','success');aFaq();};
+window.delFaq2=async function(id){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}if(!confirm('Ștergeți întrebarea? IREVERSIBIL.'))return;await deleteDoc(doc(db,'faq',id));faqs=[];toast('Sters.','success');aFaq();};
 
 async function aSch(){
   var m=document.getElementById('adm');
@@ -3380,7 +3384,7 @@ async function aSch(){
     }).join('')+
     '</tbody></table></div>';
 }
-window.svSch=async function(){
+window.svSch=async function(){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}
   var d=document.getElementById('sc-d')?.value.trim(),s=document.getElementById('sc-s')?.value.trim(),t=document.getElementById('sc-t')?.value;
   if(!d||!s||!t){toast('Completati campurile obligatorii.','error');return;}
   var ei=document.getElementById('sc-ei')?.value;
@@ -3406,7 +3410,7 @@ window.edSch=function(id,day,service,time,loc,type){
   var h=document.getElementById('sc-ft');if(h)h.textContent='Editează slujbă';
   window.scrollTo({top:0,behavior:'smooth'});
 };
-window.delSch=async function(id){if(!confirm('Ștergeți slujba? IREVERSIBIL.'))return;await deleteDoc(doc(db,'schedule',id));sched=[];toast('Sters.','success');aSch();};
+window.delSch=async function(id){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}if(!confirm('Ștergeți slujba? IREVERSIBIL.'))return;await deleteDoc(doc(db,'schedule',id));sched=[];toast('Sters.','success');aSch();};
 
 function aSnt(){
   var m=document.getElementById('adm');
@@ -3731,7 +3735,7 @@ async function aCats(){
     pan('announcements','Tipuri Anunțuri')+
     pan('audio','Categorii Audio');
 }
-window.addCat=async function(t){
+window.addCat=async function(t){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}
   var inp=document.getElementById('cni-'+t),nm=inp?inp.value.trim():'';
   if(!nm){toast('Scrieți o categorie.','error');return;}
   var sn=await getDocs(query(collection(db,'categories'),where('type','==',t),where('name','==',nm))).catch(function(){return{empty:false};});
@@ -3739,7 +3743,7 @@ window.addCat=async function(t){
   await addDoc(collection(db,'categories'),{type:t,name:nm});
   toast('Categorie adăugată!','success');inp.value='';aCats();
 };
-window.delCat=async function(id){if(!confirm('Ștergeți categoria? Produsele nu sunt afectate. IREVERSIBIL.'))return;await deleteDoc(doc(db,'categories',id));toast('Șters.','success');aCats();};
+window.delCat=async function(id){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}if(!confirm('Ștergeți categoria? Produsele nu sunt afectate. IREVERSIBIL.'))return;await deleteDoc(doc(db,'categories',id));toast('Șters.','success');aCats();};
 
 // ═══════════════ PWA ═══════════════
 var _deferredPrompt=null;
@@ -3893,7 +3897,7 @@ async function aPush(){
   '</tr>';}).join('')+'</tbody></table></div>':'');
 }
 
-window.sendPushAdmin=async function(){
+window.sendPushAdmin=async function(){if(!CU||CU.email!==ADMIN){toast('Acces interzis.','error');return;}
   var t=document.getElementById('push-t')?.value.trim();
   var b=document.getElementById('push-b')?.value.trim();
   var u=document.getElementById('push-u')?.value.trim()||'/';
@@ -4794,7 +4798,28 @@ if('loading' in HTMLImageElement.prototype){
   }, {passive: true});
 })();
 
-(function(){try{var u=new URL(window.location.href);var p=u.searchParams.get('p');if(p&&['ann','shop','audio','faq','acc'].includes(p))setTimeout(function(){window.go(p);},400);}catch(e){}})();setupAR();ldEJC();updC();ldHome();loadSiteVerses();
+
+// ════ RATE LIMITING ════
+window._checkRateLimit=function(key,maxPerHour){
+  try{
+    var now=Date.now();
+    var stored=JSON.parse(localStorage.getItem('rl_'+key)||'[]');
+    var recent=stored.filter(function(t){return now-t<3600000;});
+    if(recent.length>=maxPerHour){toast('Prea multe cereri. Incercati mai tarziu.','error');return false;}
+    recent.push(now);localStorage.setItem('rl_'+key,JSON.stringify(recent));return true;
+  }catch(e){return true;}
+};
+
+// ════ SANITIZARE ════
+window.san=function(s,maxLen){
+  if(s===null||s===undefined)return'';
+  s=String(s).trim();if(maxLen)s=s.substring(0,maxLen);return s;
+};
+window.isValidEmail=function(e){return/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);};
+window.isValidPhone=function(p){return/^(\+4|0)[0-9]{9}$/.test(p.replace(/\s/g,''));};
+window.isValidName=function(n){return n.length>=2&&n.length<=100&&!/[<>{}]/.test(n);};
+
+(function(){try{var u=new URL(window.location.href);var p=u.searchParams.get('p');var _ap=['ann','shop','audio','faq','acc','saints'];if(p&&_ap.includes(String(p).substring(0,20)))setTimeout(function(){window.go(String(p).substring(0,20));},400);}catch(e){}})();setupAR();ldEJC();updC();ldHome();loadSiteVerses();
 </script>
 </body>
 </html>
